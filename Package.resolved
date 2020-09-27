@@ -1,0 +1,34 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "Alamofire",
+        "repositoryURL": "https://github.com/Alamofire/Alamofire",
+        "state": {
+          "branch": null,
+          "revision": "becd9a729a37bdbef5bc39dc3c702b99f9e3d046",
+          "version": "5.2.2"
+        }
+      },
+      {
+        "package": "PhoneNumberKit",
+        "repositoryURL": "https://github.com/marmelroy/PhoneNumberKit",
+        "state": {
+          "branch": null,
+          "revision": "c7d7b0c91ef0ad7e413022edfcf5d6f75561e2d5",
+          "version": "3.3.1"
+        }
+      },
+      {
+        "package": "Introspect",
+        "repositoryURL": "https://github.com/siteline/SwiftUI-Introspect",
+        "state": {
+          "branch": null,
+          "revision": "de5c32c15ae169cfcb27397ffb2734dcd0e1e6d5",
+          "version": "0.1.0"
+        }
+      }
+    ]
+  },
+  "version": 1
+}

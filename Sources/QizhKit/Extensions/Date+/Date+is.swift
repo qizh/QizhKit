@@ -1,0 +1,105 @@
+//
+//  Date+is.swift
+//  Cooktour Concierge
+//
+//  Created by Serhii Shevchenko on 22.04.2020.
+//  Copyright © 2020 Serhii Shevchenko. All rights reserved.
+//
+
+import Foundation
+
+public extension Date {
+	@inlinable static var now: Date       { Date() }
+	@inlinable static var today: Date     { Date() }
+	@inlinable static var tomorrow: Date  { .today + 1.daysInterval }
+	@inlinable static var yesterday: Date { .today - 1.daysInterval }
+	
+	@inlinable static var startOfToday: Date         { Date.today.start(.day) }
+	@inlinable static var startOfTomorrow: Date   { Date.tomorrow.start(.day) }
+	@inlinable static var startOfYesterday: Date { Date.yesterday.start(.day) }
+	@inlinable static var startOfThisHour: Date        { Date.now.start(.hour) }
+	@inlinable static var startOfNextHour: Date { (Date.now + 1.hoursInterval).start(.hour) }
+	
+	@inlinable static var endOfThisHour: Date { startOfNextHour - 1.secondsInterval }
+	@inlinable static var endOfNextHour: Date { endOfThisHour + 1.hoursInterval }
+	
+	@inlinable static var reference0: Date { Date(timeIntervalSinceReferenceDate: 0) }
+	@inlinable static var unix0: Date { Date(timeIntervalSince1970: 0) }
+	
+	#if !canImport(DateToolsSwift)
+	@inlinable var isToday: Bool { Calendar.autoupdatingCurrent.isDateInToday(self) }
+	#endif
+	
+	@inlinable var isInFuture: Bool { isLater(than: .today) }
+	@inlinable var isInPast: Bool { isEarlier(than: .today) }
+	@inlinable var isTodayOrInFuture: Bool { isToday || isInFuture }
+	@inlinable var isTodayOrInPast: Bool   { isToday || isInPast }
+
+	@inlinable func    equals(   _ date: Date) -> Bool { compare(date) == .orderedSame }
+	@inlinable func   isLater(than date: Date) -> Bool { compare(date) == .orderedDescending }
+	@inlinable func isEarlier(than date: Date) -> Bool { compare(date) == .orderedAscending }
+	
+	@inlinable func start(_ components: Set<Calendar.Component>) -> Date {
+		Calendar.auto
+			.date(from: Calendar.auto.dateComponents(components, from: self))
+			.forceUnwrap(because: .validDateComponents)
+	}
+	
+	@inlinable var minuteStart: Date { start(.minute) }
+	@inlinable var   hourStart: Date { start(.hour)   }
+	@inlinable var    dayStart: Date { start(.day)    }
+	@inlinable var  monthStart: Date { start(.month)  }
+	@inlinable var   yearStart: Date { start(.year)   }
+	
+	@inlinable var isMinuteStart: Bool { compare(minuteStart) == .orderedSame }
+	@inlinable var   isHourStart: Bool { compare(hourStart)   == .orderedSame }
+	@inlinable var    isDayStart: Bool { compare(dayStart) 	  == .orderedSame }
+	@inlinable var  isMonthStart: Bool { compare(monthStart)  == .orderedSame }
+	@inlinable var   isYearStart: Bool { compare(yearStart)   == .orderedSame }
+	
+	@inlinable func isSameMinute(as other: Date) -> Bool { minuteStart.equals(other.minuteStart) }
+	@inlinable func isSameHour  (as other: Date) -> Bool {   hourStart.equals(other  .hourStart) }
+	@inlinable func isSameDay   (as other: Date) -> Bool {    dayStart.equals(other   .dayStart) }
+	@inlinable func isSameMonth (as other: Date) -> Bool {  monthStart.equals(other .monthStart) }
+	@inlinable func isSameYear  (as other: Date) -> Bool {   yearStart.equals(other  .yearStart) }
+}
+
+public extension OptionalForcedUnwrapAssumption {
+	static let validDateComponents = Self("Made out of valid date components")
+}
+
+public extension Int {
+	@inlinable var secondsInterval: TimeInterval { TimeInterval(self) }
+	@inlinable var minutesInterval: TimeInterval { TimeInterval.minute * double }
+	@inlinable var   hoursInterval: TimeInterval { TimeInterval.hour * double }
+	@inlinable var    daysInterval: TimeInterval { TimeInterval.day * double }
+}
+
+public extension Set where Element == Calendar.Component {
+	static let minute: Set<Calendar.Component> = [.era, .year, .month, .day, .hour, .minute]
+	static let hour:   Set<Calendar.Component> = [.era, .year, .month, .day, .hour]
+	static let day:    Set<Calendar.Component> = [.era, .year, .month, .day]
+	static let month:  Set<Calendar.Component> = [.era, .year, .month]
+	static let year:   Set<Calendar.Component> = [.era, .year]
+}
+
+public extension Calendar {
+	@inlinable static var auto: Calendar { .autoupdatingCurrent }
+}
+
+public extension Date {
+	@inlinable var timeIntervalToday: TimeInterval { timeIntervalSinceDayStart }
+	@inlinable var timeIntervalSinceDayStart: TimeInterval {
+		timeIntervalSince(dayStart)
+	}
+}
+
+#if canImport(DateToolsSwift)
+import DateToolsSwift
+
+public extension Date {
+	@inlinable static var endOfToday:     Date { Date    .today.end(of: .day) }
+	@inlinable static var endOfTomorrow:  Date { Date .tomorrow.end(of: .day) }
+	@inlinable static var endOfYesterday: Date { Date.yesterday.end(of: .day) }
+}
+#endif

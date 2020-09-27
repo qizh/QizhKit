@@ -5,24 +5,56 @@ import PackageDescription
 
 let package = Package(
     name: "QizhKit",
+	platforms: [
+		.iOS(.v14)
+	],
     products: [
-        // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
             name: "QizhKit",
-            targets: ["QizhKit"]),
+            targets: [
+				"QizhKit"
+			]
+		),
     ],
     dependencies: [
-        // Dependencies declare other packages that this package depends on.
-        // .package(url: /* package url */, from: "1.0.0"),
+		.package(
+			name: "PhoneNumberKit",
+			url: "https://github.com/marmelroy/PhoneNumberKit",
+			from: "3.3.0"
+		),
+		.package(
+			name: "Introspect",
+			url: "https://github.com/siteline/SwiftUI-Introspect",
+			from: "0.1.0"
+		),
+		.package(
+			name: "Alamofire",
+			url: "https://github.com/Alamofire/Alamofire",
+			from: "5.0.0"
+		),
+		/*
+		.package(
+			name: "SwiftDate",
+			url: "https://github.com/malcommac/SwiftDate",
+			from: "6.2.0"
+		),
+		*/
     ],
     targets: [
-        // Targets are the basic building blocks of a package. A target can define a module or a test suite.
-        // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "QizhKit",
-            dependencies: []),
+            dependencies: [
+				"PhoneNumberKit",
+				"Introspect",
+				"Alamofire",
+//				"SwiftDate",
+			]
+		),
+		/*
         .testTarget(
             name: "QizhKitTests",
-            dependencies: ["QizhKit"]),
+            dependencies: ["QizhKit"]
+		),
+		*/
     ]
 )
