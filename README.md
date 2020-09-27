@@ -1,3 +1,3 @@
 # QizhKit
 
-A description of this package.
+Serhii's mainly SwiftUI framework
