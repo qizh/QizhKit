@@ -14,8 +14,7 @@ public extension View {
 		_ displayMode: NavigationBarItem.TitleDisplayMode = .automatic
 	) -> some View {
 		NavigationView {
-			 navigationTitle(title.orEmpty)
-			.navigationBarTitleDisplayMode(.large)
+			navTitle(title.orEmpty, displayMode)
 		}
 	}
 }

@@ -94,12 +94,8 @@ public extension Date {
 	}
 }
 
-#if canImport(DateToolsSwift)
-import DateToolsSwift
-
 public extension Date {
 	@inlinable static var endOfToday:     Date { Date    .today.end(of: .day) }
 	@inlinable static var endOfTomorrow:  Date { Date .tomorrow.end(of: .day) }
 	@inlinable static var endOfYesterday: Date { Date.yesterday.end(of: .day) }
 }
-#endif

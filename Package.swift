@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "QizhKit",
 	platforms: [
-		.iOS(.v14)
+		.iOS(.v13)
 	],
     products: [
         .library(
@@ -32,13 +32,11 @@ let package = Package(
 			url: "https://github.com/Alamofire/Alamofire",
 			from: "5.0.0"
 		),
-		/*
 		.package(
 			name: "SwiftDate",
 			url: "https://github.com/malcommac/SwiftDate",
 			from: "6.2.0"
 		),
-		*/
     ],
     targets: [
         .target(
@@ -47,7 +45,7 @@ let package = Package(
 				"PhoneNumberKit",
 				"Introspect",
 				"Alamofire",
-//				"SwiftDate",
+				"SwiftDate",
 			]
 		),
 		/*
