@@ -358,6 +358,7 @@ public struct AppearWorkaround: ViewModifier {
 	private let action: Action?
 	
 	@State private var isFirstTime = true
+//	@State private var lastFired: Date = Date.reference0
 	@Environment(\.presentationMode) private var presentation
 	
 	public init(
@@ -373,6 +374,18 @@ public struct AppearWorkaround: ViewModifier {
 					isFirstTime = false
 					self.action?()
 				}
+
+				/*
+				let now: Date = .now
+				let timePassed = lastFired.distance(to: now)
+				print("=== timePassed: \(timePassed)")
+				let canFire = lastFired.isReference0
+					|| presentation.wrappedValue.isPresented && timePassed > 100
+				if canFire {
+					lastFired = now
+					self.action?()
+				}
+				*/
 			}
 			/*
 			.onChange(of: presentation.wrappedValue.isPresented) { isPresented in

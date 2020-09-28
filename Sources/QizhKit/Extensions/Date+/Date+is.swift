@@ -25,6 +25,8 @@ public extension Date {
 	
 	@inlinable static var reference0: Date { Date(timeIntervalSinceReferenceDate: 0) }
 	@inlinable static var unix0: Date { Date(timeIntervalSince1970: 0) }
+	@inlinable var isReference0: Bool { equals(.reference0) }
+	@inlinable var isUnix0:      Bool { equals(.unix0) }
 	
 	#if !canImport(DateToolsSwift)
 	@inlinable var isToday: Bool { Calendar.autoupdatingCurrent.isDateInToday(self) }

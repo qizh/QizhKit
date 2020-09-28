@@ -23,3 +23,9 @@ public extension StringProtocol {
 		startIndex ..< endIndex
 	}
 }
+
+public extension Character {
+	@inlinable var s: String {
+		String(self)
+	}
+}
