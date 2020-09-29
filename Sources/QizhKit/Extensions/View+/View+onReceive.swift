@@ -278,6 +278,21 @@ public extension View {
 		}
 	}
 	
+	@inlinable @ViewBuilder func whenAppear(
+		if condition: Bool,
+		perform action: (() -> Void)? = nil
+	) -> some View {
+		if condition {
+			if #available(iOS 14.0, *) {
+				modifier(AppearWorkaround(perform: action))
+			} else {
+				onAppear(perform: action)
+			}
+		} else {
+			self
+		}
+	}
+	
 	@inlinable func whenAppear(perform action: @escaping () -> Void, in ms: Int) -> some View {
 		whenAppear {
 			execute(in: ms, action)
