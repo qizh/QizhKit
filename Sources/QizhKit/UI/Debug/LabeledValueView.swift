@@ -374,6 +374,11 @@ public extension Optional where Wrapped == String {
 		LabeledValueView(self, label: label)
 	}
 }
+public extension Binding where Value == String {
+	@inlinable func labeledView(label: String? = nil) -> LabeledValueView {
+		LabeledValueView(wrappedValue, label: label)
+	}
+}
 
 public extension CGFloat {
 	@inlinable func labeledView(label: String? = nil, f digits: UInt) -> LabeledValueView {
@@ -545,6 +550,18 @@ public extension Optional where Wrapped == Bool {
 	) -> LabeledValueView {
 		LabeledValueView(
 			self,
+			label: label,
+			boolDisplayStyle: boolDisplayStyle
+		)
+	}
+}
+public extension Binding where Value == Bool {
+	@inlinable func labeledView(
+		label: String? = nil,
+		boolDisplayStyle: LabeledValueView.BoolDisplayStyle = .default
+	) -> LabeledValueView {
+		LabeledValueView(
+			wrappedValue,
 			label: label,
 			boolDisplayStyle: boolDisplayStyle
 		)
