@@ -18,3 +18,9 @@ public extension EnvironmentValues {
 		set { self[HighlightColorKey.self] = newValue }
 	}
 }
+
+public extension View {
+	func highlightColor(_ color: Color?) -> some View {
+		environment(\.highlightColor, color)
+	}
+}

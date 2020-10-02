@@ -13,6 +13,14 @@ extension ColorScheme: Identifiable, EasyCaseComparable { }
 public extension ColorScheme {
 	@inlinable var isLight: Bool { self.is(.light) }
 	@inlinable var isDark:  Bool { self.is(.dark) }
+	
+	@inlinable var opposite: ColorScheme {
+		switch self {
+		case .light: 		return .dark
+		case .dark:  		return .light
+		@unknown default: 	return .light
+		}
+	}
 }
 
 /*
