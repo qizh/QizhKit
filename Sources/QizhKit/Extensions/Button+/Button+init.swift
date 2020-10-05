@@ -179,7 +179,20 @@ public extension View where Self: Initializable {
 public extension View {
 	@inlinable func selfmade() -> Self { self } // homemade?
 	@inlinable func button() -> Button<Self> { Button(label: selfmade) }
-	@inlinable func button(action: @escaping () -> Void) -> Button<Self> { Button(action: action, label: selfmade) }
+	
+	@inlinable func button(
+		action: @escaping () -> Void
+	) -> Button<Self> {
+		Button(action: action, label: selfmade)
+	}
+	
+	@inlinable func button(
+		action: @escaping () -> Void,
+		animation: Animation
+	) -> Button<Self> {
+		Button(action: animating(action, with: animation), label: selfmade)
+	}
+	
 	@inlinable func button<Value, Root> (
 		assigning value: Value,
 			 to keyPath: ReferenceWritableKeyPath<Root, Value>,
