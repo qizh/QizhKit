@@ -36,6 +36,7 @@ public extension View {
 		}
 	}
 	
+	/*
 	@inlinable
 	@ViewBuilder
 	func navTitle (
@@ -47,4 +48,5 @@ public extension View {
 			navigationBarTitle(.empty, displayMode: displayMode)
 		}
 	}
+	*/
 }
