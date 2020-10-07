@@ -183,8 +183,8 @@ struct WebpageScreen_Previews: PreviewProvider {
 			.edgesIgnoringSafeArea(.top)
 			*/
 		}
-		.accentColor(.cooktourTextAccent)
-		.canForceNavigationBarHidden()
+//		.accentColor(.cooktourTextAccent)
+//		.canForceNavigationBarHidden()
     }
 }
 #endif
