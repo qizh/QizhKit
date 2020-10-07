@@ -14,6 +14,10 @@ public extension Color {
 	static let almostClear = Color(.systemBackground).opacity(0.001)
 }
 
+public extension UIColor {
+	static let almostClear = UIColor.systemBackground.withAlphaComponent(0.001)
+}
+
 // MARK: From UIColor
 
 public extension Color {
