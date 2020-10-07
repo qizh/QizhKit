@@ -10,7 +10,7 @@ import SwiftUI
 import Introspect
 
 public struct BecomeFirstResponder: ViewModifier {
-	@State private var textField: UITextField? = nil
+	@State private var textField: UITextField?
 	private let become: Bool
 	private let onBecome: () -> Void
 	
@@ -20,19 +20,41 @@ public struct BecomeFirstResponder: ViewModifier {
 	}
 	
 	public func body(content: Content) -> some View {
-		ZStack {
-			content.introspectTextField { textField in
-				self.textField = textField
-			}
-			
-			if become {
-				Pixel().whenAppear {
-					self.tryToBecome(attempt: 1)
+		ZStack(alignment: .top) {
+			content
+				.introspectTextField { textField in
+//					print("Introspected TextField: \(textField)")
+					self.textField ??= textField
 				}
-			}
+				.zIndex(20)
+				
+				if become && textField.isSet {
+					Pixel()
+						.onAppear(perform: becomeFirstResponder)
+						.zIndex(10)
+				}
+				/*
+				.onAppear {
+					if become && textField.isSet {
+						becomeFirstResponder()
+					}
+				}
+				*/
 		}
+//			.whenAppear(if: become && textField.isSet, perform: becomeFirstResponder)
+			/*
+			.apply(when: become && textField.isSet) { view in
+				view.onAppear(perform: becomeFirstResponder)
+			}
+			*/
 	}
 	
+	private func becomeFirstResponder() {
+		textField?.becomeFirstResponder()
+		onBecome()
+	}
+	
+	/*
 	private func tryToBecome(attempt: UInt) {
 		if let textField = textField {
 			textField.becomeFirstResponder()
@@ -43,6 +65,7 @@ public struct BecomeFirstResponder: ViewModifier {
 			}
 		}
 	}
+	*/
 }
 
 public extension View {
