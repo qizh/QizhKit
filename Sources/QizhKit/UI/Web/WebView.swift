@@ -15,6 +15,7 @@ public struct WebView: UIViewControllerRepresentable {
 	private let allowsBackForwardNavigationGestures: Bool
 	private let allowsLinkPreview: Bool
 	private let configuration: WKWebViewConfiguration?
+	private let contentOffset: Binding<CGPoint>?
 	
 	public enum Source {
 		case none
@@ -76,7 +77,8 @@ public struct WebView: UIViewControllerRepresentable {
 		baseURL baseUrl: URL? = nil,
 		allowsBackForwardNavigationGestures: Bool = false,
 		allowsLinkPreview: Bool = true,
-		configuration: WKWebViewConfiguration? = nil
+		configuration: WKWebViewConfiguration? = nil,
+		scroll contentOffset: Binding<CGPoint>? = nil
 	) {
 		if case .embed(let code) = source {
 			self.source = .html(WebView.emptyPage(withEmbedded: code))
@@ -101,6 +103,8 @@ public struct WebView: UIViewControllerRepresentable {
 			config.defaultWebpagePreferences = prefs
 			self.configuration = config
 		}
+		
+		self.contentOffset = contentOffset
 	}
 	
 	private static func emptyPage(withEmbedded code: String) -> String {
@@ -188,7 +192,12 @@ public struct WebView: UIViewControllerRepresentable {
 	}
 	
 	public func makeUIViewController(context: Context) -> EmbeddedWebViewController {
-		let vc = EmbeddedWebViewController(configuration: configuration, delegate: context.coordinator)
+		let coordinator = context.coordinator
+		coordinator.contentOffset = contentOffset
+		let vc = EmbeddedWebViewController(
+			configuration: configuration,
+			delegate: coordinator
+		)
 		vc.webView.allowsBackForwardNavigationGestures = allowsBackForwardNavigationGestures
 		vc.webView.allowsLinkPreview = allowsLinkPreview
 		return vc
@@ -238,11 +247,21 @@ public class EmbeddedWebViewController: UIViewController {
 		webView.scrollView.contentInsetAdjustmentBehavior = .never
 		super.viewDidLoad()
 	}
+	
+	public override func willMove(toParent parent: UIViewController?) {
+		guard let vc = parent else { return }
+		
+		let standard = UINavigationBarAppearance()
+		standard.configureWithDefaultBackground()
+		vc.navigationItem.standardAppearance = standard
+	}
 }
 
 public class WebViewDelegate: NSObject, WKNavigationDelegate, UIScrollViewDelegate {
 	fileprivate var havePageSet = false
 	fileprivate var havePageLoaded = false
+	
+	fileprivate var contentOffset: Binding<CGPoint>?
 	
 	public func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
 		havePageSet = true
@@ -251,6 +270,10 @@ public class WebViewDelegate: NSObject, WKNavigationDelegate, UIScrollViewDelega
 	public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
 		havePageLoaded = true
 		webView.scrollView.contentInsetAdjustmentBehavior = .automatic
+	}
+	
+	public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+		contentOffset?.wrappedValue = scrollView.contentOffset.opposite
 	}
 }
 

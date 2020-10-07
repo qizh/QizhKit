@@ -56,6 +56,12 @@ public extension CGPoint {
 }
 
 public extension CGPoint {
+	var opposite: CGPoint {
+		CGPoint(x: -x, y: -y)
+	}
+}
+
+public extension CGPoint {
 	@inlinable func offset(_ dx: CGFloat, _ dy: CGFloat) -> CGPoint { CGPoint(x + dx, y + dy) }
 	
 	@inlinable func offset(x dx: CGFloat) -> CGPoint { CGPoint(x + dx, y) }
