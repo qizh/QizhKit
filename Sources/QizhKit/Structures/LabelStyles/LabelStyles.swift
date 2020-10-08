@@ -46,7 +46,7 @@ public struct NavbarLabelStyle: LabelStyle {
 @available(iOS 14.0, *)
 public extension View {
 	@inlinable func labelStyleNavbar(
-		_ color: Color?,
+		_ color: Color? = .none,
 		icon iconSide: NavbarLabelStyle.Side
 	) -> some View {
 		labelStyle(
