@@ -30,6 +30,19 @@ public extension View {
 	
 	@inlinable
 	@ViewBuilder
+	func apply <Transformed: View, T> (
+		mapping optional: T?,
+		@ViewBuilder _ transform: (Self, T) -> Transformed
+	) -> some View {
+		if let value = optional {
+			transform(self, value)
+		} else {
+			self
+		}
+	}
+	
+	@inlinable
+	@ViewBuilder
 	func apply <Transformed: View> (
 		when condition: Bool,
 		   _ transform: (Self) -> Transformed

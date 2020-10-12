@@ -48,6 +48,13 @@ public extension Collection {
 		first(where: { $0[keyPath: keyPath] == value })
 	}
 	
+	@inlinable func contains <Value: Equatable> (
+		where keyPath: KeyPath<Element, Value>,
+		equals value: Value
+	) -> Bool {
+		contains(where: { $0[keyPath: keyPath] == value })
+	}
+	
 	@inlinable func firstIndex <Value: Equatable> (
 		where keyPath: KeyPath<Element, Value>,
 		equals value: Value

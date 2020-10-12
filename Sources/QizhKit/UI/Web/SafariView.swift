@@ -86,6 +86,7 @@ public struct SafariButton<Content>: View where Content: View {
 	private let url: URL
 	private let title: String?
 	private let content: Content
+	private let isActive: Binding<Bool>?
 	
 	@State private var isPresented = false
 	
@@ -94,26 +95,36 @@ public struct SafariButton<Content>: View where Content: View {
 	public init(
 		opening url: URL,
 		title: String? = nil,
+		isActive: Binding<Bool>? = nil,
 		@ViewBuilder content: () -> Content
 	) {
 		self.url = url
 		self.title = title
+		self.isActive = isActive
 		self.content = content()
 	}
 	
 	public init<S>(
 		_ title: S,
-		opening url: URL
+		opening url: URL,
+		isActive: Binding<Bool>? = nil
 	) where S: StringProtocol, Content == Text {
 		self.url = url
 		self.title = String(title)
+		self.isActive = isActive
 		self.content = Text(title)
 	}
 	
 	public var body: some View {
 		content
-			.button(assigning: true, to: \.isPresented, on: self)
-			.sheet(isPresented: $isPresented) {
+			.button {
+				if let isActive = self.isActive {
+					isActive.wrappedValue = true
+				} else {
+					isPresented = true
+				}
+			}
+			.sheet(isPresented: isActive ?? $isPresented) {
 				SafariView(showing: self.url, title: self.title)
 					.edgesIgnoringSafeArea(.all)
 					.environment(\.colorScheme, self.colorScheme)
@@ -154,12 +165,19 @@ public extension URL {
 }
 
 public extension View {
-	@ViewBuilder func asSafariButton(opening url: URL?, title: String? = nil) -> some View {
-		if url.isSet {
-			SafariButton(opening: url.forceUnwrapBecauseTested(), title: title) { self }
-		} else {
-			self
-		}
+	@ViewBuilder func asSafariButton(
+		opening url: URL?,
+		      title: String? = nil,
+		   isActive: Binding<Bool>? = nil
+	) -> some View {
+		url.mapView { url in
+			SafariButton(
+				 opening: url,
+				   title: title,
+				isActive: isActive,
+				 content: { self }
+			)
+		} ?? self
 	}
 }
 
