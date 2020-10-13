@@ -36,6 +36,22 @@ public extension View {
 // MARK: ScrollView + reader
 
 public extension ScrollView {
+	@inlinable
+	static func reading <SpaceName: Hashable> (
+		offset: Binding<CGPoint>,
+		delayed: Bool = false,
+		in coordinateSpaceName: SpaceName,
+		_ axes: Axis.Set = .vertical,
+		showsIndicators: Bool = true,
+		@ViewBuilder content: () -> Content
+	) -> some View {
+		ScrollView(axes, showsIndicators: showsIndicators) {
+			content()
+		}
+		.scrollOffset(offset, delayed: delayed)
+	}
+	
+	/*
 	static func reading <SpaceName: Hashable, OriginalContent: View> (
 		offset: Binding<CGPoint>,
 		delayed: Bool = false,
@@ -67,6 +83,7 @@ public extension ScrollView {
 				.scrollOffset(offset, delayed: delayed)
 		}
 	}
+	*/
 }
 
 // MARK: Modifiers
