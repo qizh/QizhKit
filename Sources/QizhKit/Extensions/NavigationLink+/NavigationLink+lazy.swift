@@ -93,17 +93,36 @@ public extension NavigationLink where Label == Text {
 	}
 }
 
-public extension NavigationLink where Label == EmptyView {
-	static func lazy<Heavy>(_ destination: @autoclosure @escaping () -> Heavy) -> NavigationLink where Heavy: View, Destination == LazyView<Heavy> {
-		NavigationLink(destination: LazyView(escaped: destination), label: EmptyView.init)
+public extension NavigationLink where Label == Pixel {
+	static func lazy <Heavy> (
+		_ destination: @autoclosure @escaping () -> Heavy
+	) -> NavigationLink
+		where Heavy: View, Destination == LazyView<Heavy>
+	{
+		NavigationLink(destination: LazyView(escaped: destination)) {
+			Pixel()
+		}
 	}
 	
-	static func lazy<Heavy>(destination: @autoclosure @escaping () -> Heavy) -> NavigationLink where Heavy: View, Destination == LazyView<Heavy> {
-		NavigationLink(destination: LazyView(escaped: destination), label: EmptyView.init)
+	static func lazy <Heavy> (
+		destination: @autoclosure @escaping () -> Heavy
+	) -> NavigationLink
+		where Heavy: View, Destination == LazyView<Heavy>
+	{
+		NavigationLink(destination: LazyView(escaped: destination)) {
+			Pixel()
+		}
 	}
 	
-	static func lazy<Heavy>(destination: @autoclosure @escaping () -> Heavy, isActive: Binding<Bool>) -> NavigationLink where Heavy: View, Destination == LazyView<Heavy> {
-		NavigationLink(destination: LazyView(escaped: destination), isActive: isActive, label: EmptyView.init)
+	static func lazy <Heavy> (
+		destination: @autoclosure @escaping () -> Heavy,
+		isActive: Binding<Bool>
+	) -> NavigationLink
+		where Heavy: View, Destination == LazyView<Heavy>
+	{
+		NavigationLink(destination: LazyView(escaped: destination), isActive: isActive) {
+			Pixel()
+		}
 	}
 }
 
