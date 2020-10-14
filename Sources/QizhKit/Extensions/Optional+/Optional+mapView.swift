@@ -239,3 +239,71 @@ public extension Optional {
 		}
 	}
 }
+
+// MARK: Map View 2
+
+public extension Optional {
+	@inlinable func map <Out: View, Second> (
+		@ViewBuilder view builder: (Wrapped, Second) -> Out,
+		_ second: Second
+	) -> Out? {
+		switch self {
+		case .none: return nil
+		case .some(let wrapped): return builder(wrapped, second)
+		}
+	}
+	
+	@inlinable func map <Out: View, Second> (
+		@ViewBuilder view builder: (Wrapped, Second) -> Out,
+		_ second: Second?
+	) -> Out? {
+		switch (self, second) {
+		case (.some(let wrapped), .some(let second)):
+			return builder(wrapped, second)
+		default: return nil
+		}
+	}
+	
+	@inlinable func map <Out: View, Second> (
+		@ViewBuilder view builder: (Wrapped, Second?) -> Out,
+		_ second: Second?
+	) -> Out? {
+		switch self {
+		case .none: return nil
+		case .some(let wrapped): return builder(wrapped, second)
+		}
+	}
+	
+	// MARK: > Reversed
+	
+	@inlinable func map <Out: View, First> (
+		_ first: First,
+		@ViewBuilder view builder: (First, Wrapped) -> Out
+	) -> Out? {
+		switch self {
+		case .none: return nil
+		case .some(let wrapped): return builder(first, wrapped)
+		}
+	}
+	
+	@inlinable func map <Out: View, First> (
+		_ first: First?,
+		@ViewBuilder view builder: (First, Wrapped) -> Out
+	) -> Out? {
+		switch (self, first) {
+		case (.some(let wrapped), .some(let first)):
+			return builder(first, wrapped)
+		default: return nil
+		}
+	}
+	
+	@inlinable func map <Out: View, First> (
+		_ first: First?,
+		@ViewBuilder view builder: (First?, Wrapped) -> Out
+	) -> Out? {
+		switch self {
+		case .none: return nil
+		case .some(let wrapped): return builder(first, wrapped)
+		}
+	}
+}
