@@ -37,6 +37,11 @@ let package = Package(
 			url: "https://github.com/malcommac/SwiftDate",
 			from: "6.2.0"
 		),
+		.package(
+			name: "NonEmpty",
+			url: "https://github.com/pointfreeco/swift-nonempty",
+			from: "0.2.2"
+		),
     ],
     targets: [
         .target(
@@ -46,6 +51,7 @@ let package = Package(
 				"Introspect",
 				"Alamofire",
 				"SwiftDate",
+				"NonEmpty",
 			]
 		),
 		/*
