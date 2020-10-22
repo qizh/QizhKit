@@ -56,7 +56,13 @@ public struct ShowHeaderBackgroundViewModifier: ViewModifier {
 							if debug {
 								print("=== top < \(geometry.safeAreaInsets.top)")
 							}
-							$0 = geometry.safeAreaInsets.top
+							let topInset = geometry.safeAreaInsets.top
+							$0 = topInset
+							if #available(iOS 14, *), topSafeInset != topInset {
+								execute {
+									topSafeInset = topInset
+								}
+							}
 						}
 						.onPreferenceChange(SafeInsetsTopKey.self) {
 							if debug {
