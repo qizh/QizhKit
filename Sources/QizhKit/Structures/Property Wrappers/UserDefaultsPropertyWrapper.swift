@@ -9,23 +9,94 @@
 import Foundation
 import Combine
 
-@propertyWrapper public struct UserDefault <T> {
+@propertyWrapper public struct UserDefault <Value> {
 	private let key: String
-	private let defaultValue: T
+	private let defaultValue: Value
 	
-	public init(_ key: String, default defaultValue: T) {
+	public init(_ key: String, default defaultValue: Value) {
 		self.key = key
 		self.defaultValue = defaultValue
 	}
 	
-	public var wrappedValue: T {
+	public var wrappedValue: Value {
+		get { UserDefaults.standard.object(forKey: key) as? Value ?? defaultValue }
+		set { UserDefaults.standard.set(newValue, forKey: key) }
+	}
+}
+
+@propertyWrapper public struct UserDefaultEnum <Value: RawRepresentable> {
+	private let key: String
+	private let defaultValue: Value
+	
+	public init(_ key: String, default defaultValue: Value) {
+		self.key = key
+		self.defaultValue = defaultValue
+	}
+	
+	public init(_ key: String, default defaultValue: Value.RawValue) {
+		self.key = key
+		self.defaultValue = Value(rawValue: defaultValue)
+			.forceUnwrap(because: "Provided raw value suppose to be valid")
+	}
+	
+	public var wrappedValue: Value {
 		get {
-			return UserDefaults.standard.object(forKey: key) as? T ?? defaultValue
+			let raw = UserDefaults.standard.object(forKey: key)
+			let defaultRaw = defaultValue.rawValue
+			var value: Value? = nil
+			
+			if let number = raw as? NSNumber {
+				switch Value.RawValue.self {
+				case is Int.Type:
+					value = Value(rawValue: number.intValue as? Value.RawValue ?? defaultRaw)
+				case is UInt.Type:
+					value = Value(rawValue: number.uintValue as? Value.RawValue ?? defaultRaw)
+				case is Int8.Type:
+					value = Value(rawValue: number.int8Value as? Value.RawValue ?? defaultRaw)
+				case is UInt8.Type:
+					value = Value(rawValue: number.uint8Value as? Value.RawValue ?? defaultRaw)
+				default: ()
+				}
+			} else {
+				value = Value(rawValue: raw as? Value.RawValue ?? defaultRaw)
+			}
+			
+			return value ?? defaultValue
 		}
 		set {
-			UserDefaults.standard.set(newValue, forKey: key)
+			let defaults = UserDefaults.standard
+			let provided = newValue.rawValue
+			
+			switch provided {
+			case let value as  Int: 	defaults.set(NSNumber(value: value), forKey: key)
+			case let value as  Int8: 	defaults.set(NSNumber(value: value), forKey: key)
+			case let value as UInt: 	defaults.set(NSNumber(value: value), forKey: key)
+			case let value as UInt8: 	defaults.set(NSNumber(value: value), forKey: key)
+			default: 					defaults.set(provided, forKey: key)
+			}
 		}
 	}
+}
+
+internal protocol RawValueExtractable {
+	func extractValue() -> Any
+}
+
+internal extension RawValueExtractable where Self: RawRepresentable {
+	func extractValue() -> Any {
+		rawValue as Any
+	}
+}
+
+internal func extractRawValue(from subject: Any) -> Any? {
+	let mirror = Mirror(reflecting: subject)
+	
+	guard let displayStyle = mirror.displayStyle,
+		  case .enum = displayStyle,
+		  let extractable = subject as? RawValueExtractable
+	else { return nil }
+	
+	return extractable.extractValue()
 }
 
 @propertyWrapper public struct CodableUserDefault <T: Codable> {
