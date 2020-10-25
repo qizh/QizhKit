@@ -9,6 +9,7 @@
 import Foundation
 
 public indirect enum AirtableFormulaBuilder: CustomStringConvertible {
+	case none
 	case    search(_ value: String, _ key: String)
 	case    equals(_ value: String, _ key: String)
 	case notEquals(_ value: String, _ key: String)
@@ -52,6 +53,7 @@ public indirect enum AirtableFormulaBuilder: CustomStringConvertible {
 	
 	public var description: String {
 		switch self {
+		case      .none:               return ""
 		case    .search(let v, let k): return "SEARCH('\(e: v)', {\(k)})"
 		case    .equals(let v, let k): return "{\(k)} = '\(e: v)'"
 		case .notEquals(let v, let k): return "{\(k)} != '\(e: v)'"
