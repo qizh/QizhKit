@@ -582,11 +582,19 @@ public extension Optional where Wrapped: CaseNameProvidable {
 */
 
 public extension EasyCaseComparable {
+	@inlinable func caseView(label: String? = nil) -> LabeledValueView {
+		LabeledValueView(self, label: label)
+	}
+	
 	@inlinable func labeledView(label: String? = nil) -> LabeledValueView {
 		LabeledValueView(self, label: label)
 	}
 }
 public extension Optional where Wrapped: EasyCaseComparable {
+	@inlinable func caseView(label: String? = nil) -> LabeledValueView {
+		LabeledValueView(self, label: label)
+	}
+	
 	@inlinable func labeledView(label: String? = nil) -> LabeledValueView {
 		LabeledValueView(self, label: label)
 	}

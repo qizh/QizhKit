@@ -108,7 +108,7 @@ public extension CollectionFetcher {
 	typealias AirtableItemRecords = AirtableRecords<Value.Element>
 	typealias AFAirtableResponse = AFDataResponse<AirtableItemRecords>
 	
-	typealias RailsItemData = RailsResponse<[Value.Element]>
+	typealias RailsItemData = RailsResponses<Value.Element>
 	typealias AFRailsResponse = AFDataResponse<RailsItemData>
 	
 	func defaultResponse(_ response: AFAirtableResponse) {

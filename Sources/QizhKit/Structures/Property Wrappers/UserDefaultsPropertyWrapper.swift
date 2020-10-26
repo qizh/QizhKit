@@ -12,35 +12,64 @@ import Combine
 @propertyWrapper public struct UserDefault <Value> {
 	private let key: String
 	private let defaultValue: Value
+	private let virtual: Bool
 	
 	public init(_ key: String, default defaultValue: Value) {
 		self.key = key
 		self.defaultValue = defaultValue
+		self.virtual = false
+	}
+	
+	public init(virtual value: Value) {
+		self.key = .empty
+		self.defaultValue = value
+		self.virtual = true
 	}
 	
 	public var wrappedValue: Value {
-		get { UserDefaults.standard.object(forKey: key) as? Value ?? defaultValue }
-		set { UserDefaults.standard.set(newValue, forKey: key) }
+		get {
+			virtual
+				? defaultValue
+				: UserDefaults.standard.object(forKey: key) as? Value ?? defaultValue
+		}
+		set {
+			if !virtual {
+				UserDefaults.standard.set(newValue, forKey: key)
+			}
+		}
 	}
 }
 
 @propertyWrapper public struct UserDefaultEnum <Value: RawRepresentable> {
 	private let key: String
 	private let defaultValue: Value
+	private let virtual: Bool
 	
 	public init(_ key: String, default defaultValue: Value) {
 		self.key = key
 		self.defaultValue = defaultValue
+		self.virtual = false
 	}
 	
 	public init(_ key: String, default defaultValue: Value.RawValue) {
 		self.key = key
 		self.defaultValue = Value(rawValue: defaultValue)
 			.forceUnwrap(because: "Provided raw value suppose to be valid")
+		self.virtual = false
+	}
+	
+	public init(virtual value: Value) {
+		self.key = .empty
+		self.defaultValue = value
+		self.virtual = true
 	}
 	
 	public var wrappedValue: Value {
 		get {
+			if virtual {
+				return defaultValue
+			}
+			
 			let raw = UserDefaults.standard.object(forKey: key)
 			let defaultRaw = defaultValue.rawValue
 			var value: Value? = nil
@@ -64,6 +93,10 @@ import Combine
 			return value ?? defaultValue
 		}
 		set {
+			if virtual {
+				return
+			}
+			
 			let defaults = UserDefaults.standard
 			let provided = newValue.rawValue
 			
