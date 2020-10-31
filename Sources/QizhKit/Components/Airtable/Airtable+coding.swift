@@ -34,4 +34,10 @@ public extension JSONDecoder {
 		decoder.dateDecodingStrategy = .formatted(.airtable)
 		return decoder
 	}()
+	
+	static let rails: JSONDecoder = {
+		let decoder = JSONDecoder()
+		decoder.dateDecodingStrategy = .formatted(.airtable)
+		return decoder
+	}()
 }
