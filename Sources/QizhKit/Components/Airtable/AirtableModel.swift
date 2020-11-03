@@ -29,10 +29,16 @@ public struct RailsResponse <Item: Codable>: Codable {
 	public let data: Item
 }
 
-public struct RailsResponses <Item: Codable>: Codable {
+public struct RailsLossyResponses <Item: Codable>: Codable {
 	public let status: Int
 	public let message: String
 	@LossyArray public var data: [Item]
+}
+
+public struct RailsStrictResponses <Item: Codable>: Codable {
+	public let status: Int
+	public let message: String
+	public var data: [Item]
 }
 
 public struct AirtableRecords<Item: Codable>: Codable {
