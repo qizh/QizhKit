@@ -9,6 +9,7 @@
 import Foundation
 
 infix operator ??= : AssignmentPrecedence
+infix operator =? : AssignmentPrecedence
 
 public extension Optional {
 	/// Assigns the optional value on the right to the variable on the left only in case the variable is not defined
@@ -38,5 +39,17 @@ public extension Optional {
 		lhs = r
 		return r
 		*/
+	}
+	
+	/// Assignes a new value only when it's set
+	@discardableResult @inlinable
+	static func =? (lhs: inout Wrapped, rhs: Optional<Wrapped>) -> Wrapped {
+		switch rhs {
+		case .none:
+			return lhs
+		case .some(let value):
+			lhs = value
+			return value
+		}
 	}
 }
