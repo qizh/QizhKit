@@ -96,7 +96,7 @@ public extension Optional where Wrapped: View {
 
 // MARK: Text View
 
-public extension Optional where Wrapped: StringProtocol {
+public extension Optional where Wrapped: StringProtocol, Wrapped: EmptyTestable {
 	func mapText() -> Text? {
 		switch self {
 		case .some(let label) where label.isNotEmpty: return Text(label)
@@ -108,7 +108,7 @@ public extension Optional where Wrapped: StringProtocol {
 // MARK: > for KeyPath
 
 public extension Optional {
-	func mapText<S: StringProtocol>(for key: KeyPath<Wrapped, S>) -> Text? {
+	func mapText <S: StringProtocol & EmptyTestable> (for key: KeyPath<Wrapped, S>) -> Text? {
 		if let wrapped = self {
 			let text: S = wrapped[keyPath: key]
 			if text.isNotEmpty {
@@ -118,7 +118,7 @@ public extension Optional {
 		return nil
 	}
 	
-	func mapText<S: StringProtocol>(for key: KeyPath<Wrapped, S?>) -> Text? {
+	func mapText <S: StringProtocol & EmptyTestable> (for key: KeyPath<Wrapped, S?>) -> Text? {
 		if let wrapped = self,
 		   let text: S = wrapped[keyPath: key],
 		   text.isNotEmpty

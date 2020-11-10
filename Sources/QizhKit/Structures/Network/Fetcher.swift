@@ -61,6 +61,7 @@ public protocol CollectionFetcher: Fetcher
 	Value: RandomAccessCollection,
 	Value: InitializableCollection,
 	Value: InitializableWithSequenceCollection,
+	Value: EmptyTestable,
 	Value.Element: Codable
 {
 	#if DEBUG

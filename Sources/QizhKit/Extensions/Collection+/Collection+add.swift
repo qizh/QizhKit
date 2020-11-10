@@ -40,6 +40,12 @@ public extension RangeReplaceableCollection {
 		self + elements
 	}
 	
+	@inlinable var reversed: Self {
+		Self(reversed())
+	}
+}
+
+public extension RangeReplaceableCollection where Self: EmptyTestable {
 	mutating func cutFirst() -> Element? {
 		guard isNotEmpty else { return .none }
 		return remove(at: startIndex)
@@ -48,9 +54,5 @@ public extension RangeReplaceableCollection {
 	mutating func cutLast() -> Element? {
 		guard isNotEmpty else { return .none }
 		return remove(at: index(endIndex, offsetBy: .minusOne))
-	}
-	
-	@inlinable var reversed: Self {
-		Self(reversed())
 	}
 }

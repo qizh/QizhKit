@@ -28,7 +28,9 @@ public extension Collection where Element == String {
 	) -> [Element] {
 		sorted(by: measurement)
 	}
-	
+}
+
+public extension Collection where Self: EmptyTestable, Element == String {
 	@inlinable func closest<Measure: Comparable>(
 		to sample: String,
 		using measurementKey: IncreasingOrder.Key<Measure>

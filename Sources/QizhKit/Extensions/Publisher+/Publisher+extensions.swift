@@ -220,7 +220,7 @@ public extension Publisher where Output: Sequence {
 	}
 }
 
-public extension Publisher where Output: Collection {
+public extension Publisher where Output: Collection & EmptyTestable {
 	@inlinable func isEmpty() -> Publishers.MapKeyPath<Self, Bool> {
 		map(\.isEmpty)
 	}

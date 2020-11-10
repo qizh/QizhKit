@@ -203,11 +203,29 @@ public extension CodableUserDefault where T: WithUnknown {
 	}
 	
 	public var wrappedValue: T? {
-		get { UserDefaults.standard.object(forKey: key) as? T ?? defaultValue }
+		get {
+			if let value = UserDefaults.standard.object(forKey: key) as? T {
+				if let possibleEmptyValue = value as? EmptyTestable,
+				   possibleEmptyValue.isEmpty
+				{
+					return defaultValue
+				} else {
+					return value
+				}
+			} else {
+				return defaultValue
+			}
+		}
 		set {
 			self.changePublisher?.send()
 			if newValue.isSet {
-				UserDefaults.standard.set(newValue, forKey: key)
+				if let possibleEmptyValue = newValue as? EmptyTestable,
+				   possibleEmptyValue.isEmpty
+				{
+					UserDefaults.standard.removeObject(forKey: key)
+				} else {
+					UserDefaults.standard.set(newValue, forKey: key)
+				}
 			} else {
 				UserDefaults.standard.removeObject(forKey: key)
 			}

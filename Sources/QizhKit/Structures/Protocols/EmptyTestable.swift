@@ -9,7 +9,7 @@
 import Foundation
 import SwiftUI
 
-// MARK: Protocol
+// MARK: Provide
 
 public protocol AnyEmptyProvidable {
 	static var anyEmpty: Any { get }
@@ -23,6 +23,8 @@ public extension EmptyProvidable {
 	static var anyEmpty: Any { empty }
 }
 
+// MARK: Test
+
 public protocol EmptyTestable {
 	var isEmpty: Bool { get }
 }
@@ -32,34 +34,29 @@ public extension EmptyTestable {
 	@inlinable var nonEmpty: Self? { isEmpty ? Self?.none : self }
 }
 
+// MARK: Default Test
+
 public protocol EmptyComparable: Equatable, EmptyProvidable, EmptyTestable { }
 public extension EmptyComparable {
 	@inlinable var isEmpty: Bool { self == .empty }
 }
 
-// MARK: Mimic in other protocols
+// MARK: Adopt
 
-public extension Collection {
-	@inlinable var isNotEmpty: Bool { !isEmpty }
-	@inlinable var nonEmpty: Self? { isEmpty ? Self?.none : self }
-}
+extension Set: EmptyTestable { }
+extension Array: EmptyTestable { }
+extension ArraySlice: EmptyTestable { }
+extension Dictionary: EmptyTestable { }
+extension KeyValuePairs: EmptyTestable { }
+extension Mirror.Children: EmptyTestable { }
 
-public extension StringProtocol {
-	@inlinable var isNotEmpty: Bool { !isEmpty }
-	@inlinable var nonEmpty: Self? { isEmpty ? Self?.none : self }
-}
+extension Range: EmptyTestable { }
+extension ClosedRange: EmptyTestable { }
 
-//extension Set: EmptyTestable { }
-//extension Array: CanBeEmpty { }
-//extension ArraySlice: CanBeEmpty { }
-//extension Dictionary: CanBeEmpty { }
-//extension KeyValuePairs: CanBeEmpty { }
+extension String: EmptyTestable { }
+extension Substring: EmptyTestable { }
 
-//extension Range: CanBeEmpty { }
-//extension ClosedRange: CanBeEmpty { }
-
-//extension String: CanBeEmpty { }
-//extension Substring: CanBeEmpty { }
+// MARK: Implement
 
 extension URL: EmptyProvidable {
 	@inlinable public static var empty: URL {

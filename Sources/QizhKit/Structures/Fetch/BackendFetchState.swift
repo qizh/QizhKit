@@ -420,9 +420,13 @@ public enum BackendFetchState<Value> {
 	public var contentError: FetchError? { error?.isContentError == true ? error : nil }
 }
 
-public extension BackendFetchState where Value: Collection {
-	@inlinable static func nonEmptySuccess(_ items: Value) -> Self { items.nonEmpty.map(Self.success) ?? .emptyFailure
+public extension BackendFetchState where Value: Collection, Value: EmptyTestable {
+	@inlinable static func nonEmptySuccess(_ items: Value) -> Self {
+		items.nonEmpty.map(Self.success) ?? .emptyFailure
 	}
+}
+
+public extension BackendFetchState where Value: Collection {
 	@inlinable static var emptyFailure: Self { .fetched(.failure(.emptyContentError)) }
 	@inlinable var emptyContentError: FetchError? { error?.isEmptyContentError == true ? error : nil }
 }
@@ -436,15 +440,17 @@ public extension BackendFetchState where Value: InitializableWithSequenceCollect
 	@inlinable static func success(_ item: Value.Element) -> Self { .success(Value([item])) }
 }
 
-extension BackendFetchState: BackendFetchStateWithCollectionResult where Value: Collection {
-	/// - `has value` -> `value.isEmpty`
-	/// - `nil value` -> `false`
-	@inlinable public var isEmpty: Bool { value.map(\.isEmpty) ?? false }
-	/// - `has value` -> `value.isNotEmpty`
-	/// - `nil value` -> `false`
-	@inlinable public var isNotEmpty: Bool { value.map(\.isNotEmpty) ?? false }
+extension BackendFetchState: BackendFetchStateWithCollectionResult
+	where Value: Collection
+{
 	@inlinable public var first: Value.Element? { value?.first }
 	@inlinable public var count: Int { value?.count ?? .zero }
+	/// - `has value` -> `value.isEmpty`
+	/// - `nil value` -> `false`
+	@inlinable public var isEmpty: Bool { value?.isEmpty ?? false }
+	/// - `has value` -> `value.isNotEmpty`
+	/// - `nil value` -> `false`
+	@inlinable public var isNotEmpty: Bool { value?.isEmpty.toggled ?? false }
 }
 
 extension BackendFetchState: CaseNameProvidable { }
