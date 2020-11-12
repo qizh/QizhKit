@@ -156,6 +156,7 @@ public extension CollectionFetcher {
 	
 	#if DEBUG
 	@inlinable static var demoFetched: Self { demo(.success(Value(demoData))) }
+	@inlinable static var demoFetchedOne: Self { demo(.success(Value(demoData.prefix(1).asArray()))) }
 	@inlinable static var demoFetchedNone: Self { demo(.empty) }
 	@inlinable static var demoEmptyFailure: Self { demo(.emptyFailure) }
 	#endif
