@@ -21,7 +21,7 @@ public extension View {
 	}
 	
 	@inlinable
-	@ViewBuilder
+//	@ViewBuilder
 	func apply <Transformed: View> (
 		@ViewBuilder _ transform: (Self) -> Transformed
 	) -> some View {
