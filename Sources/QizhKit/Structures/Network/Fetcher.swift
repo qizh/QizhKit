@@ -154,6 +154,22 @@ public extension CollectionFetcher {
 		}
 	}
 	
+	func nonEmptyResponse(_ response: AFRailsLossyResponse) {
+		if debug { debugPrint(response) }
+		switch response.result {
+		case .failure: state = .failed(response)
+		case .success(let result): state = .nonEmptySuccess(Value(result.data))
+		}
+	}
+	
+	func nonEmptyResponse(_ response: AFRailsStrictResponse) {
+		if debug { debugPrint(response) }
+		switch response.result {
+		case .failure: state = .failed(response)
+		case .success(let result): state = .nonEmptySuccess(Value(result.data))
+		}
+	}
+	
 	#if DEBUG
 	@inlinable static var demoFetched: Self { demo(.success(Value(demoData))) }
 	@inlinable static var demoFetchedOne: Self { demo(.success(Value(demoData.prefix(1).asArray()))) }
