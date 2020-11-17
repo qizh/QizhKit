@@ -11,6 +11,7 @@ import Foundation
 // MARK: Protocols
 
 /// Original naming, use `AcceptingOtherValues` instead
+@available(*, deprecated, renamed: "AcceptingOtherValues")
 public protocol AllowUnknownCases: RawRepresentable where Self.RawValue == String {
 	typealias WithUnknownCases = ExtraCase<Self>
 }
