@@ -10,24 +10,29 @@ import Foundation
 
 /// Decodes Arrays and filters invalid values if the Decoder is unable to decode the value.
 @propertyWrapper
-public struct LossyArray <Item: Codable>: Codable {
+public struct LossyArray <Item: Codable>: Codable, EmptyProvidable {
 	public var wrappedValue: [Item]
 	
-	public init(wrappedValue: [Item]) {
+	public init(wrappedValue: [Item] = .empty) {
 		self.wrappedValue = wrappedValue
 	}
 	
 	public init(from decoder: Decoder) throws {
-		var container = try decoder.unkeyedContainer()
-		
 		var elements: [Item] = .empty
-		while !container.isAtEnd {
-			do {
-				let value = try container.decode(Item.self)
-				elements.append(value)
-			} catch {
-				_ = try? container.decode(Blancodable.self)
+		
+		do {
+			var container = try decoder.unkeyedContainer()
+			while !container.isAtEnd {
+				do {
+					let value = try container.decode(Item.self)
+					elements.append(value)
+				} catch {
+					print("[LossyArray] is skipping element because of decoding error: \(error)")
+					_ = try? container.decode(Blancodable.self)
+				}
 			}
+		} catch {
+			print("[LossyArray] value is not an array: \(error)")
 		}
 		
 		self.wrappedValue = elements
@@ -37,8 +42,30 @@ public struct LossyArray <Item: Codable>: Codable {
 		try wrappedValue.encode(to: encoder)
 	}
 	
+	@inlinable public static var empty: Self { .init() }
+	
 	private struct Blancodable: Codable { }
+}
+
+extension LossyArray: WithDefault {
+	@inlinable public static var `default`: Self { .init() }
 }
 
 extension LossyArray: Equatable where Item: Equatable { }
 extension LossyArray: Hashable where Item: Hashable { }
+
+public extension KeyedDecodingContainer {
+	func decode <Wrapped: Codable> (
+		_: LossyArray<Wrapped>.Type,
+		forKey key: Key
+	) -> LossyArray<Wrapped> {
+		let result: LossyArray<Wrapped>?
+		do {
+			result = try decodeIfPresent(LossyArray<Wrapped>.self, forKey: key)
+		} catch {
+			result = nil
+			print("[LossyArray] no value for `\(key)` key")
+		}
+		return result.orDefault
+	}
+}

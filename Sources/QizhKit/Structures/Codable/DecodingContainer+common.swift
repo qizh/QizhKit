@@ -11,18 +11,35 @@ import Foundation
 public extension KeyedDecodingContainer {
 	func decodeIfPresent(_ type: URL.Type, forKey key: Key) throws -> URL? {
 		if let text = try? decodeIfPresent(String.self, forKey: key) {
-			if let url = URL(string: text) {
-				return url
-			}
+			var result: URL
 			
-			if
+			if let url = URL(string: text) {
+				result = url
+			} else if
 				let encodedText = text.addingPercentEncoding(
 					withAllowedCharacters: .urlQueryAllowed
 				),
 				let url = URL(string: encodedText)
 			{
-				return url
+				result = url
+			} else {
+				return nil
 			}
+			
+			if result.scheme.isNotSet,
+			   let updated = URL(string: "http://" + result.absoluteString)
+			{
+				result = updated
+				/*
+				var components = URLComponents(url: result, resolvingAgainstBaseURL: true)
+				components?.scheme = "http"
+				if let updated = components?.url {
+					result = updated
+				}
+				*/
+			}
+			
+			return result
 		}
 		return nil
 	}
