@@ -22,7 +22,45 @@ public enum CurrencyCode:
 	case rur = "RUR"
 	case uah = "UAH"
 	case thb = "THB"
-
+	
+	private static var symbols: [String: String] = .init()
+	public static func symbol(for code: String) -> String? {
+		guard code.count == 3 else { return nil }
+		if let cached = symbols[code] {
+			return cached.nonEmpty
+		}
+		let value = findSymbol(by: code)
+		symbols[code] = value
+		return value.nonEmpty
+	}
+	
+	private static func findSymbol(by code: String) -> String {
+		var candidates: [String] = .init()
+		let ids = NSLocale.availableLocaleIdentifiers
+		
+		for id in ids {
+			guard let symbol = findSymbol(in: id, by: code) else { continue }
+			if symbol.isAlone { return symbol }
+			candidates.append(symbol)
+		}
+		
+		return candidates.lazy.sorted(by: \.count).first.orEmpty
+	}
+	
+	private static func findSymbol(
+		in id: String,
+		by code: String
+	) -> String? {
+		let locale = Locale(identifier: id)
+		return code == locale.currencyCode
+			? locale.currencySymbol
+			: nil
+	}
+	
+	public var symbol: String? {
+		CurrencyCode.symbol(for: rawValue)
+	}
+	
 	@inlinable public func formatter(_ locale: Locale) -> NumberFormatter {
 		CurrencyCode.formatter(for: rawValue, locale)
 	}
@@ -65,5 +103,9 @@ public extension AnyCurrencyCode {
 	
 	@inlinable func string(for price: Double, _ locale: Locale) -> String {
 		string(for: NSNumber(value: price), locale)
+	}
+	
+	@inlinable var symbol: String? {
+		CurrencyCode.symbol(for: rawValue)
 	}
 }
