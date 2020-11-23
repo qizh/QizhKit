@@ -51,6 +51,7 @@ extension DateFormatter: CanFormatDate { }
 extension ISO8601DateFormatter: CanFormatDate { }
 
 public struct ISO8601DashedDateFormatterProvider: DateFormatterProvidable {
+	/// "2020-11-25"
 	public static var dateFormatter: CanFormatDate {
 		let formatter = ISO8601DateFormatter()
 		formatter.formatOptions = [
@@ -61,4 +62,21 @@ public struct ISO8601DashedDateFormatterProvider: DateFormatterProvidable {
 	}
 }
 
+public struct ISO8601DashedDateTimeFormatterProvider: DateFormatterProvidable {
+	/// "2020-11-25 10:00:00 +0800"
+	public static var dateFormatter: CanFormatDate {
+		let formatter = ISO8601DateFormatter()
+		formatter.formatOptions = [
+			.withFullDate,
+			.withDashSeparatorInDate,
+			.withFullTime,
+			.withSpaceBetweenDateAndTime,
+			.withColonSeparatorInTime,
+			.withTimeZone,
+		]
+		return formatter
+	}
+}
+
 public typealias ISO8601DashedDate = CustomDate<ISO8601DashedDateFormatterProvider>
+public typealias ISO8601DashedDateTime = CustomDate<ISO8601DashedDateTimeFormatterProvider>
