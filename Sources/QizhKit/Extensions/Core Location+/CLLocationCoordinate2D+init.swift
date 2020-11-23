@@ -16,7 +16,10 @@ public extension CLLocationCoordinate2D {
 			let lon = CLLocationDegrees(longitude)
 		else { return nil }
 		
-		self.init(latitude: lat, longitude: lon)
+		self.init(
+			 latitude: lat.truncatingRemainder(dividingBy: 90),
+			longitude: lon.truncatingRemainder(dividingBy: 180)
+		)
 	}
 	
 	init?(latitude: String?, longitude: String?) {
@@ -27,7 +30,10 @@ public extension CLLocationCoordinate2D {
 			let lon = CLLocationDegrees(longitude)
 		else { return nil }
 		
-		self.init(latitude: lat, longitude: lon)
+		self.init(
+			 latitude: lat.truncatingRemainder(dividingBy: 90),
+			longitude: lon.truncatingRemainder(dividingBy: 180)
+		)
 	}
 }
 
