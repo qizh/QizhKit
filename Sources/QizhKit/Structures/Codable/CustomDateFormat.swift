@@ -35,13 +35,46 @@ public struct CustomDate<FormatterProvider: DateFormatterProvidable>: Codable, H
         try wrappedValue.encode(to: encoder)
     }
 	
+	/*
     public enum CustomDateError: Error {
         case general
     }
+	*/
+}
+
+@propertyWrapper
+public struct MandatoryCustomDate<FormatterProvider: DateFormatterProvidable>: Codable, Hashable {
+	public var wrappedValue: Date
+	
+	public init(wrappedValue: Date) {
+		self.wrappedValue = wrappedValue
+	}
+	
+	public init(from decoder: Decoder) throws {
+		let container = try decoder.singleValueContainer()
+		let text = try container.decode(String.self)
+		if let date = FormatterProvider.dateFormatter.date(from: text) {
+			wrappedValue = date
+		} else {
+			throw DecodingError.dataCorruptedError(
+				in: container,
+				debugDescription: "`\(text)` is not a valid date for provided `\(FormatterProvider.self)` formatter"
+			)
+		}
+	}
+	
+	public func encode(to encoder: Encoder) throws {
+		try wrappedValue.encode(to: encoder)
+	}
 }
 
 public extension KeyedDecodingContainer {
-	func decode<FormatterProvider>(_: CustomDate<FormatterProvider>.Type, forKey key: Key) -> CustomDate<FormatterProvider> where FormatterProvider: DateFormatterProvidable {
+	func decode <FormatterProvider> (
+		_: CustomDate<FormatterProvider>.Type,
+		forKey key: Key
+	) -> CustomDate<FormatterProvider>
+		where FormatterProvider: DateFormatterProvidable
+	{
         (try? decodeIfPresent(CustomDate<FormatterProvider>.self, forKey: key))
 			?? CustomDate<FormatterProvider>(wrappedValue: nil)
     }
@@ -80,3 +113,7 @@ public struct ISO8601DashedDateTimeFormatterProvider: DateFormatterProvidable {
 
 public typealias ISO8601DashedDate = CustomDate<ISO8601DashedDateFormatterProvider>
 public typealias ISO8601DashedDateTime = CustomDate<ISO8601DashedDateTimeFormatterProvider>
+public typealias ISO8601MandatoryDashedDate =
+	MandatoryCustomDate<ISO8601DashedDateFormatterProvider>
+public typealias ISO8601MandatoryDashedDateTime =
+	MandatoryCustomDate<ISO8601DashedDateTimeFormatterProvider>
