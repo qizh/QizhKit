@@ -114,6 +114,9 @@ public extension CollectionFetcher {
 	typealias AFRailsLossyResponse = AFDataResponse<RailsLossyItemData>
 	typealias AFRailsStrictResponse = AFDataResponse<RailsStrictItemData>
 	
+	typealias RailsItemData = RailsResponse<Item>
+	typealias AFRailsItemResponse = AFDataResponse<RailsItemData>
+	
 	func defaultResponse(_ response: AFAirtableResponse) {
 		if debug { debugPrint(response) }
 		switch response.result {
@@ -143,6 +146,14 @@ public extension CollectionFetcher {
 		switch response.result {
 		case .failure: state = .failed(response)
 		case .success(let item): state = .success(item)
+		}
+	}
+	
+	func defaultResponse(_ response: AFRailsItemResponse) {
+		if debug { debugPrint(response) }
+		switch response.result {
+		case .failure: state = .failed(response)
+		case .success(let result): state = .success(result.data)
 		}
 	}
 	
