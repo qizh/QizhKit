@@ -83,6 +83,20 @@ public struct AutoTypeCodable <T>: Codable
 	}
 }
 
+extension Optional: CustomStringConvertible where Wrapped: LosslessStringConvertible { }
+extension Optional: LosslessStringConvertible where Wrapped: LosslessStringConvertible {
+	public init?(_ description: String) {
+		self = Wrapped.init(description)
+	}
+	
+	public var description: String {
+		switch self {
+		case .none: return .empty
+		case .some(let value): return value.description
+		}
+	}
+}
+
 extension AutoTypeCodable: Equatable where T: Equatable {
 	public static func == (lhs: AutoTypeCodable<T>, rhs: AutoTypeCodable<T>) -> Bool {
 		lhs.wrappedValue == rhs.wrappedValue
