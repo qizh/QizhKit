@@ -47,11 +47,35 @@ public extension Date {
 			.forceUnwrap(because: .validDateComponents)
 	}
 	
+	@inlinable func end(_ targetComponents: Set<Calendar.Component>) -> Date {
+		var components = Calendar.auto.dateComponents(targetComponents, from: self)
+		if targetComponents.contains(.minute) {
+			components.setValue(components.minute.orZero.next, for: .minute)
+		} else if targetComponents.contains(.hour) {
+			components.setValue(components.hour.orZero.next, for: .hour)
+		} else if targetComponents.contains(.day) {
+			components.setValue(components.day.orZero.next, for: .day)
+		} else if targetComponents.contains(.month) {
+			components.setValue(components.month.orZero.next, for: .month)
+		} else if targetComponents.contains(.year) {
+			components.setValue(components.year.orZero.next, for: .year)
+		}
+		return Calendar.auto.date(from: components)
+			.forceUnwrap(because: .validDateComponents)
+			.addingTimeInterval(-1.thousandth)
+	}
+	
 	@inlinable var minuteStart: Date { start(.minute) }
 	@inlinable var   hourStart: Date { start(.hour)   }
 	@inlinable var    dayStart: Date { start(.day)    }
 	@inlinable var  monthStart: Date { start(.month)  }
 	@inlinable var   yearStart: Date { start(.year)   }
+	
+	@inlinable var minuteEnd: Date { end(.minute) }
+	@inlinable var   hourEnd: Date { end(.hour)   }
+	@inlinable var    dayEnd: Date { end(.day)    }
+	@inlinable var  monthEnd: Date { end(.month)  }
+	@inlinable var   yearEnd: Date { end(.year)   }
 	
 	@inlinable var isMinuteStart: Bool { compare(minuteStart) == .orderedSame }
 	@inlinable var   isHourStart: Bool { compare(hourStart)   == .orderedSame }
