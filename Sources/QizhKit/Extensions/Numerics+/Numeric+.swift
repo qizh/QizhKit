@@ -65,11 +65,12 @@ public extension BinaryInteger {
 }
 
 public extension FloatingPoint {
-	@inlinable var half:      Self { self / .two     }
-	@inlinable var third:     Self { self / .three   }
-	@inlinable var quater:    Self { self / .four    }
-	@inlinable var tenth:     Self { self / .ten     }
-	@inlinable var hundredth: Self { self / .hundred }
+	@inlinable var half:       Self { self / .two      }
+	@inlinable var third:      Self { self / .three    }
+	@inlinable var quater:     Self { self / .four     }
+	@inlinable var tenth:      Self { self / .ten      }
+	@inlinable var hundredth:  Self { self / .hundred  }
+	@inlinable var thousandth: Self { self / .thousand }
 	
 	@inlinable var doubled:  Self { self * .two }
 	@inlinable var hundred:  Self { self * .hundred }
