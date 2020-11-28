@@ -32,7 +32,11 @@ extension DefaultEmpty: Equatable where Wrapped: Equatable { }
 extension DefaultEmpty: Hashable where Wrapped: Hashable { }
 
 extension DefaultEmpty: WithDefault {
-	@inlinable public static var `default`: Self { .init() }
+	@inlinable public static var `default`: DefaultEmpty<Wrapped> { .init() }
+}
+
+extension DefaultEmpty: EmptyProvidable {
+	@inlinable public static var empty: DefaultEmpty<Wrapped> { .init() }
 }
 
 public extension KeyedDecodingContainer {
