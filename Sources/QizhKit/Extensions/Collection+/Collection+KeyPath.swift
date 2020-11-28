@@ -62,6 +62,13 @@ public extension Collection {
 		contains(where: { $0[keyPath: keyPath] == value })
 	}
 	
+	@inlinable func contains <Medium> (
+		_ transform: (Element) -> Medium,
+		_ isIncluded: (Medium) -> Bool
+	) -> Bool {
+		contains(where: { isIncluded(transform($0)) })
+	}
+	
 	@inlinable func firstIndex <Value: Equatable> (
 		where keyPath: KeyPath<Element, Value>,
 		equals value: Value
