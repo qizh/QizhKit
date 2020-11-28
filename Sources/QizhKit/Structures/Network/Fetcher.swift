@@ -6,7 +6,7 @@
 //  Copyright © 2020 Serhii Shevchenko. All rights reserved.
 //
 
-import Foundation
+import SwiftUI
 import Alamofire
 
 // MARK: Fetcher
@@ -125,19 +125,23 @@ public extension CollectionFetcher {
 		}
 	}
 	
-	func defaultResponse(_ response: AFRailsLossyResponse) {
+	func defaultResponse(_ response: AFRailsLossyResponse, _ animate: Bool) {
 		if debug { debugPrint(response) }
-		switch response.result {
-		case .failure: state = .failed(response)
-		case .success(let result): state = .success(Value(result.data))
+		withAnimation(animate ? .spring() : .none) {
+			switch response.result {
+			case .failure: state = .failed(response)
+			case .success(let result): state = .success(Value(result.data))
+			}
 		}
 	}
 	
-	func defaultResponse(_ response: AFRailsStrictResponse) {
+	func defaultResponse(_ response: AFRailsStrictResponse, _ animate: Bool) {
 		if debug { debugPrint(response) }
-		switch response.result {
-		case .failure: state = .failed(response)
-		case .success(let result): state = .success(Value(result.data))
+		withAnimation(animate ? .spring() : .none) {
+			switch response.result {
+			case .failure: state = .failed(response)
+			case .success(let result): state = .success(Value(result.data))
+			}
 		}
 	}
 	
@@ -149,11 +153,13 @@ public extension CollectionFetcher {
 		}
 	}
 	
-	func defaultResponse(_ response: AFRailsItemResponse) {
+	func defaultResponse(_ response: AFRailsItemResponse, _ animate: Bool) {
 		if debug { debugPrint(response) }
-		switch response.result {
-		case .failure: state = .failed(response)
-		case .success(let result): state = .success(result.data)
+		withAnimation(animate ? .spring() : .none) {
+			switch response.result {
+			case .failure: state = .failed(response)
+			case .success(let result): state = .success(result.data)
+			}
 		}
 	}
 	
@@ -165,20 +171,59 @@ public extension CollectionFetcher {
 		}
 	}
 	
-	func nonEmptyResponse(_ response: AFRailsLossyResponse) {
+	func nonEmptyResponse(_ response: AFRailsLossyResponse, _ animate: Bool) {
 		if debug { debugPrint(response) }
-		switch response.result {
-		case .failure: state = .failed(response)
-		case .success(let result): state = .nonEmptySuccess(Value(result.data))
+		withAnimation(animate ? .spring() : .none) {
+			switch response.result {
+			case .failure: state = .failed(response)
+			case .success(let result): state = .nonEmptySuccess(Value(result.data))
+			}
 		}
 	}
 	
-	func nonEmptyResponse(_ response: AFRailsStrictResponse) {
+	func nonEmptyResponse(_ response: AFRailsStrictResponse, _ animate: Bool) {
 		if debug { debugPrint(response) }
-		switch response.result {
-		case .failure: state = .failed(response)
-		case .success(let result): state = .nonEmptySuccess(Value(result.data))
+		withAnimation(animate ? .spring() : .none) {
+			switch response.result {
+			case .failure: state = .failed(response)
+			case .success(let result): state = .nonEmptySuccess(Value(result.data))
+			}
 		}
+	}
+	
+	func defaultResponse(_ response: AFRailsLossyResponse) {
+		defaultResponse(response, false)
+	}
+	func defaultResponse(animate: Bool) -> (AFRailsLossyResponse) -> Void {
+		{ self.defaultResponse($0, animate) }
+	}
+	
+	func defaultResponse(_ response: AFRailsStrictResponse) {
+		defaultResponse(response, false)
+	}
+	func defaultResponse(animate: Bool) -> (AFRailsStrictResponse) -> Void {
+		{ self.defaultResponse($0, animate) }
+	}
+	
+	func defaultResponse(_ response: AFRailsItemResponse) {
+		defaultResponse(response, false)
+	}
+	func defaultResponse(animate: Bool) -> (AFRailsItemResponse) -> Void {
+		{ self.defaultResponse($0, animate) }
+	}
+	
+	func nonEmptyResponse(_ response: AFRailsLossyResponse) {
+		nonEmptyResponse(response, false)
+	}
+	func nonEmptyResponse(animate: Bool) -> (AFRailsLossyResponse) -> Void {
+		{ self.nonEmptyResponse($0, animate) }
+	}
+	
+	func nonEmptyResponse(_ response: AFRailsStrictResponse) {
+		nonEmptyResponse(response, false)
+	}
+	func nonEmptyResponse(animate: Bool) -> (AFRailsStrictResponse) -> Void {
+		{ self.nonEmptyResponse($0, animate) }
 	}
 	
 	#if DEBUG
