@@ -83,6 +83,12 @@ public struct AutoTypeCodable <T>: Codable
 	}
 }
 
+public extension KeyedDecodingContainer {
+	func decode<T>(_: AutoTypeCodable<T>.Type, forKey key: Key) -> AutoTypeCodable<T> where T: TypedOptionalConvertible {
+		(try? decodeIfPresent(AutoTypeCodable<T>.self, forKey: key)) ?? AutoTypeCodable<T>(wrappedValue: .none)
+	}
+}
+
 extension Optional: CustomStringConvertible where Wrapped: LosslessStringConvertible { }
 extension Optional: LosslessStringConvertible where Wrapped: LosslessStringConvertible {
 	public init?(_ description: String) {
@@ -109,6 +115,7 @@ extension AutoTypeCodable: Hashable where T: Hashable {
 	}
 }
 
+/*
 extension AutoTypeCodable: WithAnyDefault where T: WithDefault { }
 extension AutoTypeCodable: WithDefault where T: WithDefault {
 	public init() {
@@ -141,3 +148,4 @@ extension AutoTypeCodable: EmptyProvidable where T: EmptyProvidable {
 		.init()
 	}
 }
+*/
