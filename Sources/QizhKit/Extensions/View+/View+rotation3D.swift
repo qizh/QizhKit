@@ -23,18 +23,18 @@ public struct RotationAxis {
 		(x: x, y: y, z: z)
 	}
 	
-	@inlinable static func x(_ value: CGFloat) -> Self {
+	@inlinable public static func x(_ value: CGFloat) -> Self {
 		.init(x: value, y: .zero, z: .zero)
 	}
-	@inlinable static func y(_ value: CGFloat) -> Self {
+	@inlinable public static func y(_ value: CGFloat) -> Self {
 		.init(x: .zero, y: value, z: .zero)
 	}
-	@inlinable static func z(_ value: CGFloat) -> Self {
+	@inlinable public static func z(_ value: CGFloat) -> Self {
 		.init(x: .zero, y: .zero, z: value)
 	}
-	@inlinable static var x: Self { x(.one) }
-	@inlinable static var y: Self { y(.one) }
-	@inlinable static var z: Self { z(.one) }
+	@inlinable public static var x: Self { x(.one) }
+	@inlinable public static var y: Self { y(.one) }
+	@inlinable public static var z: Self { z(.one) }
 }
 
 public extension View {
