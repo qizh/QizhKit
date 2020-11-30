@@ -13,10 +13,14 @@ public extension View {
 		_ radius: CGFloat,
 		_ corners: UIRectCorner = .allCorners,
 		border color: Color,
-		weight: CGFloat = .one
+		weight: CGFloat = .one,
+		tap define: Bool = false
 	) -> some View {
 		clipShape(RoundedRect(radius, corners))
 		.overlay(RoundedRect(radius, corners).stroke(color, lineWidth: weight))
+		.apply(when: define) { v in v
+			.contentShape(RoundedRect(radius, corners))
+		}
 	}
 	
 	@inlinable func round(
