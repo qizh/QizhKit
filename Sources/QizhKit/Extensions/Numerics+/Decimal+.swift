@@ -23,20 +23,24 @@ public extension Decimal {
 		self as NSDecimalNumber
 	}
 	
-	func format(as formatType: FormatType, _ locale: Locale = .current) -> String {
+	func format(
+		as formatType: FormatType,
+		position context: Formatter.Context,
+		for locale: Locale
+	) -> String {
 		switch formatType {
 		case .string:
-			return NumberFormatter.decimal(locale)
+			return NumberFormatter.decimal(position: context, for: locale)
 				.string(from: self)
 				.or("\(self)")
 		case .currency(let code):
-			return NumberFormatter.currency(code, locale)
+			return NumberFormatter.currency(code, position: context, for: locale)
 				.string(from: self)
-				.or(format(as: .string) + " " + code.uppercased())
+				.or(format(as: .string, position: context, for: locale) + .space + code.uppercased())
 		case .percent:
-			return NumberFormatter.percent(locale)
+			return NumberFormatter.percent(position: context, for: locale)
 				.string(from: self / 100)
-				.or(format(as: .string) + "%")
+				.or(format(as: .string, position: context, for: locale) + .percent)
 		}
 	}
 	

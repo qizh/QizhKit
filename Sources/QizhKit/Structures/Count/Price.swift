@@ -116,30 +116,47 @@ public typealias ServiceCharge = Price.Service
 // MARK: Format
 
 public extension Price {
-	@inlinable func formatted(_ locale: Locale) -> Formatted { Formatted(self, locale: locale) }
-	@inlinable func formatted(or free: String, _ locale: Locale) -> Formatted { Formatted(self, or: free, locale: locale) }
+	@inlinable func formatted(
+		unit: PriceUnit.AnyValue = .default,
+		position context: Formatter.Context,
+		for locale: Locale
+	) -> Formatted {
+		Formatted(self, for: unit, position: context, locale: locale)
+	}
+	
+	@inlinable func formatted(
+		unit: PriceUnit.AnyValue = .default,
+		or free: String,
+		position context: Formatter.Context,
+		for locale: Locale
+	) -> Formatted {
+		Formatted(self, for: unit, or: free, position: context, locale: locale)
+	}
 
 	struct Formatted {
 		public let price: Price
 		public let free: String?
 		public let unit: PriceUnit.AnyValue
+		public let context: Formatter.Context
 		public let locale: Locale
 		
 		public init(
 			 _ price: Price,
 			for unit: PriceUnit.AnyValue = .default,
 			 or free: String? = nil,
+			position context: Formatter.Context,
 			  locale: Locale
 		) {
 			self.price = price
 			self.unit = unit
 			self.free = free
+			self.context = context
 			self.locale = locale
 		}
 		
 		public var currency: String {
 			if price.isFree, let free = free { return free }
-			return price.currency.string(for: price.value, locale)
+			return price.currency.string(for: price.value, position: context, in: locale)
 		}
 		
 		public func separated(by separator: UnitSeparator) -> String {

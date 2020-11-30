@@ -61,17 +61,33 @@ public enum CurrencyCode:
 		CurrencyCode.symbol(for: rawValue)
 	}
 	
-	@inlinable public func formatter(_ locale: Locale) -> NumberFormatter {
-		CurrencyCode.formatter(for: rawValue, locale)
+	@inlinable public func formatter(
+		position context: Formatter.Context,
+		for locale: Locale
+	) -> NumberFormatter {
+		CurrencyCode.formatter(
+			currency: rawValue,
+			position: context,
+			for: locale
+		)
 	}
 	
 	fileprivate static var formatters = [String: NumberFormatter]()
-	public static func formatter(for code: String, _ locale: Locale) -> NumberFormatter {
-		let key: String = code + locale.identifier
+	public static func formatter(
+		currency code: String,
+		position context: Formatter.Context,
+		for locale: Locale
+	) -> NumberFormatter {
+		let key: String = code + locale.identifier + context.stringValue
 		if let formatter = CurrencyCode.formatters[key] {
 			return formatter
 		} else {
-			let formatter = NumberFormatter.currency(code, locale)
+			let formatter = NumberFormatter
+				.currency(
+					code,
+					position: context,
+					for: locale
+				)
 			CurrencyCode.formatters[key] = formatter
 			return formatter
 		}
@@ -89,20 +105,52 @@ public extension AnyCurrencyCode {
 	static let thb = Self(.thb)
 
 	@inlinable var code: String { rawValue }
-	func formatter(_ locale: Locale) -> NumberFormatter { CurrencyCode.formatter(for: code, locale) }
-	
-	@inlinable func string(for price: NSNumber, _ locale: Locale) -> String {
-		formatter(locale)
-			.string(from: price)
-			.or("\(price) \(code)")
+	func formatter(
+		position context: Formatter.Context,
+		for locale: Locale
+	) -> NumberFormatter {
+		CurrencyCode.formatter(
+			currency: code,
+			position: context,
+			for: locale
+		)
 	}
 	
-	@inlinable func string(for price: Decimal, _ locale: Locale) -> String {
-		string(for: price.number, locale)
+	@inlinable func string(
+		for price: NSNumber,
+		position context: Formatter.Context,
+		in locale: Locale
+	) -> String {
+		formatter(
+			position: context,
+			for: locale
+		)
+		.string(from: price)
+		.or("\(price) \(code)")
 	}
 	
-	@inlinable func string(for price: Double, _ locale: Locale) -> String {
-		string(for: NSNumber(value: price), locale)
+	@inlinable func string(
+		for price: Decimal,
+		position context: Formatter.Context,
+		in locale: Locale
+	) -> String {
+		string(
+			for: price.number,
+			position: context,
+			in: locale
+		)
+	}
+	
+	@inlinable func string(
+		for price: Double,
+		position context: Formatter.Context,
+		in locale: Locale
+	) -> String {
+		string(
+			for: NSNumber(value: price),
+			position: context,
+			in: locale
+		)
 	}
 	
 	@inlinable var symbol: String? {

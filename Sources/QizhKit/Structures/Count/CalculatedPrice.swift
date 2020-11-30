@@ -109,20 +109,62 @@ public extension Price {
 		public var decimal: Decimal { value }
 		public var cents: Int { ((.hundred * value) as NSDecimalNumber).intValue }
 		
-		@inlinable public var formatted: String { format(as: .string) }
-		@inlinable public var formattedPercents: String { format(as: .percent) }
-		@inlinable public var formattedCurrency: String { format(as: .currency) }
-		@inlinable public var formattedCurrencyOrEmpty: String { format(as: .currencyOrEmpty) }
+		/// - Warning: Dynamic positioning and autoupdating locale,
+		/// please use `.format(as:position:for:)`
+		@inlinable public var formatted: String {
+			format(as: .string, position: .dynamic, for: .autoupdatingCurrent)
+		}
 		
-		public func format(as formatType: FormatType, _ locale: Locale = .current) -> String {
+		/// - Warning: Dynamic positioning and autoupdating locale,
+		/// please use `.format(as:position:for:)`
+		@inlinable public var formattedPercents: String {
+			format(as: .percent, position: .dynamic, for: .autoupdatingCurrent)
+		}
+		
+		/// - Warning: Dynamic positioning and autoupdating locale,
+		/// please use `.format(as:position:for:)`
+		@inlinable public var formattedCurrency: String {
+			format(as: .currency, position: .dynamic, for: .autoupdatingCurrent)
+		}
+		
+		/// - Warning: Dynamic positioning and autoupdating locale,
+		/// please use `.format(as:position:for:)`
+		@inlinable public var formattedCurrencyOrEmpty: String {
+			format(as: .currencyOrEmpty, position: .dynamic, for: .autoupdatingCurrent)
+		}
+		
+		public func format(
+			as formatType: FormatType,
+			position context: Formatter.Context,
+			for locale: Locale
+		) -> String {
 			switch formatType {
 			case .currency(let free) where free.isSet:
 				return
-					(value.nonZero?.format(as: .currency(details.currency.code), locale))
+					(value.nonZero?.format(
+						as: .currency(details.currency.code),
+						position: context,
+						for: locale
+					))
 					.or(free.forceUnwrap(because: "switch case condition"))
-			case .currency: return value.format(as: .currency(details.currency.code), locale)
-			case .string: 	return value.format(as: .string, locale)
-			case .percent: 	return value.format(as: .percent, locale)
+			case .currency:
+				return value.format(
+					as: .currency(details.currency.code),
+					position: context,
+					for: locale
+				)
+			case .string:
+				return value.format(
+					as: .string,
+					position: context,
+					for: locale
+				)
+			case .percent:
+				return value.format(
+					as: .percent,
+					position: context,
+					for: locale
+				)
 			}
 		}
 		
