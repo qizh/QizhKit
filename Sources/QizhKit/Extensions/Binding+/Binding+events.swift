@@ -167,8 +167,9 @@ public extension Binding {
 		Binding(
 			get: getter,
 			set: { value in
+				let previousValue = self.wrappedValue
 				self.wrappedValue = value
-				flow.proceed(with: action, self.wrappedValue, value)
+				flow.proceed(with: action, previousValue, value)
 			}
 		)
 	}
