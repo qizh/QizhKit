@@ -14,7 +14,11 @@ import Alamofire
 
 public extension BackendFetchState {
 	@inlinable static func failed<T>(_ response: DataResponse<T, AFError>) -> Self {
-		.failed(with: .afError(response.debugDescription, response))
+		if case let .responseValidationFailed(.customValidationFailed(error)) = response.error,
+		   let fetchError = error as? FetchError {
+			return .failed(with: fetchError)
+		}
+		return .failed(with: .afError(response.debugDescription, response))
 	}
 }
 

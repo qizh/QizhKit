@@ -583,6 +583,7 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 		case userExists
 		case usernameTaken
 		case wrongCredentials
+		case wrongPassword
 		case tokenExpired
 		case airtableUserNotFound
 		case createUserFirst
@@ -669,6 +670,8 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 			return "The username is taken, try again with another one"
 		case .sign(.wrongCredentials):
 			return "Wrong password or no such user"
+		case .sign(.wrongPassword):
+			return "Wrong password"
 		case .sign(.tokenExpired):
 			return "App forgot what it was just doing"
 		case .sign(.airtableUserNotFound):
