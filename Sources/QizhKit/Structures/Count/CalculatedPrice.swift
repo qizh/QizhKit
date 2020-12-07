@@ -15,6 +15,7 @@ public protocol PriceCalculationProvider {
 	var all: 	  Price.Output   { get }
 	var tax: 	  Price.Output   { get }
 	var discount: Price.Output   { get }
+	var flatDiscount: Price.Output { get }
 	var service:  Price.Output   { get }
 	var total: 	  Price.Output   { get }
 	var price:    Price.Provider { get }
@@ -40,12 +41,13 @@ public extension Price {
 			Output(value: value, details: price, amount: amount)
 		}
 		
-		public var unit: 		Output { output(price.value) }
-		public var all: 		Output { output(price.value * Decimal(amount)) }
-		public var tax: 		Output { output(price.tax) }
-		public var discount: 	Output { output(price.discount) }
-		public var service: 	Output { output(.zero) }
-		public var total: 		Output { all.discounted.taxed }
+		public var unit: 		 Output { output(price.value) }
+		public var all: 		 Output { output(price.value * Decimal(amount)) }
+		public var tax: 		 Output { output(price.tax) }
+		public var discount: 	 Output { output(price.discount.percent) }
+		public var flatDiscount: Output { output(price.discount.flat) }
+		public var service: 	 Output { output(.zero) }
+		public var total: 		 Output { all.discounted.taxed }
 		
 		public static func == (l: Price.CalculatedItem, r: Price.CalculatedItem) -> Bool {
 			l.amount == r.amount &&
@@ -73,12 +75,13 @@ public extension Price {
 			Output(value: .zero, details: price, amount: .one)
 		}
 		
-		public var unit: 		Output { value }
-		public var all: 		Output { zero }
-		public var tax: 		Output { zero }
-		public var discount: 	Output { zero }
-		public var service: 	Output { value }
-		public var total: 		Output { value }
+		public var unit: 		 Output { value }
+		public var all: 		 Output { zero }
+		public var tax: 		 Output { zero }
+		public var discount: 	 Output { zero }
+		public var flatDiscount: Output { zero }
+		public var service: 	 Output { value }
+		public var total: 		 Output { value }
 	}
 }
 
@@ -172,7 +175,7 @@ public extension Price {
 			Output(value: value, details: details, amount: amount)
 		}
 		
-		public var discount: 	Output { calculate(value * details.discount.percents) }
+		public var discount: 	Output { calculate(value * details.discount.percent.percents + details.discount.flat ) }
 		public var discounted: 	Output { calculate(value - discount.value) }
 		public var tax: 		Output { calculate(value * details.tax.percents) }
 		public var taxed: 		Output { calculate(value + tax.value) }
@@ -252,12 +255,13 @@ public extension Price {
 		fileprivate var zero: Output { .zero(price) }
 		public var price: Price.Provider { firstWithPrice.price }
 		
-		public var unit: Output     { firstWithPrice.unit }
-		public var all: Output      { items.map(\.all)     .reduce(zero, +) }
-		public var tax: Output      { items.map(\.tax)     .reduce(zero, +) }
-		public var discount: Output { items.map(\.discount).reduce(zero, +) }
-		public var service: Output  { items.map(\.service) .reduce(zero, +) }
-		public var total: Output    { items.map(\.total)   .reduce(zero, +) }
+		public var unit: Output         { firstWithPrice.unit }
+		public var all: Output          { items.map(\.all)         .reduce(zero, +) }
+		public var tax: Output          { items.map(\.tax)         .reduce(zero, +) }
+		public var discount: Output     { items.map(\.discount)    .reduce(zero, +) }
+		public var flatDiscount: Output { items.map(\.flatDiscount).reduce(zero, +) }
+		public var service: Output      { items.map(\.service)     .reduce(zero, +) }
+		public var total: Output        { items.map(\.total)       .reduce(zero, +) }
 
 		public static let empty: CalculatedSum = .init()
 	}

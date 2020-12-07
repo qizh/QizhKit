@@ -25,7 +25,7 @@ public extension PriceValueProvider {
 
 public protocol PriceDetailsProvider {
 	var currency: Price.Code { get }
-	var discount: Decimal { get }
+	var discount: Price.Discount { get }
 	var tax: Decimal { get }
 }
 
@@ -43,14 +43,14 @@ public struct Price:
 	
 	public private(set) var value: 		Decimal
 	public private(set) var currency: 	Code
-	public private(set) var discount: 	Decimal
+	public private(set) var discount: 	Discount
 	public private(set) var tax: 		Decimal
 	
 	/// - Parameter currencyCode: ISO 4217 currency code
     public init(
 		   value: Decimal = .zero,
 		currency: Code = .default,
-		discount: Decimal = .zero,
+		discount: Discount = .zero,
 		     tax: Decimal = .zero
 	) {
     	self.value    = value
@@ -90,13 +90,52 @@ extension Price {
 	}
 }
 
+// MARK: Discount
+
+public extension Price {
+	enum Discount: Equatable {
+		case flat(_ value: Decimal)
+		case percent(_ value: Decimal)
+		
+		public var flat: Decimal {
+			switch self {
+			case .flat(let value): return value
+			case .percent(_): return .zero
+			}
+		}
+		
+		public var percent: Decimal {
+			switch self {
+			case .flat(_): return .zero
+			case .percent(let value): return value
+			}
+		}
+		
+		public var amount: Decimal {
+			switch self {
+			case .flat(let value): return value
+			case .percent(let value): return value
+			}
+		}
+		
+		public var isZero: Bool {
+			switch self {
+			case .flat(let value): return value.isZero
+			case .percent(let value): return value.isZero
+			}
+		}
+		
+		public static let zero: Self = .flat(.zero)
+	}
+}
+
 // MARK: Service Charge
 
 public extension Price {
 	struct Service: PriceValueProvider, PriceDetailsProvider {
 		public let value: Decimal
 		public let currency: Code
-		public let discount: Decimal = .zero
+		public let discount: Discount = .zero
 		public let tax: Decimal = .zero
 		
 		public init(_ value: Decimal, _ currency: Code = .default) {
