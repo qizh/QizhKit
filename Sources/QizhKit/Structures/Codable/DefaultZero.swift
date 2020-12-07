@@ -32,7 +32,7 @@ public struct DefaultZero <Wrapped: Numeric & Codable>: Codable {
 	
 	public static var `default`: Self { .init() }
 	public static var defaultValue: Wrapped { .zero }
-
+	public static var zero: Self { .init() }
 }
 
 @propertyWrapper
@@ -59,6 +59,7 @@ public struct DefaultValueOne <Wrapped: Numeric & Codable>: Codable, WithDefault
 	
 	public static var `default`: Self { .init() }
 	public static var defaultValue: Wrapped { .one }
+	public static var one: Self { .init() }
 }
 
 extension DefaultZero: Equatable where Wrapped: Equatable { }
