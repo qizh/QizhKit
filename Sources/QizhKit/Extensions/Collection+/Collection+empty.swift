@@ -16,6 +16,6 @@ public extension Collection {
 	@inlinable var       nonAlone: Self? {  isNotAlone ? self : .none }
 	@inlinable var    moreThanOne: Self? {  isNotAlone ? self : .none }
 	
-	@inlinable var justOne: Element? { isAlone ? first : .none }
-	@inlinable var    only: Element? { isAlone ? first : .none }
+	var justOne: Element? { isAlone ? first : .none }
+	var    only: Element? { isAlone ? first : .none }
 }
