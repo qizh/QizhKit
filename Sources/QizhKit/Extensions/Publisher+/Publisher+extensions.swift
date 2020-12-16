@@ -165,6 +165,24 @@ public extension Publisher {
 	}
 }
 
+// MARK: Equal
+
+public extension Publisher {
+	@inlinable
+	func areEqual <T> () -> Publishers.Map<Self, Bool>
+		where Output == (T, T), T: Equatable
+	{
+		map { $0 == $1 }
+	}
+	
+	@inlinable
+	func areNotEqual <T> () -> Publishers.Map<Self, Bool>
+	where Output == (T, T), T: Equatable
+	{
+		map { $0 != $1 }
+	}
+}
+
 // MARK: Clip
 
 public extension Publisher where Output: Comparable {
@@ -206,17 +224,44 @@ public extension Publisher where Output: Strideable {
 
 // MARK: Collection and Sequence
 
-public extension Publisher where Output: Sequence {
-	@inlinable func elementsMap<T>(_ transform: @escaping (Output.Element) -> T) -> Publishers.Map<Self, [T]> {
+public extension Publisher where Output: Collection {
+	@inlinable func elementsMap <T> (
+		_ transform: @escaping (Output.Element) -> T
+	) -> Publishers.Map<Self, [T]> {
 		map({ $0.map(transform) })
 	}
 	
-	@inlinable func elementsCompactMap<T>(_ transform: @escaping (Output.Element) -> T?, nonEmpty: Bool = false) -> Publishers.CompactMap<Self, [T]> {
+	@inlinable func elementsCompactMap <T> (
+		_ transform: @escaping (Output.Element) -> T?,
+		nonEmpty: Bool = false
+	) -> Publishers.CompactMap<Self, [T]> {
 		compactMap(
 			nonEmpty
 			? { $0.compactMap(transform).nonEmpty }
 			: { $0.compactMap(transform) }
 		)
+	}
+	
+	@inlinable
+	func optionalFirstElement() -> Publishers.Map<Self, Self.Output.Element?> {
+		map(\.first)
+	}
+	
+	@inlinable
+	func mandatoryFirstElement() -> Publishers.CompactMap<Self, Self.Output.Element> {
+		compactMap(\.first)
+	}
+}
+
+public extension Publisher where Output: BidirectionalCollection {
+	@inlinable
+	func optionalLastElement() -> Publishers.Map<Self, Self.Output.Element?> {
+		map(\.last)
+	}
+	
+	@inlinable
+	func mandatoryLastElement() -> Publishers.CompactMap<Self, Self.Output.Element> {
+		compactMap(\.last)
 	}
 }
 
