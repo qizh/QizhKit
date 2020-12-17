@@ -56,6 +56,20 @@ public extension View {
 	
 	@inlinable
 	@ViewBuilder
+	func apply <Transformed: View, Fallback: View> (
+		when condition: Bool,
+		   _ transform: (Self) -> Transformed,
+		else  fallback: (Self) -> Fallback
+	) -> some View {
+		if condition {
+			transform(self)
+		} else {
+			fallback(self)
+		}
+	}
+	
+	@inlinable
+	@ViewBuilder
 	func apply <Transformed: View> (
 		for iOS: IOSVersion,
 		_ transform: (Self) -> Transformed
