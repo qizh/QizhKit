@@ -294,8 +294,8 @@ public extension Publisher {
 		filter { $0.is(value) }
 	}
 	
-	@inlinable func equals<T>(to value: T) -> Publishers.Map<Self, Bool> where T == Output, T: Equatable {
-		map { $0 == value }
+	@inlinable func equals<T>(to value: @autoclosure @escaping () -> T) -> Publishers.Map<Self, Bool> where T == Output, T: Equatable {
+		map { $0 == value() }
 	}
 	
 	@inlinable func `is`<T>(_ value: T) -> Publishers.Map<Self, Bool> where T == Output, T: CaseComparable {
@@ -326,8 +326,8 @@ public extension Publisher {
 		filter { $0.isNot(value) }
 	}
 	
-	@inlinable func notEquals<T>(to value: T) -> Publishers.Map<Self, Bool> where T == Output, T: Equatable {
-		map { $0 != value }
+	@inlinable func notEquals<T>(to value: @autoclosure @escaping () -> T) -> Publishers.Map<Self, Bool> where T == Output, T: Equatable {
+		map { $0 != value() }
 	}
 	
 	@inlinable func isNot<T>(_ value: T) -> Publishers.Map<Self, Bool> where T == Output, T: CaseComparable {
