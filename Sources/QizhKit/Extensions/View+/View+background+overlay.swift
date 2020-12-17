@@ -130,6 +130,7 @@ public extension View {
 	
 	@inlinable func foregroundWhite() -> some View { foregroundColor(.white) }
 	@inlinable func foregroundBlack() -> some View { foregroundColor(.black) }
+	@inlinable func foregroundPlaceholder() -> some View { foregroundColor(Color(.placeholderText)) }
 	
 	// MARK: > Deprecated
 	
@@ -189,6 +190,7 @@ public extension Text {
 	
 	@inlinable func foregroundWhite() -> Text { foregroundColor(.white) }
 	@inlinable func foregroundBlack() -> Text { foregroundColor(.black) }
+	@inlinable func foregroundPlaceholder() -> Text { foregroundColor(Color(.placeholderText)) }
 }
 
 // MARK: Max
