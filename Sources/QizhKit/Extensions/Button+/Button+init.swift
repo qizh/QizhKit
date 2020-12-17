@@ -180,20 +180,40 @@ public extension View {
 	@inlinable func selfmade() -> Self { self } // homemade?
 	@inlinable func button() -> Button<Self> { Button(label: selfmade) }
 	
-	@inlinable func button(
+	@inlinable
+	func button(
 		action: @escaping () -> Void
 	) -> Button<Self> {
 		Button(action: action, label: selfmade)
 	}
 	
-	@inlinable func button(
+	@inlinable
+	func button <A> (
+		action: @escaping (A) -> Void,
+		_ argument: A
+	) -> Button<Self> {
+		Button(action: { action(argument) }, label: selfmade)
+	}
+	
+	@inlinable
+	func button <A1, A2> (
+		action: @escaping (A1, A2) -> Void,
+		_ argument1: A1,
+		_ argument2: A2
+	) -> Button<Self> {
+		Button(action: { action(argument1, argument2) }, label: selfmade)
+	}
+	
+	@inlinable
+	func button(
 		action: @escaping () -> Void,
 		animation: Animation
 	) -> Button<Self> {
 		Button(action: animating(action, with: animation), label: selfmade)
 	}
 	
-	@inlinable func button<Value, Root> (
+	@inlinable
+	func button<Value, Root> (
 		assigning value: Value,
 			 to keyPath: ReferenceWritableKeyPath<Root, Value>,
 		      on object: Root,
@@ -208,7 +228,8 @@ public extension View {
 			           flow)
 	}
 	
-	@inlinable func button<Value, Root> (
+	@inlinable
+	func button<Value, Root> (
 		resetting keyPath: ReferenceWritableKeyPath<Root, Value?>,
 			    on object: Root,
 			    animation: Animation? = .none,
