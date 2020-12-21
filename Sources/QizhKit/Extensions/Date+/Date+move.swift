@@ -36,7 +36,8 @@ public extension Date {
 	/// - Requires: `value` should be within a day range.
 	/// Otherwise a truncating remainder dividing by day will be used.
 	@inlinable func time(_ value: Double) -> Date {
-		dayStart + TimeInterval(value.truncatingRemainder(dividingBy: TimeInterval.day))
+		with(time: value)
+//		dayStart + TimeInterval(value.truncatingRemainder(dividingBy: TimeInterval.day))
 	}
 	
 	/// Creates another `Date` by setting provided time since the beginning of the day
