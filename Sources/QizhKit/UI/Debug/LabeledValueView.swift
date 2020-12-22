@@ -341,7 +341,7 @@ public struct LabeledValueView: View {
 				radius: 2,
 				weight: colorScheme.isDark ? 1/3 : 0
 			)
-			.fixedSize(horizontal: true, vertical: false)
+//			.fixedSize(horizontal: true, vertical: false)
 		}
 		.frame(height: 15)
 		.background(background)
