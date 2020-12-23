@@ -17,3 +17,12 @@ public extension AdditiveArithmetic where Self: Equatable {
 	
 	@inlinable var bool: Bool { isNotZero }
 }
+
+public extension Collection {
+	@inlinable
+	func sum <Output: AdditiveArithmetic> (
+		of transform: (Element) -> Output
+	) -> Output {
+		map(transform).reduce(.zero, +)
+	}
+}
