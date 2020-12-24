@@ -85,11 +85,20 @@ public enum ExtraCase<Known>: Codable
 
 extension ExtraCase: RawRepresentable {
 	public init(rawValue: String) {
+		if let known = Known(rawValue: rawValue),
+		   known.rawValue == rawValue {
+			self = .known(known)
+		} else {
+			self = .unknown(rawValue)
+		}
+		/*
 		self = Known(rawValue: rawValue)
 			.map(Self.known)
 		?? .unknown(rawValue)
+		*/
 	}
 	
+	@inlinable
 	public var rawValue: String {
 		switch self {
 		case   .known(let known): return known.rawValue
@@ -98,20 +107,54 @@ extension ExtraCase: RawRepresentable {
 	}
 }
 
-// MARK: With Unknown
+// MARK: Equatable, Hashable
 
 extension ExtraCase: Equatable where Known: Equatable { }
 extension ExtraCase: Hashable where Known: Hashable { }
 
-extension ExtraCase: WithUnknown {
-	@inlinable public static var unknown: Self { .unknown() }
+// MARK: With Unknown
+
+extension ExtraCase: WithUnknown, WithAnyUnknown {
+	@inlinable public static var unknown: Self { .unknown(.empty) }
+}
+
+extension ExtraCase where Known: WithUnknown {
+	@inlinable public init(_ value: Known?) { self = .known(value ?? .unknown) }
 	
+	public init(from decoder: Decoder) throws {
+		guard let rawValue = try? decoder.singleValueContainer().decode(Known.RawValue.self) else {
+			self = .unknown
+			return
+		}
+		self.init(rawValue: rawValue)
+	}
+	
+	@inlinable public static var unknown: Self { .known(.unknown) }
+	
+	/*
 	@inlinable public var isUnknown: Bool {
 		switch self {
-		case .known: return false
-		case .unknown: return true
+		case .known(.unknown): return true
+		default: return false
 		}
 	}
+	*/
+}
+
+// MARK: With Default
+
+extension ExtraCase: WithDefault, WithAnyDefault where Known: WithDefault {
+	@inlinable public init(_ value: Known? = nil) { self = .known(value ?? .default) }
+	
+	public init(from decoder: Decoder) throws {
+		guard let rawValue = try? decoder.singleValueContainer().decode(Known.RawValue.self) else {
+			self = .default
+			return
+		}
+		self.init(rawValue: rawValue)
+	}
+	
+	@inlinable public static var `default`: Self { .known(.default) }
 }
 
 // MARK: Identifiable
@@ -143,7 +186,7 @@ extension ExtraCase: StringIterable where Known: CaseIterable { }
 extension ExtraCase: CaseIterable where Known: CaseIterable {
 	/// All known cases and one empty unknown
 	public static var allCases: [Self] {
-		[.unknown] + Known.allCases.map(Self.known)
+		[.unknown()] + Known.allCases.map(Self.known)
 	}
 }
 
@@ -176,40 +219,20 @@ public extension ExtraCase where Known: CasesKeysProviding {
 
 // MARK: Default Coding
 
-extension ExtraCase: WithDefault, WithAnyDefault where Known: WithDefault {
-	@inlinable public init(_ value: Known? = nil) { self = .known(value ?? .default) }
-	@inlinable public static var `default`: Self { .known(.default) }
-	
-	public init(from decoder: Decoder) throws {
-		guard let rawValue = try? decoder.singleValueContainer().decode(Known.RawValue.self) else {
-			self = .known(.default)
-			return
-		}
-		self = Self(rawValue: rawValue)
-	}
-	
-}
-
-extension ExtraCase where Known: WithUnknown {
-	@inlinable public init(_ value: Known?) { self = .known(value ?? .unknown) }
-	@inlinable public static var unknown: Self { .known(.unknown) }
-	
-	public init(from decoder: Decoder) throws {
-		guard let rawValue = try? decoder.singleValueContainer().decode(Known.RawValue.self) else {
-			self = .known(.unknown)
-			return
-		}
-		self = Self(rawValue: rawValue)
-	}
-	
-}
-
 public extension KeyedDecodingContainer {
 	func decode<Known>(_: ExtraCase<Known>.Type, forKey key: Key) throws -> ExtraCase<Known> where Known: WithDefault {
-        if let value = try? decodeIfPresent(ExtraCase<Known>.self, forKey: key) {
-            return value
+		if let rawValue = try? decodeIfPresent(Known.RawValue.self, forKey: key) {
+			return .init(rawValue: rawValue)
         } else {
 			return .default
         }
     }
+	
+	func decode<Known>(_: ExtraCase<Known>.Type, forKey key: Key) throws -> ExtraCase<Known> where Known: WithUnknown {
+		if let rawValue = try? decodeIfPresent(Known.RawValue.self, forKey: key) {
+			return .init(rawValue: rawValue)
+		} else {
+			return .unknown
+		}
+	}
 }
