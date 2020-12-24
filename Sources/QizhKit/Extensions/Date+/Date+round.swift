@@ -30,6 +30,7 @@ public extension Date {
 	}
 }
 
+/*
 #if canImport(DateToolsSwift)
 import DateToolsSwift
 
@@ -50,3 +51,4 @@ public extension Date {
 	}
 }
 #endif
+*/

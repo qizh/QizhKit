@@ -28,9 +28,9 @@ public extension Date {
 	@inlinable var isReference0: Bool { equals(.reference0) }
 	@inlinable var isUnix0:      Bool { equals(.unix0) }
 	
-	#if !canImport(DateToolsSwift)
+//	#if !canImport(DateToolsSwift)
 	@inlinable var isToday: Bool { Calendar.autoupdatingCurrent.isDateInToday(self) }
-	#endif
+//	#endif
 	
 	@inlinable var isInFuture: Bool { isLater(than: .today) }
 	@inlinable var isInPast: Bool { isEarlier(than: .today) }
@@ -121,7 +121,7 @@ public extension Date {
 }
 
 public extension Date {
-	@inlinable static var endOfToday:     Date { Date    .today.end(of: .day) }
-	@inlinable static var endOfTomorrow:  Date { Date .tomorrow.end(of: .day) }
-	@inlinable static var endOfYesterday: Date { Date.yesterday.end(of: .day) }
+	@inlinable static var endOfToday:     Date { Date    .today.end(.day) }
+	@inlinable static var endOfTomorrow:  Date { Date .tomorrow.end(.day) }
+	@inlinable static var endOfYesterday: Date { Date.yesterday.end(.day) }
 }
