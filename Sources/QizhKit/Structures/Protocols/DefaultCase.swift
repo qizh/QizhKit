@@ -140,7 +140,7 @@ public extension RawRepresentable
 /// This is the main code to support coding to default
 public extension KeyedDecodingContainer {
 	func decode<Result>(_: Result.Type, forKey key: Key) -> Result where Result: WithDefault, Result: Decodable {
-		(try? decodeIfPresent(Result.self, forKey: key)) ?? Result.default
+		(try? decodeIfPresent(Result.self, forKey: key)).orDefault
     }
 }
 
