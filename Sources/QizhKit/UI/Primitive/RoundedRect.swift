@@ -17,6 +17,16 @@ public struct RoundedRect: Shape {
 		set { radius = newValue }
 	}
 	
+	/*
+	public var animatableData: AnimatablePair<CGFloat, UIRectCorner> {
+		get { AnimatablePair(radius, corners) }
+		set {
+			radius = newValue.first
+			corners = newValue.second
+		}
+	}
+	*/
+	
 	public init(_ radius: CGFloat, _ corners: UIRectCorner = .allCorners) {
 		self.radius = radius
 		self.corners = corners

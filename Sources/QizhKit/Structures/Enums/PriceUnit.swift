@@ -42,6 +42,7 @@ public extension AnyCountableUnit {
 
 	@inlinable func string(for amount: UInt, spell: Bool = false, _ locale: Locale) -> String {
 		string(for: Int(amount), spell: spell, locale)
+//		string(for: Int(amount.clippedFromZero(to: UInt(Int.max))), spell: spell, locale)
 	}
 	
 	@inlinable func string(for amount: Int, spell: Bool = false, _ locale: Locale) -> String {
