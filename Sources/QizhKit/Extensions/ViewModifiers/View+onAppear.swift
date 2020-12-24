@@ -54,7 +54,6 @@ public extension View {
 		}
 	}
 	
-	@inlinable
 	@ViewBuilder
 	func apply <Transformed: View, Fallback: View> (
 		when condition: Bool,
