@@ -8,6 +8,8 @@
 
 import Foundation
 
+// MARK: 0
+
 @propertyWrapper
 public struct DefaultZero <Wrapped: Numeric & Codable>: Codable {
 	public var wrappedValue: Wrapped
@@ -34,6 +36,23 @@ public struct DefaultZero <Wrapped: Numeric & Codable>: Codable {
 	public static var defaultValue: Wrapped { .zero }
 	public static var zero: Self { .init() }
 }
+
+extension DefaultZero: Equatable where Wrapped: Equatable { }
+extension DefaultZero: Hashable where Wrapped: Hashable { }
+
+extension DefaultZero: ExpressibleByIntegerLiteral where Wrapped: ExpressibleByIntegerLiteral {
+	public init(integerLiteral value: Wrapped.IntegerLiteralType) {
+		self.wrappedValue = Wrapped(integerLiteral: value)
+	}
+}
+
+public extension KeyedDecodingContainer {
+	func decode<T>(_: DefaultZero<T>.Type, forKey key: Key) -> DefaultZero<T> {
+		(try? decodeIfPresent(DefaultZero<T>.self, forKey: key)) ?? DefaultZero<T>()
+	}
+}
+
+// MARK: 1
 
 @propertyWrapper
 public struct DefaultValueOne <Wrapped: Numeric & Codable>: Codable, WithDefault {
@@ -62,16 +81,16 @@ public struct DefaultValueOne <Wrapped: Numeric & Codable>: Codable, WithDefault
 	public static var one: Self { .init() }
 }
 
-extension DefaultZero: Equatable where Wrapped: Equatable { }
-extension DefaultZero: Hashable where Wrapped: Hashable { }
 extension DefaultValueOne: Equatable where Wrapped: Equatable { }
 extension DefaultValueOne: Hashable where Wrapped: Hashable { }
 
-public extension KeyedDecodingContainer {
-	func decode<T>(_: DefaultZero<T>.Type, forKey key: Key) -> DefaultZero<T> {
-		(try? decodeIfPresent(DefaultZero<T>.self, forKey: key)) ?? DefaultZero<T>()
+extension DefaultValueOne: ExpressibleByIntegerLiteral where Wrapped: ExpressibleByIntegerLiteral {
+	public init(integerLiteral value: Wrapped.IntegerLiteralType) {
+		self.wrappedValue = Wrapped(integerLiteral: value)
 	}
-	
+}
+
+public extension KeyedDecodingContainer {
 	func decode<T>(_: DefaultValueOne<T>.Type, forKey key: Key) -> DefaultValueOne<T> {
 		(try? decodeIfPresent(DefaultValueOne<T>.self, forKey: key)) ?? DefaultValueOne<T>()
 	}
