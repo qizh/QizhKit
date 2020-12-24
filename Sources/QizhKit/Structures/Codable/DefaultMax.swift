@@ -33,6 +33,12 @@ public struct DefaultMax<Wrapped>: Codable
 	
 }
 
+extension DefaultMax: ExpressibleByIntegerLiteral where Wrapped: ExpressibleByIntegerLiteral {
+	public init(integerLiteral value: Wrapped.IntegerLiteralType) {
+		self.wrappedValue = Wrapped(integerLiteral: value)
+	}
+}
+
 extension DefaultMax: Equatable where Wrapped: Equatable { }
 extension DefaultMax: Hashable where Wrapped: Hashable { }
 
