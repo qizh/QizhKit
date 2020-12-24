@@ -26,6 +26,12 @@ public struct DefaultFalse: Codable, Hashable {
     }
 }
 
+extension DefaultFalse: ExpressibleByBooleanLiteral {
+	public init(booleanLiteral value: Bool) {
+		self.wrappedValue = value
+	}
+}
+
 public extension KeyedDecodingContainer {
     func decode(_: DefaultFalse.Type, forKey key: Key) -> DefaultFalse {
         (try? decodeIfPresent(DefaultFalse.self, forKey: key))
