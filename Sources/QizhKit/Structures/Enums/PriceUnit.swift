@@ -12,6 +12,7 @@ public enum PriceUnit:
 	String,
 	Codable,
 	CaseIterable,
+//	CaseInsensitiveStringRepresentable,
 	EasyCaseComparable,
 	DefaultCaseFirst,
 	AcceptingOtherValues
@@ -21,6 +22,7 @@ public enum PriceUnit:
 	case hour
 	case ticket
 	case bottle
+	case piece
 	case day
 	case night
 	case trip
@@ -35,6 +37,7 @@ public extension AnyCountableUnit {
 	static var hour:    AnyCountableUnit { .known(.hour) }
 	static var ticket:  AnyCountableUnit { .known(.ticket) }
 	static var bottle:  AnyCountableUnit { .known(.bottle) }
+	static var piece:   AnyCountableUnit { .known(.piece) }
 	static var day:     AnyCountableUnit { .known(.day) }
 	static var night:   AnyCountableUnit { .known(.night) }
 	static var trip:    AnyCountableUnit { .known(.trip) }
@@ -53,6 +56,14 @@ public extension AnyCountableUnit {
 		
 		return (formatter.string(from: NSNumber(value: amount)).map { $0 + .space } ?? .empty)
 			+ rawValue.pluralize(count: amount)
+	}
+	
+	@inlinable
+	var rawValue: String {
+		switch self {
+		case   .known(let known): return known.rawValue
+		case .unknown(let value): return value.lowercased()
+		}
 	}
 	
 	@inlinable var rawValuePlural: String { rawValue.pluralize() }
