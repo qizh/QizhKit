@@ -69,6 +69,7 @@ fileprivate struct UnionRectPreferenceKey: PreferenceKey {
 	}
 }
 
+@available(*, deprecated, message: "Use `Flock` instead", renamed: "Flock")
 public struct LineStack<Input, Content>: View
 	where
 	Input: RandomAccessCollection,
@@ -198,20 +199,26 @@ public struct LineStack<Input, Content>: View
 	}
 }
 
+@available(iOS 14, *)
 public extension HStack {
 //	@inlinable
 	static func Clipped<Input, Content>(
 		_ data: Input,
-		spacing: CGFloat? = nil,
-		@ViewBuilder build: @escaping LineStack<Input, Content>.Builder
-	) -> LineStack<Input, Content>
+		spacing: CGFloat = 16,
+		@ViewBuilder build: @escaping Flock<Input, Content>.Builder
+	) -> Flock<Input, Content>
 		where
 		Input: RandomAccessCollection,
 		Input.Element: Hashable,
 		Input: Hashable,
 		Content: View
 	{
-		LineStack(data, spacing: spacing, build: build)
+		Flock(
+			of: data,
+			verticalSpacing: spacing,
+			horizontalSpacing: spacing,
+			build: build
+		)
 	}
 }
 
@@ -241,6 +248,7 @@ fileprivate class Vocabulary {
 	}
 }
 
+@available(iOS 14, *)
 struct LineStack_Previews: PreviewProvider {
     static var previews: some View {
 		Group {
@@ -301,7 +309,7 @@ struct LineStack_Previews: PreviewProvider {
 				VStack(alignment: .center, spacing: 4) {
 					Text("Top").regular(14)
 					
-					LineStack(Vocabulary.shuffled(seed: 4), spacing: 4) { word in
+					Flock(of: Vocabulary.shuffled(seed: 4), spacing: 4) { word in
 						Text(word)
 							.regular(8)
 							.fixedSize()
