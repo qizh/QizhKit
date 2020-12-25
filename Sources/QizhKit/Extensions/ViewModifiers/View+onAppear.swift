@@ -45,7 +45,7 @@ public extension View {
 	@ViewBuilder
 	func apply <Transformed: View> (
 		when condition: Bool,
-		   _ transform: (Self) -> Transformed
+		@ViewBuilder _ transform: (Self) -> Transformed
 	) -> some View {
 		if condition {
 			transform(self)
