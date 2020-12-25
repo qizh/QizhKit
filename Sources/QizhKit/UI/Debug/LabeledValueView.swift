@@ -608,7 +608,18 @@ public extension Collection {
 			VStack.LabeledViews {
 				"[\(Element.self)]".labeledView(label: label)
 				ForEach(enumerating: self) { offset, element in
-					"\(element)".labeledView(label: "\(offset)")
+					switch element {
+					case let item as CGRect:
+						item.labeledView(label: "\(offset)", f: 2)
+					case let item as CGSize:
+						item.labeledView(label: "\(offset)", f: 2)
+					case let item as CGPoint:
+						item.labeledView(label: "\(offset)", f: 2)
+					case let item as CGFloat:
+						item.labeledView(label: "\(offset)", f: 2)
+					default:
+						"\(element)".labeledView(label: "\(offset)")
+					}
 				}
 			}
 		}
