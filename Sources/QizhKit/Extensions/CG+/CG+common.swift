@@ -71,6 +71,9 @@ public extension CGPoint {
 }
 
 public extension CGPoint {
+	@inlinable func moving(x: CGFloat) -> CGPoint { CGPoint(x: x, y: y) }
+	@inlinable func moving(y: CGFloat) -> CGPoint { CGPoint(x: x, y: y) }
+	
 	@inlinable func moving(
 		to destination: CGPoint,
 		 with progress: Factor
@@ -275,6 +278,20 @@ public extension CGRect {
 	@inlinable init(from: CGPoint, to: CGPoint) {
 		self.init(standartizing: CGRect(from, (from - to).size))
 	}
+}
+
+public extension CGRect {
+	@inlinable static var infinity: CGRect {
+		CGRect(.zero, .infinity)
+	}
+	
+	@inlinable var isFinite   : Bool { size.isFinite }
+	@inlinable var isZero     : Bool { size.isZero }
+	@inlinable var isInfinite : Bool { !isFinite }
+	@inlinable var isNotZero  : Bool { !isZero }
+	@inlinable var finite     : CGRect? { isFinite ? self : nil }
+	@inlinable var nonZero    : Self?   { isZero   ? nil : self }
+	@inlinable var area       : CGFloat { standardized.size.area }
 }
 
 extension CGRect: ExpressibleByArrayLiteral {
