@@ -16,13 +16,13 @@ public extension View {
 		weight: CGFloat = .one,
 		tap define: Bool = false
 	) -> some View {
-		clipShape(RoundedRect(radius, corners))
+		clipShape(RoundedCornersRectangle(radius, corners))
 		.overlay(
-			RoundedRect(radius, corners)
+			RoundedCornersRectangle(radius, corners)
 				.stroke(color, lineWidth: weight)
 		)
-		.apply(when: define) { v in v
-			.contentShape(RoundedRect(radius, corners))
+		.apply(when: define) {
+			$0.contentShape(RoundedCornersRectangle(radius, corners))
 		}
 	}
 	
@@ -30,7 +30,7 @@ public extension View {
 		_ radius: CGFloat,
 		_ corners: UIRectCorner = .allCorners
 	) -> some View {
-		clipShape(RoundedRect(radius, corners), style: FillStyle(eoFill: true, antialiased: true))
+		clipShape(RoundedCornersRectangle(radius, corners), style: FillStyle(eoFill: true, antialiased: true))
 	}
 }
 
@@ -81,17 +81,17 @@ public extension View {
 		border color: Color,
 		weight: CGFloat = .one
 	) -> some View {
-		clipShape(RoundedRect(radius, corners))
-		.overlay(RoundedRect(radius, corners).stroke(color, lineWidth: weight))
-		.contentShape(RoundedRect(radius, corners))
+		clipShape(RoundedCornersRectangle(radius, corners))
+			.overlay(RoundedCornersRectangle(radius, corners).stroke(color, lineWidth: weight))
+			.contentShape(RoundedCornersRectangle(radius, corners))
 	}
 	
 	@inlinable func roundButton(
 		_ radius: CGFloat,
 		_ corners: UIRectCorner = .allCorners
 	) -> some View {
-		clipShape(RoundedRect(radius, corners))
-		.contentShape(RoundedRect(radius, corners))
+		clipShape(RoundedCornersRectangle(radius, corners))
+			.contentShape(RoundedCornersRectangle(radius, corners))
 	}
 	
 	@inlinable func circleBorder<S: ShapeStyle>(
