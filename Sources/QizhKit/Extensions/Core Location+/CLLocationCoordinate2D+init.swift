@@ -46,4 +46,6 @@ public extension CLLocation {
 public extension CLLocationCoordinate2D {
 	@inlinable static var zero: CLLocationCoordinate2D { .init() }
 	var isZero: Bool { latitude.isZero && longitude.isZero }
+	@inlinable var isNotZero: Bool { !isZero }
+	var nonZero: CLLocationCoordinate2D? { isZero ? nil : self }
 }
