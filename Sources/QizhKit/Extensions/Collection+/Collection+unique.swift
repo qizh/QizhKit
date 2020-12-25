@@ -17,7 +17,9 @@ public extension Collection where Element: Hashable {
 	@inlinable func removingHashableDuplicates() -> [Element] {
 		firstUniqueElements
 	}
-	
+}
+
+public extension Collection {
 	func removingHashableDuplicates<Value>(by transform: (Element) -> Value) -> [Element] where Value: Hashable {
 		var seen = Set<Value>()
 		return filter({ seen.insert(transform($0)).inserted })
