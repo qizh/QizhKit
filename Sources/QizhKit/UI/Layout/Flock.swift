@@ -516,6 +516,7 @@ struct Flock_Previews: PreviewProvider {
 	}
 	
 	struct TestView: View {
+		@State var offset: Int
 		@State var amount: Int
 		@State var width: CGFloat
 		
@@ -541,6 +542,7 @@ struct Flock_Previews: PreviewProvider {
 		}
 		
 		init() {
+			self._offset = .init(initialValue: .zero)
 			self._amount = .init(initialValue: 6)
 			self._width = .init(initialValue: 150) // 90
 		}
@@ -576,6 +578,7 @@ struct Flock_Previews: PreviewProvider {
 				}
 				.width(width, .trailing)
 				.border.c2()
+				.delete()
 				
 				Flock(
 					of: Self.words.prefix(amount),
@@ -589,6 +592,7 @@ struct Flock_Previews: PreviewProvider {
 				}
 				.width(width)
 				.border.c2()
+				.delete()
 
 				Flock(
 					of: Self.words.prefix(amount),
@@ -602,15 +606,18 @@ struct Flock_Previews: PreviewProvider {
 				}
 				.width(width)
 				.border.c5()
+				.delete()
 				
 				Flock(
-					of: Self.words.prefix(amount),
-					height: .fit
+					of: Self.words.dropFirst(offset).prefix(amount),
+					height: .fit,
+					alignment: .trailing,
+					debug: true
 				) { word in
 					Tag(word)
 						.transition(AnyTransition.scale(scale: 0.5).combined(with: .opacity).animation(.spring()))
 				}
-				.width(width, .center)
+				.width(width)
 				.border.c3()
 				
 				Color.pink.height(4).width(width)
@@ -637,17 +644,23 @@ struct Flock_Previews: PreviewProvider {
 					.width(width, .trailing)
 					.border.c9()
 				}
-//				.delete()
-//				Spacer()
+				.delete()
+				Spacer()
 				
 				HStack {
-					Button("width + 10", assign: width + 10, to: \.width, on: self)
-					Button("width - 10", assign: width - 10, to: \.width, on: self)
-					Button("+ Tag", assign: amount + 1, to: \.amount, on: self) //, animation: .spring())
-					Button("- Tag", assign: amount - 1, to: \.amount, on: self) //, animation: .spring())
+					Group {
+						Button("width + 10", assign: width + 10, to: \.width, on: self)
+						Button("width - 10", assign: width - 10, to: \.width, on: self)
+						Button("+ Start", assign: offset + 1, to: \.offset, on: self)
+						Button("- Start", assign: (offset - 1).clippedAboveZero(), to: \.offset, on: self)
+						Button("+ Tag", assign: amount + 1, to: \.amount, on: self)
+						Button("- Tag", assign: (amount - 1).clippedAboveZero(), to: \.amount, on: self)
+					}
+					.padding(4)
+					.round(6, border: .green, weight: 1)
 				}
 //				.buttonStyleOutlined()
-//				.font(.tag)
+				.semibold(8)
 				.height(40)
 				.maxWidth()
 				.border.c5()
