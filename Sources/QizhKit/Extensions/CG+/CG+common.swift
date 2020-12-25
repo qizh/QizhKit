@@ -413,6 +413,11 @@ public extension CGRect {
 }
 
 public extension CGRect {
+	@inlinable func  width(_  width: CGFloat) -> CGRect { CGRect(origin, CGSize(width, height)) }
+	@inlinable func height(_ height: CGFloat) -> CGRect { CGRect(origin, CGSize(width, height)) }
+}
+
+public extension CGRect {
 	@inlinable var s0: String { "(\(origin.s0), \(size.s0))" }
 	@inlinable var s1: String { "(\(origin.s1), \(size.s1))" }
 	@inlinable var s2: String { "(\(origin.s2), \(size.s2))" }
