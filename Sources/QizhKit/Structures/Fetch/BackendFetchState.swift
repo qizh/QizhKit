@@ -579,14 +579,21 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 		case illegalCharacters(_ value: String)
 	}
 	
-	public enum SignFailureReason: EasyCaseComparable {
-		case userExists
+	public enum SignFailureReason: Equatable, EasyCaseComparable {
+		case userExists(_ loginMethod: ExistingUserLogin)
 		case usernameTaken
 		case wrongCredentials
 		case wrongPassword
 		case tokenExpired
 		case airtableUserNotFound
 		case createUserFirst
+		
+		public enum ExistingUserLogin: Equatable, EasyCaseComparable {
+			case unknown
+			case google
+			case apple
+			case both
+		}
 	}
 	
 	/// Creates an `.appLogicError`
@@ -664,8 +671,13 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 			return "You are not authorised to perform this action. Please login and try again."
 		case .unknown:
 			return "Unknown error"
-		case .sign(.userExists):
+		case .sign(.userExists(.unknown)):
 			return "You have signed up before, try to log in"
+		case .sign(.userExists(.google)):
+			return "You've signed up before, try logging in with Google"
+		case .sign(.userExists(.both)): fallthrough
+		case .sign(.userExists(.apple)):
+			return "You've signed up before, try logging in with Apple"
 		case .sign(.usernameTaken):
 			return "The username is taken, try again with another one"
 		case .sign(.wrongCredentials):
