@@ -12,20 +12,32 @@ import Introspect
 public struct BecomeFirstResponder: ViewModifier {
 	@State private var textField: UITextField?
 	private let become: Bool
-	private let onBecome: () -> Void
+	private let msDelay: Int
+	private let onBecome: (() -> Void)?
 	
-	public init(_ become: Bool, onBecome: @escaping () -> Void = {}) {
+	public init(
+		_ become: Bool,
+		in msDelay: Int = .zero,
+		onBecome: (() -> Void)? = nil
+	) {
 		self.become = become
+		self.msDelay = msDelay
 		self.onBecome = onBecome
 	}
 	
 	public func body(content: Content) -> some View {
-		ZStack(alignment: .top) {
+		ZStack(alignment: .topLeading) {
 			content
 				.introspectTextField { textField in
-//					print("Introspected TextField: \(textField)")
 					self.textField ??= textField
 				}
+				/*
+				.apply(when: textField.isNotSet) {
+					$0.introspectTextField { textField in
+						self.textField ??= textField
+					}
+				}
+				*/
 				.zIndex(20)
 				
 				if become && textField.isSet {
@@ -33,48 +45,68 @@ public struct BecomeFirstResponder: ViewModifier {
 						.onAppear(perform: becomeFirstResponder)
 						.zIndex(10)
 				}
-				/*
-				.onAppear {
-					if become && textField.isSet {
-						becomeFirstResponder()
-					}
-				}
-				*/
 		}
-//			.whenAppear(if: become && textField.isSet, perform: becomeFirstResponder)
-			/*
-			.apply(when: become && textField.isSet) { view in
-				view.onAppear(perform: becomeFirstResponder)
-			}
-			*/
 	}
 	
 	private func becomeFirstResponder() {
-		textField?.becomeFirstResponder()
-		onBecome()
-	}
-	
-	/*
-	private func tryToBecome(attempt: UInt) {
-		if let textField = textField {
-			textField.becomeFirstResponder()
-			self.onBecome()
-		} else if attempt <= 3 {
-			execute(in: 100) {
-				self.tryToBecome(attempt: attempt + 1)
+		if msDelay.isZero {
+			textField?.becomeFirstResponder()
+			onBecome?()
+		} else {
+			execute(in: msDelay) {
+				textField?.becomeFirstResponder()
+				onBecome?()
 			}
 		}
 	}
-	*/
+}
+
+public struct ReturnKeyType: ViewModifier {
+	@State private var textField: UITextField?
+	private let type: UIReturnKeyType
+	
+	public init(
+		_ type: UIReturnKeyType
+	) {
+		self.type = type
+	}
+	
+	public func body(content: Content) -> some View {
+		ZStack(alignment: .topLeading) {
+			content
+				.introspectTextField { textField in
+					self.textField ??= textField
+				}
+				/*
+				.apply(when: textField.isNotSet) {
+					$0.introspectTextField { textField in
+						self.textField ??= textField
+					}
+				}
+				*/
+				.zIndex(20)
+			
+			if let field = textField {
+				Pixel()
+					.onAppear {
+						field.returnKeyType = self.type
+					}
+					.zIndex(10)
+			}
+		}
+	}
 }
 
 public extension View {
 	func becomeFirstResponder(when condition: Bool) -> some View {
+		modifier(BecomeFirstResponder(condition))
+		/*
 		apply(when: condition) { view in
 			view.introspectTextField { field in
 				field.becomeFirstResponder()
 			}
 		}
+		*/
 	}
 	
 	func becomeFirstResponder<S>(
@@ -94,16 +126,22 @@ public extension View {
 	}
 	
 	func becomeFirstResponder(in ms: Int) -> some View {
+		modifier(BecomeFirstResponder(true, in: ms))
+		/*
 		introspectTextField { field in
 			execute(in: ms) {
 				field.becomeFirstResponder()
 			}
 		}
+		*/
 	}
 	
 	func returnKeyType(_ type: UIReturnKeyType) -> some View {
+		modifier(ReturnKeyType(type))
+		/*
 		introspectTextField { field in
 			field.returnKeyType = type
 		}
+		*/
 	}
 }
