@@ -28,6 +28,7 @@ public extension Character {
 	static let plusminusChar: Character    = "±"
 	static let degreesChar: Character      = "°"
 	static let lowLineChar: Character      = "_"
+	static let underlineChar: Character    = "_"
 	static let percentChar: Character      = "%"
 	static let questionMarkChar: Character = "?"
 	
@@ -65,6 +66,7 @@ public extension String {
 	static let plusminus    = String(Character.plusminusChar)
 	static let degrees      = String(Character.degreesChar)
 	static let lowLine      = String(Character.lowLineChar)
+	static let underline    = String(Character.underlineChar)
 	static let percent      = String(Character.percentChar)
 	static let questionMark = String(Character.questionMarkChar)
 	
