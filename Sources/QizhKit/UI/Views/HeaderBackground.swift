@@ -12,8 +12,9 @@ import Combine
 public struct ShowHeaderBackgroundViewModifier: ViewModifier {
 	private let height: CGFloat
 	private let customStyle: UIBlurEffect.Style?
-	private let measureType: MeasureType
-	
+	@State private var measurementsCount: Int = .zero
+	@State private var measureType: MeasureType
+
 	private let show: Bool
 	private let debug: Bool
 	
@@ -22,8 +23,8 @@ public struct ShowHeaderBackgroundViewModifier: ViewModifier {
 	public static let defaultHeight: CGFloat = NavigationBarDimension.height
 	public static let defaultOffset: CGFloat = 80
 
-	@Environment(\.colorScheme) private var colorScheme: ColorScheme
-	@Environment(\.safeFrameInsets) private var safeFrameInsets: UIEdgeInsets
+	@Environment(\.colorScheme) private var colorScheme
+	@Environment(\.safeFrameInsets) private var safeFrameInsets
 	
 	public init(
 		   on scroll: CGPoint,
@@ -36,7 +37,7 @@ public struct ShowHeaderBackgroundViewModifier: ViewModifier {
 		self.height = height
 		self.customStyle = style
 		self.show = scroll.y < -offset
-		self.measureType = measure
+		self._measureType = .init(initialValue: measure)
 		self.debug = debug
 	}
 	
@@ -49,7 +50,7 @@ public struct ShowHeaderBackgroundViewModifier: ViewModifier {
 			content
 				.zIndex(20)
 			
-			if topSafeInset.isZero || measureType.is(.continuous) {
+			if topSafeInset.isZero || measureType > .single {
 				GeometryReader { geometry in
 					Color.almostClear
 						.transformPreference(SafeInsetsTopKey.self) {
@@ -58,17 +59,27 @@ public struct ShowHeaderBackgroundViewModifier: ViewModifier {
 							}
 							let topInset = geometry.safeAreaInsets.top
 							$0 = topInset
+							
+							if measureType == .few, topSafeInset == topInset {
+								execute {
+									measurementsCount += .one
+									if measurementsCount >= 3 {
+										measureType = .single
+									}
+								}
+							}
+							
 							if #available(iOS 14, *), topSafeInset != topInset {
 								execute {
 									topSafeInset = topInset
 								}
 							}
 						}
-						.onPreferenceChange(SafeInsetsTopKey.self) {
+						.onPreferenceChange(SafeInsetsTopKey.self) { top in
 							if debug {
-								print("=== top > \($0)")
+								print("=== top > \(top), measure: \(measureType)")
 							}
-							self.topSafeInset = $0
+							topSafeInset = top
 						}
 				}
 				.zIndex(10)
@@ -117,8 +128,9 @@ public struct ShowHeaderBackgroundViewModifier: ViewModifier {
 		.height(height + safeFrameInsets.top)
 	}
 	
-	public enum MeasureType: EasyCaseComparable {
+	public enum MeasureType: Comparable, EasyCaseComparable {
 		case single
+		case few
 		case continuous
 	}
 	
