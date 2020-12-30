@@ -168,6 +168,7 @@ public struct Flock <Input, Content>: View
 					)
 			}
 		}
+		.clipped()
 		.apply(when: debug) { content in
 			content
 				.border.c4()
