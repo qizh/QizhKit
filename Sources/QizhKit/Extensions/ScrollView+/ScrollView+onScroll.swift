@@ -228,6 +228,12 @@ class IntrospectedScrollViewDelegate: NSObject, UIScrollViewDelegate {
 	
 	func scrollViewDidScroll(_ scrollView: UIScrollView) {
 		contentOffset?.wrappedValue = (scrollView.contentOffset - contentOffsetBase).opposite
+		/*
+		let value = (scrollView.contentOffset - contentOffsetBase).opposite
+		execute {
+			self.contentOffset?.wrappedValue = value
+		}
+		*/
 	}
 	
 	/*
