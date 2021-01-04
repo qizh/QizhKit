@@ -40,6 +40,16 @@ public extension EasyCaseComparable where Self: Identifiable {
 	@inlinable var id: String { String(reflecting: self) }
 }
 
+extension Optional: EasyComparable where Wrapped: EasyComparable {
+	@inlinable
+	public func `is`(_ other: Wrapped.Other) -> Bool {
+		switch self {
+		case .none: return false
+		case .some(let wrapped): return wrapped.is(other)
+		}
+	}
+}
+
 // MARK: V1
 
 public protocol CaseComparable: CaseNameProvidable, EasyComparable { }
