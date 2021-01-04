@@ -178,33 +178,43 @@ public extension CodableUserDefault where T: WithUnknown {
 	}
 }
 
-@propertyWrapper public struct ResettableUserDefault <T> {
+@propertyWrapper public struct ResettableUserDefault <Value> {
 	private let key: String
-	private let defaultValue: T?
+	private let defaultValue: Value?
 	private var changePublisher: ObservableObjectPublisher?
+	private let virtual: Bool
 	
 	public init(
 		_ key: String,
-		default defaultValue: T? = .none
+		default defaultValue: Value? = .none
 	) {
 		self.key = key
 		self.defaultValue = defaultValue
+		self.virtual = false
 	}
 	
-	public init <K> (
-		_ key: K,
-		default defaultValue: T? = .none
+	public init <Key> (
+		_ key: Key,
+		default defaultValue: Value? = .none
 	)
 		where
-		K: RawRepresentable,
-		K.RawValue == String
+		Key: RawRepresentable,
+		Key.RawValue == String
 	{
 		self.init(key.rawValue, default: defaultValue)
 	}
 	
-	public var wrappedValue: T? {
+	public init(virtual value: Value) {
+		self.key = .empty
+		self.defaultValue = value
+		self.virtual = true
+	}
+	
+	public var wrappedValue: Value? {
 		get {
-			if let value = UserDefaults.standard.object(forKey: key) as? T {
+			if not(virtual),
+			   let value = UserDefaults.standard.object(forKey: key) as? Value
+			{
 				if let possibleEmptyValue = value as? EmptyTestable,
 				   possibleEmptyValue.isEmpty
 				{
@@ -217,6 +227,7 @@ public extension CodableUserDefault where T: WithUnknown {
 			}
 		}
 		set {
+			guard not(virtual) else { return }
 			self.changePublisher?.send()
 			if newValue.isSet {
 				if let possibleEmptyValue = newValue as? EmptyTestable,
