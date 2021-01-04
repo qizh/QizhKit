@@ -229,6 +229,51 @@ public extension View {
 	}
 	
 	@inlinable
+	func button <Value> (
+		assigning value: Value,
+			 to binding: Binding<Value>,
+			  animation: Animation? = .none,
+				 _ flow: ExecutionFlow = .current
+	) -> Button<Self> {
+		.init(
+			action: {
+				flow.proceed {
+					if let animation = animation {
+						withAnimation(animation) {
+							binding.wrappedValue = value
+						}
+					} else {
+						binding.wrappedValue = value
+					}
+				}
+			},
+			label: selfmade
+		)
+	}
+	
+	@inlinable
+	func button(
+		toggling binding: Binding<Bool>,
+		       animation: Animation? = .none,
+			      _ flow: ExecutionFlow = .current
+	) -> Button<Self> {
+		.init(
+			action: {
+				flow.proceed {
+					if let animation = animation {
+						withAnimation(animation) {
+							binding.toggle()
+						}
+					} else {
+						binding.toggle()
+					}
+				}
+			},
+			label: selfmade
+		)
+	}
+	
+	@inlinable
 	func button<Value, Root> (
 		resetting keyPath: ReferenceWritableKeyPath<Root, Value?>,
 			    on object: Root,
