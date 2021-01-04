@@ -142,6 +142,14 @@ public extension Collection where Element: CaseComparable {
 	}
 }
 
+public extension Collection where Element: EasyComparable {
+	@inlinable func contains(_ value: Element.Other) -> Bool {
+		contains { element in
+			element.is(value)
+		}
+	}
+}
+
 @inlinable public func not <T> (_ test: @escaping (T) -> Bool) -> (T) -> Bool {
 	{ !test($0) }
 }
