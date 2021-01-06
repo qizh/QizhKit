@@ -85,6 +85,7 @@ public struct FetchErrorDebugDetails: Codable {
 		
 		case .sign(_): ()
 		case .cancelled: ()
+		case .notFound: ()
 		case .unauthorized: ()
 		case .unauthorizedCallPrevented: ()
 		case .emptyContentError: ()

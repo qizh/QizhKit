@@ -570,6 +570,7 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 	case preconditionValidation(PreconditionValidationReason)
 	
 	case cancelled
+	case notFound
 	case unauthorized
 	case unauthorizedCallPrevented
 	case emptyContentError
@@ -617,6 +618,7 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 	public static func == (lhs: FetchError, rhs: FetchError) -> Bool {
 		switch (lhs, rhs) {
 		case (                    .cancelled,                     .cancelled): 	return true
+		case (                     .notFound,                      .notFound): 	return true
 		case (                 .unauthorized,                  .unauthorized): 	return true
 		case (    .unauthorizedCallPrevented,     .unauthorizedCallPrevented): 	return true
 		case (            .emptyContentError,             .emptyContentError): 	return true
@@ -665,6 +667,8 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 			return "No items here"
 		case .cancelled:
 			return "Someone have canceled the action. It was you, right?"
+		case .notFound:
+			return "Not found"
 		case .unauthorized:
 			return "You were not active for a while. Please login and try again."
 		case .unauthorizedCallPrevented:
@@ -710,6 +714,7 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 		case .sign(.createUserFirst): 		return false
 		case .sign(_): 						return true
 		case .cancelled: 					return false
+		case .notFound: 					return true
 		case .unauthorized: 				return true
 		case .unauthorizedCallPrevented: 	return true
 		case .emptyContentError: 			return true
