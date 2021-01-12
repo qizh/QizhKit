@@ -187,10 +187,11 @@ public struct ScrollViewContentOffsetDelegateModifier: ViewModifier {
 	
 	public func body(content: Content) -> some View {
 		content
-//			.whenAppear(perform: checkIfIsActive)
 			.introspectScrollView { scrollView in
 				if let delegateAssigned = scrollView.delegate as? IntrospectedScrollViewDelegate {
-					self.delegate = delegateAssigned
+					if self.delegate != delegateAssigned {
+						self.delegate = delegateAssigned
+					}
 				} else {
 					scrollView.delegate = self.delegate
 				}
@@ -201,13 +202,6 @@ public struct ScrollViewContentOffsetDelegateModifier: ViewModifier {
 				self.delegate.contentOffset = self.$contentOffset
 			}
 	}
-	
-	/*
-	private func checkIfIsActive() {
-		let state = UIApplication.shared.applicationState
-		print("=== App State: \(state.rawValue), \(state.stringValue)")
-	}
-	*/
 }
 
 // MARK: Delegate
