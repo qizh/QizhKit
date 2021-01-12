@@ -41,6 +41,7 @@ import Combine
 	}
 }
 
+@available(iOS, deprecated: 14.0, message: "Use `AppStorage` instead")
 @propertyWrapper public struct UserDefaultEnum <Value: RawRepresentable> {
 	private let key: String
 	private let defaultValue: Value
@@ -133,6 +134,7 @@ internal func extractRawValue(from subject: Any) -> Any? {
 	return extractable.extractValue()
 }
 
+@available(iOS, deprecated: 14.0, message: "Use `AppStorage` instead")
 @propertyWrapper public struct CodableUserDefault <T: Codable> {
 	private let key: String
 	private let defaultValue: T
@@ -250,6 +252,7 @@ public extension CodableUserDefault where T: WithUnknown {
 	}
 }
 
+@available(iOS, deprecated: 14.0, message: "Use `AppStorage` instead")
 @propertyWrapper public struct UserDefaultJson <T: Codable> {
 	private let key: String
 	private let defaultValue: T
