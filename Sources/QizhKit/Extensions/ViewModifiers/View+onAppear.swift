@@ -142,7 +142,7 @@ public struct OnAppearChange<Other: View>: ViewModifier {
 		if didAppear {
 			other
 		} else {
-			content.whenAppear { self.didAppear = true }
+			content.onAppear { self.didAppear = true }
 		}
 	}
 }
@@ -160,7 +160,7 @@ public struct ModifyOnAppear<Modifier: ViewModifier>: ViewModifier {
 		if didAppear {
 			content.modifier(modifier)
 		} else {
-			content.whenAppear { self.didAppear = true }
+			content.onAppear { self.didAppear = true }
 		}
 	}
 }
