@@ -307,7 +307,7 @@ public struct LabeledValueView: View {
 		case .none:
 			self.init(valueView: Self.bool(value: false).asAnyView(), label: label)
 		case .some(let wrapped):
-			self.init(".\(caseName(of: wrapped, .identifiable))", label: label)
+			self.init(".\(caseName(of: wrapped, [.name, .arguments]))", label: label)
 		}
 	}
 	
@@ -581,7 +581,7 @@ public extension Optional where Wrapped: CaseNameProvidable {
 }
 */
 
-public extension EasyCaseComparable {
+public extension EasySelfComparable {
 	@inlinable func caseView(label: String? = nil) -> LabeledValueView {
 		LabeledValueView(self, label: label)
 	}
@@ -590,13 +590,22 @@ public extension EasyCaseComparable {
 		LabeledValueView(self, label: label)
 	}
 }
-public extension Optional where Wrapped: EasyCaseComparable {
+public extension Optional where Wrapped: EasySelfComparable {
 	@inlinable func caseView(label: String? = nil) -> LabeledValueView {
 		LabeledValueView(self, label: label)
 	}
 	
 	@inlinable func labeledView(label: String? = nil) -> LabeledValueView {
 		LabeledValueView(self, label: label)
+	}
+}
+public extension Binding where Value: EasySelfComparable {
+	@inlinable func caseView(label: String? = nil) -> LabeledValueView {
+		LabeledValueView(self.wrappedValue, label: label)
+	}
+	
+	@inlinable func labeledView(label: String? = nil) -> LabeledValueView {
+		LabeledValueView(self.wrappedValue, label: label)
 	}
 }
 

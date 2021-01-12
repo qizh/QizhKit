@@ -20,6 +20,24 @@
         }
       },
       {
+        "package": "NonEmpty",
+        "repositoryURL": "https://github.com/pointfreeco/swift-nonempty",
+        "state": {
+          "branch": null,
+          "revision": "9ef8c4aea57b8da7fedd5303d29470ea2a00c08d",
+          "version": "0.2.2"
+        }
+      },
+      {
+        "package": "SwiftDate",
+        "repositoryURL": "https://github.com/malcommac/SwiftDate",
+        "state": {
+          "branch": null,
+          "revision": "6190d0cefff3013e77ed567e6b074f324e5c5bf5",
+          "version": "6.3.1"
+        }
+      },
+      {
         "package": "Introspect",
         "repositoryURL": "https://github.com/siteline/SwiftUI-Introspect",
         "state": {

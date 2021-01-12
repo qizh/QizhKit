@@ -576,7 +576,7 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 	case emptyContentError
 	case unknown
 	
-	public enum PreconditionValidationReason: EasyCaseComparable {
+	public enum PreconditionValidationReason: Equatable {
 		case illegalCharacters(_ value: String)
 	}
 	
@@ -630,7 +630,7 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 		case (.multipleProvidersError(let l), .multipleProvidersError(let r)): 	return l == r
 		case (         .appLogicError(let l),          .appLogicError(let r)): 	return l == r
 		case (                  .sign(let l),                   .sign(let r)): 	return l == r
-		case (.preconditionValidation(let l), .preconditionValidation(let r)): 	return l.is(r)
+		case (.preconditionValidation(let l), .preconditionValidation(let r)): 	return l == r
 		
 		case ( .verboseError(let l1, let l2),  .verboseError(let r1, let r2)):
 			return l1 == r1 && l2 == r2

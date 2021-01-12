@@ -13,7 +13,7 @@ public enum FlockHeight: EasyCaseComparable {
 	case expand
 }
 
-public enum FlockLines: EasyCaseComparable {
+public enum FlockLines: Equatable, EasyCaseComparable {
 	case one
 	case some(_ amount: Int)
 	case unlimited

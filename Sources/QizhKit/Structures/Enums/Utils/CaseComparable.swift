@@ -29,14 +29,21 @@ public extension EasyComparable {
 }
 
 public protocol EasySelfComparable: EasyComparable where Other == Self { }
-public protocol EasyCaseComparable: EasySelfComparable { }
+public protocol EasyCaseComparable: Equatable, EasySelfComparable { }
 public extension EasyCaseComparable {
+	@inlinable func `is`(_ other: Self) -> Bool {
+		self == other
+	}
+}
+
+public protocol EasyCaseReflectingComparable: EasySelfComparable { }
+public extension EasyCaseReflectingComparable {
 	@inlinable func `is`(_ other: Self) -> Bool {
 		String(reflecting: self) == String(reflecting: other)
 	}
 }
 
-public extension EasyCaseComparable where Self: Identifiable {
+public extension EasyCaseReflectingComparable where Self: Identifiable {
 	@inlinable var id: String { String(reflecting: self) }
 }
 

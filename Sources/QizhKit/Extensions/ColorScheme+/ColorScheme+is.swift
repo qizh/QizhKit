@@ -8,7 +8,25 @@
 
 import SwiftUI
 
-extension ColorScheme: Identifiable, EasyCaseComparable { }
+extension ColorScheme: Identifiable, EasySelfComparable {
+	@inlinable
+	public var id: String {
+		switch self {
+		case .light: return "light"
+		case .dark: return "dark"
+		@unknown default: return "unknown"
+		}
+	}
+	
+	@inlinable
+	public func `is`(_ other: Self) -> Bool {
+		switch (self, other) {
+		case (.light, .light): return true
+		case (.dark, .dark): return true
+		default: return false
+		}
+	}
+}
 
 public extension ColorScheme {
 	@inlinable var isLight: Bool { self.is(.light) }

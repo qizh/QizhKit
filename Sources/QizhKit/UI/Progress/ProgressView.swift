@@ -407,6 +407,15 @@ public struct ProgressView: View {
 		case visual
 		case large
 		
+		@inlinable
+		public var id: Int8 {
+			switch self {
+			case .small: 	return 1
+			case .visual: 	return 2
+			case .large: 	return 3
+			}
+		}
+		
 		public var value: CGFloat {
 			switch self {
 			case .small: 	return 18
@@ -472,6 +481,14 @@ public struct ProgressView: View {
 	public enum ColorMode: CaseIterable, EasyCaseComparable, Identifiable, Hashable {
 		case multi
 		case mono
+		
+		@inlinable
+		public var id: Int8 {
+			switch self {
+			case .multi: return 1
+			case .mono: return 0
+			}
+		}
 	}
 	
 	// MARK: Icons
