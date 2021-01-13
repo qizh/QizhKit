@@ -11,6 +11,13 @@ import DeviceKit
 
 extension Device: Identifiable {
 	@inlinable public var id: String { description }
+	
+	public var previewName: String {
+		switch self {
+		case .iPhoneSE: return "iPhone SE (1st generation)"
+		default: return description
+		}
+	}
 }
 
 public extension Collection where Element == Device {
@@ -69,12 +76,12 @@ public extension View {
 	@ViewBuilder
 	func previewDifferentScreenSizes() -> some View {
 		ForEach([Device].iOS14x2sizes) { device in
-			self.previewDevice(PreviewDevice(stringLiteral: device.description))
-				.previewDisplayName(device.description + .space + "@2")
+			self.previewDevice(PreviewDevice(stringLiteral: device.previewName))
+				.previewDisplayName(device.previewName + .space + "@2")
 		}
 		ForEach([Device].iOS14x3sizes) { device in
-			self.previewDevice(PreviewDevice(stringLiteral: device.description))
-				.previewDisplayName(device.description + .space + "@3")
+			self.previewDevice(PreviewDevice(stringLiteral: device.previewName))
+				.previewDisplayName(device.previewName + .space + "@3")
 		}
 	}
 	
