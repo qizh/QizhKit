@@ -234,6 +234,80 @@ public extension CollectionFetcher {
 	#endif
 }
 
+public extension CollectionFetcher where Item: Identifiable {
+	func defaultResponse(_ response: AFRailsLossyResponse, _ animate: Bool) {
+		if debug { debugPrint(response) }
+		withAnimation(animate ? .spring() : .none) {
+			switch response.result {
+			case .failure: state = .failed(response)
+			case .success(let result):
+				state = .success(Value(result.data.removingHashableDuplicates(by: \.id)))
+			}
+		}
+	}
+	
+	func defaultResponse(_ response: AFRailsStrictResponse, _ animate: Bool) {
+		if debug { debugPrint(response) }
+		withAnimation(animate ? .spring() : .none) {
+			switch response.result {
+			case .failure: state = .failed(response)
+			case .success(let result):
+				state = .success(Value(result.data.removingHashableDuplicates(by: \.id)))
+			}
+		}
+	}
+	
+	func defaultResponse(_ response: AFRailsLossyResponse) {
+		defaultResponse(response, false)
+	}
+	func defaultResponse(animate: Bool) -> (AFRailsLossyResponse) -> Void {
+		{ self.defaultResponse($0, animate) }
+	}
+	
+	func defaultResponse(_ response: AFRailsStrictResponse) {
+		defaultResponse(response, false)
+	}
+	func defaultResponse(animate: Bool) -> (AFRailsStrictResponse) -> Void {
+		{ self.defaultResponse($0, animate) }
+	}
+	
+	func nonEmptyResponse(_ response: AFRailsLossyResponse, _ animate: Bool) {
+		if debug { debugPrint(response) }
+		withAnimation(animate ? .spring() : .none) {
+			switch response.result {
+			case .failure: state = .failed(response)
+			case .success(let result):
+				state = .nonEmptySuccess(Value(result.data.removingHashableDuplicates(by: \.id)))
+			}
+		}
+	}
+	
+	func nonEmptyResponse(_ response: AFRailsStrictResponse, _ animate: Bool) {
+		if debug { debugPrint(response) }
+		withAnimation(animate ? .spring() : .none) {
+			switch response.result {
+			case .failure: state = .failed(response)
+			case .success(let result):
+				state = .nonEmptySuccess(Value(result.data.removingHashableDuplicates(by: \.id)))
+			}
+		}
+	}
+	
+	func nonEmptyResponse(_ response: AFRailsLossyResponse) {
+		nonEmptyResponse(response, false)
+	}
+	func nonEmptyResponse(animate: Bool) -> (AFRailsLossyResponse) -> Void {
+		{ self.nonEmptyResponse($0, animate) }
+	}
+	
+	func nonEmptyResponse(_ response: AFRailsStrictResponse) {
+		nonEmptyResponse(response, false)
+	}
+	func nonEmptyResponse(animate: Bool) -> (AFRailsStrictResponse) -> Void {
+		{ self.nonEmptyResponse($0, animate) }
+	}
+}
+
 public extension SingleItemFetcher where Item: AirtableModel {
 	typealias K = Item.Fields.CodingKeys
 }
