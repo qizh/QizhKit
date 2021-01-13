@@ -7,6 +7,53 @@
 //
 
 import SwiftUI
+import DeviceKit
+
+extension Device: Identifiable {
+	@inlinable public var id: String { description }
+}
+
+public extension Collection where Element == Device {
+	static var iPhones12: [Device] {
+		[
+			.iPhone12Mini,
+			.iPhone12Pro,
+			.iPhone12ProMax,
+		]
+	}
+	
+	static var iOS14sizes: [Device] {
+		[
+			Device.iPhoneSE,
+			Device.iPhone8,
+			Device.iPhoneXR,
+			Device.iPhone12Mini,
+			Device.iPhone12Pro,
+			Device.iPhone8Plus,
+			Device.iPhone11ProMax,
+			Device.iPhone12ProMax,
+
+		]
+	}
+	
+	static var iOS14x2sizes: [Device] {
+		[
+			Device.iPhoneSE,
+			Device.iPhone8,
+			Device.iPhoneXR,
+		]
+	}
+	
+	static var iOS14x3sizes: [Device] {
+		[
+			Device.iPhone12Mini,
+			Device.iPhone12Pro,
+			Device.iPhone8Plus,
+			Device.iPhone11ProMax,
+			Device.iPhone12ProMax,
+		]
+	}
+}
 
 public extension View {
 	@inlinable func previewAllColorSchemes(
@@ -19,10 +66,28 @@ public extension View {
 		}
 	}
 	
-	@inlinable func previewDifferentDevices(names: Bool = false) -> some View {
-		ForEach(["iPhone 11", "iPhone SE (2nd generation)", "iPhone 8 Plus", "iPhone 11 Pro"], id: \.self) { name in
-			self.previewDevice(.init(stringLiteral: name))
-				.previewDisplayName(names ? name : nil)
+	@ViewBuilder
+	func previewDifferentScreenSizes() -> some View {
+		ForEach([Device].iOS14x2sizes) { device in
+			self.previewDevice(PreviewDevice(stringLiteral: device.description))
+				.previewDisplayName(device.description + .space + "@2")
+		}
+		ForEach([Device].iOS14x3sizes) { device in
+			self.previewDevice(PreviewDevice(stringLiteral: device.description))
+				.previewDisplayName(device.description + .space + "@3")
+		}
+	}
+	
+	@inlinable
+	func previewDifferentDevices(
+		devices: [Device] = .iPhones12,
+		names: Bool = false
+	) -> some View {
+		ForEach(devices) { device in
+			self.previewDevice(PreviewDevice(stringLiteral: device.description))
+				.apply(when: names) {
+					$0.previewDisplayName(device.description)
+				}
 		}
 	}
 	

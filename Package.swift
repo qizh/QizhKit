@@ -6,11 +6,12 @@ import PackageDescription
 let package = Package(
     name: "QizhKit",
 	platforms: [
-		.iOS(.v13)
+		.iOS(.v13),
 	],
     products: [
         .library(
             name: "QizhKit",
+//			type: .dynamic,
             targets: [
 				"QizhKit"
 			]
@@ -42,6 +43,11 @@ let package = Package(
 			url: "https://github.com/pointfreeco/swift-nonempty",
 			from: "0.2.2"
 		),
+		.package(
+			name: "DeviceKit",
+			url: "https://github.com/devicekit/DeviceKit",
+			from: "4.2.1"
+		),
     ],
     targets: [
         .target(
@@ -52,6 +58,7 @@ let package = Package(
 				"Alamofire",
 				"SwiftDate",
 				"NonEmpty",
+				"DeviceKit",
 			]
 		),
 		/*
