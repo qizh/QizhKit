@@ -21,7 +21,6 @@ public extension View {
 	}
 	
 	@inlinable
-//	@ViewBuilder
 	func apply <Transformed: View> (
 		@ViewBuilder _ transform: (Self) -> Transformed
 	) -> some View {
@@ -29,6 +28,22 @@ public extension View {
 	}
 	
 	@inlinable
+	func apply <Transformed: View, T> (
+		@ViewBuilder _ transform: (Self, T) -> Transformed,
+		_ argument: T
+	) -> some View {
+		transform(self, argument)
+	}
+	
+	@inlinable
+	func apply <Transformed: View, T1, T2> (
+		@ViewBuilder _ transform: (Self, T1, T2) -> Transformed,
+		_ argument1: T1,
+		_ argument2: T2
+	) -> some View {
+		transform(self, argument1, argument2)
+	}
+	
 	@ViewBuilder
 	func apply <Transformed: View, T> (
 		mapping optional: T?,
@@ -41,7 +56,6 @@ public extension View {
 		}
 	}
 	
-	@inlinable
 	@ViewBuilder
 	func apply <Transformed: View> (
 		when condition: Bool,
@@ -67,7 +81,6 @@ public extension View {
 		}
 	}
 	
-	@inlinable
 	@ViewBuilder
 	func apply <Transformed: View> (
 		for iOS: IOSVersion,
