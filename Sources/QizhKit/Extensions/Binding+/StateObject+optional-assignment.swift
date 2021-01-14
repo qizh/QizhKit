@@ -22,3 +22,17 @@ public extension StateObject {
 		}
 	}
 }
+
+public extension Published {
+	/// Creates a new `Published` initialized with a `initialValue` set
+	/// if the right side value is defined
+	@discardableResult @inlinable
+	static func =? (lhs: inout Published<Value>, rhs: Value?) -> Published<Value> {
+		switch rhs {
+		case .none: return lhs
+		case .some(let value):
+			lhs = .init(initialValue: value)
+			return lhs
+		}
+	}
+}
