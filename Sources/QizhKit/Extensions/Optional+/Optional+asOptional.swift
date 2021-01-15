@@ -12,6 +12,7 @@ public protocol OptionalConvertible: AnyRecreatable {
 	var isSet: Bool { get }
 	var isNotSet: Bool { get }
 	var wrappedType: Any.Type { get }
+	static var wrappedType: Any.Type { get }
 	func anyForceUnwrap(because assumption: String) -> Any
 }
 
@@ -23,6 +24,7 @@ public protocol TypedOptionalConvertible: OptionalConvertible {
 
 extension Optional: TypedOptionalConvertible {
 	public var wrappedType: Any.Type { Wrapped.self }
+	public static var wrappedType: Any.Type { Wrapped.self }
 	public func anyForceUnwrap(because assumption: String) -> Any {
 		forceUnwrap(because: OptionalForcedUnwrapAssumption(assumption))
 	}
