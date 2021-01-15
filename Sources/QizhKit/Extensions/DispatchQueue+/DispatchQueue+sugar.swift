@@ -8,9 +8,9 @@
 
 import SwiftUI
 
-@inlinable public func execute(
+public func execute(
 	in ms: Int = .zero,
-	_ work: @escaping MainQueue.Callback
+	_ work: @escaping () -> Void
 ) {
 	if ms.isZero {
 		DispatchQueue.main.async(execute: work)
@@ -19,7 +19,40 @@ import SwiftUI
 	}
 }
 
-@inlinable public func executing(
+public func execute <T> (
+	in ms: Int = .zero,
+	_ work: @escaping (T) -> Void,
+	_ argument: T
+) {
+	if ms.isZero {
+		DispatchQueue.main.async {
+			work(argument)
+		}
+	} else {
+		DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(ms)) {
+			work(argument)
+		}
+	}
+}
+
+public func execute <T1, T2> (
+	in ms: Int = .zero,
+	_ work: @escaping (T1, T2) -> Void,
+	_ argument1: T1,
+	_ argument2: T2
+) {
+	if ms.isZero {
+		DispatchQueue.main.async {
+			work(argument1, argument2)
+		}
+	} else {
+		DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(ms)) {
+			work(argument1, argument2)
+		}
+	}
+}
+
+public func executing(
 	in ms: Int = .zero,
 	_ work: @escaping MainQueue.Callback
 ) -> () -> Void {
