@@ -41,7 +41,7 @@ import Foundation
 		self.wrappedValue = wrappedValue
 	}
 	
-	public init <Wrapped> (wrappedValue: Item = .none) where Item == Wrapped?, Wrapped: Codable {
+	public init <Wrapped> (wrappedValue: Item = .none) where Item == Wrapped? {
 		self.wrappedValue = wrappedValue
 	}
 	
@@ -49,10 +49,19 @@ import Foundation
         let container = try decoder.singleValueContainer()
 		let array = try container.decode([Item].self)
 		if array.isEmpty {
-			let context = DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Found empty array where one element is required")
+			let context = DecodingError.Context(
+				codingPath: decoder.codingPath,
+				debugDescription: "Found empty array where one \(Item.self) element is required"
+			)
 			throw DecodingError.valueNotFound(Item.self, context)
 		}
 		wrappedValue = array.first!
+	}
+	
+	public init <Wrapped> (from decoder: Decoder) throws where Item == Wrapped? {
+		let container = try decoder.singleValueContainer()
+		let array = try container.decode([Wrapped].self)
+		wrappedValue = array.first
 	}
 	
 	public func encode(to encoder: Encoder) throws {
@@ -87,3 +96,35 @@ public extension KeyedDecodingContainer {
 
 extension CodeAsArray: Equatable where Item: Equatable {}
 extension CodeAsArray: Hashable where Item: Hashable {}
+
+// MARK: Optional
+
+@propertyWrapper
+public struct CodeOptionalAsArray <Item: Codable>: Codable {
+	public var wrappedValue: Item?
+	
+	public init(wrappedValue: Item? = .none) {
+		self.wrappedValue = wrappedValue
+	}
+	
+	public init(from decoder: Decoder) throws {
+		let container = try decoder.singleValueContainer()
+		let array = try container.decode([Item].self)
+		wrappedValue = array.first
+	}
+	
+	public func encode(to encoder: Encoder) throws {
+		try [wrappedValue].encode(to: encoder)
+	}
+	
+	public static var none: Self {
+		.init()
+	}
+}
+
+extension CodeOptionalAsArray: Equatable where Item: Equatable {}
+extension CodeOptionalAsArray: Hashable where Item: Hashable {}
+
+extension CodeOptionalAsArray: CustomStringConvertible {
+	@inlinable public var description: String { "\(wrappedValue.orNilString)" }
+}
