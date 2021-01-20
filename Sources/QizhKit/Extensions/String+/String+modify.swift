@@ -17,6 +17,7 @@ public extension String {
 	}
 	@inlinable var withSpacesTrimmed: String { trimmingCharacters(in: .whitespaces) }
 	@inlinable var withLinesNSpacesTrimmed: String { trimmingCharacters(in: .whitespacesAndNewlines) }
+	@inlinable var digits: String { replacing(CharacterSet.decimalDigits.inverted) }
 }
 
 public extension Substring {
