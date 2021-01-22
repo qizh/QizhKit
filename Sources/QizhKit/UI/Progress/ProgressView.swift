@@ -26,6 +26,21 @@ public struct ProgressView: View {
 	// MARK: Init
 	
 	public init(
+		state: BasicBackendFetchState,
+		size: Size = .visual,
+		show: StatesSet = .all,
+		color: ColorMode = .mono
+	) {
+		self.state = state
+		self.name = .none
+		self.progress = .none
+		self.error = .none
+		self.size = size
+		self.show = show
+		self.color = color
+	}
+	
+	public init(
 		state: GeneralBackendFetchState,
 		size: Size = .visual,
 		show: StatesSet = .all,
