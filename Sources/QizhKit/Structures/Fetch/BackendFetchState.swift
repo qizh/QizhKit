@@ -466,6 +466,17 @@ extension BackendFetchState: EasySelfComparable {
 	}
 }
 
+extension BackendFetchState: CustomStringConvertible {
+	public var description: String {
+		switch self {
+		case .idle: return ".idle"
+		case .inProgress(let progress): return ".inProgress(\(progress.cgvalue, f: 1))"
+		case .fetched(.success(_)): return ".success"
+		case .fetched(.failure(_)): return ".failure"
+		}
+	}
+}
+
 // MARK: > Map Views
 
 public extension GeneralBackendFetchState {
