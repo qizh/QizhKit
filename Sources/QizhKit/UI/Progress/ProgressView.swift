@@ -33,7 +33,7 @@ public struct ProgressView: View {
 	) {
 		self.state = state
 		self.name = .none
-		self.progress = .none
+		self.progress = .undetermined
 		self.error = .none
 		self.size = size
 		self.show = show
