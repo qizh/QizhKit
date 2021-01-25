@@ -128,3 +128,10 @@ extension CodeOptionalAsArray: Hashable where Item: Hashable {}
 extension CodeOptionalAsArray: CustomStringConvertible {
 	@inlinable public var description: String { "\(wrappedValue.orNilString)" }
 }
+
+public extension KeyedDecodingContainer {
+	func decode<Item>(_: CodeOptionalAsArray<Item>.Type, forKey key: Key) throws -> CodeOptionalAsArray<Item> {
+		(try decodeIfPresent(CodeOptionalAsArray<Item>.self, forKey: key))
+			?? .none
+	}
+}
