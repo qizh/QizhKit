@@ -179,6 +179,18 @@ public extension View {
 			)
 		} ?? self
 	}
+	
+	@available(iOS 14.0, *)
+	@ViewBuilder
+	func asLink(opening url: URL?) -> some View {
+		if let url = url {
+			Link(destination: url) {
+				self
+			}
+		} else {
+			self
+		}
+	}
 }
 
 // MARK: Previews
