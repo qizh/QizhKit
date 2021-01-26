@@ -12,7 +12,7 @@ import Foundation
 
 public extension SignedNumeric where Self: Comparable {
 	var signum: Self {
-		switch magnitude {
+		switch self {
 		case let p where p > .zero: return .one
 		case let n where n < .zero: return .minusOne
 		case .zero: fallthrough
