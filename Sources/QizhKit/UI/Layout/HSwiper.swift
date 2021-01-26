@@ -27,6 +27,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	private let indicator: IndicatorBuilder
 	
 	@State private var dragOffset: CGFloat = .zero
+	@State private var draggedPages: Int = .zero
 	
 	// MARK: Init
 	
@@ -160,43 +161,50 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 					pageOffset(in: geometry.size),
 					data.count
 				)
-				.animation(.easeInOut(duration: 0.1), value: pageOffset(in: geometry.size))
 				.size(geometry.size)
 				.zIndex(20)
+				
+				/// Debug Calculations
+				// debugCalculations(in: geometry.size).zIndex(30)
 			}
+			.animation(.spring(), value: dragOffset.isZero)
 			.backgroundColor(.almostClear)
 			.gesture(
 				DragGesture(minimumDistance: 5)
 					.onChanged { value in
-						let offset = value.translation.width
+						let pageSize = geometry.size.width + spacing
+						let offset = value.translation.width + draggedPages * pageSize
 						let isEdgeSwiping =
 							   selected == data.first?.id && offset.isPositive
 							|| selected == data.last?.id  && offset.isNegative
 						
 						dragOffset = isEdgeSwiping ? offset.third : offset
+						if dragOffset.magnitude > (geometry.size.width + spacing).half {
+							let newDraggedPages = draggedPages + pagesCount(in: geometry.size)
+							let newSelected = currentSelected(in: geometry.size)
+							dragOffset = (newDraggedPages - draggedPages) * pageSize + dragOffset
+							selected = newSelected
+							draggedPages = newDraggedPages
+						}
 					}
 					.onEnded { value in
-						let pageSize = geometry.size.width + spacing
-						let swipePagesCount = pagesCount(in: geometry.size)
-						selected = currentSelected(in: geometry.size)
-						dragOffset = swipePagesCount * pageSize + dragOffset
-						
-						withAnimation(.spring()) {
-							dragOffset = .zero
-						}
+						dragOffset = .zero
+						draggedPages = .zero
 					}
 			)
 		}
 		.clipped()
     }
 	
-	/*
-	private func activePages(in size: CGSize) -> [Int] {
-		dragOffset.isZero
-			? [selectedPage]
-			: [selectedPage, currentPage(in: size)].sorted()
+	private func debugCalculations(in size: CGSize) -> some View {
+		VStack.LabeledViews {
+			pagesCount(in: size).labeledView(label: "swipe pages count")
+			pageOffset(in: size).labeledView(label: "swipe page offset")
+			draggedPages.labeledView(label: "dragged pages")
+			dragOffset.signum.int.labeledView(label: "signum")
+			dragOffset.labeledView(label: "offset", f: 0)
+		}
 	}
-	*/
 	
 	private func pageOffset(in size: CGSize) -> Int {
 		-(dragOffset / (size.width + spacing))
@@ -252,7 +260,11 @@ public struct HSwiperIndicator: View {
 		total: Int
 	) {
 		self.active = active
-		self.offset = offset
+		if offset >= 0 {
+			self.offset = offset.clipped(from: 0, to: total - 1 - active)
+		} else {
+			self.offset = offset.clipped(from: -active, to: 0)
+		}
 		self.total = total
 	}
 	
@@ -271,11 +283,8 @@ public struct HSwiperIndicator: View {
 										.foregroundColor(.white)
 										.offset(x: activeLeading.cg * (geometry.size.width + spacing))
 										.width(geometry.size.width + offset.magnitude.cg * (geometry.size.width + spacing))
-//										.animation(.spring(), value: offset)
-//										.transition(.identity)
 								}
 							)
-//							.alignmentGuide(.leadingSide) { _ in .zero }
 					}
 			}
 		}
@@ -304,8 +313,8 @@ public struct HSwiperIndicator: View {
 
 #if DEBUG
 @available(iOS 14.0, *)
-struct HSwiper_Previews: PreviewProvider {
-	struct Demo1: View {
+public struct HSwiper_Previews: PreviewProvider {
+	public struct Demo1: View {
 		@State var page: Int = 0
 		
 		var data: [String] {
@@ -319,7 +328,9 @@ struct HSwiper_Previews: PreviewProvider {
 			]
 		}
 		
-		var body: some View {
+		public init() { }
+		
+		public var body: some View {
 			VStack {
 				HSwiper(
 					enumerating: data,
@@ -334,22 +345,29 @@ struct HSwiper_Previews: PreviewProvider {
 					}
 					.expand()
 					.backgroundColor(
-						offset.isZero ? .pink : .blue
+						[
+							Color.blue,
+							Color.green,
+							Color.orange,
+							Color.pink,
+							Color.purple,
+							Color.red,
+							Color.yellow,
+						][cycle: offset]
 					)
 				}
 				.size(200, 150)
 				.border.c1()
 				
-				page.labeledView(label: "page")
 				Stepper(value: $page.animation(.spring()), in: 0 ... data.count - 1) {
-					EmptyView()
+					page.labeledView()
 				}
 				.fixedSize()
 			}
 		}
 	}
 	
-    static var previews: some View {
+	public static var previews: some View {
 		Demo1()
 			.previewFitting()
     }
