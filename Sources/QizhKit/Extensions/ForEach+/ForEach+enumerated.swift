@@ -31,7 +31,7 @@ extension ForEach where Content: View {
 		Data == [AnyEnumeratedElement<Source>],
 		ID == AnyEnumeratedElement<Source>.ID
 	{
-		self.init(data.enumeratedElements(), id: \.id, content: { content($0.offset, $0.element) })
+		self.init(data.enumeratedElements(), content: { content($0.offset, $0.element) })
 	}
 	
 	public init <Source> (
