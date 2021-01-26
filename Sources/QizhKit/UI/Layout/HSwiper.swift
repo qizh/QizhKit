@@ -160,7 +160,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 					pageOffset(in: geometry.size),
 					data.count
 				)
-				.animation(.spring(), value: pageOffset(in: geometry.size))
+				.animation(.easeInOut(duration: 0.1), value: pageOffset(in: geometry.size))
 				.size(geometry.size)
 				.zIndex(20)
 			}
