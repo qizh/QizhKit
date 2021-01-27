@@ -63,13 +63,21 @@ public extension Collection where Element == Device {
 }
 
 public extension View {
-	@inlinable func previewAllColorSchemes(
+	@inlinable
+	func previewAllColorSchemes(
 		_ enabled: Bool = true,
 		names: Bool = false
 	) -> some View {
 		ForEach(enabled ? ColorScheme.allCases : [.default]) { scheme in
 			self.colorScheme(scheme)
 				.previewDisplayName(names ? scheme.name : nil)
+		}
+	}
+	
+	@inlinable
+	func previewEnabledAndDisabled() -> some View {
+		ForEach([true, false], id: \.self) { isEnabled in
+			enabled(isEnabled)
 		}
 	}
 	
