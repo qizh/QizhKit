@@ -44,6 +44,10 @@ public extension Publisher {
 		map({ $0.map(transform) })
 	}
 	
+	@inlinable func flatMap<In, Out>(_ transform: @escaping (In) -> Out?) -> Publishers.Map<Self, Out?> where Output == In? {
+		map({ $0.flatMap(transform) })
+	}
+	
 	@inlinable func compactMap<Output1, Output2>() -> Publishers.CompactMap<Self, (Output1, Output2)> where Output == (Output1?, Output2?) {
 		compactMap(unwrap)
 	}
