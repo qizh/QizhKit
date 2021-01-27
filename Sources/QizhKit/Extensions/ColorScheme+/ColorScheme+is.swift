@@ -52,7 +52,7 @@ extension ColorScheme: WithDefault {
 }
 
 public extension ColorScheme {
-	@inlinable var name: String { caseName(of: self).capitalized }
+	@inlinable var name: String { caseName(of: self, .name).capitalized }
 	@inlinable static func named(_ name: String) -> ColorScheme { .init(name: name) }
 	
 	init(name: String) {
