@@ -342,3 +342,14 @@ public extension ScreenWithFetcher {
 		}
 	}
 }
+
+// MARK: AF Headers
+
+public extension Optional where Wrapped == HTTPHeader {
+	func mapAsHeaders() -> HTTPHeaders? {
+		switch self {
+		case .none: return .none
+		case .some(let header): return [header]
+		}
+	}
+}
