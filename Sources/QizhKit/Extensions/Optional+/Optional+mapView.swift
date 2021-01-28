@@ -307,14 +307,3 @@ public extension Optional {
 		}
 	}
 }
-
-// MARK: Convert
-
-public extension Optional {
-	func mapAsArray() -> [Wrapped]? {
-		switch self {
-		case .none: return nil
-		case .some(let wrapped): return [wrapped]
-		}
-	}
-}
