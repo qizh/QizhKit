@@ -8,11 +8,17 @@
 
 import SwiftUI
 
-public struct HexStringColor: Codable, Hashable, WithDefault, CustomStringConvertible {
+public struct HexStringColor: Codable,
+							  Hashable,
+							  WithDefault,
+							  CustomStringConvertible,
+							  ExpressibleByStringLiteral {
 	public let value: UInt64
 	public let hasAlphaChannel: Bool
 	
 	public static let `default`: HexStringColor = .init(0x000000)
+	public static let black: HexStringColor = .init(0x000000)
+	public static let white: HexStringColor = .init(0xffffff)
 	
 	public init(_ value: UInt64, isWithAlpha: Bool = false) {
 		self.value = value
@@ -30,6 +36,11 @@ public struct HexStringColor: Codable, Hashable, WithDefault, CustomStringConver
 		} else {
 			self = .default
 		}
+	}
+	
+	@inlinable
+	public init(stringLiteral value: String) {
+		self.init(value)
 	}
 	
 	public var color: Color {
