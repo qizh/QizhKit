@@ -16,7 +16,7 @@ public extension View {
 		_ action: @escaping () -> Void
 	) -> some View {
 		animation(anim, value: value)
-		.whenAppear {
+		.onAppear {
 			execute {
 				action()
 			}
@@ -42,7 +42,7 @@ public extension View {
 			anim,
 			value: value
 		)
-		.whenAppear {
+		.onAppear {
 			execute {
 				object[keyPath: keyPath] = value
 			}
@@ -60,7 +60,7 @@ public extension View {
 			anim.repeatForever(autoreverses: autoreverses),
 			value: value
 		)
-		.whenAppear {
+		.onAppear {
 			execute {
 				action()
 			}
@@ -90,7 +90,7 @@ public extension View {
 			anim.repeatForever(autoreverses: autoreverses),
 			value: value
 		)
-		.whenAppear {
+		.onAppear {
 			execute {
 				object[keyPath: keyPath] = value
 			}

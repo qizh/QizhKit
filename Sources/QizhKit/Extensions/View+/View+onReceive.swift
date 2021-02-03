@@ -268,39 +268,36 @@ public extension View {
 	
 	// MARK: on (Dis) Appear
 	
-	@inlinable @ViewBuilder func whenAppear(
+	@ViewBuilder
+	func whenAppear(
 		perform action: (() -> Void)? = nil
 	) -> some View {
-		if #available(iOS 14.0, *) {
-			modifier(AppearWorkaround(perform: action))
-		} else {
-			onAppear(perform: action)
+		switch action {
+		case .none: self
+		case .some(let action): self.onAppear(perform: action)
 		}
 	}
 	
-	@inlinable @ViewBuilder func whenAppear(
+	@ViewBuilder
+	func whenAppear(
 		if condition: Bool,
 		perform action: (() -> Void)? = nil
 	) -> some View {
 		if condition {
-			if #available(iOS 14.0, *) {
-				modifier(AppearWorkaround(perform: action))
-			} else {
-				onAppear(perform: action)
-			}
+			onAppear(perform: action)
 		} else {
 			self
 		}
 	}
 	
 	@inlinable func whenAppear(perform action: @escaping () -> Void, in ms: Int) -> some View {
-		whenAppear {
+		onAppear {
 			execute(in: ms, action)
 		}
 	}
 	
 	@inlinable func whenAppear(in ms: Int, _ action: @escaping () -> Void) -> some View {
-		whenAppear {
+		onAppear {
 			execute(in: ms, action)
 		}
 	}
@@ -319,7 +316,7 @@ public extension View {
 		with anim: Animation? = .none,
 			 flow: ExecutionFlow = .current
 	) -> some View {
-		whenAppear {
+		onAppear {
 			guard cond else { return }
 			var exe: () -> Void = { root[keyPath: key] = val() }
 			if let ani = anim { exe = { withAnimation(ani, exe) } }
