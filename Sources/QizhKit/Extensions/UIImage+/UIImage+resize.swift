@@ -6,7 +6,37 @@
 //  Copyright © 2021 Serhii Shevchenko. All rights reserved.
 //
 
+import SwiftUI
 import UIKit
+
+public extension Image {
+	init(
+		systemName: String,
+		pointSize: CGFloat = 16,
+		weight: UIImage.SymbolWeight = .unspecified,
+		scale: UIImage.SymbolScale = .default,
+		tint: UIColor? = .none
+	) {
+		var uiImage = UIImage(
+			systemName: systemName,
+			pointSize: pointSize,
+			weight: weight,
+			scale: scale
+		) ?? UIImage(
+			systemName: "questionmark.square.dashed",
+			pointSize: pointSize,
+			weight: weight,
+			scale: scale
+		)
+		.forceUnwrapBecauseCreated()
+		
+		if let tint = tint {
+			uiImage = uiImage.withTintColor(tint, renderingMode: .alwaysTemplate)
+		}
+		
+		self.init(uiImage: uiImage)
+	}
+}
 
 public extension UIImage {
 	func resized(to size: CGSize) -> UIImage {
