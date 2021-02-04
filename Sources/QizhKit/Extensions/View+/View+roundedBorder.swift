@@ -34,20 +34,44 @@ public extension View {
 	}
 }
 
+public enum LinePosition: EasyCaseComparable {
+	case center
+	case inner
+	case outer
+	
+	public func inset(for weight: CGFloat) -> CGFloat {
+		switch self {
+		case .center: return .zero
+		case .inner:  return  weight.half
+		case .outer:  return -weight.half
+		}
+	}
+}
+
 public extension View {
 	@inlinable func circle(
 		border color: Color,
-		weight: CGFloat = .one
+		weight: CGFloat = .one,
+		position: LinePosition = .center
 	) -> some View {
-		 clipShape(Circle())
-		.overlay(Circle().stroke(color, lineWidth: weight))
+		self.clipShape(Circle())
+			.overlay(
+				Circle()
+					.inset(by: position.inset(for: weight))
+					.stroke(color, lineWidth: weight)
+			)
 	}
 	
 	@inlinable func circle(
-		weight: CGFloat = .one
+		weight: CGFloat = .one,
+		position: LinePosition = .center
 	) -> some View {
-		 clipShape(Circle())
-		.overlay(Circle().stroke(lineWidth: weight))
+		self.clipShape(Circle())
+			.overlay(
+				Circle()
+					.inset(by: position.inset(for: weight))
+					.stroke(lineWidth: weight)
+			)
 	}
 }
 
