@@ -157,8 +157,9 @@ public extension CGPoint {
 }
 
 extension CGPoint: AdditiveArithmetic {
-	@inlinable public static func + (l: CGPoint, r: CGPoint) -> CGPoint { CGPoint(l.x + r.x, l.y + r.y) }
-	@inlinable public static func - (l: CGPoint, r: CGPoint) -> CGPoint { CGPoint(l.x - r.x, l.y - r.y) }
+	public static func + (l: CGPoint, r: CGPoint) -> CGPoint { CGPoint(l.x + r.x, l.y + r.y) }
+	public static func - (l: CGPoint, r: CGPoint) -> CGPoint { CGPoint(l.x - r.x, l.y - r.y) }
+	public static prefix func -(value: CGPoint) -> CGPoint { CGPoint(-value.x, -value.y) }
 }
 
 public extension CGPoint {
@@ -222,7 +223,7 @@ public extension CGSize {
 }
 
 public extension CGSize {
-	@inlinable func expandBy(dx: CGFloat, dy: CGFloat) -> CGSize {
+	@inlinable func expandBy(dx: CGFloat = .zero, dy: CGFloat = .zero) -> CGSize {
 		CGSize(width: width + dx, height: height + dy)
 	}
 }
