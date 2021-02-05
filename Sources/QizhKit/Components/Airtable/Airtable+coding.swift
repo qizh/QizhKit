@@ -26,6 +26,13 @@ public extension JSONEncoder {
 		encoder.dateEncodingStrategy = .formatted(.airtable)
 		return encoder
 	}()
+	
+	static let rails: JSONEncoder = {
+		let encoder = JSONEncoder()
+		encoder.outputFormatting = .prettyPrinted
+		encoder.dateEncodingStrategy = .formatted(.airtable)
+		return encoder
+	}()
 }
 
 public extension JSONDecoder {
