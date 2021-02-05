@@ -599,6 +599,7 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 		case tokenExpired
 		case airtableUserNotFound
 		case createUserFirst
+		case wrongCode
 		
 		public enum ExistingUserLogin: Equatable, EasyCaseComparable {
 			case unknown
@@ -705,6 +706,8 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 			return "Database record mismatch, please report"
 		case .sign(.createUserFirst):
 			return "All values should be provided"
+		case .sign(.wrongCode):
+			return "Code doesn't match"
 		
 		case .preconditionValidation(.illegalCharacters(_)):
 			return "Input contains illegal characters"
@@ -723,6 +726,7 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 		case .api(_, _): 					return false
 		case .appLogicError(_): 			return false
 		case .sign(.createUserFirst): 		return false
+		case .sign(.wrongCode): 			return false
 		case .sign(_): 						return true
 		case .cancelled: 					return false
 		case .notFound: 					return true
