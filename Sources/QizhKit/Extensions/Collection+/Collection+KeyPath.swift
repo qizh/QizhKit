@@ -108,6 +108,13 @@ public extension Collection {
 	}
 }
 
+public extension Collection where Element: EasyComparable {
+	@inlinable
+	func first(_ other: Element.Other) -> Element? {
+		first(where: { $0.is(other) })
+	}
+}
+
 // MARK: > ID
 
 public extension Collection where Element: Identifiable {
@@ -143,7 +150,8 @@ public extension Collection where Element: CaseComparable {
 }
 
 public extension Collection where Element: EasyComparable {
-	@inlinable func contains(_ value: Element.Other) -> Bool {
+	@inlinable
+	func contains(_ value: Element.Other) -> Bool {
 		contains { element in
 			element.is(value)
 		}
