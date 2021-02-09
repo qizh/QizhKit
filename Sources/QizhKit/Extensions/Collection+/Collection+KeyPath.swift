@@ -226,11 +226,11 @@ public extension Collection {
 	
 	// MARK: > Not
 	
-	@inlinable func filter(not isIncluded: KeyPath<Element, Bool>) -> [Element] {
+	@inlinable func filterNot(_ isIncluded: KeyPath<Element, Bool>) -> [Element] {
 		filter(isIncluded, equals: false)
 	}
 	
-	@inlinable func filter(not isIncluded: @escaping (Element) -> Bool) -> [Element] {
+	@inlinable func filterNot(_ isIncluded: @escaping (Element) -> Bool) -> [Element] {
 		filter(not(isIncluded))
 	}
 	
