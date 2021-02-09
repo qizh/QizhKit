@@ -16,15 +16,16 @@ public struct DefaultMax<Wrapped>: Codable
 {
 	public var wrappedValue: Wrapped
 	
-	@inlinable public static var `default`: Wrapped { .max }
+	@inlinable public static var defaultValue: Wrapped { .max }
+	@inlinable public static var `default`: Self { .init() }
 	
-	public init(wrappedValue: Wrapped = Self.default) {
+	public init(wrappedValue: Wrapped = Self.defaultValue) {
 		self.wrappedValue = wrappedValue
 	}
 	
 	public init(from decoder: Decoder) throws {
 		let container = try decoder.singleValueContainer()
-		wrappedValue = (try? container.decode(Wrapped.self)) ?? Self.default
+		wrappedValue = (try? container.decode(Wrapped.self)) ?? Self.defaultValue
 	}
 	
 	public func encode(to encoder: Encoder) throws {
