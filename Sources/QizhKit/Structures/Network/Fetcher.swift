@@ -105,6 +105,8 @@ public extension SingleItemFetcher {
 public extension CollectionFetcher {
 	typealias Item = Value.Element
 	typealias ItemResponse = AFDataResponse<Item>
+	typealias LossyValue = LossyArray<Item>
+	typealias LossyValueResponse = AFDataResponse<LossyValue>
 	
 	typealias AirtableItemRecords = AirtableRecords<Value.Element>
 	typealias AFAirtableResponse = AFDataResponse<AirtableItemRecords>
@@ -116,6 +118,16 @@ public extension CollectionFetcher {
 	
 	typealias RailsItemData = RailsResponse<Item>
 	typealias AFRailsItemResponse = AFDataResponse<RailsItemData>
+	
+	func defaultResponse(_ response: LossyValueResponse, _ animate: Bool) {
+		if debug { debugPrint(response) }
+		withAnimation(animate ? .spring() : .none) {
+			switch response.result {
+			case .failure: state = .failed(response)
+			case .success(let result): state = .success(Value(result.wrappedValue))
+			}
+		}
+	}
 	
 	func defaultResponse(_ response: AFAirtableResponse) {
 		if debug { debugPrint(response) }
@@ -171,6 +183,16 @@ public extension CollectionFetcher {
 		}
 	}
 	
+	func nonEmptyResponse(_ response: LossyValueResponse, _ animate: Bool) {
+		if debug { debugPrint(response) }
+		withAnimation(animate ? .spring() : .none) {
+			switch response.result {
+			case .failure: state = .failed(response)
+			case .success(let result): state = .nonEmptySuccess(Value(result.wrappedValue))
+			}
+		}
+	}
+	
 	func nonEmptyResponse(_ response: AFRailsLossyResponse, _ animate: Bool) {
 		if debug { debugPrint(response) }
 		withAnimation(animate ? .spring() : .none) {
@@ -189,6 +211,13 @@ public extension CollectionFetcher {
 			case .success(let result): state = .nonEmptySuccess(Value(result.data))
 			}
 		}
+	}
+	
+	func defaultResponse(_ response: LossyValueResponse) {
+		defaultResponse(response, false)
+	}
+	func defaultResponse(animate: Bool) -> (LossyValueResponse) -> Void {
+		{ self.defaultResponse($0, animate) }
 	}
 	
 	func defaultResponse(_ response: AFRailsLossyResponse) {
@@ -210,6 +239,13 @@ public extension CollectionFetcher {
 	}
 	func defaultResponse(animate: Bool) -> (AFRailsItemResponse) -> Void {
 		{ self.defaultResponse($0, animate) }
+	}
+	
+	func nonEmptyResponse(_ response: LossyValueResponse) {
+		nonEmptyResponse(response, false)
+	}
+	func nonEmptyResponse(animate: Bool) -> (LossyValueResponse) -> Void {
+		{ self.nonEmptyResponse($0, animate) }
 	}
 	
 	func nonEmptyResponse(_ response: AFRailsLossyResponse) {
