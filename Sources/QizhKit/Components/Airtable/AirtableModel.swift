@@ -12,14 +12,13 @@ public protocol BackendModel:
 	Decodable, /// `Encodable` is already in `PrettyStringConvertable`
 	Hashable,
 	Identifiable,
-	EmptyProvidable,
 	PrettyStringConvertable,
 	ExpressibleByStringLiteral where StringLiteralType == String
 {
 	var id: ID { get }
 }
 
-public protocol RailsModel: BackendModel {
+public protocol RailsModel: BackendModel, EmptyProvidable {
 	associatedtype CodingKeys: CodingKey & CaseIterable
 }
 
@@ -62,7 +61,7 @@ public protocol AirtableModelFields:
 }
 
 @dynamicMemberLookup
-public protocol AirtableModel: BackendModel {
+public protocol AirtableModel: BackendModel, EmptyProvidable {
 	associatedtype Fields: AirtableModelFields
 	var fields: Fields { get }
 	var createdTime: Date { get }
