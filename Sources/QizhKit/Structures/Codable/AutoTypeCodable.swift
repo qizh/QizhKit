@@ -51,15 +51,15 @@ public struct AutoTypeCodable <T>: Codable
 				decodeBoolFromNSNumber(),
 				decode(Bool.self),
 				decode(Int.self),
+				decode(UInt.self),
+				decode(Double.self),
+				decode(Float.self),
 				decode(Int8.self),
 				decode(Int16.self),
 				decode(Int64.self),
-				decode(UInt.self),
 				decode(UInt8.self),
 				decode(UInt16.self),
 				decode(UInt64.self),
-				decode(Double.self),
-				decode(Float.self),
 			]
 			
 			guard let rawValue = types.lazy.compactMap({ $0(decoder) }).first,
