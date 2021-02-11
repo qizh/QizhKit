@@ -48,20 +48,21 @@ import Foundation
 	public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
 		let array = try container.decode([Item].self)
-		if array.isEmpty {
+		if let firstValue = array.first {
+			wrappedValue = firstValue
+		} else {
 			let context = DecodingError.Context(
 				codingPath: decoder.codingPath,
 				debugDescription: "Found empty array where one \(Item.self) element is required"
 			)
 			throw DecodingError.valueNotFound(Item.self, context)
 		}
-		wrappedValue = array.first!
 	}
 	
 	public init <Wrapped> (from decoder: Decoder) throws where Item == Wrapped? {
-		let container = try decoder.singleValueContainer()
-		let array = try container.decode([Wrapped].self)
-		wrappedValue = array.first
+		let container = try? decoder.singleValueContainer()
+		let array = try? container?.decode([Wrapped].self)
+		wrappedValue = array?.first
 	}
 	
 	public func encode(to encoder: Encoder) throws {
@@ -83,15 +84,25 @@ public extension KeyedEncodingContainer {
 
 public extension KeyedDecodingContainer {
 	func decode<Item>(_: CodeAsArray<Item>.Type, forKey key: Key) throws -> CodeAsArray<Item> where Item: TypedOptionalConvertible, Item.Wrapped: Codable {
-		(try decodeIfPresent(CodeAsArray<Item>.self, forKey: key))
+		return (try? decodeIfPresent(CodeAsArray<Item>.self, forKey: key))
 			?? CodeAsArray(wrappedValue: .none)
     }
 	
 	/// - Tag: KeyedDecodingContainer-CodeAsArray-Item-WithDefault
 	func decode<Item>(_: CodeAsArray<Item>.Type, forKey key: Key) throws -> CodeAsArray<Item> where Item: WithDefault {
-        (try decodeIfPresent(CodeAsArray<Item>.self, forKey: key))
+		return (try? decodeIfPresent(CodeAsArray<Item>.self, forKey: key))
 			?? CodeAsArray(wrappedValue: Item.default)
     }
+	
+	func decode<Item>(_: CodeAsArray<Item>.Type, forKey key: Key) throws -> CodeAsArray<Item> where Item: WithUnknown {
+		return (try? decodeIfPresent(CodeAsArray<Item>.self, forKey: key))
+			?? CodeAsArray(wrappedValue: Item.unknown)
+	}
+	
+	func decode<Item>(_: CodeAsArray<Item>.Type, forKey key: Key) throws -> CodeAsArray<Item> where Item: WithDefault, Item: WithUnknown {
+		return (try? decodeIfPresent(CodeAsArray<Item>.self, forKey: key))
+			?? CodeAsArray(wrappedValue: Item.default)
+	}
 }
 
 extension CodeAsArray: Equatable where Item: Equatable {}
@@ -131,7 +142,7 @@ extension CodeOptionalAsArray: CustomStringConvertible {
 
 public extension KeyedDecodingContainer {
 	func decode<Item>(_: CodeOptionalAsArray<Item>.Type, forKey key: Key) throws -> CodeOptionalAsArray<Item> {
-		(try decodeIfPresent(CodeOptionalAsArray<Item>.self, forKey: key))
+		(try? decodeIfPresent(CodeOptionalAsArray<Item>.self, forKey: key))
 			?? .none
 	}
 }
