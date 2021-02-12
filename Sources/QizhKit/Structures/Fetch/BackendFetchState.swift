@@ -688,7 +688,7 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 		case .unknown:
 			return "Unknown error"
 		case .sign(.userExists(.unknown)):
-			return "You have signed up before, try to log in"
+			return "A user with this email already exists. Try to log in."
 		case .sign(.userExists(.google)):
 			return "You've signed up before, try logging in with Google"
 		case .sign(.userExists(.both)): fallthrough
