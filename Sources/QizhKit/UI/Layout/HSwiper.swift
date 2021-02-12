@@ -209,6 +209,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 						content(item)
 					}
 					.size(geometry.size, alignment)
+					.clipped()
 				}
 				.offset(x: currentOffset(in: geometry.size))
 				.zIndex(10)
@@ -224,38 +225,46 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 				
 				/// Debug Calculations
 				// debugCalculations(in: geometry.size).zIndex(30)
+				
+				Color.almostClear
+					.size(geometry.size)
+					.gesture(
+						dragGesture(in: geometry)
+					)
+					.zIndex(11)
 			}
 			.animation(.spring(), value: dragOffset.isZero)
-			.backgroundColor(.almostClear)
-			.gesture(
-				DragGesture(minimumDistance: 10)
-					.onChanged { value in
-						let dragOffsetSign = dragOffset.sign
-						let pageSize = geometry.size.width + spacing
-						let offset = value.translation.width + draggedPages * pageSize
-						let isEdgeSwiping =
-							   selected == data.first?.id && offset.isPositive
-							|| selected == data.last?.id  && offset.isNegative
-						
-						dragOffset = isEdgeSwiping ? offset.third : offset
-						if dragOffset.magnitude > (geometry.size.width + spacing).half {
-							let newDraggedPages = draggedPages + pagesCount(in: geometry.size)
-							let newSelected = currentSelected(in: geometry.size)
-							dragOffset = (newDraggedPages - draggedPages) * pageSize + dragOffset
-							selected = newSelected
-							draggedPages = newDraggedPages
-						} else if dragOffsetSign != dragOffset.sign {
-							animationValue += 1
-						}
-					}
-					.onEnded { value in
-						dragOffset = .zero
-						draggedPages = .zero
-					}
-			)
 		}
 		.clipped()
     }
+	
+	private func dragGesture(in geometry: GeometryProxy) -> some Gesture {
+		DragGesture(minimumDistance: 10)
+			.onChanged { value in
+				guard geometry.frame(in: .local).contains(value.startLocation) else { return }
+				let dragOffsetSign = dragOffset.sign
+				let pageSize = geometry.size.width + spacing
+				let offset = value.translation.width + draggedPages * pageSize
+				let isEdgeSwiping =
+					   selected == data.first?.id && offset.isPositive
+					|| selected == data.last?.id  && offset.isNegative
+				
+				dragOffset = isEdgeSwiping ? offset.third : offset
+				if dragOffset.magnitude > (geometry.size.width + spacing).half {
+					let newDraggedPages = draggedPages + pagesCount(in: geometry.size)
+					let newSelected = currentSelected(in: geometry.size)
+					dragOffset = (newDraggedPages - draggedPages) * pageSize + dragOffset
+					selected = newSelected
+					draggedPages = newDraggedPages
+				} else if dragOffsetSign != dragOffset.sign {
+					animationValue += 1
+				}
+			}
+			.onEnded { value in
+				dragOffset = .zero
+				draggedPages = .zero
+			}
+	}
 	
 	private func debugCalculations(in size: CGSize) -> some View {
 		VStack.LabeledViews {
