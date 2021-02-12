@@ -341,9 +341,19 @@ public struct HSwiperIndicator: View {
 					.foregroundColor(.white(0.5))
 					.height(4)
 					.frame(minWidth: 4, maxWidth: 20)
+					.overlay(
+						RoundedCornersRectangle(2)
+							.stroke(
+								Color.black(
+									index < activeLeading || index > activeTrailing
+										? 0.1
+										: 0
+								),
+								lineWidth: 0.5
+							)
+					)
 					.apply(when: index == .zero) { content in
 						content
-							.zIndex(10)
 							.overlay(
 								GeometryReader { geometry in
 									RoundedCornersRectangle(2)
@@ -351,14 +361,12 @@ public struct HSwiperIndicator: View {
 										.offset(x: activeLeading.cg * (geometry.size.width + spacing))
 										.width(geometry.size.width + offset.magnitude.cg * (geometry.size.width + spacing))
 								}
+								.shadow(color: .black(0.3), radius: 1.5)
 							)
-					} else: { content in
-						content
-							.zIndex(5)
 					}
+					.zIndex((total - index).double)
 			}
 		}
-		.shadow(color: .black(0.15), radius: 1.5)
 		
 		/// Debug values
 		// .add(.above, content: debugValues)
@@ -369,6 +377,10 @@ public struct HSwiperIndicator: View {
 	
 	private var activeLeading: Int {
 		max(0, min(active, active + offset))
+	}
+	
+	private var activeTrailing: Int {
+		min(total - 1, max(active, active + offset))
 	}
 	
 	private func debugValues() -> some View {
