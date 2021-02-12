@@ -28,6 +28,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	
 	@State private var dragOffset: CGFloat = .zero
 	@State private var draggedPages: Int = .zero
+	@State private var animationValue: UInt = .zero
 	
 	// MARK: Init
 	
@@ -212,10 +213,14 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 				.offset(x: currentOffset(in: geometry.size))
 				.zIndex(10)
 				
-				pageIndicator(
-					for: geometry.size,
-					pageOffset: pageOffset(in: geometry.size)
+				indicator(
+					selectedPage,
+					pageOffset(in: geometry.size),
+					data.count
 				)
+				.size(geometry.size)
+				.animation(.spring(), value: animationValue)
+				.zIndex(20)
 				
 				/// Debug Calculations
 				// debugCalculations(in: geometry.size).zIndex(30)
@@ -223,8 +228,9 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 			.animation(.spring(), value: dragOffset.isZero)
 			.backgroundColor(.almostClear)
 			.gesture(
-				DragGesture(minimumDistance: 5)
+				DragGesture(minimumDistance: 10)
 					.onChanged { value in
+						let dragOffsetSign = dragOffset.sign
 						let pageSize = geometry.size.width + spacing
 						let offset = value.translation.width + draggedPages * pageSize
 						let isEdgeSwiping =
@@ -238,6 +244,8 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 							dragOffset = (newDraggedPages - draggedPages) * pageSize + dragOffset
 							selected = newSelected
 							draggedPages = newDraggedPages
+						} else if dragOffsetSign != dragOffset.sign {
+							animationValue += 1
 						}
 					}
 					.onEnded { value in
@@ -249,17 +257,6 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		.clipped()
     }
 	
-	private func pageIndicator(for size: CGSize, pageOffset: Int) -> some View {
-		indicator(
-			selectedPage,
-			pageOffset,
-			data.count
-		)
-		.size(size)
-		.animation(.spring(), value: selectedPage - pageOffset)
-		.zIndex(20)
-	}
-	
 	private func debugCalculations(in size: CGSize) -> some View {
 		VStack.LabeledViews {
 			pagesCount(in: size).labeledView(label: "swipe pages count")
@@ -267,6 +264,11 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 			draggedPages.labeledView(label: "dragged pages")
 			dragOffset.signum.int.labeledView(label: "signum")
 			dragOffset.labeledView(label: "offset", f: 0)
+			selectedPage.labeledView(label: "selected page")
+			/*
+			(selectedPage - draggedPages).labeledView(label: "animation value")
+			*/
+			animationValue.labeledView(label: "animation")
 		}
 	}
 	
@@ -341,6 +343,7 @@ public struct HSwiperIndicator: View {
 					.frame(minWidth: 4, maxWidth: 20)
 					.apply(when: index == .zero) { content in
 						content
+							.zIndex(10)
 							.overlay(
 								GeometryReader { geometry in
 									RoundedCornersRectangle(2)
@@ -349,9 +352,13 @@ public struct HSwiperIndicator: View {
 										.width(geometry.size.width + offset.magnitude.cg * (geometry.size.width + spacing))
 								}
 							)
+					} else: { content in
+						content
+							.zIndex(5)
 					}
 			}
 		}
+		.shadow(color: .black(0.15), radius: 1.5)
 		
 		/// Debug values
 		// .add(.above, content: debugValues)
@@ -410,6 +417,7 @@ public struct HSwiper_Previews: PreviewProvider {
 					.expand()
 					.backgroundColor(
 						[
+							Color.white,
 							Color.blue,
 							Color.green,
 							Color.orange,
