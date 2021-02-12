@@ -106,10 +106,12 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		)
 	}
 	
-	/*
 	public init <Source> (
 		hashing data: Source,
+		alignment: Alignment = .center,
+		spacing: CGFloat = .zero,
 		selected: Binding<ID>,
+		@ViewBuilder indicator: @escaping IndicatorBuilder,
 		@ViewBuilder content: @escaping (Int, Source.Element) -> Content
 	) where
 		Source: Collection,
@@ -119,14 +121,43 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	{
 		self.init(
 			data.enumeratedHashableElements(),
+			alignment: alignment,
+			spacing: spacing,
 			selected: selected,
+			indicator: indicator,
+			content: { content($0.offset, $0.element) }
+		)
+	}
+	
+	public init <Source> (
+		hashing data: Source,
+		alignment: Alignment = .center,
+		spacing: CGFloat = .zero,
+		selected: Binding<ID>,
+		@ViewBuilder content: @escaping (Int, Source.Element) -> Content
+	) where
+		Source: Collection,
+		Source.Element: Hashable,
+		Data == [EnumeratedHashableElement<Source>],
+		ID == Source.Element,
+		IndicatorContent == EmptyView
+	{
+		self.init(
+			data.enumeratedHashableElements(),
+			alignment: alignment,
+			spacing: spacing,
+			selected: selected,
+			indicator: { _, _, _ in EmptyView() },
 			content: { content($0.offset, $0.element) }
 		)
 	}
 	
 	public init <Source> (
 		identifying data: Source,
+		alignment: Alignment = .center,
+		spacing: CGFloat = .zero,
 		selected: Binding<ID>,
+		@ViewBuilder indicator: @escaping IndicatorBuilder,
 		@ViewBuilder content: @escaping (Int, Source.Element) -> Content
 	) where
 		Source: Collection,
@@ -136,11 +167,36 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	{
 		self.init(
 			data.enumeratedIdentifiableElements(),
+			alignment: alignment,
+			spacing: spacing,
 			selected: selected,
+			indicator: indicator,
 			content: { content($0.offset, $0.element) }
 		)
 	}
-	*/
+	
+	public init <Source> (
+		identifying data: Source,
+		alignment: Alignment = .center,
+		spacing: CGFloat = .zero,
+		selected: Binding<ID>,
+		@ViewBuilder content: @escaping (Int, Source.Element) -> Content
+	) where
+		Source: Collection,
+		Source.Element: Identifiable,
+		Data == [EnumeratedIdentifiableElement<Source>],
+		ID == Source.Element.ID,
+		IndicatorContent == EmptyView
+	{
+		self.init(
+			data.enumeratedIdentifiableElements(),
+			alignment: alignment,
+			spacing: spacing,
+			selected: selected,
+			indicator: { _, _, _ in EmptyView() },
+			content: { content($0.offset, $0.element) }
+		)
+	}
 	
 	// MARK: Body
 	
@@ -156,13 +212,10 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 				.offset(x: currentOffset(in: geometry.size))
 				.zIndex(10)
 				
-				indicator(
-					selectedPage,
-					pageOffset(in: geometry.size),
-					data.count
+				pageIndicator(
+					for: geometry.size,
+					pageOffset: pageOffset(in: geometry.size)
 				)
-				.size(geometry.size)
-				.zIndex(20)
 				
 				/// Debug Calculations
 				// debugCalculations(in: geometry.size).zIndex(30)
@@ -195,6 +248,17 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		}
 		.clipped()
     }
+	
+	private func pageIndicator(for size: CGSize, pageOffset: Int) -> some View {
+		indicator(
+			selectedPage,
+			pageOffset,
+			data.count
+		)
+		.size(size)
+		.animation(.spring(), value: selectedPage - pageOffset)
+		.zIndex(20)
+	}
 	
 	private func debugCalculations(in size: CGSize) -> some View {
 		VStack.LabeledViews {
