@@ -584,6 +584,7 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 	case notFound
 	case unauthorized
 	case unauthorizedCallPrevented
+	case accessForbidden
 	case emptyContentError
 	case unknown
 	
@@ -685,6 +686,8 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 			return "You were not active for a while. Please login and try again."
 		case .unauthorizedCallPrevented:
 			return "You are not authorised to perform this action. Please login and try again."
+		case .accessForbidden:
+			return "You don't have permission to view this content."
 		case .unknown:
 			return "Unknown error"
 		case .sign(.userExists(.unknown)):
@@ -732,6 +735,7 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 		case .notFound: 					return true
 		case .unauthorized: 				return true
 		case .unauthorizedCallPrevented: 	return true
+		case .accessForbidden: 				return true
 		case .emptyContentError: 			return true
 		case .unknown: 						return false
 		case .preconditionValidation(_): 	return false

@@ -47,7 +47,7 @@ extension DataResponse: FetchResponse {
 
 public struct FetchErrorDebugDetails: Codable {
 	public private(set) var fullname: String = "Unknown"
-	public private(set) var description: String? = .none
+	public private(set) var description: String = "No description"
 	public private(set) var details: [String] = .empty
 	public private(set) var underlying: String? = .none
 	public private(set) var af: AFResponseDebugDetails? = .none
@@ -60,7 +60,6 @@ public struct FetchErrorDebugDetails: Codable {
 		case .afError(_, let response):
 			self.af = FetchErrorDebugDetails.AFResponseDebugDetails(of: response)
 		case .providerError(_, let underlyingError):
-			self.description = error.localizedDescription
 			self.underlying = underlyingError.localizedDescription
 		case .error(let details):
 			self.details = [details]
@@ -88,6 +87,7 @@ public struct FetchErrorDebugDetails: Codable {
 		case .notFound: ()
 		case .unauthorized: ()
 		case .unauthorizedCallPrevented: ()
+		case .accessForbidden: ()
 		case .emptyContentError: ()
 		case .unknown: ()
 		}
