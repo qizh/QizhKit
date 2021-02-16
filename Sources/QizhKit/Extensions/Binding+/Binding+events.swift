@@ -222,6 +222,52 @@ public extension Binding {
 	}
 }
 
+// MARK: .on collection
+
+public extension Binding where Value: Collection {
+	@discardableResult @inlinable
+	func on(
+		empty action: @escaping () -> Void,
+		_ flow: ExecutionFlow = .current
+	) -> Binding {
+		Binding(
+			get: getter,
+			set: { value in
+				self.wrappedValue = value
+				if value.isEmpty { flow.proceed(with: action) }
+			}
+		)
+	}
+	
+	@discardableResult @inlinable
+	func on(
+		nonEmpty action: @escaping () -> Void,
+		_ flow: ExecutionFlow = .current
+	) -> Binding {
+		Binding(
+			get: getter,
+			set: { value in
+				self.wrappedValue = value
+				if !value.isEmpty { flow.proceed(with: action) }
+			}
+		)
+	}
+	
+	@discardableResult @inlinable
+	func on(
+		nonEmpty action: @escaping (Value) -> Void,
+		_ flow: ExecutionFlow = .current
+	) -> Binding {
+		Binding(
+			get: getter,
+			set: { value in
+				self.wrappedValue = value
+				if !value.isEmpty { flow.proceed(with: action, value) }
+			}
+		)
+	}
+}
+
 // MARK: .on true | false
 /// Bool
 
