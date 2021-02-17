@@ -116,6 +116,18 @@ extension ExtraCase: Hashable where Known: Hashable { }
 
 extension ExtraCase: WithUnknown, WithAnyUnknown {
 	@inlinable public static var unknown: Self { .unknown(.empty) }
+	@inlinable public var isUnknown: Bool {
+		switch self {
+		case .known(_):   return false
+		case .unknown(_): return true
+		}
+	}
+	@inlinable public var isKnown: Bool {
+		switch self {
+		case .known(_):   return true
+		case .unknown(_): return false
+		}
+	}
 }
 
 extension ExtraCase where Known: WithUnknown {
