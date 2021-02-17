@@ -142,7 +142,8 @@ public struct CaseNameFormat: OptionSet, ExpressibleByIntegerLiteral {
 		
 		let name = input
 			.deleting(.starting(with: .first, .leftSkobka))
-			.take(all: .after(.last, .dot))
+			.deleting(.ending(with: .last, .dot))
+			// .take(all: .after(.last, .dot))
 		
 		let type = input
 			.deleting(.starting(with: .first, name))
