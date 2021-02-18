@@ -81,6 +81,19 @@ public extension BackendModel {
 	}
 }
 
+extension Array: ExpressibleByStringLiteral,
+				 ExpressibleByUnicodeScalarLiteral,
+				 ExpressibleByExtendedGraphemeClusterLiteral
+				 where Element: BackendModel
+{
+	public init(stringLiteral value: String) {
+		self = try! JSONDecoder.airtable.decode(Self.self, from: Data(value.utf8))
+	}
+	
+	@inlinable public init(unicodeScalarLiteral value: String) { self.init(stringLiteral: value) }
+	@inlinable public init(extendedGraphemeClusterLiteral value: String) { self.init(stringLiteral: value) }
+}
+
 public extension AirtableModel {
 	var createdTime: Date { .reference0 }
 	
