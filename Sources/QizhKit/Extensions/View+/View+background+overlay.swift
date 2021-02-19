@@ -20,6 +20,22 @@ public extension View {
 	func overlay<Overlay>(aligned: Alignment, _ view: Overlay) -> some View where Overlay: View {
 		overlay(view, alignment: aligned)
 	}
+	
+	@inlinable
+	func background <Background: View> (
+		aligned alignment: Alignment,
+		@ViewBuilder _ content: () -> Background
+	) -> some View {
+		background(content(), alignment: alignment)
+	}
+	
+	@inlinable
+	func overlay <Overlay: View> (
+		aligned alignment: Alignment,
+		@ViewBuilder _ content: () -> Overlay
+	) -> some View {
+		overlay(content(), alignment: alignment)
+	}
 }
 
 // MARK: Background Color
