@@ -12,7 +12,7 @@ import Foundation
 public struct DefaultFalse: Codable, Hashable {
     public var wrappedValue: Bool
     
-    public init(wrappedValue: Bool) {
+    public init(wrappedValue: Bool = false) {
         self.wrappedValue = wrappedValue
     }
     
