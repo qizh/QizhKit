@@ -39,6 +39,28 @@ public extension Image {
 }
 
 public extension UIImage {
+	func resized(to size: CGFloat, _ mode: ResizeMode) -> UIImage {
+		let scale: CGFloat
+		switch mode {
+		case .fit:  scale = size / self.size.biggerSide
+		case .fill: scale = size / self.size.smallerSide
+		}
+		
+		let renderFormat = UIGraphicsImageRendererFormat.default()
+		renderFormat.opaque = true
+		renderFormat.scale = scale
+		let renderer = UIGraphicsImageRenderer(size: self.size, format: renderFormat)
+		let redrawnImage = renderer.image { context in
+			self.draw(in: CGRect(origin: .zero, size: self.size))
+		}
+		return redrawnImage
+	}
+	
+	enum ResizeMode {
+		case fit
+		case fill
+	}
+	
 	func resized(to size: CGSize) -> UIImage {
 		UIGraphicsImageRenderer(size: size).image { _ in
 			draw(in: CGRect(origin: .zero, size: size))
