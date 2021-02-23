@@ -83,6 +83,9 @@ public extension KeyedDecodingContainer {
 	func decode<Result>(_: Result.Type, forKey key: Key) -> Result where Result: WithUnknown, Result: Decodable {
 		(try? decodeIfPresent(Result.self, forKey: key)) ?? Result.unknown
     }
+	func decode<Result>(_: Result.Type, forKey key: Key) -> Result where Result: WithUnknown, Result: WithDefault, Result: Decodable {
+		(try? decodeIfPresent(Result.self, forKey: key)) ?? Result.default
+	}
 }
 
 public typealias CodableWithUnknown = Codable & WithUnknown
