@@ -17,7 +17,10 @@ public protocol AllowUnknownCases: RawRepresentable where Self.RawValue == Strin
 }
 
 /// Updated namind, better reflect meaning of this protocol
-public protocol AcceptingOtherValues: RawRepresentable where Self.RawValue == String {
+public protocol AcceptingOtherValues: RawRepresentable
+	where Self.RawValue: Codable,
+		  Self.RawValue: Equatable
+{
 	typealias AnyValue = ExtraCase<Self>
 	typealias WithUnknownCases = ExtraCase<Self>
 }
@@ -66,10 +69,11 @@ public extension CaseIterable where Self: StringIterable {
 
 public enum ExtraCase<Known>: Codable
 	where Known: RawRepresentable,
-		  Known.RawValue == String
+		  Known.RawValue: Equatable,
+		  Known.RawValue: Codable
 {
 	case   known(_ known: Known)
-	case unknown(_ value: String = .empty)
+	case unknown(_ value: Known.RawValue)
 	
 	@inlinable public init(_ value: Known) { self = .known(value) }
 	
@@ -79,27 +83,32 @@ public enum ExtraCase<Known>: Codable
 		case .unknown: 			return nil
 		}
 	}
+	
+	public init(from decoder: Decoder) throws {
+		let container = try decoder.singleValueContainer()
+		let rawValue = try container.decode(Known.RawValue.self)
+		self.init(rawValue: rawValue)
+	}
+	
+	public func encode(to encoder: Encoder) throws {
+		try rawValue.encode(to: encoder)
+	}
 }
 
-// MARK: Identifiable
+// MARK: Raw Representable
 
-extension ExtraCase: RawRepresentable {
-	public init(rawValue: String) {
+extension ExtraCase: RawRepresentable where Known.RawValue: Equatable {
+	public init(rawValue: Known.RawValue) {
 		if let known = Known(rawValue: rawValue),
 		   known.rawValue == rawValue {
 			self = .known(known)
 		} else {
 			self = .unknown(rawValue)
 		}
-		/*
-		self = Known(rawValue: rawValue)
-			.map(Self.known)
-		?? .unknown(rawValue)
-		*/
 	}
 	
 	@inlinable
-	public var rawValue: String {
+	public var rawValue: Known.RawValue {
 		switch self {
 		case   .known(let known): return known.rawValue
 		case .unknown(let value): return value
@@ -110,12 +119,14 @@ extension ExtraCase: RawRepresentable {
 // MARK: Equatable, Hashable
 
 extension ExtraCase: Equatable where Known: Equatable { }
-extension ExtraCase: Hashable where Known: Hashable { }
+extension ExtraCase: Hashable where Known: Equatable, Known.RawValue: Hashable { }
 
 // MARK: With Unknown
 
-extension ExtraCase: WithUnknown, WithAnyUnknown {
-	@inlinable public static var unknown: Self { .unknown(.empty) }
+extension ExtraCase: WithUnknown, WithAnyUnknown
+	where Known.RawValue: Initializable
+{
+	@inlinable public static var unknown: Self { .unknown(.init()) }
 	@inlinable public var isUnknown: Bool {
 		switch self {
 		case .known(_):   return false
@@ -171,15 +182,36 @@ extension ExtraCase: WithDefault, WithAnyDefault where Known: WithDefault {
 
 // MARK: Identifiable
 
-extension ExtraCase: Identifiable {
-	@inlinable public var id: String { rawValue }
+extension ExtraCase: Identifiable where Known.RawValue: Hashable {
+	@inlinable public var id: Known.RawValue { rawValue }
+}
+
+extension ExtraCase: CustomStringConvertible {
+	@inlinable public var description: String { "\(rawValue)" }
 }
 
 // MARK: String
 
-extension ExtraCase: ExpressibleByStringLiteral, CustomStringConvertible {
-	@inlinable public var description: String { rawValue }
+extension ExtraCase: ExpressibleByStringLiteral,
+					 ExpressibleByExtendedGraphemeClusterLiteral,
+					 ExpressibleByUnicodeScalarLiteral
+	where Known.RawValue == String
+{
 	@inlinable public init(stringLiteral value: String) {
+		self.init(rawValue: value)
+	}
+	@inlinable public init(extendedGraphemeClusterLiteral value: String) {
+		self.init(rawValue: value)
+	}
+	@inlinable public init(unicodeScalarLiteral value: String) {
+		self.init(rawValue: value)
+	}
+}
+
+// MARK: Int
+
+extension ExtraCase: ExpressibleByIntegerLiteral where IntegerLiteralType == Known.RawValue {
+	@inlinable public init(integerLiteral value: Known.RawValue) {
 		self.init(rawValue: value)
 	}
 }
@@ -196,9 +228,9 @@ extension ExtraCase: EasyComparable {
 extension ExtraCase: AnyCaseIterable where Known: CaseIterable { }
 extension ExtraCase: StringIterable where Known: CaseIterable { }
 extension ExtraCase: CaseIterable where Known: CaseIterable {
-	/// All known cases and one empty unknown
+	/// All known cases
 	public static var allCases: [Self] {
-		[.unknown()] + Known.allCases.map(Self.known)
+		Known.allCases.map(Self.known)
 	}
 }
 
