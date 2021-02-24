@@ -6,7 +6,7 @@
 //  Copyright © 2020 Serhii Shevchenko. All rights reserved.
 //
 
-import Foundation
+import SwiftUI
 
 public struct StringValidationExpression:
 	ExpressibleByStringLiteral,
@@ -25,6 +25,13 @@ public struct StringValidationExpression:
 public extension String {
 	@inlinable var isValidEmail: Bool { self.is(valid: .email) }
 	@inlinable var isValidYouTubeCode: Bool { self.is(valid: .youtubeVideoCode) }
+	@inlinable var isValidURL: Bool {
+		URL(string: self)
+			.map { url in
+				UIApplication.shared.canOpenURL(url)
+			}
+			?? false
+	}
 }
 
 public extension String {
