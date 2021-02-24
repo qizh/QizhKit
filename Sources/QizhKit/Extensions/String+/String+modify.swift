@@ -46,6 +46,29 @@ public extension String {
 	}
 }
 
+// MARK: URL
+
+public extension String {
+	var withHTTPSchemeIfIsURLWithNoScheme: String {
+		guard let originalURL = URL(string: self) else { return self }
+		if let scheme = originalURL.scheme,
+		   scheme.isNotEmpty {
+			/// Scheme is present
+			return self
+		} else {
+			/// Set `http` scheme
+			var components = URLComponents(url: originalURL, resolvingAgainstBaseURL: true)
+			if let host = components?.host, host.isNotEmpty {
+				components?.scheme = "https"
+				if let output = components?.string {
+					return output
+				}
+			}
+			return URL(string: "https://" + self)?.absoluteString ?? self
+		}
+	}
+}
+
 /*
 public extension String {
 	@inlinable func deleting(
