@@ -54,6 +54,7 @@ public struct AutoTypeCodable <T>: Codable
 				decode(UInt.self),
 				decode(Double.self),
 				decode(Float.self),
+				decode(Date.self),
 				decode(Int8.self),
 				decode(Int16.self),
 				decode(Int64.self),
@@ -112,6 +113,15 @@ extension AutoTypeCodable: Equatable where T: Equatable {
 extension AutoTypeCodable: Hashable where T: Hashable {
 	public func hash(into hasher: inout Hasher) {
 		hasher.combine(wrappedValue)
+	}
+}
+
+extension Date: LosslessStringConvertible {
+	public init?(_ description: String) {
+		if let date = DateFormatter().date(from: description) {
+			self = date
+		}
+		return nil
 	}
 }
 
