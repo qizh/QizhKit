@@ -73,7 +73,7 @@ extension NumberOfItems: Identifiable {
 
 extension NumberOfItems: Equatable {
 	public static func == (lhs: NumberOfItems, rhs: NumberOfItems) -> Bool {
-		assert(lhs.unit == rhs.unit, "You're comparing `NumberOfItems` of different units: \(lhs.unit.rawValue) and \(rhs.unit.rawValue).")
+		// assert(lhs.unit == rhs.unit, "You're comparing `NumberOfItems` of different units: \(lhs.unit.rawValue) and \(rhs.unit.rawValue).")
 		return lhs.value == rhs.value
 	}
 }
