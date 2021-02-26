@@ -101,3 +101,45 @@ public extension AirtableModel {
 		fields[keyPath: key]
 	}
 }
+
+// MARK: Get key
+
+public extension RailsModel {
+	func value <T> (
+		for key: String
+	) -> T?
+		where T: Codable,
+			  T: LosslessStringConvertible
+	{
+		guard CodingKeys.allCases.contains(where: \.stringValue, equals: key),
+			  let data = try? JSONEncoder().encode(self)
+		else { return .none }
+		return try? KeyDecoder.decode(T.self, from: data, by: key)
+	}
+}
+
+public struct KeyDecoder {
+	private static let userInfoKey = CodingUserInfoKey(rawValue: "key")!
+	
+	private struct SingleKeyWrapper <Wrapped: Codable & LosslessStringConvertible>: Decodable {
+		@AutoTypeCodable var wrappedValue: Wrapped
+		
+		init(from decoder: Decoder) throws {
+			let keyName = decoder.userInfo[KeyDecoder.userInfoKey] as! String
+			let key = JSONCodingKeys(stringValue: keyName)
+			let values = try decoder.container(keyedBy: JSONCodingKeys.self)
+			_wrappedValue = try values.decode(AutoTypeCodable<Wrapped>.self, forKey: key)
+		}
+	}
+	
+	public static func decode <T: Codable & LosslessStringConvertible> (
+		_ type: T.Type,
+		from data: Data,
+		by key: String
+	) throws -> T {
+		let decoder = JSONDecoder()
+		decoder.userInfo[KeyDecoder.userInfoKey] = key
+		let model = try decoder.decode(SingleKeyWrapper<T>.self, from: data).wrappedValue
+		return model
+	}
+}
