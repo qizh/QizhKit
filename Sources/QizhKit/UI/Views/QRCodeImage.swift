@@ -18,16 +18,16 @@ public struct QRCodeImage: View {
 		self.source = source
 	}
 	
-	public var body: Image {
-		(
-			codeImage(from: source)
-				?? Image("")
-		)
-		.interpolation(.none)
-		.resizable()
+	@ViewBuilder
+	public var body: some View {
+		if let image = codeImage(from: source) {
+			Image(uiImage: image)
+				.interpolation(.none)
+				.resizable()
+		}
 	}
 	
-	private func codeImage(from string: String) -> Image? {
+	private func codeImage(from string: String) -> UIImage? {
 		guard let data = string.data(using: .ascii) else { return nil }
 		
 		let filter = CIFilter.qrCodeGenerator()
@@ -38,7 +38,7 @@ public struct QRCodeImage: View {
 		
 		if let output = filter.outputImage?.transformed(by: transform),
 		   let cgImage = context.createCGImage(output, from: output.extent.inset(scale)) {
-			return Image(uiImage: UIImage(cgImage: cgImage))
+			return UIImage(cgImage: cgImage)
 		}
 		
 		return nil
