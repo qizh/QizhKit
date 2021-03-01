@@ -368,3 +368,20 @@ public extension Collection {
 		self.min(by: keyPath, using: >)
 	}
 }
+
+// MARK: Group By
+
+public extension Collection {
+	func group(by transform: (Element) -> Bool) -> (match: [Element], other: [Element]) {
+		var match: [Element] = .init()
+		var other: [Element] = .init()
+		for element in self {
+			if transform(element) {
+				match.append(element)
+			} else {
+				other.append(element)
+			}
+		}
+		return (match: match, other: other)
+	}
+}
