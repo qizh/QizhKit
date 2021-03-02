@@ -52,6 +52,7 @@ public struct AutoTypeCodable <T>: Codable
 				decode(Bool.self),
 				decode(Int.self),
 				decode(UInt.self),
+				decode(Decimal.self),
 				decode(Double.self),
 				decode(Float.self),
 				decode(Date.self),
@@ -122,6 +123,12 @@ extension Date: LosslessStringConvertible {
 			self = date
 		}
 		return nil
+	}
+}
+
+extension Decimal: LosslessStringConvertible {
+	public init?(_ description: String) {
+		self.init(string: description)
 	}
 }
 
