@@ -598,6 +598,7 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 		case wrongCredentials
 		case wrongPassword
 		case tokenExpired
+		case tokenInvalid
 		case airtableUserNotFound
 		case createUserFirst
 		case wrongCode
@@ -704,7 +705,9 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 		case .sign(.wrongPassword):
 			return "Wrong password"
 		case .sign(.tokenExpired):
-			return "App forgot what it was just doing"
+			return "Your session is expired, please login"
+		case .sign(.tokenInvalid):
+			return "Invalid user permissions, please report"
 		case .sign(.airtableUserNotFound):
 			return "Database record mismatch, please report"
 		case .sign(.createUserFirst):
