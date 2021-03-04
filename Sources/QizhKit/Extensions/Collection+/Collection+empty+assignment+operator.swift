@@ -13,6 +13,10 @@ infix operator ∅= : AssignmentPrecedence
 infix operator ∅? : NilCoalescingPrecedence
 
 public extension Collection {
+	/// Assignes a value to a field only when a field has `.empty` value
+	/// - Parameters:
+	///   - lhs: field
+	///   - rhs: value
 	@inlinable static func ∅= (lhs: inout Self, rhs: Self) {
 		if lhs.isEmpty {
 			lhs = rhs
@@ -25,6 +29,10 @@ public extension Collection {
 		return lhs
 	}
 	
+	/// Assignes a value to a field only when a field has `nil` or `.empty` value
+	/// - Parameters:
+	///   - lhs: Optional field
+	///   - rhs: value
 	@inlinable static func ∅= (lhs: inout Optional<Self>, rhs: Self) {
 		if lhs == nil || lhs!.isEmpty {
 			lhs = rhs
@@ -39,6 +47,10 @@ public extension Collection {
 }
 
 public extension Optional {
+	/// Assignes a value to a field only when value is defined and a field is `nil`
+	/// - Parameters:
+	///   - lhs: Optional field
+	///   - rhs: Optional value
 	@inlinable static func ∅= (lhs: inout Optional<Wrapped>, rhs: Optional<Wrapped>) {
 		if lhs == nil, rhs != nil {
 			lhs = rhs
@@ -51,6 +63,10 @@ public extension Optional {
 		return lhs
 	}
 	
+	/// Assignes a value to a field only when a field is `nil`
+	/// - Parameters:
+	///   - lhs: Optional field
+	///   - rhs: Value
 	@inlinable static func ∅= (lhs: inout Optional<Wrapped>, rhs: Wrapped) {
 		if lhs == nil {
 			lhs = rhs
