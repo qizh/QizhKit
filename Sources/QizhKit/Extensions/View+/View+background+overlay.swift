@@ -23,7 +23,7 @@ public extension View {
 	
 	@inlinable
 	func background <Background: View> (
-		aligned alignment: Alignment,
+		aligned alignment: Alignment = .center,
 		@ViewBuilder _ content: () -> Background
 	) -> some View {
 		background(content(), alignment: alignment)
@@ -31,7 +31,7 @@ public extension View {
 	
 	@inlinable
 	func overlay <Overlay: View> (
-		aligned alignment: Alignment,
+		aligned alignment: Alignment = .center,
 		@ViewBuilder _ content: () -> Overlay
 	) -> some View {
 		overlay(content(), alignment: alignment)
