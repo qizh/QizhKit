@@ -543,7 +543,7 @@ public protocol ImportanceProvider {
 
 public extension Collection where Element: ImportanceProvider {
 	@inlinable func sortedByImportance() -> [Element] { sorted(by: \.importance) }
-	@inlinable var mostImportant: Element? { sortedByImportance().last }
+	@inlinable var mostImportant: Element? { lazy.sortedByImportance().last }
 }
 
 // MARK: > Hash
