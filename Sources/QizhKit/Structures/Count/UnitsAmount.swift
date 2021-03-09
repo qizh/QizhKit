@@ -28,11 +28,11 @@ public struct UnitsAmount: Hashable, CustomStringConvertible, WithDefaultValue {
 		self.init(unit: .known(unit), amount: amount)
 	}
 
-	@inlinable public var description: String {
+	public var description: String {
 		unit.string(for: amount, .current)
 	}
 	
-	@inlinable public func description(_ locale: Locale) -> String {
+	public func description(_ locale: Locale) -> String {
 		unit.string(for: amount, locale)
 	}
 	
