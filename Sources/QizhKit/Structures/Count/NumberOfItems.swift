@@ -91,4 +91,8 @@ extension NumberOfItems: CustomStringConvertible {
 	public var description: String {
 		unit.string(for: value, .autoupdatingCurrent)
 	}
+	
+	public func description(in locale: Locale) -> String {
+		unit.string(for: value, locale)
+	}
 }
