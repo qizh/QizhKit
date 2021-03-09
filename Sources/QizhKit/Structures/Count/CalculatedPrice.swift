@@ -13,7 +13,7 @@ import Foundation
 public protocol PriceCalculationProvider {
 	var unit: 	  Price.Output   { get }
 	var all: 	  Price.Output   { get }
-	var tax: 	  Price.Output   { get }
+	var taxes: 	 [Price.Output]  { get }
 	var discount: Price.Output   { get }
 	var flatDiscount: Price.Output { get }
 	var service:  Price.Output   { get }
@@ -37,23 +37,30 @@ public extension Price {
 			self.amount = amount
 		}
 		
-		private func output(_ value: Decimal) -> Output {
-			Output(value: value, details: price, amount: amount)
+		private func output(_ value: Decimal, _ name: String) -> Output {
+			Output(value: value, details: price, amount: amount, name: name)
 		}
 		
-		public var unit: 		 Output { output(price.value) }
-		public var all: 		 Output { output(price.value * Decimal(amount)) }
-		public var tax: 		 Output { output(price.tax) }
-		public var discount: 	 Output { output(price.discount.percent) }
-		public var flatDiscount: Output { output(price.discount.flat) }
-		public var service: 	 Output { output(.zero) }
+		public var unit: 		 Output { output(price.value, "One item") }
+		public var all: 		 Output { output(price.value * Decimal(amount), "All items") }
+		public var taxes: 		[Output] {
+			price.taxes.map { tax in
+				switch tax {
+				case let .flat(value, name): return output(value, name)
+				case let .percent(value, name): return output(value, name)
+				}
+			}
+		}
+		public var discount: 	 Output { output(price.discount.percent, "Discount percent") }
+		public var flatDiscount: Output { output(price.discount.flat, "Discount value") }
+		public var service: 	 Output { output(.zero, "Service Fee") }
 		public var total: 		 Output { all.discounted.taxed }
 		
 		public static func == (l: Price.CalculatedItem, r: Price.CalculatedItem) -> Bool {
 			l.amount == r.amount &&
 			l.price.value == r.price.value &&
 			l.price.currency == r.price.currency &&
-			l.price.tax == r.price.tax &&
+			l.price.taxes == r.price.taxes &&
 			l.price.discount == r.price.discount
 		}
 	}
@@ -68,20 +75,20 @@ public extension Price {
 		}
 		
 		private var value: Output {
-			Output(value: price.value, details: price, amount: .one)
+			Output(value: price.value, details: price, amount: .one, name: "Service Fee")
 		}
 		
 		private var zero: Output {
-			Output(value: .zero, details: price, amount: .one)
+			Output(value: .zero, details: price, amount: .one, name: "Service Fee")
 		}
 		
-		public var unit: 		 Output { value }
-		public var all: 		 Output { zero }
-		public var tax: 		 Output { zero }
-		public var discount: 	 Output { zero }
-		public var flatDiscount: Output { zero }
-		public var service: 	 Output { value }
-		public var total: 		 Output { value }
+		public var unit: 		 Output  { value }
+		public var all: 		 Output  { zero }
+		public var taxes: 		[Output] { .empty }
+		public var discount: 	 Output  { zero }
+		public var flatDiscount: Output  { zero }
+		public var service: 	 Output  { value }
+		public var total: 		 Output  { value }
 	}
 }
 
@@ -98,15 +105,18 @@ public extension Price {
 		private let value: Decimal
 		private let details: Details
 		private let amount: UInt
+		public let name: String
 		
 		fileprivate init(
 			value: Decimal,
 			details: Details,
-			amount: UInt
+			amount: UInt,
+			name: String
 		) {
 			self.value = value
 			self.details = details
 			self.amount = amount
+			self.name = name
 		}
 		
 		public var decimal: Decimal { value }
@@ -171,15 +181,45 @@ public extension Price {
 			}
 		}
 		
-		private func calculate(_ value: Decimal) -> Output {
-			Output(value: value, details: details, amount: amount)
+		private func calculate(_ value: Decimal, _ name: String) -> Output {
+			Output(value: value, details: details, amount: amount, name: name)
 		}
 		
-		public var discount: 	Output { calculate(value * details.discount.percent.percents + details.discount.flat ) }
-		public var discounted: 	Output { calculate(value - discount.value) }
-		public var tax: 		Output { calculate(value * details.tax.percents) }
-		public var taxed: 		Output { calculate(value + tax.value) }
-		public var negated: 	Output { calculate(value.negated) }
+		public var discount: Output {
+			calculate(
+				value * details.discount.percent.percents + details.discount.flat,
+				"Discount"
+			)
+		}
+		public var discounted: Output { calculate(value - discount.value, "Discounted") }
+		public var taxes: [Output] {
+			details.taxes.map { tax in
+				switch tax {
+				case let .flat(amount, name): return calculate(amount, name)
+				case let .percent(percent, name): return calculate(value * percent, name)
+				}
+			}
+		}
+		/// Sum of all taxes
+		public var tax: Output {
+			taxes.reduce(.zero(details), +)
+		}
+		public var taxed: Output {
+			calculate(
+				taxes
+					.map(\.value)
+					.reduce(value, +),
+				"Taxed"
+			)
+			/*
+			var output = value
+			for taxOutput in taxes {
+				output += taxOutput.value
+			}
+			return calculate(output, "Taxed")
+			*/
+		}
+		public var negated: Output { calculate(value.negated, name) }
 		
 		/// When the value is 0 or the amount is 0
 		public var isFree: Bool { value.isZero || amount.isZero }
@@ -195,9 +235,9 @@ public extension Price {
 		public var nonZero: Output? { isZero ? nil : self }
 		
 		public static func zero(_ details: Details) -> Output {
-			Output(value: .zero, details: details, amount: .zero)
+			Output(value: .zero, details: details, amount: .zero, name: "Zero")
 		}
-
+		
 		// MARK: > Format Type
 		
 		public enum FormatType {
@@ -213,7 +253,8 @@ public extension Price {
 			Output(
 				value: l.value + r.value,
 				details: l.details,
-				amount: l.amount + r.amount
+				amount: l.amount + r.amount,
+				name: l.name + .space + r.name
 			)
 		}
 	}
@@ -222,9 +263,11 @@ public extension Price {
 		CalculatedItem(self, amount)
 	}
 	
+	/*
 	@inlinable func calculate(for amount: UInt, service: Service) -> CalculatedSum {
 		CalculatedItem(self, amount) + service.calculated
 	}
+	*/
 }
 
 // MARK: Sum
@@ -257,12 +300,12 @@ public extension Price {
 		
 		public var unit: Output         { firstWithPrice.unit }
 		public var all: Output          { items.map(\.all)         .reduce(zero, +) }
-		public var tax: Output          { items.map(\.tax)         .reduce(zero, +) }
+		public var taxes: [Output]      { items.map(\.taxes).joined().asArray() }
 		public var discount: Output     { items.map(\.discount)    .reduce(zero, +) }
 		public var flatDiscount: Output { items.map(\.flatDiscount).reduce(zero, +) }
 		public var service: Output      { items.map(\.service)     .reduce(zero, +) }
 		public var total: Output        { items.map(\.total)       .reduce(zero, +) }
-
+		
 		public static let empty: CalculatedSum = .init()
 	}
 }

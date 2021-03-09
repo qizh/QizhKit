@@ -26,7 +26,7 @@ public extension PriceValueProvider {
 public protocol PriceDetailsProvider {
 	var currency: Price.Code { get }
 	var discount: Price.Discount { get }
-	var tax: Decimal { get }
+	var taxes: [Price.Tax] { get }
 }
 
 //public typealias PriceValueAndDetailsProvider = PriceValueProvider & PriceDetailsProvider
@@ -44,20 +44,32 @@ public struct Price:
 	public private(set) var value: 		Decimal
 	public private(set) var currency: 	Code
 	public private(set) var discount: 	Discount
-	public private(set) var tax: 		Decimal
+	public private(set) var taxes: 		[Tax]
 	
 	/// - Parameter currencyCode: ISO 4217 currency code
     public init(
 		   value: Decimal = .zero,
 		currency: Code = .default,
 		discount: Discount = .zero,
-		     tax: Decimal = .zero
+		   taxes: [Tax] = .empty
 	) {
     	self.value    = value
 		self.currency = currency
 		self.discount = discount
-		self.tax      = tax
+		self.taxes    = taxes
     }
+	
+	public init(
+		   value: Decimal = .zero,
+		currency: Code = .default,
+		discount: Discount = .zero,
+		   taxes: Tax...
+	) {
+		self.value    = value
+		self.currency = currency
+		self.discount = discount
+		self.taxes    = taxes
+	}
 	
 	@inlinable public init(_ value: Decimal, _ currency: Code = .default) {
 		self.init(value: value, currency: currency)
@@ -127,6 +139,60 @@ public extension Price {
 		
 		public static let zero: Self = .flat(.zero)
 	}
+	
+	var isDiscounted: Bool {
+		discount.amount.isNotZero
+	}
+}
+
+// MARK: Tax
+
+public extension Price {
+	enum Tax: Equatable {
+		case flat(_ value: Decimal, name: String = .empty)
+		case percent(_ value: Decimal, name: String = .empty)
+		
+		public var flat: Decimal {
+			switch self {
+			case .flat(let value, _): return value
+			case .percent(_, _): return .zero
+			}
+		}
+		
+		public var percent: Decimal {
+			switch self {
+			case .flat(_, _): return .zero
+			case .percent(let value, _): return value
+			}
+		}
+		
+		public var amount: Decimal {
+			switch self {
+			case .flat(let value, _): return value
+			case .percent(let value, _): return value
+			}
+		}
+		
+		public var name: String {
+			switch self {
+			case .flat(_, let name): return name
+			case .percent(_, let name): return name
+			}
+		}
+		
+		public var isZero: Bool {
+			switch self {
+			case .flat(let value, _): return value.isZero
+			case .percent(let value, _): return value.isZero
+			}
+		}
+		
+		public static let zero: Self = .flat(.zero)
+	}
+	
+	var isTaxed: Bool {
+		taxes.contains(where: \.amount.isNotZero)
+	}
 }
 
 // MARK: Service Charge
@@ -136,7 +202,7 @@ public extension Price {
 		public let value: Decimal
 		public let currency: Code
 		public let discount: Discount = .zero
-		public let tax: Decimal = .zero
+		public let taxes: [Tax] = .empty
 		
 		public init(_ value: Decimal, _ currency: Code = .default) {
 			self.value = value
