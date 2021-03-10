@@ -347,7 +347,7 @@ public extension View {
 		}
 	}
 	
-	@inlinable func whenAppear <Value> (
+	func whenAppear <Value> (
 		when condition: Bool = true,
 	  assign     value: @autoclosure @escaping () -> Value,
 		  to    target: Binding<Value>,
@@ -377,8 +377,101 @@ public extension View {
 			flow.proceed(with: exe)
 		}
 	}
+	
+	// MARK: > Assign Binding
+	
+	func onAppear <Value> (
+		  when cond: Bool = true,
+		assign  val: @autoclosure @escaping () -> Value,
+		 to binding: Binding<Value>,
+		  with anim: Animation? = .none,
+			   flow: ExecutionFlow = .current
+	) -> some View {
+		onAppear {
+			guard cond else { return }
+			var exe: () -> Void = { binding.wrappedValue = val() }
+			if let ani = anim { exe = { withAnimation(ani, exe) } }
+			flow.proceed(with: exe)
+		}
+	}
+	
+	func onDisappear <Value> (
+		  when cond: Bool = true,
+		assign  val: @autoclosure @escaping () -> Value,
+		 to binding: Binding<Value>,
+		  with anim: Animation? = .none,
+			   flow: ExecutionFlow = .current
+	) -> some View {
+		onDisappear {
+			guard cond else { return }
+			var exe: () -> Void = { binding.wrappedValue = val() }
+			if let ani = anim { exe = { withAnimation(ani, exe) } }
+			flow.proceed(with: exe)
+		}
+	}
+	
+	// MARK: > Reset Binding<Optional>
+	
+	func onAppear <Value> (
+			when cond: Bool = true,
+		reset binding: Binding<Value?>,
+			with anim: Animation? = .none,
+				 flow: ExecutionFlow = .current
+	) -> some View {
+		onAppear {
+			guard cond else { return }
+			var exe: () -> Void = { binding.wrappedValue = .none }
+			if let ani = anim { exe = { withAnimation(ani, exe) } }
+			flow.proceed(with: exe)
+		}
+	}
+	
+	func onDisappear <Value> (
+		    when cond: Bool = true,
+		reset binding: Binding<Value?>,
+		    with anim: Animation? = .none,
+			     flow: ExecutionFlow = .current
+	) -> some View {
+		onDisappear {
+			guard cond else { return }
+			var exe: () -> Void = { binding.wrappedValue = .none }
+			if let ani = anim { exe = { withAnimation(ani, exe) } }
+			flow.proceed(with: exe)
+		}
+	}
+	
+	// MARK: > Toggle Binding<Bool>
+	
+	func onAppear(
+			 when cond: Bool = true,
+		toggle binding: Binding<Bool>,
+			 with anim: Animation? = .none,
+				  flow: ExecutionFlow = .current
+	) -> some View {
+		onAppear {
+			guard cond else { return }
+			var exe: () -> Void = { binding.toggle() }
+			if let ani = anim { exe = { withAnimation(ani, exe) } }
+			flow.proceed(with: exe)
+		}
+	}
+	
+	func onDisappear(
+			 when cond: Bool = true,
+		toggle binding: Binding<Bool>,
+			 with anim: Animation? = .none,
+				  flow: ExecutionFlow = .current
+	) -> some View {
+		onDisappear {
+			guard cond else { return }
+			var exe: () -> Void = { binding.toggle() }
+			if let ani = anim { exe = { withAnimation(ani, exe) } }
+			flow.proceed(with: exe)
+		}
+	}
 }
 
+/*
 //@available(iOS 14.0, *)
 public struct AppearWorkaround: ViewModifier {
 	public typealias Action = () -> Void
@@ -421,3 +514,4 @@ public struct AppearWorkaround: ViewModifier {
 			*/
 	}
 }
+*/
