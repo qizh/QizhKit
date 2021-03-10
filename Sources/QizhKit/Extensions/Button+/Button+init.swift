@@ -287,9 +287,29 @@ public extension View {
 				label: selfmade,
 					   flow)
 	}
+	
+	@inlinable
+	func button <Value> (
+		resetting binding: Binding<Value?>,
+				animation: Animation? = .none,
+				   _ flow: ExecutionFlow = .current
+	) -> Button<Self> {
+		.init(
+			action: {
+				flow.proceed {
+					if let animation = animation {
+						withAnimation(animation) {
+							binding.wrappedValue = .none
+						}
+					} else {
+						binding.wrappedValue = .none
+					}
+				}
+			},
+			label: selfmade
+		)
+	}
 }
-
-
 
 // MARK: Action
 
