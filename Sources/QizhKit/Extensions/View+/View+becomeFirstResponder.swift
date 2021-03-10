@@ -43,6 +43,7 @@ public struct BecomeFirstResponder: ViewModifier {
 				if become && textField.isSet {
 					Pixel()
 						.onAppear(perform: becomeFirstResponder)
+						.onDisappear(reset: $textField)
 						.zIndex(10)
 				}
 		}
