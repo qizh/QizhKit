@@ -257,6 +257,15 @@ public extension Price {
 				name: l.name + .space + r.name
 			)
 		}
+		
+		public static func + (l: Output, r: Decimal) -> Output {
+			Output(
+				value: l.value + r,
+				details: l.details,
+				amount: l.amount,
+				name: l.name
+			)
+		}
 	}
 	
 	@inlinable func calculate(for amount: UInt) -> CalculatedItem {
