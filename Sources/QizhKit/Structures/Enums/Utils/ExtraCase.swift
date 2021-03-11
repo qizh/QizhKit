@@ -108,6 +108,11 @@ extension ExtraCase: RawRepresentable where Known.RawValue: Equatable {
 	}
 	
 	@inlinable
+	public static func some(_ rawValue: Known.RawValue) -> Self {
+		.init(rawValue: rawValue)
+	}
+	
+	@inlinable
 	public var rawValue: Known.RawValue {
 		switch self {
 		case   .known(let known): return known.rawValue
