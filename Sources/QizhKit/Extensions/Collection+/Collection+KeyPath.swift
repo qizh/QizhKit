@@ -372,7 +372,11 @@ public extension Collection {
 // MARK: Group By
 
 public extension Collection {
-	func group(by transform: (Element) -> Bool) -> (match: [Element], other: [Element]) {
+	func group(
+		by transform: (Element) -> Bool
+	)
+		-> (match: [Element], other: [Element])
+	{
 		var match: [Element] = .init()
 		var other: [Element] = .init()
 		for element in self {
@@ -383,5 +387,31 @@ public extension Collection {
 			}
 		}
 		return (match: match, other: other)
+	}
+	
+	func group <Medium: Equatable> (
+		by transform: (Element) -> Medium,
+		equals match: Medium
+	)
+		-> (match: [Element], other: [Element])
+	{
+		group(
+			by: { item in
+				transform(item) == match
+			}
+		)
+	}
+	
+	func group <Medium: EasyComparable> (
+		by transform: (Element) -> Medium,
+		is match: Medium.Other
+	)
+		-> (match: [Element], other: [Element])
+	{
+		group(
+			by: { item in
+				transform(item).is(match)
+			}
+		)
 	}
 }
