@@ -17,9 +17,19 @@ public struct JSONCodingKeys: CodingKey {
 	
 	public var intValue: Int?
 	
-	public init?(intValue: Int) {
+	public init(intValue: Int) {
 		self.init(stringValue: "\(intValue)")
 		self.intValue = intValue
+	}
+	
+	@inlinable
+	public static func some(_ value: String) -> Self {
+		.init(stringValue: value)
+	}
+	
+	@inlinable
+	public static func some(_ value: Int) -> Self {
+		.init(intValue: value)
 	}
 }
 
@@ -91,11 +101,15 @@ public extension KeyedEncodingContainerProtocol where Key == JSONCodingKeys {
 				try encode(value, forKey: key)
 			case let value as Int:
 				try encode(value, forKey: key)
+			case let value as UInt:
+				try encode(value, forKey: key)
 			case let value as String:
 				try encode(value, forKey: key)
 			case let value as Double:
 				try encode(value, forKey: key)
 			case let value as CGFloat:
+				try encode(value, forKey: key)
+			case let value as Decimal:
 				try encode(value, forKey: key)
 			case let value as Dictionary<String, Any>:
 				try encode(value, forKey: key)
@@ -134,11 +148,15 @@ public extension UnkeyedEncodingContainer {
 				try encode(value)
 			case let value as Int:
 				try encode(value)
+			case let value as UInt:
+				try encode(value)
 			case let value as String:
 				try encode(value)
 			case let value as Double:
 				try encode(value)
 			case let value as CGFloat:
+				try encode(value)
+			case let value as Decimal:
 				try encode(value)
 			case let value as Dictionary<String, Any>:
 				try encode(value)
@@ -147,7 +165,8 @@ public extension UnkeyedEncodingContainer {
 			case Optional<Any>.none:
 				try encodeNil()
 			default:
-				let keys = JSONCodingKeys(intValue: index).map({ [ $0 ] }) ?? []
+				//let keys = JSONCodingKeys(intValue: index).map({ [ $0 ] }) ?? []
+				let keys: [JSONCodingKeys] = .just(.some(index))
 				throw EncodingError.invalidValue(value, EncodingError.Context(codingPath: codingPath + keys, debugDescription: "Invalid JSON value"))
 			}
 		}
