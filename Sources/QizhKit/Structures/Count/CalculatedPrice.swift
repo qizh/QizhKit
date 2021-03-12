@@ -21,6 +21,12 @@ public protocol PriceCalculationProvider {
 	var price:    Price.Provider { get }
 }
 
+public extension PriceCalculationProvider {
+	@inlinable static var zero: Price.CalculatedItem { .init(Price.zero, .zero) }
+	@inlinable var isZero: Bool { all.isZero }
+	@inlinable var isNotZero: Bool { not(isZero) }
+}
+
 // MARK: Calculated
 
 public extension Price {
@@ -230,6 +236,7 @@ public extension Price {
 		/// When the value is 0. Amount could be non-zero.
 		/// For example 2 items $0 each
 		public var isZero: Bool { value.isZero }
+		@inlinable public var isNotZero: Bool { not(isZero) }
 		
 		/// When the value is not 0, amount could be zero
 		public var nonZero: Output? { isZero ? nil : self }
