@@ -111,6 +111,8 @@ public extension KeyedEncodingContainerProtocol where Key == JSONCodingKeys {
 				try encode(value, forKey: key)
 			case let value as Decimal:
 				try encode(value, forKey: key)
+			case let value as Date:
+				try encode(value, forKey: key)
 			case let value as Dictionary<String, Any>:
 				try encode(value, forKey: key)
 			case let value as Array<Any>:
@@ -157,6 +159,8 @@ public extension UnkeyedEncodingContainer {
 			case let value as CGFloat:
 				try encode(value)
 			case let value as Decimal:
+				try encode(value)
+			case let value as Date:
 				try encode(value)
 			case let value as Dictionary<String, Any>:
 				try encode(value)
