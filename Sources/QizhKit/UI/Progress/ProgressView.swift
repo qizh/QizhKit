@@ -86,10 +86,10 @@ public struct ProgressView: View {
 	}
 	
 	public init(
-		_ progress: FetchProgress,
-		_ size: Size = .visual,
-		_ show: StatesSet = .all,
-		_ color: ColorMode = .mono
+		progress: FetchProgress,
+		size: Size = .visual,
+		show: StatesSet = .all,
+		color: ColorMode = .mono
 	) {
 		self.state = .init(progress)
 		self.name = nil
@@ -98,6 +98,21 @@ public struct ProgressView: View {
 		self.size = size
 		self.show = show
 		self.color = color
+	}
+	
+	@inlinable
+	public init(
+		_ progress: FetchProgress,
+		_ size: Size = .visual,
+		_ show: StatesSet = .all,
+		_ color: ColorMode = .mono
+	) {
+		self.init(
+			progress: progress,
+			size: size,
+			show: show,
+			color: color
+		)
 	}
 	
 	@inlinable public init(
