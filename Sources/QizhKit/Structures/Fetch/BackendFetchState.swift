@@ -128,7 +128,10 @@ public extension String.StringInterpolation {
 
 // MARK: - Basic State
 
-public enum BasicBackendFetchState: CaseComparable {
+public enum BasicBackendFetchState: Hashable,
+									EasyCaseComparable,
+									CaseNameProvidable
+{
 	case idle, inProgress, success, failure
 }
 
@@ -139,6 +142,15 @@ public extension BasicBackendFetchState {
 		case .undetermined: self = .inProgress
 		case .progress(_): 	self = .inProgress
 		case .complete: 	self = .success
+		}
+	}
+	
+	var progress: FetchProgress {
+		switch self {
+		case .idle: 		return .none
+		case .inProgress: 	return .undetermined
+		case .success: 		return .complete
+		case .failure: 		return .none
 		}
 	}
 }
@@ -735,6 +747,8 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 	public var haveSomethingImportantToSay: Bool {
 		switch self {
 		case .error(_): 					return false
+		case .providerError(_, let error as FetchError):
+			return error.haveSomethingImportantToSay
 		case .providerError(_, _): 			return false
 		case .multipleProvidersError(_): 	return false
 		case .afError(_, _): 				return false
