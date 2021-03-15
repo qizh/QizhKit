@@ -266,6 +266,48 @@ public extension View {
 		}
 	}
 	
+	// MARK: Assign Binding
+	
+	func assign <P, Value> (
+		   _ publisher: P,
+			to binding: Binding<Value>,
+		when condition: Bool = true,
+		with animation: Animation? = .none,
+				  flow: ExecutionFlow = .current
+	) -> some View
+		where
+		P: Publisher,
+		P.Output == Value,
+		P.Failure == Never
+	{
+		onReceive(publisher) { value in
+			guard condition else { return }
+			var closure: () -> Void = { binding.wrappedValue = value }
+			if let animation = animation { closure = { withAnimation(animation, closure) } }
+			flow.proceed(with: closure)
+		}
+	}
+	
+	func assign <P, Value> (
+		   _ publisher: P,
+			to binding: Binding<Value?>,
+		when condition: Bool = true,
+		with animation: Animation? = .none,
+				  flow: ExecutionFlow = .current
+	) -> some View
+		where
+		P: Publisher,
+		P.Output == Value,
+		P.Failure == Never
+	{
+		onReceive(publisher) { value in
+			guard condition else { return }
+			var closure: () -> Void = { binding.wrappedValue = value }
+			if let animation = animation { closure = { withAnimation(animation, closure) } }
+			flow.proceed(with: closure)
+		}
+	}
+
 	// MARK: on (Dis) Appear
 	
 	@ViewBuilder
