@@ -576,7 +576,13 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 	case contentError(String)
 	case verboseError(_ title: String, _ description: String? = .none)
 	case api(_ code: Int, _ message: String)
-	case appLogicError(_ details: String)
+	case appLogicError(
+			statement: String = "We deeply apologize for our developer's mistake, please be so kind to report this issue so we can justify the punishment",
+			reason: String,
+			func: String? = .none,
+			file: String? = .none,
+			line: Int? = .none
+		 )
 	case sign(SignFailureReason)
 	case preconditionValidation(PreconditionValidationReason)
 	
@@ -626,7 +632,12 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 		file: String = #file,
 		line: Int = #line
 	) -> FetchError {
-		.appLogicError("\(expected) expected when fetching \(fetchable) with Harbor.\n\(function) in \(file):\(line)")
+		.appLogicError(
+			reason: "\(expected) not found when fetching \(fetchable) using harbor",
+			func: function,
+			file: file,
+			line: line
+		)
 	}
 	
 	public static func == (lhs: FetchError, rhs: FetchError) -> Bool {
@@ -642,7 +653,7 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 		case (           .deleteError(let l),            .deleteError(let r)): 	return l == r
 		case (          .contentError(let l),           .contentError(let r)): 	return l == r
 		case (.multipleProvidersError(let l), .multipleProvidersError(let r)): 	return l == r
-		case (         .appLogicError(let l),          .appLogicError(let r)): 	return l == r
+		case (.appLogicError(_, let l, _, _, _), .appLogicError(_, let r, _, _, _)): return l == r
 		case (                  .sign(let l),                   .sign(let r)): 	return l == r
 		case (.preconditionValidation(let l), .preconditionValidation(let r)): 	return l == r
 		
@@ -666,7 +677,8 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 		case .providerError(let message, _): 		return message
 		case .multipleProvidersError(let messages): return messages.joined(separator: .comaspace)
 		case .afError(let message, _): 				return message
-		case .appLogicError(let details): 			return details
+		case .appLogicError(let statement, _, _, _, _):
+			return statement
 		case .verboseError(let title, let description):
 			var result = title
 			if let description = description {
@@ -730,7 +742,7 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 		case .contentError(_): 				return false
 		case .verboseError(_, _): 			return true
 		case .api(_, _): 					return false
-		case .appLogicError(_): 			return false
+		case .appLogicError(_, _, _, _, _): return false
 		case .sign(.createUserFirst): 		return false
 		case .sign(.wrongCode): 			return false
 		case .sign(_): 						return true

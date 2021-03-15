@@ -76,12 +76,13 @@ public struct FetchErrorDebugDetails: Codable {
 			}
 		case .api(let code, let message):
 			self.details = ["Code \(code)", message]
-		case .appLogicError(let details):
-			self.details = [details]
-		
+		case let .appLogicError(_, reason, function, file, line):
+			if let value = function { self.details.append(value) }
+			if let value = file     { self.details.append(value) }
+			if let value = line     { self.details.append("line \(value)") }
+			self.underlying = reason
 		case .preconditionValidation(.illegalCharacters(let value)):
 			self.details = [value]
-		
 		case .sign(_): ()
 		case .cancelled: ()
 		case .notFound: ()
