@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-public struct JSONCodingKeys: CodingKey {
+public struct JSONCodingKeys: CodingKey, ExpressibleByStringLiteral {
 	public var stringValue: String
 	
 	public init(stringValue: String) {
@@ -30,6 +30,16 @@ public struct JSONCodingKeys: CodingKey {
 	@inlinable
 	public static func some(_ value: Int) -> Self {
 		.init(intValue: value)
+	}
+	
+	@inlinable
+	public static func some(_ value: CodingKey) -> Self {
+		.init(stringValue: value.stringValue)
+	}
+	
+	@inlinable
+	public init(stringLiteral value: StringLiteralType) {
+		self.init(stringValue: value)
 	}
 }
 
@@ -124,20 +134,36 @@ public extension KeyedEncodingContainerProtocol where Key == JSONCodingKeys {
 			}
 		}
 	}
+	
+	@inlinable
+	mutating func encode <Value, OtherKey> (
+		_ value: Value,
+		forKey key: OtherKey
+	) throws where Value: Encodable, OtherKey: CodingKey {
+		try encode(value, forKey: .some(key))
+	}
+	
+	@inlinable
+	mutating func encode <Value> (
+		_ value: Value,
+		forKey key: String
+	) throws where Value: Encodable {
+		try encode(value, forKey: .some(key))
+	}
 }
 
 public extension KeyedEncodingContainerProtocol {
 	mutating func encode(_ value: Dictionary<String, Any>?, forKey key: Key) throws {
-		if value != nil {
+		if let value = value {
 			var container = self.nestedContainer(keyedBy: JSONCodingKeys.self, forKey: key)
-			try container.encode(value!)
+			try container.encode(value)
 		}
 	}
 	
 	mutating func encode(_ value: Array<Any>?, forKey key: Key) throws {
-		if value != nil {
+		if let value = value {
 			var container = self.nestedUnkeyedContainer(forKey: key)
-			try container.encode(value!)
+			try container.encode(value)
 		}
 	}
 }
