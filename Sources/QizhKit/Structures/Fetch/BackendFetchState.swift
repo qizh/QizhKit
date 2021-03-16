@@ -610,7 +610,7 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 		case illegalCharacters(_ value: String)
 	}
 	
-	public enum SignFailureReason: Equatable, EasyCaseComparable {
+	public enum SignFailureReason: Equatable, EasyCaseComparable, CaseNameProvidable {
 		case userExists(_ loginMethod: ExistingUserLogin)
 		case usernameTaken
 		case wrongCredentials
@@ -621,7 +621,7 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 		case createUserFirst
 		case wrongCode
 		
-		public enum ExistingUserLogin: Equatable, EasyCaseComparable {
+		public enum ExistingUserLogin: Equatable, EasyCaseComparable, CaseNameProvidable {
 			case unknown
 			case google
 			case apple
