@@ -46,44 +46,64 @@ extension DataResponse: FetchResponse {
 }
 
 public struct FetchErrorDebugDetails: Codable {
-	public private(set) var fullname: String = "Unknown"
+	public private(set) var type: String? = .none
 	public private(set) var description: String = "No description"
-	public private(set) var details: [String] = .empty
-	public private(set) var underlying: String? = .none
+	@CodableAnyDictionary public private(set) var details: [String: Any] = .empty
+	@CodableAnyDictionary public private(set) var underlying: [String: Any] = .empty
 	public private(set) var af: AFResponseDebugDetails? = .none
 	
 	public init(of error: FetchError) {
-		self.fullname = error.caseName
+		self.type = caseName(of: error, [.type, .name])
 		self.description = error.localizedDescription
 		
 		switch error {
-		case .afError(_, let response):
+		case .afError(let details, let response):
 			self.af = FetchErrorDebugDetails.AFResponseDebugDetails(of: response)
-		case .providerError(_, let underlyingError):
-			self.underlying = underlyingError.localizedDescription
+			self.details = ["note": details]
+		case .providerError(_, let fetchError as FetchError):
+			self.underlying = FetchErrorDebugDetails(of: fetchError).asDictionary()
+		case .providerError(_, let generalError):
+			self.underlying = [
+				"description": generalError.localizedDescription
+			]
 		case .error(let details):
-			self.details = [details]
+			self.details = ["note": details]
 		case .multipleProvidersError(let details):
-			self.details = details
+			self.details = ["notes": details]
 		case .deleteError(let details):
-			self.details = [details]
+			self.details = ["note": details]
 		case .contentError(let details):
-			self.details = [details]
+			self.details = ["note": details]
 		case .verboseError(let title, let description):
-			self.details = [title]
-			if let description = description {
-				self.details.append(description)
-			}
+			self.details = [
+				"title": title,
+				"description": description as Any
+			]
 		case .api(let code, let message):
-			self.details = ["Code \(code)", message]
-		case let .appLogicError(_, reason, function, file, line):
-			if let value = function { self.details.append(value) }
-			if let value = file     { self.details.append(value) }
-			if let value = line     { self.details.append("line \(value)") }
-			self.underlying = reason
+			self.details = [
+				"code": code,
+				"message": message
+			]
+		case let .appLogicError(statement, reason, function, file, line):
+			self.details = [
+				"statement": statement,
+				"reason": reason,
+				"function": function as Any,
+				"file": file as Any,
+				"line": line as Any
+			]
 		case .preconditionValidation(.illegalCharacters(let value)):
-			self.details = [value]
-		case .sign(_): ()
+			self.details = [
+				"type": "illegalCharacters",
+				"value": value
+			]
+		case .sign(let reason):
+			self.details = [
+				"reason": reason.caseWord
+			]
+			if case .userExists(let loginMethod) = reason {
+				self.details["login method"] = loginMethod.caseWord
+			}
 		case .cancelled: ()
 		case .notFound: ()
 		case .unauthorized: ()
@@ -104,7 +124,7 @@ public struct FetchErrorDebugDetails: Codable {
 //		public let networkDuration: String
 //		public let serializationDuration: String
 		public let result: String?
-		public let underlying: AFErrorDebugDetails?
+		@CodableAnyDictionary public var underlying: [String: Any]
 		public let error: String?
 
 		init(of response: FetchResponse) {
@@ -126,12 +146,17 @@ public struct FetchErrorDebugDetails: Codable {
 //			self.serializationDuration = "\(response.serializationDuration) s"
 			self.result = response.valueDescription
 			
-			if let error = response.underlying?.asAFError {
-				self.underlying = .init(error)
-				self.error = nil
-			} else {
-				self.underlying = nil
-				self.error = response.underlying?.localizedDescription
+			switch response.underlying {
+			case let error as AFError:
+				self.underlying = AFErrorDebugDetails(error).asDictionary()
+				self.error = .none
+			case let error as FetchError:
+				self.underlying = FetchErrorDebugDetails(of: error).asDictionary()
+				self.error = .none
+			case .some(let error):
+				self.error = error.localizedDescription
+			case .none:
+				self.error = .none
 			}
 		}
 		
