@@ -10,11 +10,15 @@ import Foundation
 
 /// Decodes Arrays and filters invalid values if the Decoder is unable to decode the value.
 @propertyWrapper
-public struct LossyArray <Item: Codable>: Codable, EmptyProvidable {
+public struct LossyArray <Item: Codable>: Codable, EmptyProvidable, ExpressibleByArrayLiteral {
 	public var wrappedValue: [Item]
 	
 	public init(wrappedValue: [Item] = .empty) {
 		self.wrappedValue = wrappedValue
+	}
+	
+	public init(arrayLiteral elements: Item...) {
+		self.wrappedValue = elements
 	}
 	
 	public init(from decoder: Decoder) throws {
@@ -36,6 +40,16 @@ public struct LossyArray <Item: Codable>: Codable, EmptyProvidable {
 		}
 		
 		self.wrappedValue = elements
+	}
+	
+	@inlinable
+	public static func some(_ elements: Item...) -> Self {
+		.init(wrappedValue: elements)
+	}
+	
+	@inlinable
+	public static func some(_ elements: [Item]) -> Self {
+		.init(wrappedValue: elements)
 	}
 	
 	public func encode(to encoder: Encoder) throws {
