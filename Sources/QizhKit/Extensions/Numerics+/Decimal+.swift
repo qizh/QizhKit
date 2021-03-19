@@ -9,18 +9,29 @@
 import Foundation
 
 public extension Decimal {
+	@inlinable
 	var negated: Decimal {
-		var copy = self
-		copy.negate()
-		return copy
+		-self
 	}
 	
-	@inlinable var percents: Decimal {
+	@inlinable
+	var percents: Decimal {
 		self / 100
 	}
 	
-	@inlinable var number: NSDecimalNumber {
+	@inlinable
+	var number: NSDecimalNumber {
 		self as NSDecimalNumber
+	}
+	
+	@inlinable
+	var intValue: Int {
+		number.intValue
+	}
+	
+	@inlinable
+	var cents: Int {
+		(self * .hundred).intValue
 	}
 	
 	func format(
