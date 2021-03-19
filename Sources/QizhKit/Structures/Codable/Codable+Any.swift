@@ -105,6 +105,11 @@ public extension UnkeyedDecodingContainer {
 public extension KeyedEncodingContainerProtocol where Key == JSONCodingKeys {
 	mutating func encode(_ value: Dictionary<String, Any>) throws {
 		try value.forEach { (key, value) in
+			try encode(
+				AnyEncodable(value),
+				forKey: JSONCodingKeys(stringValue: key)
+			)
+			/*
 			let key = JSONCodingKeys(stringValue: key)
 			switch value {
 			case let value as Bool:
@@ -130,8 +135,9 @@ public extension KeyedEncodingContainerProtocol where Key == JSONCodingKeys {
 			case Optional<Any>.none:
 				try encodeNil(forKey: key)
 			default:
-				throw EncodingError.invalidValue(value, EncodingError.Context(codingPath: codingPath + [key], debugDescription: "Invalid JSON value"))
+				throw EncodingError.invalidValue(value, EncodingError.Context(codingPath: codingPath + [key], debugDescription: "Invalid JSON value (keyed)"))
 			}
+			*/
 		}
 	}
 	
@@ -171,6 +177,8 @@ public extension KeyedEncodingContainerProtocol {
 public extension UnkeyedEncodingContainer {
 	mutating func encode(_ value: Array<Any>) throws {
 		try value.enumerated().forEach { (index, value) in
+			try encode(AnyEncodable(value))
+			/*
 			switch value {
 			case let value as Bool:
 				try encode(value)
@@ -197,8 +205,9 @@ public extension UnkeyedEncodingContainer {
 			default:
 				//let keys = JSONCodingKeys(intValue: index).map({ [ $0 ] }) ?? []
 				let keys: [JSONCodingKeys] = .just(.some(index))
-				throw EncodingError.invalidValue(value, EncodingError.Context(codingPath: codingPath + keys, debugDescription: "Invalid JSON value"))
+				throw EncodingError.invalidValue(value, EncodingError.Context(codingPath: codingPath + keys, debugDescription: "Invalid unkeyed JSON value"))
 			}
+			*/
 		}
 	}
 	
