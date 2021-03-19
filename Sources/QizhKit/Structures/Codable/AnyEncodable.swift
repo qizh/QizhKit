@@ -42,57 +42,81 @@ extension AnyEncodableProtocol {
 
 		switch wrappedValue {
 		case let number as NSNumber:
+			// print("::encoding as NSNumber: \(number)")
 			try encode(nsnumber: number, into: &container)
 		case is NSNull:
 			try container.encodeNil()
 		case is Void:
 			try container.encodeNil()
 		case let bool as Bool:
+			// print("::encoding as Bool: \(bool)")
 			try container.encode(bool)
 		case let int as Int:
+			// print("::encoding as Int: \(int)")
 			try container.encode(int)
 		case let int8 as Int8:
+			// print("::encoding as Int8: \(int8)")
 			try container.encode(int8)
 		case let int16 as Int16:
+			// print("::encoding as Int16: \(int16)")
 			try container.encode(int16)
 		case let int32 as Int32:
+			// print("::encoding as Int32: \(int32)")
 			try container.encode(int32)
 		case let int64 as Int64:
+			// print("::encoding as Int64: \(int64)")
 			try container.encode(int64)
 		case let uint as UInt:
+			// print("::encoding as UInt: \(uint)")
 			try container.encode(uint)
 		case let uint8 as UInt8:
+			// print("::encoding as UInt8: \(uint8)")
 			try container.encode(uint8)
 		case let uint16 as UInt16:
+			// print("::encoding as UInt16: \(uint16)")
 			try container.encode(uint16)
 		case let uint32 as UInt32:
+			// print("::encoding as UInt32: \(uint32)")
 			try container.encode(uint32)
 		case let uint64 as UInt64:
+			// print("::encoding as UInt64: \(uint64)")
 			try container.encode(uint64)
 		case let float as Float:
+			// print("::encoding as Float: \(float)")
 			try container.encode(float)
 		case let double as Double:
+			// print("::encoding as Double: \(double)")
 			try container.encode(double)
 		case let double as Decimal:
+			// print("::encoding as Decimal: \(double)")
 			try container.encode(double)
 		case let double as CGFloat:
+			// print("::encoding as CGFloat: \(double)")
 			try container.encode(double)
 		case let string as String:
+			// print("::encoding as String: \(string)")
 			try container.encode(string)
 		case let date as Date:
+			// print("::encoding as Date: \(date)")
 			try container.encode(date)
 		case let url as URL:
+			// print("::encoding as URL: \(url)")
 			try container.encode(url)
 		case let array as [Any?]:
+			// print("::encoding as [Any?]: \(array)")
 			try container.encode(array.map { AnyEncodable($0) })
 		case let dictionary as [String: Any?]:
+			// print("::encoding as [String: Any?]: \(dictionary)")
 			try container.encode(dictionary.mapValues { AnyEncodable($0) })
+		case let encodable as Encodable:
+			// print("::encoding as Encodable: \(encodable)")
+			try encodable.encode(to: encoder)
 		default:
 			let context = EncodingError.Context(codingPath: container.codingPath, debugDescription: "AnyEncodable value cannot be encoded")
 			throw EncodingError.invalidValue(wrappedValue, context)
 		}
 	}
-
+	
 	private func encode(nsnumber: NSNumber, into container: inout SingleValueEncodingContainer) throws {
 		switch CFNumberGetType(nsnumber) {
 		case .charType:
