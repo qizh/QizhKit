@@ -126,7 +126,7 @@ public extension Price {
 		}
 		
 		public var decimal: Decimal { value }
-		public var cents: Int { ((.hundred * value) as NSDecimalNumber).intValue }
+		public var cents: Int { value.cents }
 		
 		/// - Warning: Dynamic positioning and autoupdating locale,
 		/// please use `.format(as:position:for:)`
