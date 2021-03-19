@@ -51,6 +51,9 @@ extension AnyEncodableProtocol {
 		case let bool as Bool:
 			// print("::encoding as Bool: \(bool)")
 			try container.encode(bool)
+		case let decimal as Decimal:
+			// print("::encoding as Decimal: \(double)")
+			try container.encode(decimal)
 		case let int as Int:
 			// print("::encoding as Int: \(int)")
 			try container.encode(int)
@@ -86,9 +89,6 @@ extension AnyEncodableProtocol {
 			try container.encode(float)
 		case let double as Double:
 			// print("::encoding as Double: \(double)")
-			try container.encode(double)
-		case let double as Decimal:
-			// print("::encoding as Decimal: \(double)")
 			try container.encode(double)
 		case let double as CGFloat:
 			// print("::encoding as CGFloat: \(double)")
