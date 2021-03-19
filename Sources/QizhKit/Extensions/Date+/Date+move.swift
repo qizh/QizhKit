@@ -56,5 +56,9 @@ public extension Date {
 	@inlinable mutating func set(time: TimeInterval) {
 		self = dayStart + time.withinDay
 	}
-
+	
+	/// Time passed since midnight
+	var time: TimeInterval {
+		self.dayStart.distance(to: self)
+	}
 }
