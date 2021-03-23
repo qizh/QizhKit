@@ -26,6 +26,8 @@ public struct AnyEncodable: Encodable {
 	public static func some<T>(_ value: T?) -> Self {
 		.init(value)
 	}
+	
+	public static let skipNilValues = CodingUserInfoKey(rawValue: "skip nil encoding")!
 }
 
 @usableFromInline
@@ -39,15 +41,19 @@ extension AnyEncodable: AnyEncodableProtocol {}
 extension AnyEncodableProtocol {
 	public func encode(to encoder: Encoder) throws {
 		var container = encoder.singleValueContainer()
-
+		
 		switch wrappedValue {
 		case let number as NSNumber:
 			// print("::encoding as NSNumber: \(number)")
 			try encode(nsnumber: number, into: &container)
 		case is NSNull:
-			try container.encodeNil()
+			if encoder.userInfo[AnyEncodable.skipNilValues] as? Bool != true {
+				try container.encodeNil()
+			}
 		case is Void:
-			try container.encodeNil()
+			if encoder.userInfo[AnyEncodable.skipNilValues] as? Bool != true {
+				try container.encodeNil()
+			}
 		case let bool as Bool:
 			// print("::encoding as Bool: \(bool)")
 			try container.encode(bool)
@@ -111,6 +117,15 @@ extension AnyEncodableProtocol {
 		case let encodable as Encodable:
 			// print("::encoding as Encodable: \(encodable)")
 			try encodable.encode(to: encoder)
+		case let optional as Optional<Any>:
+			switch optional {
+			case .none:
+				if encoder.userInfo[AnyEncodable.skipNilValues] as? Bool != true {
+					try container.encodeNil()
+				}
+			case .some(let value):
+				try AnyEncodable(value).encode(to: encoder)
+			}
 		default:
 			let context = EncodingError.Context(codingPath: container.codingPath, debugDescription: "AnyEncodable value cannot be encoded")
 			throw EncodingError.invalidValue(wrappedValue, context)
