@@ -27,6 +27,7 @@ public struct EncodeString <Value: Encodable>: Encodable {
 		jsonEncoder.dateEncodingStrategy = .formatted(.airtable)
 		// jsonEncoder.userInfo[AnyEncodable.skipNilValues] = true
 		
+		var container = encoder.singleValueContainer()
 		if let data = try? jsonEncoder.encode(wrappedValue),
 		   let string = String(data: data, encoding: .utf8)
 		{
@@ -34,18 +35,17 @@ public struct EncodeString <Value: Encodable>: Encodable {
 			
 			if string == "null" {
 				// print(.tab + "> encoding nil")
-				/*
-				var container = encoder.singleValueContainer()
 				try container.encodeNil()
-				*/
 			} else {
 				let output = string
 					.deleting(prefix: .quot)
 					.deleting(suffix: .quot)
 				
 				// print(.tab + "> encoding > \(output)")
-				try output.encode(to: encoder)
+				try container.encode(output)
 			}
+		} else {
+			try container.encodeNil()
 		}
 	}
 }
