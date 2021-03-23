@@ -21,6 +21,7 @@ extension NumberFormatter {
 		formatter.numberStyle = .percent
 		formatter.locale = locale
 		formatter.formattingContext = context
+		formatter.maximumFractionDigits = 2
 		return formatter
 	}
 	
