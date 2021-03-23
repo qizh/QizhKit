@@ -16,7 +16,7 @@ public struct EncodeString <Value: Encodable>: Encodable {
 	public init(wrappedValue: Value) {
 		self.wrappedValue = wrappedValue
 	}
-		
+	
 	@inlinable
 	public static func some(_ value: Value) -> Self {
 		.init(wrappedValue: value)
@@ -25,13 +25,27 @@ public struct EncodeString <Value: Encodable>: Encodable {
 	public func encode(to encoder: Encoder) throws {
 		let jsonEncoder = JSONEncoder()
 		jsonEncoder.dateEncodingStrategy = .formatted(.airtable)
+		// jsonEncoder.userInfo[AnyEncodable.skipNilValues] = true
 		
-		let data = try jsonEncoder.encode(wrappedValue)
-		
-		let string = String(data: data, encoding: .utf8)?
-			.deleting(prefix: .quot)
-			.deleting(suffix: .quot)
-		
-		try string.encode(to: encoder)
+		if let data = try? jsonEncoder.encode(wrappedValue),
+		   let string = String(data: data, encoding: .utf8)
+		{
+			// print("::encodeString > raw > \(string)")
+			
+			if string == "null" {
+				// print(.tab + "> encoding nil")
+				/*
+				var container = encoder.singleValueContainer()
+				try container.encodeNil()
+				*/
+			} else {
+				let output = string
+					.deleting(prefix: .quot)
+					.deleting(suffix: .quot)
+				
+				// print(.tab + "> encoding > \(output)")
+				try output.encode(to: encoder)
+			}
+		}
 	}
 }
