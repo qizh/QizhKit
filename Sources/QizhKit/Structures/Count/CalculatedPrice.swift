@@ -18,7 +18,7 @@ public protocol PriceCalculationProvider {
 	var flatDiscount: Price.Output { get }
 	var service:  Price.Output   { get }
 	var total: 	  Price.Output   { get }
-	func total(rounding scale: Int) -> Price.Output
+	var roundedTotal: Price.Output { get }
 	var price:    Price.Provider { get }
 }
 
@@ -62,8 +62,8 @@ public extension Price {
 		public var flatDiscount: Output { output(price.discount.flat, "Discount value") }
 		public var service: 	 Output { output(.zero, "Service Fee") }
 		public var total: 		 Output { all.discounted.taxed }
-		public func total(rounding scale: Int) -> Output {
-			all.discounted(rounding: scale).taxed(rounding: scale)
+		public var roundedTotal: Output {
+			all.roundedDiscounted.roundedTaxed
 		}
 		
 		public static func == (l: Price.CalculatedItem, r: Price.CalculatedItem) -> Bool {
@@ -99,7 +99,7 @@ public extension Price {
 		public var flatDiscount: Output  { zero }
 		public var service: 	 Output  { value }
 		public var total: 		 Output  { value }
-		public func total(rounding scale: Int) -> Output { value }
+		public var roundedTotal: Output  { value }
 	}
 }
 
@@ -195,10 +195,12 @@ public extension Price {
 		private func calculate(
 			_ value: Decimal,
 			_ name: String,
-			rounding scale: Int? = .none
+			rounded: Bool = false
 		) -> Output {
 			Output(
-				value: scale.map { value.rounded($0, .bankers) } ?? value,
+				value: rounded
+					? value.rounded(details.currency.roundingScale, .bankers)
+					: value,
 				details: details,
 				amount: amount,
 				name: name
@@ -212,11 +214,11 @@ public extension Price {
 			)
 		}
 		
-		public func discount(rounding scale: Int) -> Output {
+		public var roundedDiscount: Output {
 			calculate(
 				value * details.discount.percent.percents + details.discount.flat,
 				"Discount",
-				rounding: scale
+				rounded: true
 			)
 		}
 		
@@ -224,8 +226,8 @@ public extension Price {
 			calculate(value - discount.value, "Discounted")
 		}
 		
-		public func discounted(rounding scale: Int) -> Output {
-			calculate(value - discount(rounding: scale).value, "Discounted")
+		public var roundedDiscounted: Output {
+			calculate(value - roundedDiscount.value, "Discounted")
 		}
 		
 		public var taxes: [Output] {
@@ -251,24 +253,24 @@ public extension Price {
 			)
 		}
 		
-		public func taxes(rounding scale: Int) -> [Output] {
+		public var roundedTaxes: [Output] {
 			details.taxes.map { tax in
 				switch tax {
 				case let .flat(amount, name):
-					return calculate(amount, name, rounding: scale)
+					return calculate(amount, name, rounded: true)
 				case let .percent(percent, name):
-					return calculate(value * percent.percents, name, rounding: scale)
+					return calculate(value * percent.percents, name, rounded: true)
 				}
 			}
 		}
 		
-		public func tax(rounding scale: Int) -> Output {
-			taxes(rounding: scale).reduce(.zero(details), +)
+		public var roundedTax: Output {
+			roundedTaxes.reduce(.zero(details), +)
 		}
 		
-		public func taxed(rounding scale: Int) -> Output {
+		public var roundedTaxed: Output {
 			calculate(
-				taxes(rounding: scale)
+				roundedTaxes
 					.map(\.value)
 					.reduce(value, +),
 				"Taxed"
@@ -371,11 +373,7 @@ public extension Price {
 		public var flatDiscount: Output { items.map(\.flatDiscount).reduce(zero, +) }
 		public var service: Output      { items.map(\.service)     .reduce(zero, +) }
 		public var total: Output        { items.map(\.total)       .reduce(zero, +) }
-		public func total(rounding scale: Int) -> Output {
-			items
-				.map { $0.total(rounding: scale) }
-				.reduce(zero, +)
-		}
+		public var roundedTotal: Output { items.map(\.roundedTotal).reduce(zero, +) }
 		
 		public static let empty: CalculatedSum = .init()
 	}
