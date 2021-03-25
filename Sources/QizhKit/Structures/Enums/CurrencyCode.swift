@@ -23,7 +23,7 @@ public enum CurrencyCode:
 	case uah = "UAH"
 	case thb = "THB"
 	
-	private static var symbols: [String: String] = .init()
+	private static var symbols: [String: String] = .empty
 	public static func symbol(for code: String) -> String? {
 		guard code.count == 3 else { return nil }
 		if let cached = symbols[code] {
@@ -92,6 +92,13 @@ public enum CurrencyCode:
 			return formatter
 		}
 	}
+	
+	fileprivate static var roundingScales: [String: Int] = .empty
+	public static var isoFormatter: NumberFormatter = {
+		let formatter = NumberFormatter()
+		formatter.numberStyle = .currencyISOCode
+		return formatter
+	}()
 }
 
 public typealias AnyCurrencyCode = ExtraCase<CurrencyCode>
@@ -155,5 +162,17 @@ public extension AnyCurrencyCode {
 	
 	@inlinable var symbol: String? {
 		CurrencyCode.symbol(for: rawValue)
+	}
+	
+	var roundingScale: Int {
+		let code = self.code.uppercased()
+		if let scale = CurrencyCode.roundingScales[code] {
+			return scale
+		}
+		let formatter = CurrencyCode.isoFormatter
+		formatter.currencyCode = code
+		let scale = formatter.maximumFractionDigits
+		CurrencyCode.roundingScales[code] = scale
+		return scale
 	}
 }
