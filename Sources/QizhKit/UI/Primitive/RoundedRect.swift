@@ -55,11 +55,13 @@ public extension UIRectCorner {
 	@inlinable static var none: UIRectCorner   { [] }
 }
 
-public struct RoundedCornersRectangle: Shape {
+public struct RoundedCornersRectangle: InsettableShape {
 	public var topLeft: CGFloat
 	public var topRight: CGFloat
 	public var bottomLeft: CGFloat
 	public var bottomRight: CGFloat
+	
+	public var insetAmount: CGFloat
 	
 	public var animatableData:
 		AnimatablePair<
@@ -97,6 +99,8 @@ public struct RoundedCornersRectangle: Shape {
 		self.topRight = topRight
 		self.bottomLeft = bottomLeft
 		self.bottomRight = bottomRight
+		
+		self.insetAmount = .zero
 	}
 	
 	public init(
@@ -107,6 +111,8 @@ public struct RoundedCornersRectangle: Shape {
 		self.topRight = corners.contains(.topRight) ? radius : .zero
 		self.bottomLeft = corners.contains(.bottomLeft) ? radius : .zero
 		self.bottomRight = corners.contains(.bottomRight) ? radius : .zero
+		
+		self.insetAmount = .zero
 	}
 	
 	public func path(in rect: CGRect) -> Path {
@@ -122,38 +128,38 @@ public struct RoundedCornersRectangle: Shape {
 		let bl = min(maxRadius, bottomLeft)
 		let br = min(maxRadius, bottomRight)
 
-		path.move(to: CGPoint(x: tl, y: 0))
+		path.move(to: CGPoint(x: tl + insetAmount, y: insetAmount))
 		
-		path.addLine(to: CGPoint(x: width - tr, y: 0))
+		path.addLine(to: CGPoint(x: width - tr - insetAmount, y: insetAmount))
 		path.addArc(
-			center: CGPoint(x: width - tr, y: tr),
+			center: CGPoint(x: width - tr - insetAmount, y: tr + insetAmount),
 			radius: tr,
 			startAngle: .degrees(-90),
 			endAngle: .degrees(0),
 			clockwise: false
 		)
 
-		path.addLine(to: CGPoint(x: width, y: height - br))
+		path.addLine(to: CGPoint(x: width - insetAmount, y: height - br - insetAmount))
 		path.addArc(
-			center: CGPoint(x: width - br, y: height - br),
+			center: CGPoint(x: width - br - insetAmount, y: height - br - insetAmount),
 			radius: br,
 			startAngle: .degrees(0),
 			endAngle: .degrees(90),
 			clockwise: false
 		)
 
-		path.addLine(to: CGPoint(x: bl, y: height))
+		path.addLine(to: CGPoint(x: bl + insetAmount, y: height - insetAmount))
 		path.addArc(
-			center: CGPoint(x: bl, y: height - bl),
+			center: CGPoint(x: bl + insetAmount, y: height - bl - insetAmount),
 			radius: bl,
 			startAngle: .degrees(90),
 			endAngle: .degrees(180),
 			clockwise: false
 		)
 
-		path.addLine(to: CGPoint(x: 0, y: tl))
+		path.addLine(to: CGPoint(x: insetAmount, y: tl + insetAmount))
 		path.addArc(
-			center: CGPoint(x: tl, y: tl),
+			center: CGPoint(x: tl + insetAmount, y: tl + insetAmount),
 			radius: tl,
 			startAngle: .degrees(180),
 			endAngle: .degrees(270),
@@ -161,5 +167,11 @@ public struct RoundedCornersRectangle: Shape {
 		)
 
 		return path
+	}
+	
+	public func inset(by amount: CGFloat) -> some InsettableShape {
+		var copy = self
+		copy.insetAmount = amount
+		return copy
 	}
 }
