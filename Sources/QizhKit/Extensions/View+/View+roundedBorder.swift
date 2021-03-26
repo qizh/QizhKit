@@ -14,11 +14,13 @@ public extension View {
 		_ corners: UIRectCorner = .allCorners,
 		border color: Color,
 		weight: CGFloat = .one,
+		position: LinePosition = .center,
 		tap define: Bool = false
 	) -> some View {
 		clipShape(RoundedCornersRectangle(radius, corners))
 		.overlay(
 			RoundedCornersRectangle(radius, corners)
+				.inset(by: position.inset(for: weight))
 				.stroke(color, lineWidth: weight)
 		)
 		.apply(when: define) {
