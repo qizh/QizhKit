@@ -32,3 +32,8 @@ public extension Binding where Value: AdditiveArithmetic {
 public extension Binding where Value: TypedOptionalConvertible {
 	static var none: Self { .constant(.none) }
 }
+
+public extension Binding where Value == Date {
+	static var now: Self { .constant(.now) }
+	static var reference0: Self { .constant(.reference0) }
+}
