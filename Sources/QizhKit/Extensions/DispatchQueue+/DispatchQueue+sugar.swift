@@ -74,6 +74,22 @@ public func executing(
 	{ withAnimation(animation, work) }
 }
 
+// MARK: Assign
+
+/// Assign a value on the Main Queue
+@inlinable
+public func executeAssign <T> (_ value: T, to binding: Binding<T>) {
+	execute { binding.wrappedValue = value }
+}
+
+/// Will only assign a different value on the Main Queue
+@inlinable
+public func executeUpdate <T: Equatable> (_ binding: Binding<T>, with value: T) {
+	if binding.wrappedValue != value {
+		executeAssign(value, to: binding)
+	}
+}
+
 // MARK: Flow
 
 public enum ExecutionFlow {
