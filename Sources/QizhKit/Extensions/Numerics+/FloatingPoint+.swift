@@ -35,4 +35,11 @@ public extension BinaryFloatingPoint {
 public extension FloatingPoint {
 	@inlinable var rounded: Self { rounded() }
 	@inlinable var isRounded: Bool { self == rounded }
+	
+	/// Rounds the double to decimal places value
+	@inlinable
+	func rounded(dp: UInt) -> Self {
+		let divisor: Self = .ten ↗︎ dp
+		return (self * divisor).rounded() / divisor
+	}
 }
