@@ -27,7 +27,7 @@ public extension Binding where Value == Date {
 		}
 	}
 	
-	static func asCombination(
+	static func combine(
 		date: Binding<Date>,
 		time: Binding<TimeInterval>
 	) -> Binding<Date> {
