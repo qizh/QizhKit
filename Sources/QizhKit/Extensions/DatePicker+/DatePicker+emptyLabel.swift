@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+// MARK: Empty
+
 public extension DatePicker where Label == EmptyView {
 	init(
 		selection: Binding<Date>,
@@ -56,5 +58,16 @@ public extension DatePicker where Label == EmptyView {
 			displayedComponents: displayedComponents,
 			label: EmptyView.init
 		)
+	}
+}
+
+// MARK: Both
+
+public extension DatePickerComponents {
+	static let both: Self = [.date, .hourAndMinute]
+	
+	@inlinable
+	var haveBoth: Bool {
+		contains(.both)
 	}
 }
