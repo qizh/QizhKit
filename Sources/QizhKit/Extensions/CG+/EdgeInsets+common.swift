@@ -21,13 +21,46 @@ public extension Optional where Wrapped == EdgeInsets {
 	var trailing: CGFloat { self?.trailing ?? .zero }
 }
 
-/*
-extension EdgeInsets: WithUnknown {
-	public static let unknown = EdgeInsets(
-		top: .zero,
-		leading: .greatestFiniteMagnitude,
-		bottom: .greatestFiniteMagnitude,
-		trailing: .zero
-	)
+public extension UIEdgeInsets {
+	func asEdgeInsets() -> EdgeInsets {
+		.init(
+			top: top,
+			leading: left,
+			bottom: bottom,
+			trailing: right
+		)
+	}
 }
-*/
+
+public extension DefaultStringInterpolation {
+	mutating func appendInterpolation(
+		_ insets: EdgeInsets,
+		f: Int = .zero
+	) {
+		appendInterpolation(
+			  insets.top.toString(fractionDigits: f)
+			+ ":" + insets.bottom.toString(fractionDigits: f)
+			+ "-<" + insets.leading.toString(fractionDigits: f)
+			+ ":" + insets.trailing.toString(fractionDigits: f) + ">"
+		)
+	}
+}
+
+public extension EdgeInsets {
+	func rounded(dp: UInt) -> EdgeInsets {
+		.init(
+			     top: top     .rounded(dp: dp),
+			 leading: leading .rounded(dp: dp),
+			  bottom: bottom  .rounded(dp: dp),
+			trailing: trailing.rounded(dp: dp)
+		)
+	}
+}
+
+public extension EdgeInsets {
+	/// Compares the rounded values
+	@inlinable
+	func equals(_ other: Self, precision dp: UInt) -> Bool {
+		self.rounded(dp: dp) == other.rounded(dp: dp)
+	}
+}
