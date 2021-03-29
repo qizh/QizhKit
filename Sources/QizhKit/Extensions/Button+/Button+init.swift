@@ -213,6 +213,14 @@ public extension View {
 	}
 	
 	@inlinable
+	func button(
+		animation: Animation,
+		action: @escaping () -> Void
+	) -> Button<Self> {
+		Button(action: animating(action, with: animation), label: selfmade)
+	}
+	
+	@inlinable
 	func button<Value, Root> (
 		assigning value: Value,
 			 to keyPath: ReferenceWritableKeyPath<Root, Value>,
