@@ -394,11 +394,26 @@ public extension View {
 	  assign     value: @autoclosure @escaping () -> Value,
 		  to    target: Binding<Value>,
 		with animation: Animation? = .none,
-			      flow: ExecutionFlow = .current
+				  flow: ExecutionFlow = .current
 	) -> some View {
 		onAppear {
 			guard condition else { return }
 			var command: () -> Void = { target.wrappedValue = value() }
+			if let animation = animation { command = { withAnimation(animation, command) } }
+			flow.proceed(with: command)
+		}
+	}
+	
+	func onAppear <Value> (
+		when condition: Bool = true,
+	  assign     value: @autoclosure @escaping () -> Value?,
+		  to    target: Binding<Value>,
+		with animation: Animation? = .none,
+				  flow: ExecutionFlow = .current
+	) -> some View {
+		onAppear {
+			guard condition else { return }
+			var command: () -> Void = { if let value = value() { target.wrappedValue = value } }
 			if let animation = animation { command = { withAnimation(animation, command) } }
 			flow.proceed(with: command)
 		}
