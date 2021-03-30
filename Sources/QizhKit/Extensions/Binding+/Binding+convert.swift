@@ -48,3 +48,13 @@ public extension Binding where Value == Date {
 		}
 	}
 }
+
+public extension Binding where Value == String {
+	func asOptional() -> Binding<String?> {
+		Binding<String?> {
+			wrappedValue.nonEmpty
+		} set: { value in
+			wrappedValue = value.orEmpty
+		}
+	}
+}
