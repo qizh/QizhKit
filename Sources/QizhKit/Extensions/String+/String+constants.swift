@@ -44,6 +44,7 @@ public extension Character {
 	static let leftParenthesisChar: Character  = "("
 	static let rightParenthesisChar: Character = ")"
 	
+	/// ⚡️
 	static let boltChar: Character         = "⚡️"
 }
 
