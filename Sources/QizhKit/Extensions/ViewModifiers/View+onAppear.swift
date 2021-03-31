@@ -57,6 +57,21 @@ public extension View {
 	}
 	
 	@ViewBuilder
+	func apply <Transformed: View, T1, T2> (
+		mapping optional1: T1?,
+		    and optional2: T2?,
+		@ViewBuilder _ transform: (Self, T1, T2) -> Transformed
+	) -> some View {
+		if let value1 = optional1,
+		   let value2 = optional2
+		{
+			transform(self, value1, value2)
+		} else {
+			self
+		}
+	}
+	
+	@ViewBuilder
 	func apply <Transformed: View> (
 		when condition: Bool,
 		@ViewBuilder _ transform: (Self) -> Transformed
