@@ -24,7 +24,7 @@ public extension View {
 	@available(*, deprecated, renamed: "background(_:_:)")
 	@inlinable
 	func background <Background: View> (
-		aligned alignment: Alignment = .center,
+		aligned alignment: Alignment,
 		@ViewBuilder _ content: () -> Background
 	) -> some View {
 		background(content(), alignment: alignment)
@@ -33,7 +33,7 @@ public extension View {
 	@available(*, deprecated, renamed: "overlay(_:_:)")
 	@inlinable
 	func overlay <Overlay: View> (
-		aligned alignment: Alignment = .center,
+		aligned alignment: Alignment,
 		@ViewBuilder _ content: () -> Overlay
 	) -> some View {
 		overlay(content(), alignment: alignment)
