@@ -6,10 +6,15 @@
 //  Copyright © 2020 Serhii Shevchenko. All rights reserved.
 //
 
-import Foundation
+import SwiftUI
 
 public extension Bool {
 	var sign: Character {
 		self ? .boltChar : .xMarkChar
+	}
+	
+	var imageCircle: some View {
+		Image(systemName: self ? "checkmark.circle" : "xmark.circle")
+			.foregroundColor(self ? .green : .red)
 	}
 }
