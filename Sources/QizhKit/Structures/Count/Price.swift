@@ -261,7 +261,13 @@ public extension Price {
 		
 		public var currency: String {
 			if price.isFree, let free = free { return free }
-			return price.currency.string(for: price.value, position: context, in: locale)
+			return price.currency
+				.string(
+					for: price.value,
+					position: context,
+					in: locale,
+					alwaysShowFraction: false
+				)
 		}
 		
 		public func separated(by separator: UnitSeparator) -> String {

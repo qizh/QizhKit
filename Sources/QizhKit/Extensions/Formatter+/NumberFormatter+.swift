@@ -40,13 +40,16 @@ extension NumberFormatter {
 	public static func currency(
 		_ code: String,
 		position context: Formatter.Context,
-		for locale: Locale
+		for locale: Locale,
+		alwaysShowFraction: Bool
 	) -> NumberFormatter {
 		let formatter = NumberFormatter()
 		formatter.numberStyle = .currency
 		formatter.currencyCode = code
 		formatter.locale = locale
-		formatter.minimumFractionDigits = 0
+		if not(alwaysShowFraction) {
+			formatter.minimumFractionDigits = 0
+		}
 		formatter.formattingContext = context
 		return formatter
 	}

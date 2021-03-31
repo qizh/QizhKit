@@ -44,8 +44,14 @@ public extension Decimal {
 			return NumberFormatter.decimal(position: context, for: locale)
 				.string(from: self)
 				.or("\(self)")
-		case .currency(let code):
-			return NumberFormatter.currency(code, position: context, for: locale)
+		case let .currency(code, alwaysShowFraction):
+			return NumberFormatter
+				.currency(
+					code,
+					position: context,
+					for: locale,
+					alwaysShowFraction: alwaysShowFraction
+				)
 				.string(from: self)
 				.or(format(as: .string, position: context, for: locale) + .space + code.uppercased())
 		case .percent:
@@ -57,7 +63,7 @@ public extension Decimal {
 	
 	enum FormatType {
 		case string
-		case currency(_ code: String)
+		case currency(_ code: String, alwaysShowFraction: Bool)
 		case percent
 	}
 }

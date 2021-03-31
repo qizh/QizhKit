@@ -63,12 +63,14 @@ public enum CurrencyCode:
 	
 	@inlinable public func formatter(
 		position context: Formatter.Context,
-		for locale: Locale
+		for locale: Locale,
+		alwaysShowFraction: Bool
 	) -> NumberFormatter {
 		CurrencyCode.formatter(
 			currency: rawValue,
 			position: context,
-			for: locale
+			for: locale,
+			alwaysShowFraction: alwaysShowFraction
 		)
 	}
 	
@@ -76,7 +78,8 @@ public enum CurrencyCode:
 	public static func formatter(
 		currency code: String,
 		position context: Formatter.Context,
-		for locale: Locale
+		for locale: Locale,
+		alwaysShowFraction: Bool
 	) -> NumberFormatter {
 		let key: String = code + locale.identifier + context.stringValue
 		if let formatter = CurrencyCode.formatters[key] {
@@ -86,7 +89,8 @@ public enum CurrencyCode:
 				.currency(
 					code,
 					position: context,
-					for: locale
+					for: locale,
+					alwaysShowFraction: alwaysShowFraction
 				)
 			CurrencyCode.formatters[key] = formatter
 			return formatter
@@ -114,23 +118,27 @@ public extension AnyCurrencyCode {
 	@inlinable var code: String { rawValue }
 	func formatter(
 		position context: Formatter.Context,
-		for locale: Locale
+		for locale: Locale,
+		alwaysShowFraction: Bool
 	) -> NumberFormatter {
 		CurrencyCode.formatter(
 			currency: code,
 			position: context,
-			for: locale
+			for: locale,
+			alwaysShowFraction: alwaysShowFraction
 		)
 	}
 	
 	@inlinable func string(
 		for price: NSNumber,
 		position context: Formatter.Context,
-		in locale: Locale
+		in locale: Locale,
+		alwaysShowFraction: Bool
 	) -> String {
 		formatter(
 			position: context,
-			for: locale
+			for: locale,
+			alwaysShowFraction: alwaysShowFraction
 		)
 		.string(from: price)
 		.or("\(price) \(code)")
@@ -139,24 +147,28 @@ public extension AnyCurrencyCode {
 	@inlinable func string(
 		for price: Decimal,
 		position context: Formatter.Context,
-		in locale: Locale
+		in locale: Locale,
+		alwaysShowFraction: Bool
 	) -> String {
 		string(
 			for: price.number,
 			position: context,
-			in: locale
+			in: locale,
+			alwaysShowFraction: alwaysShowFraction
 		)
 	}
 	
 	@inlinable func string(
 		for price: Double,
 		position context: Formatter.Context,
-		in locale: Locale
+		in locale: Locale,
+		alwaysShowFraction: Bool
 	) -> String {
 		string(
 			for: NSNumber(value: price),
 			position: context,
-			in: locale
+			in: locale,
+			alwaysShowFraction: alwaysShowFraction
 		)
 	}
 	

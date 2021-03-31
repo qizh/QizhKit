@@ -148,13 +148,13 @@ public extension Price {
 		/// - Warning: Dynamic positioning and autoupdating locale,
 		/// please use `.format(as:position:for:)`
 		@inlinable public var formattedCurrency: String {
-			format(as: .currency, position: .dynamic, for: .autoupdatingCurrent)
+			format(as: .currency(alwaysShowFraction: false), position: .dynamic, for: .autoupdatingCurrent)
 		}
 		
 		/// - Warning: Dynamic positioning and autoupdating locale,
 		/// please use `.format(as:position:for:)`
 		@inlinable public var formattedCurrencyOrEmpty: String {
-			format(as: .currencyOrEmpty, position: .dynamic, for: .autoupdatingCurrent)
+			format(as: .currency(free: .empty, alwaysShowFraction: false), position: .dynamic, for: .autoupdatingCurrent)
 		}
 		
 		public func format(
@@ -163,17 +163,17 @@ public extension Price {
 			for locale: Locale
 		) -> String {
 			switch formatType {
-			case .currency(let free) where free.isSet:
+			case let .currency(free, alwaysShowFraction) where free.isSet:
 				return
 					(value.nonZero?.format(
-						as: .currency(details.currency.code),
+						as: .currency(details.currency.code, alwaysShowFraction: alwaysShowFraction),
 						position: context,
 						for: locale
 					))
 					.or(free.forceUnwrap(because: "switch case condition"))
-			case .currency:
+			case let .currency(_, alwaysShowFraction):
 				return value.format(
-					as: .currency(details.currency.code),
+					as: .currency(details.currency.code, alwaysShowFraction: alwaysShowFraction),
 					position: context,
 					for: locale
 				)
@@ -302,10 +302,7 @@ public extension Price {
 		public enum FormatType {
 			case string
 			case percent
-			case currency(free: String? = nil)
-			
-			public static let currency: Self = .currency(free: nil)
-			public static let currencyOrEmpty: Self = .currency(free: .empty)
+			case currency(free: String? = nil, alwaysShowFraction: Bool)
 		}
 		
 		public static func + (l: Output, r: Output) -> Output {
