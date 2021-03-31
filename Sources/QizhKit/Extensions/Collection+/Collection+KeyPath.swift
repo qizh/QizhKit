@@ -115,6 +115,17 @@ public extension Collection where Element: EasyComparable {
 	}
 }
 
+// MARK: Last
+
+public extension BidirectionalCollection {
+	@inlinable func last <Value: EasyComparable> (
+		where keyPath: KeyPath<Element, Value>,
+		is value: Value.Other
+	) -> Element? {
+		last(where: { $0[keyPath: keyPath].is(value) })
+	}
+}
+
 // MARK: > ID
 
 public extension Collection where Element: Identifiable {
