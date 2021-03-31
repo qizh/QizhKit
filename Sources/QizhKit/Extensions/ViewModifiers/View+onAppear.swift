@@ -142,6 +142,16 @@ public extension View {
 	}
 }
 
+public struct Views {
+	@inlinable
+	public static func produce <T, Output: View> (
+		using value: T,
+		@ViewBuilder in producer: (T) -> Output
+	) -> Output {
+		producer(value)
+	}
+}
+
 public struct OnAppearChange<Other: View>: ViewModifier {
 	private let other: Other
 	
