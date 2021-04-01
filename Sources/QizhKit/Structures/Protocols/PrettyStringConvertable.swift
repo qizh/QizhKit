@@ -15,6 +15,7 @@ public protocol PrettyStringConvertable:
 { }
 
 public extension PrettyStringConvertable {
+	/// JSON representation of the model
 	var description: String {
 		let encoder = JSONEncoder()
 		encoder.outputFormatting = .prettyPrinted
@@ -28,6 +29,7 @@ public extension PrettyStringConvertable {
 		}
 	}
 	
+	/// Model entity name and id
 	var debugDescription: String {
 		caseName(of: Self.self, .name) + debugIdentifier()
 	}
