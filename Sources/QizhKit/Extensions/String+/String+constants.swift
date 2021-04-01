@@ -79,6 +79,7 @@ public extension String {
 	static let dot          = String(Character.dotChar)
 	static let coma         = String(Character.comaChar)
 	static let tridot       = String(Character.tridotChar)
+	/// :
 	static let colon        = String(Character.colonChar)
 	
 	static let leftParenthesis  = String(Character.leftParenthesisChar)
