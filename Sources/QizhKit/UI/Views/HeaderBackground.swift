@@ -50,6 +50,13 @@ public struct ShowHeaderBackgroundViewModifier: ViewModifier {
 			content
 				.zIndex(20)
 			
+			GeometryReader { geometry -> Color in
+				executeUpdate($topSafeInset, with: geometry.safeAreaInsets.top)
+				return Color.clear
+			}
+			.zIndex(10)
+			
+			/*
 			if topSafeInset.isZero || measureType > .single {
 				GeometryReader { geometry in
 					Color.almostClear
@@ -84,6 +91,7 @@ public struct ShowHeaderBackgroundViewModifier: ViewModifier {
 				}
 				.zIndex(10)
 			}
+			*/
 			
 			BlurredBackgroundView(style: self.style)
 				.height(show ? height + safeFrameInsets.top : 0)
@@ -134,12 +142,14 @@ public struct ShowHeaderBackgroundViewModifier: ViewModifier {
 		case continuous
 	}
 	
+	/*
 	private struct SafeInsetsTopKey: PreferenceKey {
 		public static var defaultValue: CGFloat = .zero
 		public static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
 			value = nextValue()
 		}
 	}
+	*/
 	
 	/*
 	private struct SafeInsetsKey: PreferenceKey {
