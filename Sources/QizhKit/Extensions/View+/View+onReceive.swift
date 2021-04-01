@@ -526,6 +526,20 @@ public extension View {
 			flow.proceed(with: exe)
 		}
 	}
+	
+	// MARK: Print
+	
+	func onAppear(print message: String) -> some View {
+		onAppear(perform: {
+			print(message)
+		})
+	}
+	
+	func onDisappear(print message: String) -> some View {
+		onDisappear(perform: {
+			print(message)
+		})
+	}
 }
 
 /*
