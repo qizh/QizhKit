@@ -29,7 +29,7 @@ public extension UInt {
 	var s: String {
 		switch self {
 		case .max: 	return ".max"
-		default: 	return "\(self)"
+		default: 	return String(self)
 		}
 	}
 }
