@@ -97,3 +97,32 @@ public extension View {
 		}
     }
 }
+
+// MARK: Combine Transitions
+
+public extension View {
+	@ViewBuilder
+	func transition(_ transitions: AnyTransition...) -> some View {
+		if let combination = transitions.combined() {
+			self.transition(combination)
+		} else {
+			self
+		}
+	}
+}
+
+public extension AnyTransition {
+	static func + (l: AnyTransition, r: AnyTransition) -> AnyTransition {
+		l.combined(with: r)
+	}
+}
+
+public extension RangeReplaceableCollection where Element == AnyTransition {
+	func combined() -> AnyTransition? {
+		if let base = first {
+			return self.dropFirst().reduce(base, +)
+		} else {
+			return .none
+		}
+	}
+}
