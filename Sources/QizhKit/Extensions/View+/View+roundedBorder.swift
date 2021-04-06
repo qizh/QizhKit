@@ -9,7 +9,8 @@
 import SwiftUI
 
 public extension View {
-	@inlinable func round(
+	@inlinable
+	func round(
 		_ radius: CGFloat,
 		_ corners: UIRectCorner = .allCorners,
 		border color: Color,
@@ -25,6 +26,48 @@ public extension View {
 		)
 		.apply(when: define) {
 			$0.contentShape(RoundedCornersRectangle(radius, corners))
+		}
+	}
+	
+	@inlinable
+	func round(
+		topLeft: CGFloat,
+		topRight: CGFloat,
+		bottomLeft: CGFloat,
+		bottomRight: CGFloat,
+		border color: Color,
+		weight: CGFloat = .one,
+		position: LinePosition = .center,
+		tap define: Bool = false
+	) -> some View {
+		clipShape(
+			RoundedCornersRectangle(
+				topLeft: topLeft,
+				topRight: topRight,
+				bottomLeft: bottomLeft,
+				bottomRight: bottomRight
+			)
+		)
+		.overlay(
+			RoundedCornersRectangle(
+				topLeft: topLeft,
+				topRight: topRight,
+				bottomLeft: bottomLeft,
+				bottomRight: bottomRight
+			)
+			.inset(by: position.inset(for: weight))
+			.stroke(color, lineWidth: weight)
+		)
+		.apply(when: define) { rounded in
+			rounded
+				.contentShape(
+					RoundedCornersRectangle(
+						topLeft: topLeft,
+						topRight: topRight,
+						bottomLeft: bottomLeft,
+						bottomRight: bottomRight
+					)
+				)
 		}
 	}
 	
