@@ -14,6 +14,12 @@ public extension Collection {
 	@inlinable func compactMap<Wrapped>() -> [Wrapped] where Element == Wrapped? {
 		compactMap { item -> Wrapped? in item }
 	}
+	
+	@inlinable func compactMap<T>(as type: T.Type) -> [T] {
+		compactMap { element -> T? in
+			element as? T
+		}
+	}
 }
 
 // MARK: Sorted
@@ -219,6 +225,13 @@ public extension Collection {
 		_ transformed: (Element) -> Medium
 	) -> [Self.Element] {
 		filter({ element in other.contains(no: transformed(element)) })
+	}
+	
+	@inlinable func removingAll <Medium: Equatable> (
+		where transformed: (Element) -> Medium,
+		equals other: Medium
+	) -> [Self.Element] {
+		filter({ element in transformed(element) != other })
 	}
 	
 	@inlinable func filter <Medium: Equatable> (
