@@ -56,6 +56,20 @@ public protocol SingleItemFetcher: Fetcher {
 
 // MARK: Collection Protocol
 
+#if DEBUG
+public protocol CollectionFetcher: Fetcher, ExpressibleByArrayLiteral
+	where
+	Value: RandomAccessCollection,
+	Value: InitializableCollection,
+	Value: InitializableWithSequenceCollection,
+	Value: EmptyTestable,
+	Value.Element: Codable
+{
+	#if DEBUG
+	static var demoData: [Value.Element] { get }
+	#endif
+}
+#else
 public protocol CollectionFetcher: Fetcher
 	where
 	Value: RandomAccessCollection,
@@ -68,6 +82,7 @@ public protocol CollectionFetcher: Fetcher
 	static var demoData: [Value.Element] { get }
 	#endif
 }
+#endif
 
 // MARK: Single Extension
 
@@ -271,6 +286,15 @@ public extension CollectionFetcher {
 	@inlinable static func demoFetched(_ items: [Item]) -> Self { demo(.success(Value(items))) }
 	#endif
 }
+
+#if DEBUG
+extension CollectionFetcher {
+	public init(arrayLiteral elements: Item...) {
+		self.init()
+		self.state = .success(Value(elements))
+	}
+}
+#endif
 
 public extension CollectionFetcher where Item: Identifiable {
 	func defaultResponse(_ response: AFRailsLossyResponse, _ animate: Bool) {
