@@ -10,12 +10,22 @@ import SwiftUI
 
 public func execute(
 	in ms: Int = .zero,
+	withAnimation animation: Animation? = .none,
 	_ work: @escaping () -> Void
 ) {
-	if ms.isZero {
-		DispatchQueue.main.async(execute: work)
+	var action: () -> Void
+	if let animation = animation {
+		action = {
+			withAnimation(animation, work)
+		}
 	} else {
-		DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(ms), execute: work)
+		action = work
+	}
+	
+	if ms.isZero {
+		DispatchQueue.main.async(execute: action)
+	} else {
+		DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(ms), execute: action)
 	}
 }
 
