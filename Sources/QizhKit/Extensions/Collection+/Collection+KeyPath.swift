@@ -75,13 +75,24 @@ public extension Collection {
 		contains(where: { isIncluded(transform($0)) })
 	}
 	
-	@inlinable func firstIndex <Value: Equatable> (
+	/*
+	@inlinable
+	func firstIndex <Value: Equatable> (
 		where keyPath: KeyPath<Element, Value>,
 		equals value: Value
 	) -> Self.Index? {
 		firstIndex(where: { $0[keyPath: keyPath] == value })
 	}
+	*/
 	
+	@inlinable
+	func firstIndex <Medium: Equatable> (
+		where transform: (Element) -> Medium,
+		equals value: Medium
+	) -> Self.Index? {
+		firstIndex(where: { transform($0) == value })
+	}
+
 	// MARK: > of type
 	
 	@inlinable func first<Value, Cast>(
@@ -230,13 +241,13 @@ public extension Collection {
 	@inlinable func removingAll <Medium: Equatable> (
 		where transformed: (Element) -> Medium,
 		equals other: Medium
-	) -> [Self.Element] {
-		filter({ element in transformed(element) != other })
+	) -> [Element] {
+		filter({ transformed($0) != other })
 	}
 	
 	@inlinable func filter <Medium: Equatable> (
 		leave transformed: (Element) -> Medium,
-		 from other: [Medium]
+		from other: [Medium]
 	) -> [Self.Element] {
 		filter({ element in other.contains(transformed(element)) })
 	}
