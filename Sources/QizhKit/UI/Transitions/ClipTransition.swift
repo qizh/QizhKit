@@ -56,6 +56,16 @@ public struct ScalableRectangle: Shape {
 	public func path(in rect: CGRect) -> Path {
 		Rectangle()
 			.scale(x: factor.horizontal.cg, y: factor.vertical.cg, anchor: anchor)
+			/*
+			.size(
+				width: rect.width(scaled: factor.horizontal),
+				height: rect.height(scaled: factor.vertical)
+			)
+			.offset(
+				x: anchor.x * rect.width(scaled: -factor.horizontal),
+				y: anchor.y * rect.height(scaled: -factor.vertical)
+			)
+			*/
 			.path(in: rect)
 	}
 }

@@ -453,6 +453,7 @@ public struct Factor:
 	
 	@inlinable public static func factor(_ value: Value) -> Factor { Factor(value) }
 	@inlinable public var both: AxisFactor { .both(self) }
+	public static prefix func -(factor: Factor) -> Factor { Factor(-factor.value) }
 }
 
 public struct AxisFactor:
