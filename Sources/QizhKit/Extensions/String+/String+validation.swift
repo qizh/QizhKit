@@ -51,7 +51,6 @@ public extension String {
 	}
 }
 
-/*
 // MARK: Emoji
 
 public extension Character {
@@ -82,4 +81,3 @@ public extension String {
 	var emojis: [Character] { filter { $0.isEmoji } }
 	var emojiScalars: [UnicodeScalar] { filter { $0.isEmoji }.flatMap { $0.unicodeScalars } }
 }
-*/
