@@ -18,15 +18,18 @@ public extension View {
 		position: LinePosition = .center,
 		tap define: Bool = false
 	) -> some View {
-		clipShape(RoundedCornersRectangle(radius, corners))
-		.overlay(
-			RoundedCornersRectangle(radius, corners)
-				.inset(by: position.inset(for: weight))
-				.stroke(color, lineWidth: weight)
-		)
-		.apply(when: define) {
-			$0.contentShape(RoundedCornersRectangle(radius, corners))
-		}
+		let shape = RoundedCornersRectangle(radius, corners)
+		
+		return self
+			.clipShape(shape)
+			.overlay(
+				shape
+					.inset(by: position.inset(for: weight))
+					.stroke(color, lineWidth: weight)
+			)
+			.apply(when: define) { rounded in
+				rounded.contentShape(shape)
+			}
 	}
 	
 	@inlinable
@@ -40,43 +43,72 @@ public extension View {
 		position: LinePosition = .center,
 		tap define: Bool = false
 	) -> some View {
-		clipShape(
-			RoundedCornersRectangle(
-				topLeft: topLeft,
-				topRight: topRight,
-				bottomLeft: bottomLeft,
-				bottomRight: bottomRight
-			)
+		let shape = RoundedCornersRectangle(
+			topLeft: topLeft,
+			topRight: topRight,
+			bottomLeft: bottomLeft,
+			bottomRight: bottomRight
 		)
-		.overlay(
-			RoundedCornersRectangle(
-				topLeft: topLeft,
-				topRight: topRight,
-				bottomLeft: bottomLeft,
-				bottomRight: bottomRight
+		
+		return self
+			.clipShape(shape)
+			.overlay(
+				shape
+					.inset(by: position.inset(for: weight))
+					.stroke(color, lineWidth: weight)
 			)
-			.inset(by: position.inset(for: weight))
-			.stroke(color, lineWidth: weight)
-		)
-		.apply(when: define) { rounded in
-			rounded
-				.contentShape(
-					RoundedCornersRectangle(
-						topLeft: topLeft,
-						topRight: topRight,
-						bottomLeft: bottomLeft,
-						bottomRight: bottomRight
-					)
-				)
-		}
+			.apply(when: define) { rounded in
+				rounded
+					.contentShape(shape)
+			}
 	}
 	
+	@inlinable
+	func round(
+		_ radius: CGFloat,
+		_ corners: UIRectCorner = .allCorners,
+		tap define: Bool = false
+	) -> some View {
+		let shape = RoundedCornersRectangle(radius, corners)
+		
+		return self
+			.clipShape(shape)
+			.apply(when: define) { rounded in
+				rounded.contentShape(shape)
+			}
+	}
+	
+	@inlinable
+	func round(
+		topLeft: CGFloat,
+		topRight: CGFloat,
+		bottomLeft: CGFloat,
+		bottomRight: CGFloat,
+		tap define: Bool = false
+	) -> some View {
+		let shape = RoundedCornersRectangle(
+			topLeft: topLeft,
+			topRight: topRight,
+			bottomLeft: bottomLeft,
+			bottomRight: bottomRight
+		)
+		
+		return self
+			.clipShape(shape)
+			.apply(when: define) { rounded in
+				rounded
+					.contentShape(shape)
+			}
+	}
+	
+	/*
 	@inlinable func round(
 		_ radius: CGFloat,
 		_ corners: UIRectCorner = .allCorners
 	) -> some View {
 		clipShape(RoundedCornersRectangle(radius, corners), style: FillStyle(eoFill: true, antialiased: true))
 	}
+	*/
 }
 
 public enum LinePosition: EasyCaseComparable {
