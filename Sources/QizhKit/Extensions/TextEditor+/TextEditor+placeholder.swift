@@ -31,7 +31,7 @@ public extension TextEditor {
 		editing text: String,
 		compact: Bool
 	) -> some View {
-		ZStack {
+		ZStack(alignment: .topLeading) {
 			self
 				.padding(
 					compact
@@ -40,7 +40,7 @@ public extension TextEditor {
 				)
 				.zIndex(20)
 			
-			if text.isNotEmpty {
+			if text.isEmpty {
 				Text(placeholder)
 					.foregroundColor(\.placeholderText)
 					.padding(
@@ -48,7 +48,6 @@ public extension TextEditor {
 							? .zero
 							: textEditorInsets
 					)
-					.maxWidth(.topLeading)
 					.zIndex(10)
 					.transition(.offset(x: 16), .opacity)
 			}
