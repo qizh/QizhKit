@@ -39,9 +39,9 @@ let package = Package(
 			from: "6.2.0"
 		),
 		.package(
-			name: "NonEmpty",
+			name: "swift-nonempty",
 			url: "https://github.com/pointfreeco/swift-nonempty",
-			from: "0.2.2"
+			from: "0.3.1"
 		),
 		.package(
 			name: "DeviceKit",
@@ -57,7 +57,10 @@ let package = Package(
 				"Introspect",
 				"Alamofire",
 				"SwiftDate",
-				"NonEmpty",
+				.product(
+					name: "NonEmpty",
+					package: "swift-nonempty"
+				),
 				"DeviceKit",
 			]
 		),

@@ -29,12 +29,12 @@
         }
       },
       {
-        "package": "NonEmpty",
+        "package": "swift-nonempty",
         "repositoryURL": "https://github.com/pointfreeco/swift-nonempty",
         "state": {
           "branch": null,
-          "revision": "9ef8c4aea57b8da7fedd5303d29470ea2a00c08d",
-          "version": "0.2.2"
+          "revision": "a3dbd05f2b57cb0ea1b8138a720fc28a1629ca06",
+          "version": "0.3.1"
         }
       },
       {
