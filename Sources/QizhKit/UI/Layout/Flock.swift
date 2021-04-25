@@ -453,6 +453,26 @@ fileprivate final class FlockLayout: ObservableObject {
 			}
 		}
 		
+		if alignment.vertical != .top {
+			for line in lines {
+				let lineHeight = line.height
+				for index in line.range {
+					let frame = frames[index]
+					let dy: CGFloat
+					if alignment.vertical == .center {
+						dy = (lineHeight - frame.height).half
+					} else if alignment.vertical == .bottom {
+						dy = lineHeight - frame.height
+					} else {
+						/// Should never happen
+						dy = .zero
+					}
+					
+					frames[index] = frame.offset(y: dy)
+				}
+			}
+		}
+		
 		if debug {
 			self.debugStates = debugStates.map { $0.joined(separator: .comaspace) }
 		}
@@ -508,7 +528,7 @@ struct Flock_Previews: PreviewProvider {
 		
 		var body: some View {
 			Text(word)
-				.regular(8)
+				.regular(4 + word.count.cg)
 				.fixedSize()
 				.padding(4)
 				.padding(.horizontal, 2)
@@ -612,7 +632,7 @@ struct Flock_Previews: PreviewProvider {
 				Flock(
 					of: Self.words.dropFirst(offset).prefix(amount),
 					height: .fit,
-					alignment: .trailing,
+					alignment: .bottomTrailing,
 					debug: true
 				) { word in
 					Tag(word)
