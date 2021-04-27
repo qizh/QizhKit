@@ -83,3 +83,26 @@ public extension Decimal {
 		return result
 	}
 }
+
+// MARK: Code through Data
+
+public extension KeyedEncodingContainer {
+	mutating func encode(_ value: Decimal, forKey key: K) throws {
+		try encode(value.data, forKey: key)
+	}
+	
+	mutating func encodeIfPresent(_ value: Decimal?, forKey key: K) throws {
+		guard let value = value else { return }
+		try encode(value, forKey: key)
+	}
+}
+
+extension KeyedDecodingContainer {
+	func decode(_ type: Decimal.Type, forKey key: K) throws -> Decimal {
+		try decode(Data.self, forKey: key).decode(codingPath, key: key)
+	}
+	
+	func decodeIfPresent(_ type: Decimal.Type, forKey key: K) throws -> Decimal? {
+		try decodeIfPresent(Data.self, forKey: key)?.decode(codingPath, key: key)
+	}
+}

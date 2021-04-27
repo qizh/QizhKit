@@ -96,3 +96,27 @@ public extension FloatingPoint {
 	/// 1/3, 1/2, or the whole point depending on a current screen scale
 	@inlinable static var pixel: Self { .one / Self(UIScreen.main.scale.int) }
 }
+
+// MARK: Decode as Data
+
+public extension Numeric {
+	var data: Data {
+		var bytes = self
+		return .init(bytes: &bytes, count: MemoryLayout<Self>.size)
+	}
+}
+
+public extension DataProtocol {
+	func decode<T: Numeric>(_ codingPath: [CodingKey], key: CodingKey) throws -> T {
+		var value: T = .zero
+		guard withUnsafeMutableBytes(of: &value, copyBytes) == MemoryLayout.size(ofValue: value) else {
+			throw DecodingError.dataCorrupted(
+				.init(
+					codingPath: codingPath,
+					debugDescription: "The key \(key) could not be converted to a numeric value: \(Array(self))"
+				)
+			)
+		}
+		return value
+	}
+}
