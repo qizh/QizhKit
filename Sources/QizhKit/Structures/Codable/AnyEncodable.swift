@@ -43,9 +43,6 @@ extension AnyEncodableProtocol {
 		var container = encoder.singleValueContainer()
 		
 		switch wrappedValue {
-		case let number as NSNumber:
-			// print("::encoding as NSNumber: \(number)")
-			try encode(nsnumber: number, into: &container)
 		case is NSNull:
 			if encoder.userInfo[AnyEncodable.skipNilValues] as? Bool != true {
 				try container.encodeNil()
@@ -58,7 +55,7 @@ extension AnyEncodableProtocol {
 			// print("::encoding as Bool: \(bool)")
 			try container.encode(bool)
 		case let decimal as Decimal:
-			// print("::encoding as Decimal: \(double)")
+			// print("::encoding as Decimal: \(decimal)")
 			try container.encode(decimal)
 		case let int as Int:
 			// print("::encoding as Int: \(int)")
@@ -99,6 +96,9 @@ extension AnyEncodableProtocol {
 		case let double as CGFloat:
 			// print("::encoding as CGFloat: \(double)")
 			try container.encode(double)
+		case let number as NSNumber:
+			// print("::encoding as NSNumber: \(number)")
+			try encode(nsnumber: number, into: &container)
 		case let string as String:
 			// print("::encoding as String: \(string)")
 			try container.encode(string)
