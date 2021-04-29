@@ -108,6 +108,8 @@ extension AnyEncodableProtocol {
 		case let url as URL:
 			// print("::encoding as URL: \(url)")
 			try container.encode(url)
+		case let data as Data:
+			try container.encode(data)
 		case let array as [Any?]:
 			// print("::encoding as [Any?]: \(array)")
 			try container.encode(array.map { AnyEncodable($0) })

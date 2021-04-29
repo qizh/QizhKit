@@ -84,25 +84,60 @@ public extension Decimal {
 	}
 }
 
+/*
 // MARK: Code through Data
 
-public extension KeyedEncodingContainer {
-	mutating func encode(_ value: Decimal, forKey key: K) throws {
-		try encode(value.data, forKey: key)
+@propertyWrapper
+public struct DataCodeDecimal: Codable, CustomStringConvertible {
+	public var wrappedValue: Decimal
+	
+	public init(wrappedValue: Decimal) {
+		self.wrappedValue = wrappedValue
 	}
 	
-	mutating func encodeIfPresent(_ value: Decimal?, forKey key: K) throws {
+	public init(from decoder: Decoder) throws {
+		let container = try decoder.singleValueContainer()
+		let data = try container.decode(Data.self)
+		var value: Decimal = .zero
+		guard withUnsafeMutableBytes(of: &value, data.copyBytes) == MemoryLayout.size(ofValue: value) else {
+			throw DecodingError.dataCorruptedError(in: container, debugDescription: "Data could not be converted to a numberic value: \(Array(data))")
+		}
+		self.wrappedValue = value
+	}
+	
+	public func encode(to encoder: Encoder) throws {
+		var container = encoder.singleValueContainer()
+		try container.encode(wrappedValue.data)
+	}
+	
+	public var description: String {
+		wrappedValue.format(as: .string, position: .standalone, for: .current)
+	}
+}
+
+public extension KeyedEncodingContainer {
+	mutating func encode(_ value: DataCodeDecimal, forKey key: K) throws {
+		try encode(value.wrappedValue.data, forKey: key)
+	}
+	
+	mutating func encodeIfPresent(_ value: DataCodeDecimal?, forKey key: K) throws {
 		guard let value = value else { return }
 		try encode(value, forKey: key)
 	}
 }
 
 extension KeyedDecodingContainer {
-	func decode(_ type: Decimal.Type, forKey key: K) throws -> Decimal {
-		try decode(Data.self, forKey: key).decode(codingPath, key: key)
+	func decode(_ type: DataCodeDecimal.Type, forKey key: K) throws -> DataCodeDecimal {
+		let value: Decimal = try decode(Data.self, forKey: key).decode(codingPath, key: key)
+		return DataCodeDecimal(wrappedValue: value)
 	}
 	
-	func decodeIfPresent(_ type: Decimal.Type, forKey key: K) throws -> Decimal? {
-		try decodeIfPresent(Data.self, forKey: key)?.decode(codingPath, key: key)
+	func decodeIfPresent(_ type: DataCodeDecimal.Type, forKey key: K) throws -> DataCodeDecimal? {
+		if let value: Decimal = try decodeIfPresent(Data.self, forKey: key)?
+			.decode(codingPath, key: key) {
+			return DataCodeDecimal(wrappedValue: value)
+		}
+		return .none
 	}
 }
+*/
