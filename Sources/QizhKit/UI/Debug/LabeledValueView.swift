@@ -8,11 +8,33 @@
 
 import SwiftUI
 
+// MARK: Stack
+
 public extension VStack {
 	@inlinable static func LabeledViews(@ViewBuilder _ content: () -> Content) -> VStack {
 		.init(alignment: .separator, spacing: 2, content: content)
 	}
 }
+
+// MARK: Library Content
+
+@available(iOS 14.0, *)
+public struct LabeledValueLibraryContent: LibraryContentProvider {
+	@LibraryContentBuilder
+	public var views: [LibraryItem] {
+		LibraryItem(
+			VStack.LabeledViews {
+				"Value".labeledView(label: "Label")
+			},
+			visible: true,
+			title: "Stack of labeled views",
+			category: .layout,
+			matchingSignature: String?.none
+		)
+	}
+}
+
+// MARK: View
 
 public struct LabeledValueView: View {
 	private var valueView: AnyView
