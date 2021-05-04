@@ -27,6 +27,9 @@ public enum FlockLines: Equatable, EasyCaseComparable {
 	}
 }
 
+// TODO: Implement the following
+#warning("TODO: Implement Flock @functionBuilder init option")
+
 @available(iOS 14, *)
 public struct Flock <Input, Content>: View
 	where
