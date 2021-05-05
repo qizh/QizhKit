@@ -1,14 +1,14 @@
 //
-//  File.swift
-//  
+//  View+navbartitle.swift
+//  QizhKit
 //
 //  Created by Serhii Shevchenko on 28.09.2020.
+//  Copyright © 2020 Serhii Shevchenko. All rights reserved.
 //
 
 import SwiftUI
 
 public extension View {
-	@inlinable
 	@ViewBuilder
 	func navTitle <S: StringProtocol> (
 		_ title: S,
@@ -18,11 +18,10 @@ public extension View {
 			self.navigationTitle(title)
 				.navigationBarTitleDisplayMode(displayMode)
 		} else {
-			navigationBarTitle(Text(title), displayMode: displayMode)
+			self.navigationBarTitle(Text(title), displayMode: displayMode)
 		}
 	}
 	
-	@inlinable
 	@ViewBuilder
 	func navTitle(
 		_ text: Text,
@@ -32,21 +31,7 @@ public extension View {
 			self.navigationTitle(text)
 				.navigationBarTitleDisplayMode(displayMode)
 		} else {
-			navigationBarTitle(text, displayMode: displayMode)
+			self.navigationBarTitle(text, displayMode: displayMode)
 		}
 	}
-	
-	/*
-	@inlinable
-	@ViewBuilder
-	func navTitle (
-		_ displayMode: NavigationBarItem.TitleDisplayMode
-	) -> some View {
-		if #available(iOS 14.0, *) {
-			navigationBarTitleDisplayMode(displayMode)
-		} else {
-			navigationBarTitle(.empty, displayMode: displayMode)
-		}
-	}
-	*/
 }
