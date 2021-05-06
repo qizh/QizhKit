@@ -725,6 +725,7 @@ public struct DebugGeometryViewModifier: ViewModifier {
 			.overlay(
 				GeometryReader {
 					self.valueView(of: $0)
+						.fixedSize()
 						.padding(2)
 						.frame(
 							maxWidth: $0.size.width,
