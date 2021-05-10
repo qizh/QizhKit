@@ -133,8 +133,9 @@ public extension View {
 		.previewFitting(padding: fit ? .vertical : [])
 	}
 	
+	/// `en_US`, `ru_UA`, `th_TH`, `en_UA`
 	@inlinable func previewDemoLocales() -> some View {
-		previewLocales("en_US", "ru_UA", "th_TH")
+		previewLocales("en_US", "ru_UA", "th_TH", "en_UA")
 	}
 	
 	@inlinable func previewLocales(_ codes: String ...) -> some View {
