@@ -29,6 +29,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	@State private var dragOffset: CGFloat = .zero
 	@State private var draggedPages: Int = .zero
 	@State private var animationValue: UInt = .zero
+	@State private var predictedOffset: CGFloat = .zero
 	
 	// MARK: Init
 	
@@ -239,28 +240,41 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
     }
 	
 	private func dragGesture(in geometry: GeometryProxy) -> some Gesture {
-		DragGesture(minimumDistance: 10)
+		let pageSize = geometry.size.width + spacing
+		return DragGesture(minimumDistance: 10)
 			.onChanged { value in
 				guard geometry.frame(in: .local).contains(value.startLocation) else { return }
 				let dragOffsetSign = dragOffset.sign
-				let pageSize = geometry.size.width + spacing
 				let offset = value.translation.width + draggedPages * pageSize
 				let isEdgeSwiping =
 					   selected == data.first?.id && offset.isPositive
 					|| selected == data.last?.id  && offset.isNegative
 				
 				dragOffset = isEdgeSwiping ? offset.third : offset
-				if dragOffset.magnitude > (geometry.size.width + spacing).half {
+				if dragOffset.magnitude > pageSize.half {
 					let newDraggedPages = draggedPages + pagesCount(in: geometry.size)
 					let newSelected = currentSelected(in: geometry.size)
 					dragOffset = (newDraggedPages - draggedPages) * pageSize + dragOffset
 					selected = newSelected
 					draggedPages = newDraggedPages
-				} else if dragOffsetSign != dragOffset.sign {
-					animationValue += 1
+				} else {
+					predictedOffset = value.predictedEndTranslation.width
+					if dragOffsetSign != dragOffset.sign {
+						animationValue += 1
+					}
 				}
 			}
 			.onEnded { value in
+				if draggedPages.isZero,
+				   predictedOffset.magnitude > pageSize.half,
+				   let newSelected = selected(with: -predictedOffset.sign.offset)
+				{
+					let newDraggedPages = draggedPages - predictedOffset.sign.offset
+					dragOffset = (newDraggedPages - draggedPages) * pageSize + dragOffset
+					selected = newSelected
+					draggedPages = newDraggedPages
+				}
+				predictedOffset = .zero
 				dragOffset = .zero
 				draggedPages = .zero
 			}
@@ -273,10 +287,8 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 			draggedPages.labeledView(label: "dragged pages")
 			dragOffset.signum.int.labeledView(label: "signum")
 			dragOffset.labeledView(label: "offset", f: 0)
+			predictedOffset.labeledView(label: "predicted", f: 0)
 			selectedPage.labeledView(label: "selected page")
-			/*
-			(selectedPage - draggedPages).labeledView(label: "animation value")
-			*/
 			animationValue.labeledView(label: "animation")
 		}
 	}
@@ -317,6 +329,28 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	
 	private var selectedIndex: Data.Index {
 		data.firstIndex(id: selected) ?? data.startIndex
+	}
+	
+	private func selectedIndex(with offset: Int) -> Data.Index {
+		data.index(selectedIndex, offsetBy: offset)
+	}
+	
+	private func page(at index: Data.Index) -> ID? {
+		guard data.indices.contains(index) else { return .none }
+		return data[index].id
+	}
+	
+	private func selected(with offset: Int) -> ID? {
+		page(at: selectedIndex(with: offset))
+	}
+}
+
+fileprivate extension FloatingPointSign {
+	var offset: Int {
+		switch self {
+		case .minus: return -1
+		case .plus: return 1
+		}
 	}
 }
 
@@ -449,7 +483,7 @@ public struct HSwiper_Previews: PreviewProvider {
 						][cycle: offset]
 					)
 				}
-				.size(200, 150)
+				.size(200, 180)
 				.border.c1()
 				
 				Stepper(value: $page.animation(.spring()), in: 0 ... data.count - 1) {
