@@ -275,6 +275,9 @@ public extension CGRect {
 	@inlinable static func rect( _ width: CGFloat, _ height: CGFloat) -> CGRect { CGRect(width, height) }
 	@inlinable static func rect(_ origin: CGPoint,   _ size: CGSize)  -> CGRect { CGRect(origin, size) }
 	
+	@inlinable static func square(_ origin: CGPoint, _ size: CGFloat) -> CGRect { CGRect(origin, .square(size)) }
+	@inlinable static func square(_ size: CGFloat) -> CGRect { CGRect(.zero, .square(size)) }
+	
 	@inlinable init(standartizing rect: CGRect) { self = rect.standardized }
 	@inlinable init(from: CGPoint, to: CGPoint) {
 		self.init(standartizing: CGRect(from, (from - to).size))
