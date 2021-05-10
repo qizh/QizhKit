@@ -8,6 +8,8 @@
 
 import Foundation
 
+// MARK: Prepare, then map
+
 public extension Collection {
 	@inlinable
 	func map <Input, Output> (
@@ -27,6 +29,30 @@ public extension Collection {
 	) -> [Output] {
 		map { element in
 			transform(element)(argument1, argument2)
+		}
+	}
+}
+
+// MARK: Map with arguments
+
+public extension Collection {
+	@inlinable
+	func map <Argument, Output> (
+		_ transform: (Element, Argument) -> Output,
+		_ argument: Argument
+	) -> [Output] {
+		map { element in
+			transform(element, argument)
+		}
+	}
+	
+	@inlinable
+	func map <Argument, Output> (
+		_ argument: Argument,
+		_ transform: (Argument, Element) -> Output
+	) -> [Output] {
+		map { element in
+			transform(argument, element)
 		}
 	}
 }
