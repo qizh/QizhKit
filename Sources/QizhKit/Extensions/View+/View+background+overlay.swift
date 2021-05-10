@@ -12,16 +12,93 @@ import SwiftUI
 
 public extension View {
 	@inlinable
+	func background <Background> (
+		_ alignment: Alignment,
+		_ view: Background
+	) -> some View where Background: View {
+		background(view, alignment: alignment)
+	}
+	
+	@inlinable
+	func overlay <Overlay> (
+		_ alignment: Alignment,
+		_ view: Overlay
+	) -> some View where Overlay: View {
+		overlay(view, alignment: alignment)
+	}
+	
+	@inlinable
+	func background <Background> (
+		_ alignment: Alignment = .center,
+		@ViewBuilder view: () -> Background
+	) -> some View where Background: View {
+		background(view(), alignment: alignment)
+	}
+	
+	@inlinable
+	func overlay <Overlay> (
+		_ alignment: Alignment = .center,
+		@ViewBuilder view: () -> Overlay
+	) -> some View where Overlay: View {
+		overlay(view(), alignment: alignment)
+	}
+}
+
+// MARK: Library Content
+
+@available(iOS 14.0, *)
+public struct BackgroundAndOverlaySugarLibraryContent: LibraryContentProvider {
+	@LibraryContentBuilder
+	public func modifiers <Base: View> (base: Base) -> [LibraryItem] {
+		[
+			LibraryItem(
+				base.overlay(.center, Text("Overlay")),
+				title: "Overlay view",
+				category: .layout,
+				matchingSignature: "overlay(_:_:)"
+			),
+			LibraryItem(
+				base.overlay(.center) {
+					Text("Overlay")
+				},
+				title: "Overlay view builder",
+				category: .layout,
+				matchingSignature: "overlay(_:view:)"
+			),
+			LibraryItem(
+				base.background(.center, Color.secondarySystemFill),
+				title: "Background view",
+				category: .layout,
+				matchingSignature: "background(_:_:)"
+			),
+			LibraryItem(
+				base.background(.center) {
+					Color.secondarySystemFill
+				},
+				title: "Background view builder",
+				category: .layout,
+				matchingSignature: "background(_:view:)"
+			),
+		]
+	}
+}
+
+// MARK: Deprecated
+
+public extension View {
+	@available(*, deprecated, renamed: "background(_:_:)")
+	@inlinable
 	func background<Background>(aligned: Alignment, _ view: Background) -> some View where Background: View {
 		background(view, alignment: aligned)
 	}
 	
+	@available(*, deprecated, renamed: "overlay(_:_:)")
 	@inlinable
 	func overlay<Overlay>(aligned: Alignment, _ view: Overlay) -> some View where Overlay: View {
 		overlay(view, alignment: aligned)
 	}
 	
-	@available(*, deprecated, renamed: "background(_:_:)")
+	@available(*, deprecated, renamed: "background(_:view:)")
 	@inlinable
 	func background <Background: View> (
 		aligned alignment: Alignment,
@@ -30,26 +107,10 @@ public extension View {
 		background(content(), alignment: alignment)
 	}
 	
-	@available(*, deprecated, renamed: "overlay(_:_:)")
+	@available(*, deprecated, renamed: "overlay(_:view:)")
 	@inlinable
 	func overlay <Overlay: View> (
 		aligned alignment: Alignment,
-		@ViewBuilder _ content: () -> Overlay
-	) -> some View {
-		overlay(content(), alignment: alignment)
-	}
-	
-	@inlinable
-	func background <Background: View> (
-		_ alignment: Alignment = .center,
-		@ViewBuilder _ content: () -> Background
-	) -> some View {
-		background(content(), alignment: alignment)
-	}
-	
-	@inlinable
-	func overlay <Overlay: View> (
-		_ alignment: Alignment = .center,
 		@ViewBuilder _ content: () -> Overlay
 	) -> some View {
 		overlay(content(), alignment: alignment)
