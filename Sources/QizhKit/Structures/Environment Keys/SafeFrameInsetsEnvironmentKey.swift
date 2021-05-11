@@ -25,4 +25,22 @@ public extension View {
 			safeFrameInsets.top = value
 		}
 	}
+	
+	func safeFrameBottom(_ value: CGFloat) -> some View {
+		transformEnvironment(\.safeFrameInsets) { safeFrameInsets in
+			safeFrameInsets.bottom = value
+		}
+	}
+	
+	#if DEBUG
+	func simulateSafeFrameInsets(
+		top: CGFloat = 44,
+		bottom: CGFloat = 34
+	) -> some View {
+		transformEnvironment(\.safeFrameInsets) { insets in
+			insets.top = top
+			insets.bottom = bottom
+		}
+	}
+	#endif
 }
