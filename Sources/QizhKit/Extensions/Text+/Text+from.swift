@@ -13,3 +13,12 @@ public extension String {
 		Text(self)
 	}
 }
+
+public extension Text {
+	static func + (lhs: Text, rhs: Text?) -> Text {
+		switch rhs {
+		case .some(let text): return lhs + text
+		case .none: return lhs
+		}
+	}
+}
