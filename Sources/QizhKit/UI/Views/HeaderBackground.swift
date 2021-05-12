@@ -203,11 +203,20 @@ public extension View {
 	/// Please apply the following modifiers before this one:
 	/// ```
 	/// view
-	/// .transparentNavigationBarAppliedOnce()
-	/// .forceNavigationBarHidden()
-	/// .edgesIgnoringSafeArea(.top)
-	/// .autoShowHeaderBackground(on: $scroll) // <-- last one
+	///   .transparentNavigationBarAppliedOnce()
+	///   // .forceNavigationBarHidden()
+	///   .edgesIgnoringSafeArea(.top)
+	///   .autoShowHeaderBackground(on: $scroll) // <-- last one
 	/// ```
+	/// - Parameters:
+	///   - scroll: `UIScrollView` offset `CGPoint`
+	///   - offset: Scroll offset when header appears. Default value: `80`
+	///   - height: Header height. Default value: `48`
+	///   - measure: Type of safe area measurement. Default value: `.single`
+	///   - style: Blur effect style.
+	///   `.auto(colorScheme)` value is used when no value provided
+	///   - debug: Show visual debug
+	/// - Returns: `ZStack` with content and header
 	func autoShowHeaderBackground(
 		on scroll: CGPoint,
 		after offset: CGFloat = ShowHeaderBackgroundViewModifier.defaultOffset,
