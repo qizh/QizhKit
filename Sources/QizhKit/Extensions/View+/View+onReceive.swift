@@ -9,10 +9,24 @@
 import SwiftUI
 import Combine
 
+// MARK: onChange
+
+@available(iOS 14.0, *)
+extension View {
+	@inlinable public func onChange <Value: Equatable> (
+		of value: Value,
+		perform action: @escaping () -> Void
+	) -> some View {
+		onChange(
+			of: value,
+			perform: { _ in action() }
+		)
+	}
+}
+
+// MARK: onReceive
+
 public extension View {
-	
-	// MARK: onReceive
-	
 	@inlinable func onReceive<P>(
 		_ publisher: P,
 		perform action: @escaping () -> Void
