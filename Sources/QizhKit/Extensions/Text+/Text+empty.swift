@@ -10,4 +10,5 @@ import SwiftUI
 
 extension Text: EmptyComparable {
 	public static let empty = Text(verbatim: .empty)
+	public static let space = Text(verbatim: .space)
 }
