@@ -9,19 +9,8 @@
 import SwiftUI
 
 extension ForEach where Content: View {
-	/*
-	public init <Source> (
-		_ data: Source,
-		@ViewBuilder content: @escaping (Int, Source.Element) -> Content
-	) where
-		Source: Collection,
-		Source.Element: Identifiable,
-		Data == [EnumeratedIdentifiableElement<Source>],
-		ID == Source.Element.ID
-	{
-		self.init(data.enumeratedIdentifiableElements(), content: { content($0.offset, $0.element) })
-	}
-	*/
+	
+	// MARK: Enumerating
 	
 	public init <Source> (
 		enumerating data: Source,
@@ -31,8 +20,31 @@ extension ForEach where Content: View {
 		Data == [AnyEnumeratedElement<Source>],
 		ID == AnyEnumeratedElement<Source>.ID
 	{
-		self.init(data.enumeratedElements(), content: { content($0.offset, $0.element) })
+		self.init(
+			data.enumeratedElements(),
+			content: { item in
+				content(item.offset, item.element)
+			}
+		)
 	}
+	
+	public init <Source> (
+		enumerating data: Source,
+		@ViewBuilder content: @escaping (Source.Element) -> Content
+	) where
+		Source: Collection,
+		Data == [AnyEnumeratedElement<Source>],
+		ID == AnyEnumeratedElement<Source>.ID
+	{
+		self.init(
+			data.enumeratedElements(),
+			content: { item in
+				content(item.element)
+			}
+		)
+	}
+	
+	// MARK: Hashing
 	
 	public init <Source> (
 		hashing data: Source,
@@ -43,8 +55,32 @@ extension ForEach where Content: View {
 		Data == [EnumeratedHashableElement<Source>],
 		ID == Source.Element
 	{
-		self.init(data.enumeratedHashableElements(), content: { content($0.offset, $0.element) })
+		self.init(
+			data.enumeratedHashableElements(),
+			content: { item in
+				content(item.offset, item.element)
+			}
+		)
 	}
+	
+	public init <Source> (
+		hashing data: Source,
+		@ViewBuilder content: @escaping (Source.Element) -> Content
+	) where
+		Source: Collection,
+		Source.Element: Hashable,
+		Data == [EnumeratedHashableElement<Source>],
+		ID == Source.Element
+	{
+		self.init(
+			data.enumeratedHashableElements(),
+			content: { item in
+				content(item.element)
+			}
+		)
+	}
+	
+	// MARK: Identifying
 	
 	public init <Source> (
 		identifying data: Source,
@@ -55,9 +91,33 @@ extension ForEach where Content: View {
 		Data == [EnumeratedIdentifiableElement<Source>],
 		ID == Source.Element.ID
 	{
-		self.init(data.enumeratedIdentifiableElements(), content: { content($0.offset, $0.element) })
+		self.init(
+			data.enumeratedIdentifiableElements(),
+			content: { item in
+				content(item.offset, item.element)
+			}
+		)
+	}
+	
+	public init <Source> (
+		identifying data: Source,
+		@ViewBuilder content: @escaping (Source.Element) -> Content
+	) where
+		Source: Collection,
+		Source.Element: Identifiable,
+		Data == [EnumeratedIdentifiableElement<Source>],
+		ID == Source.Element.ID
+	{
+		self.init(
+			data.enumeratedIdentifiableElements(),
+			content: { item in
+				content(item.element)
+			}
+		)
 	}
 }
+
+// MARK: Elements
 
 public protocol EnumeratedElement: Identifiable {
 	associatedtype Base: Collection
@@ -118,6 +178,8 @@ public struct EnumeratedHashableElement<Base: Collection>: EnumeratedElement whe
 	
 	public var id: Element { element }
 }
+
+// MARK: Collections
 
 extension Collection {
 	@inlinable func enumeratedElements() -> [AnyEnumeratedElement<Self>] {
