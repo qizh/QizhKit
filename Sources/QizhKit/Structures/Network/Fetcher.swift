@@ -415,3 +415,20 @@ public extension Optional where Wrapped == HTTPHeader {
 		}
 	}
 }
+
+extension HTTPHeaders {
+	public static func + (lhs: HTTPHeaders, rhs: HTTPHeader) -> HTTPHeaders {
+		var copy = lhs
+		copy.add(rhs)
+		return copy
+	}
+}
+
+extension Optional where Wrapped == HTTPHeaders {
+	public static func + (lhs: HTTPHeaders?, rhs: HTTPHeader) -> HTTPHeaders {
+		switch lhs {
+		case .some(let headers): return headers + rhs
+		case .none: return HTTPHeaders(.just(rhs))
+		}
+	}
+}
