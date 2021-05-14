@@ -8,13 +8,16 @@
 
 import Foundation
 
+// MARK: Enum
+
 public enum CurrencyCode:
 	String,
 	Codable,
 	Hashable,
 	CaseComparable,
 	DefaultCaseFirst,
-	AcceptingOtherValues
+	AcceptingOtherValues,
+	CaseInsensitiveStringRepresentable
 {
 	case usd = "USD"
 	case eur = "EUR"
@@ -105,6 +108,8 @@ public enum CurrencyCode:
 	}()
 }
 
+// MARK: Any
+
 public typealias AnyCurrencyCode = ExtraCase<CurrencyCode>
 
 public extension AnyCurrencyCode {
@@ -114,8 +119,8 @@ public extension AnyCurrencyCode {
 	static let rur = Self(.rur)
 	static let uah = Self(.uah)
 	static let thb = Self(.thb)
-
-	@inlinable var code: String { rawValue }
+	
+	@inlinable var code: String { rawValue.uppercased() }
 	func formatter(
 		position context: Formatter.Context,
 		for locale: Locale,
