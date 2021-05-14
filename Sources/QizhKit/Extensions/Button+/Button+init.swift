@@ -317,6 +317,53 @@ public extension View {
 			label: selfmade
 		)
 	}
+	
+	/// For valid URLs converts a view to a `SafariButton` or `Link`
+	/// - Parameters:
+	///   - url: Won't make any change for undefined URLs
+	///   - target: In app or in Safari
+	///   - title: In app browser start title
+	///   - isActive: In app browser `isActive`
+	@ViewBuilder
+	func button(
+		opening url: URL?,
+		target: URLOpenTarget = .app,
+		title: String? = .none,
+		isActive: Binding<Bool>? = .none
+	) -> some View {
+		if let url = url {
+			if #available(iOS 14.0, *) {
+				switch target {
+				case .app:
+					SafariButton(
+						opening: url,
+						title: title,
+						isActive: isActive,
+						content: selfmade
+					)
+				case .safari:
+					Link(
+						destination: url,
+						label: selfmade
+					)
+				}
+			} else {
+				SafariButton(
+					opening: url,
+					title: title,
+					isActive: isActive,
+					content: selfmade
+				)
+			}
+		} else {
+			self
+		}
+	}
+}
+
+public enum URLOpenTarget {
+	case app
+	case safari
 }
 
 // MARK: Action
