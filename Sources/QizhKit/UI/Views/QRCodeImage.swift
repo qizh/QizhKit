@@ -20,14 +20,14 @@ public struct QRCodeImage: View {
 	
 	@ViewBuilder
 	public var body: some View {
-		if let image = codeImage(from: source) {
+		if let image = Self.codeImage(from: source, using: context) {
 			Image(uiImage: image)
 				.interpolation(.none)
 				.resizable()
 		}
 	}
 	
-	private func codeImage(from string: String) -> UIImage? {
+	public static func codeImage(from string: String, using context: CIContext) -> UIImage? {
 		guard let data = string.data(using: .ascii) else { return nil }
 		
 		let filter = CIFilter.qrCodeGenerator()
