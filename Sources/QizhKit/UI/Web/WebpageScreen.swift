@@ -53,7 +53,7 @@ public struct WebpageScreen: View {
 							ToolbarItem(placement: .navigationBarTrailing) {
 								if source.isDebug, source.string.isNotEmpty {
 									Label("Share", systemImage: "square.and.arrow.up")
-										.button(action: copySource)
+										.button(action: shareSourceFile)
 								}
 							}
 						}
