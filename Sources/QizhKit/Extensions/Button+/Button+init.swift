@@ -359,6 +359,26 @@ public extension View {
 			self
 		}
 	}
+	
+	func button <Screen: View> (
+		showing screen: Screen
+	) -> some View {
+		NavigationLink(
+			destination: screen,
+			label: selfmade
+		)
+	}
+	
+	func button <Screen: View> (
+		showing screen: Screen,
+		isActive: Binding<Bool>
+	) -> some View {
+		NavigationLink(
+			destination: screen,
+			isActive: isActive,
+			label: selfmade
+		)
+	}
 }
 
 public enum URLOpenTarget {
