@@ -91,6 +91,7 @@ public struct ISO8601DashedDateFormatterProvider: DateFormatterProvidable {
 			.withFullDate,
 			.withDashSeparatorInDate
 		]
+		formatter.timeZone = .autoupdatingCurrent
 		return formatter
 	}
 }
