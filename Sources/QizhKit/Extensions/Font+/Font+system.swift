@@ -66,6 +66,19 @@ public extension Font {
 		case .lowercaseSmallCaps: 	return self.lowercaseSmallCaps()
 		case .uppercaseSmallCaps: 	return self.uppercaseSmallCaps()
 		case .italic: 				return self.italic()
+		case .monospacedDigit: 		return self.monospacedDigit()
+		case .tight:
+			if #available(iOS 14.0, *) {
+				return self.leading(.tight)
+			} else {
+				return self
+			}
+		case .loose:
+			if #available(iOS 14.0, *) {
+				return self.leading(.loose)
+			} else {
+				return self
+			}
 		}
 	}
 }
@@ -76,4 +89,9 @@ public enum FontModification {
 	case lowercaseSmallCaps
 	case uppercaseSmallCaps
 	case italic
+	case monospacedDigit
+	@available(iOS 14, *)
+	case tight
+	@available(iOS 14, *)
+	case loose
 }
