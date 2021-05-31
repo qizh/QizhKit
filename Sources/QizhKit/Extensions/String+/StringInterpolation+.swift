@@ -179,4 +179,17 @@ public extension DefaultStringInterpolation {
 			appendLiteral(error.localizedDescription)
 		}
 	}
+	
+	mutating func appendInterpolation(debug value: Any?) {
+		let encoder = JSONEncoder()
+		encoder.outputFormatting = .prettyPrinted
+		
+		do {
+			let encoded = try encoder.encode(AnyEncodable(value))
+			let string = String(decoding: encoded, as: UTF8.self)
+			appendLiteral(string)
+		} catch {
+			appendLiteral(error.localizedDescription)
+		}
+	}
 }
