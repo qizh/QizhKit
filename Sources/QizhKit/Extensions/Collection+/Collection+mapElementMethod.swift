@@ -55,4 +55,24 @@ public extension Collection {
 			transform(argument, element)
 		}
 	}
+	
+	@inlinable
+	func compactMap <Argument, Output> (
+		_ transform: (Element, Argument) -> Output?,
+		_ argument: Argument
+	) -> [Output] {
+		compactMap { element in
+			transform(element, argument)
+		}
+	}
+	
+	@inlinable
+	func compactMap <Argument, Output> (
+		_ argument: Argument,
+		_ transform: (Argument, Element) -> Output?
+	) -> [Output] {
+		compactMap { element in
+			transform(argument, element)
+		}
+	}
 }
