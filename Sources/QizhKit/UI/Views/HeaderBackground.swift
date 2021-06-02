@@ -96,11 +96,7 @@ public struct ShowHeaderBackgroundViewModifier: ViewModifier {
 			BlurredBackgroundView(style: self.style)
 				.height(show ? height + safeFrameInsets.top : 0)
 				.padding(.bottom, .hairline)
-				.overlay(
-					aligned: .bottom,
-					Color(.separator)
-						.height(.hairline)
-				)
+				.overlay(.bottom, Color(.separator).height(.hairline))
 				.apply(when: topSafeInset.isNotZero) {
 					$0.offset(y: -topSafeInset)
 				}
@@ -118,8 +114,7 @@ public struct ShowHeaderBackgroundViewModifier: ViewModifier {
 			Color.clear
 				.overlay(LinearGradient.vertical(from: .blue, to: .orange).opacity(0.3))
 				.debugFrame(blurred: false, alignment: .bottom)
-				.overlay(
-					aligned: .bottom,
+				.overlay(.bottom) {
 					VStack.LabeledViews {
 						self.safeFrameInsets.top.labeledView(label: "device")
 						geometry.safeAreaInsets.top.labeledView(label: "screen")
@@ -127,7 +122,7 @@ public struct ShowHeaderBackgroundViewModifier: ViewModifier {
 						self.show.labeledView(label: "show")
 					}
 					.padding(.bottom, 19)
-				)
+				}
 				.overlay(Color.blue.height(1), alignment: .top)
 				.overlay(Color.orange.height(1), alignment: .bottom)
 				.height(geometry.size.height)

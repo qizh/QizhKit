@@ -102,8 +102,7 @@ public struct ScrollOffsetReader <SpaceName: Hashable>: ViewModifier {
 	
 	public func body(content: Content) -> some View {
 		content
-			.background(
-				aligned: .topLeading,
+			.background(.topLeading) {
 				GeometryReader { geometry in
 					Color.almostClear
 						.transformPreference(OriginPreferenceKey.self) { value in
@@ -114,7 +113,7 @@ public struct ScrollOffsetReader <SpaceName: Hashable>: ViewModifier {
 						}
 				}
 				.size0()
-			)
+			}
 	}
 }
 

@@ -175,8 +175,7 @@ public struct Flock <Input, Content>: View
 		.apply(when: debug) { content in
 			content
 				.border.c4()
-				.overlay(
-					aligned: .topTrailing,
+				.overlay(.topTrailing) {
 					VStack.LabeledViews {
 						layout.space.labeledView(label: "space", f: 2)
 						CGSize(layout.width, layout.height).labeledView(label: "size", f: 2)
@@ -188,7 +187,7 @@ public struct Flock <Input, Content>: View
 					}
 					.fixedSize()
 					.offset(x: 200)
-				)
+				}
 		}
 		.apply(when: data.isEmpty) { _ in
 			Pixel()
