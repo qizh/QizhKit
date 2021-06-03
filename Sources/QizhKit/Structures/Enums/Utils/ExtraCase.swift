@@ -125,6 +125,11 @@ extension ExtraCase: RawRepresentable where Known.RawValue: Equatable {
 
 extension ExtraCase: Equatable where Known: Equatable { }
 extension ExtraCase: Hashable where Known: Equatable, Known.RawValue: Hashable { }
+extension ExtraCase: Comparable where Known: Equatable, Known.RawValue: Comparable {
+	public static func < (lhs: ExtraCase<Known>, rhs: ExtraCase<Known>) -> Bool {
+		lhs.rawValue < rhs.rawValue
+	}
+}
 
 // MARK: With Unknown
 
