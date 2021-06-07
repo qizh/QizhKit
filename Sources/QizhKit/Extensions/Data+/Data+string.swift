@@ -8,8 +8,10 @@
 
 import Foundation
 
-public extension Data {
-	struct HexEncodingOptions: OptionSet {
+// MARK: Hex
+
+extension Data {
+	public struct HexEncodingOptions: OptionSet {
 		public let rawValue: Int
 		public init(rawValue: Int) {
 			self.rawValue = rawValue
@@ -17,7 +19,7 @@ public extension Data {
 		public static let upperCase = HexEncodingOptions(rawValue: 1 << 0)
 	}
 	
-	func hexEncodedString(options: HexEncodingOptions = []) -> String {
+	public func hexEncodedString(options: HexEncodingOptions = []) -> String {
 		let hexDigits = Array(
 			(options.contains(.upperCase)
 				? "0123456789ABCDEF"
@@ -36,7 +38,7 @@ public extension Data {
 		return String(utf16CodeUnits: chars, count: chars.count)
 	}
 	
-	init?(hexString: String) {
+	public init?(hexString: String) {
 		let len = hexString.count / 2
 		var data = Data(capacity: len)
 		for i in 0 ..< len {
@@ -50,5 +52,13 @@ public extension Data {
 			}
 		}
 		self = data
+	}
+}
+
+// MARK: String
+
+extension Data {
+	public func asString(encoding: String.Encoding) -> String? {
+		String(data: self, encoding: encoding)
 	}
 }
