@@ -11,41 +11,16 @@ import Combine
 
 private var cancellables = Set<AnyCancellable>()
 
+// MARK: Key
+
 public extension Published {
 	init(
 		wrappedValue defaultValue: Value,
 		key: String,
 		store: UserDefaults
 	) {
-		
-		/*
-		switch defaultValue {
-		case is Bool:
-			self.init(initialValue: store.bool(forKey: key) as? Value ?? defaultValue)
-		case is Int:
-			self.init(initialValue: store.integer(forKey: key) as? Value ?? defaultValue)
-		case is Float:
-			self.init(initialValue: store.float(forKey: key) as? Value ?? defaultValue)
-		case is Double:
-			self.init(initialValue: store.double(forKey: key) as? Value ?? defaultValue)
-		case is CGFloat:
-			self.init(initialValue: store.double(forKey: key) as? Value ?? defaultValue)
-		case is String:
-			self.init(initialValue: store.string(forKey: key) as? Value ?? defaultValue)
-		case is Array<String>:
-			self.init(initialValue: store.stringArray(forKey: key) as? Value ?? defaultValue)
-		case is Dictionary<String, Any>:
-			self.init(initialValue: store.dictionary(forKey: key) as? Value ?? defaultValue)
-		case is Array<Any>:
-			self.init(initialValue: store.array(forKey: key) as? Value ?? defaultValue)
-		default:
-			self.init(initialValue: defaultValue)
-		}
-		*/
-		
 		self.init(initialValue: store.object(forKey: key) as? Value ?? defaultValue)
 		
-//		cancellables[key] =
 		projectedValue
 			.sink { value in
 				if let optional = value as? OptionalConvertible,
@@ -54,24 +29,12 @@ public extension Published {
 				} else {
 					store.set(value, forKey: key)
 				}
-				/*
-				switch value {
-				case let value as Bool: 			store.set(value, forKey: key)
-				case let value as Int: 				store.set(value, forKey: key)
-				case let value as Float: 			store.set(value, forKey: key)
-				case let value as Double: 			store.set(value, forKey: key)
-				case let value as CGFloat: 			store.set(value, forKey: key)
-				case let value as String: 			store.set(value, forKey: key)
-				case let value as [String]: 		store.set(value, forKey: key)
-				case let value as [String: Any]: 	store.set(value, forKey: key)
-				case let value as [Any]: 			store.set(value, forKey: key)
-				default: 							store.set(value, forKey: key)
-				}
-				*/
 			}
 			.store(in: &cancellables)
 	}
 }
+
+// MARK: Raw Representable Key
 
 public extension Published
 	where Value: RawRepresentable,
@@ -87,7 +50,6 @@ public extension Published
 		
 		self.init(initialValue: value)
 		
-//		cancellables[key] =
 		projectedValue
 			.sink { value in
 				store.set(value.rawValue, forKey: key)
@@ -108,7 +70,6 @@ public extension Published
 		let current = store.integer(forKey: key)
 		self.init(initialValue: Value(rawValue: current) ?? defaultValue)
 		
-//		cancellables[key] =
 		projectedValue
 			.sink { value in
 				store.set(value.rawValue, forKey: key)
@@ -116,6 +77,8 @@ public extension Published
 			.store(in: &cancellables)
 	}
 }
+
+// MARK: Codable
 
 public extension Published
 	where Value: Codable
@@ -136,7 +99,6 @@ public extension Published
 			self.init(initialValue: defaultValue)
 		}
 		
-//		cancellables[key] =
 		projectedValue
 			.sink { value in
 				do {
