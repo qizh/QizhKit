@@ -287,6 +287,21 @@ public extension Publisher where Output: Collection & EmptyTestable {
 	}
 }
 
+// MARK: Remove Duplicates
+
+extension Publisher {
+	@inlinable
+	public func removeDuplicates <T> (
+		by transform: @escaping (Output) -> T
+	) -> Publishers.RemoveDuplicates<Self>
+		where T: Equatable
+	{
+		removeDuplicates { prev, current in
+			transform(prev) == transform(current)
+		}
+	}
+}
+
 // MARK: Filter
 
 public extension Publisher {
