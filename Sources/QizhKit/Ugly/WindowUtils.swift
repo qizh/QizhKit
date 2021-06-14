@@ -36,7 +36,8 @@ public struct WindowUtils {
 	}
 	
 	public static var currentWindow: UIWindow? {
-		keyWindow ?? originalWindow
+		originalWindow
+		// keyWindow ?? originalWindow
 	}
 }
 
