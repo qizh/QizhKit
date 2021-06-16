@@ -17,14 +17,14 @@ public extension Collection {
 	/// - Parameters:
 	///   - lhs: field
 	///   - rhs: value
-	@inlinable static func ∅= (lhs: inout Self, rhs: Self) {
+	static func ∅= (lhs: inout Self, rhs: @autoclosure () -> Self) {
 		if lhs.isEmpty {
-			lhs = rhs
+			lhs = rhs()
 		}
 	}
-	static func ∅? (lhs: Self, rhs: Self) -> Self {
+	static func ∅? (lhs: Self, rhs: @autoclosure () -> Self) -> Self {
 		if lhs.isEmpty {
-			return rhs
+			return rhs()
 		}
 		return lhs
 	}
