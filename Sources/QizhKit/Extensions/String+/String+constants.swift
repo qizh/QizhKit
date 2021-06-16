@@ -22,8 +22,8 @@ public extension Character {
 	
 	static let plusChar: Character         = "+"
 	static let minusChar: Character        = "-"
-	static let multiplyChar: Character     = "×"
-	static let xMarkChar: Character        = "𐄂"
+	static let multiplyChar: Character     = "✕"
+	static let xMarkChar: Character        = "✕"
 	static let divideChar: Character       = "÷"
 	static let plusminusChar: Character    = "±"
 	static let degreesChar: Character      = "°"
