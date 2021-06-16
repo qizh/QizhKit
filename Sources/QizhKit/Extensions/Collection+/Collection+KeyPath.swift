@@ -253,6 +253,13 @@ public extension Collection {
 	}
 	
 	@inlinable func filter <Medium: Equatable> (
+		remove transformed: (Element) -> Medium,
+		from other: [Medium]
+	) -> [Self.Element] {
+		filter({ element in other.contains(no: transformed(element)) })
+	}
+	
+	@inlinable func filter <Medium: Equatable> (
 		where transformed: (Element) -> [Medium],
 		contains other: Medium
 	) -> [Self.Element] {
