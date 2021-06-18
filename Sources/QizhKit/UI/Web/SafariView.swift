@@ -118,11 +118,18 @@ public struct SafariButton<Content>: View where Content: View {
 	public var body: some View {
 		content
 			.button {
-				if let isActive = self.isActive {
-					isActive.wrappedValue = true
-				} else {
-					isPresented = true
-				}
+				UIApplication.shared
+					.open(
+						url,
+						options: [.universalLinksOnly: true]
+					) { success in
+						guard not(success) else { return }
+						if let isActive = self.isActive {
+							isActive.wrappedValue = true
+						} else {
+							isPresented = true
+						}
+					}
 			}
 			.sheet(isPresented: isActive ?? $isPresented) {
 				SafariView(showing: self.url, title: self.title)
@@ -165,19 +172,23 @@ public extension URL {
 }
 
 public extension View {
-	@ViewBuilder func asSafariButton(
+	@ViewBuilder
+	func asSafariButton(
 		opening url: URL?,
 		      title: String? = nil,
 		   isActive: Binding<Bool>? = nil
 	) -> some View {
-		url.mapView { url in
+		if let url = url {
 			SafariButton(
 				 opening: url,
 				   title: title,
-				isActive: isActive,
-				 content: { self }
-			)
-		} ?? self
+				isActive: isActive
+			) {
+				self
+			}
+		} else {
+			self
+		}
 	}
 	
 	@available(iOS 14.0, *)
