@@ -21,6 +21,7 @@ public extension Numeric {
 	@inlinable static var ten:        Self { 10 }
 	@inlinable static var dozen:      Self { 12 }
 	@inlinable static var twelve:     Self { 12 }
+	@inlinable static var sixteen:    Self { 16 }
 	@inlinable static var twenty:     Self { 20 }
 	@inlinable static var twentyFour: Self { 24 }
 	@inlinable static var thirty:     Self { 30 }
