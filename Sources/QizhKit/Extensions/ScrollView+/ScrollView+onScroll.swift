@@ -195,7 +195,7 @@ public struct ScrollViewContentOffsetDelegateModifier: ViewModifier {
 					scrollView.delegate = self.delegate
 				}
 				
-				if self.delegate.contentOffsetBase.isZero {
+				if self.delegate.contentOffsetBase.y == CGFloat.zero.nextUp {
 					self.delegate.contentOffsetBase = scrollView.contentOffset
 				}
 				self.delegate.contentOffset = self.$contentOffset
@@ -206,7 +206,7 @@ public struct ScrollViewContentOffsetDelegateModifier: ViewModifier {
 // MARK: Delegate
 
 class IntrospectedScrollViewDelegate: NSObject, UIScrollViewDelegate {
-	var contentOffsetBase: CGPoint = .zero
+	var contentOffsetBase: CGPoint = .init(x: .zero, y: CGFloat.zero.nextUp)
 	
 	var onEndDragging: ScrollViewEndDraggingDelegateModifier.Callback?
 	var contentOffset: Binding<CGPoint>?
