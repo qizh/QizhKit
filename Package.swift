@@ -48,6 +48,11 @@ let package = Package(
 			url: "https://github.com/devicekit/DeviceKit",
 			from: "4.2.1"
 		),
+		.package(
+			name: "BetterSafariView",
+			url: "https://github.com/stleamist/BetterSafariView.git",
+			from: "2.3.1"
+		),
     ],
     targets: [
         .target(
@@ -62,6 +67,7 @@ let package = Package(
 					package: "swift-nonempty"
 				),
 				"DeviceKit",
+				"BetterSafariView",
 			]
 		),
 		/*
