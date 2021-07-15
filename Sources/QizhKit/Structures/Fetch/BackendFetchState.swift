@@ -597,6 +597,7 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 		 )
 	case sign(SignFailureReason)
 	case preconditionValidation(PreconditionValidationReason)
+	case priceMismatch(_ message: String)
 	
 	case cancelled
 	case notFound
@@ -743,6 +744,8 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 		
 		case .preconditionValidation(.illegalCharacters(_)):
 			return "Input contains illegal characters"
+		case .priceMismatch(_):
+			return "The price doesn't match"
 		}
 	}
 	
@@ -770,6 +773,7 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 		case .emptyContentError: 			return true
 		case .unknown: 						return false
 		case .preconditionValidation(_): 	return false
+		case .priceMismatch(_): 			return true
 		}
 	}
 	

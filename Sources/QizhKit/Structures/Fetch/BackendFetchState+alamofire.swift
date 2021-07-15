@@ -104,6 +104,10 @@ public struct FetchErrorDebugDetails: Codable {
 			if case .userExists(let loginMethod) = reason {
 				self.details["login method"] = loginMethod.caseWord
 			}
+		case .priceMismatch(let message):
+			self.details = [
+				"message": message
+			]
 		case .cancelled: ()
 		case .notFound: ()
 		case .unauthorized: ()
