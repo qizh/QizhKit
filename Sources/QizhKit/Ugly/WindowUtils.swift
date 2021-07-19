@@ -14,6 +14,7 @@ public struct WindowUtils {
 		originalWindow = window
 	}
 	
+	// @available(iOSApplicationExtension, unavailable)
 	public static var windowScene: UIWindowScene? {
 		UIApplication.shared
 			.connectedScenes
@@ -21,6 +22,7 @@ public struct WindowUtils {
 			.first as? UIWindowScene
 	}
 	
+	// @available(iOSApplicationExtension, unavailable)
 	public static var keyWindow: UIWindow? {
 		UIApplication.shared.connectedScenes
 			.filter { $0.activationState == .foregroundActive }
@@ -32,7 +34,7 @@ public struct WindowUtils {
 	}
 	
 	public static var rootViewController: UIViewController? {
-		keyWindow?.rootViewController
+		originalWindow?.rootViewController
 	}
 	
 	public static var currentWindow: UIWindow? {
@@ -46,7 +48,7 @@ public struct WindowUtils {
 }
 
 @inlinable public func endEditing(force: Bool) {
-	WindowUtils.keyWindow?.endEditing(force)
+	WindowUtils.originalWindow?.endEditing(force)
 }
 
 public struct SafeFrame {

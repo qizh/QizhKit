@@ -8,6 +8,7 @@
 
 import UIKit
 
+// @available(iOSApplicationExtension, unavailable)
 public extension UIResponder {
 	private weak static var _currentFirstResponder: UIResponder? = nil
 	

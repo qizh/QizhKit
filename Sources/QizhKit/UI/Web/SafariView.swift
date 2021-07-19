@@ -155,6 +155,7 @@ public struct SafariButton<Content>: View where Content: View {
 	}
 	*/
 	
+	// @available(iOSApplicationExtension, unavailable)
 	private func openURL() {
 		UIApplication.shared
 			.open(
