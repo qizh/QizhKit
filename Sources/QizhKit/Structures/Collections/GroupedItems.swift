@@ -15,6 +15,11 @@ public struct GroupedItems <Group, Element>: Equatable
 {
 	public let group: Group
 	public let items: [Element]
+	
+	public init(group: Group, items: [Element]) {
+		self.group = group
+		self.items = items
+	}
 }
 
 public extension GroupedItems where Group: Hashable {
