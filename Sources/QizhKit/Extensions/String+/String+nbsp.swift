@@ -21,7 +21,12 @@ public extension String {
 		replacing(.whitespaces, with: .minus)
 	}
 	
+	@available(*, deprecated, renamed: "withUnderscoreForSpaces")
 	@inlinable var withUnderlineForSpaces: String {
-		replacing(.whitespaces, with: .lowLine)
+		replacing(.whitespaces, with: .underline)
+	}
+	
+	@inlinable var withUnderscoreForSpaces: String {
+		replacing(.whitespaces, with: .underscore)
 	}
 }
