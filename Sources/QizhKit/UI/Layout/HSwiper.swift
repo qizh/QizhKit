@@ -117,7 +117,6 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		@ViewBuilder content: @escaping (Int, Source.Element) -> Content
 	) where
 		Source: Collection,
-		Source.Element: Hashable,
 		Data == [EnumeratedHashableElement<Source>],
 		ID == Source.Element
 	{
@@ -139,7 +138,6 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		@ViewBuilder content: @escaping (Int, Source.Element) -> Content
 	) where
 		Source: Collection,
-		Source.Element: Hashable,
 		Data == [EnumeratedHashableElement<Source>],
 		ID == Source.Element,
 		IndicatorContent == EmptyView

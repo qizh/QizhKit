@@ -10,7 +10,7 @@ import Foundation
 
 // MARK: Zero
 
-public extension AdditiveArithmetic where Self: Equatable {
+public extension AdditiveArithmetic {
 	@inlinable var isZero: Bool { self == .zero }
 	@inlinable var isNotZero: Bool { self != .zero }
 	@inlinable var nonZero: Self? { isZero ? nil : self }
