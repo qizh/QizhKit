@@ -88,6 +88,12 @@ public extension Date {
 	@inlinable func isSameDay   (as other: Date) -> Bool {    dayStart.equals(other   .dayStart) }
 	@inlinable func isSameMonth (as other: Date) -> Bool {  monthStart.equals(other .monthStart) }
 	@inlinable func isSameYear  (as other: Date) -> Bool {   yearStart.equals(other  .yearStart) }
+	
+	func distance(in component: Calendar.Component, to date: Date = .now) -> Int {
+		Calendar.autoupdatingCurrent
+			.dateComponents([component], from: self, to: date)
+			.value(for: component) ?? .zero
+	}
 }
 
 public extension OptionalForcedUnwrapAssumption {
