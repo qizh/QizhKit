@@ -860,10 +860,11 @@ struct ProgressView_Previews: PreviewProvider {
 									)
 									Spacer()
 								}
-								.background(
-									aligned: .bottom,
-									Color(.systemGray5).height(1).offset(y: 8)
-								)
+								.background(.bottom) {
+									Color(.systemGray5)
+										.height(1)
+										.offset(y: 8)
+								}
 							}
 						}
 						.padding()
