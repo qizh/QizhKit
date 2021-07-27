@@ -35,11 +35,13 @@ let package = Package(
 			url: "https://github.com/Alamofire/Alamofire",
 			from: "5.0.0"
 		),
+		/*
 		.package(
 			name: "SwiftDate",
 			url: "https://github.com/malcommac/SwiftDate",
 			from: "6.2.0"
 		),
+		*/
 		/*
 		.package(
 			name: "swift-nonempty",
@@ -67,7 +69,9 @@ let package = Package(
 				*/
 				"Introspect",
 				"Alamofire",
+				/*
 				"SwiftDate",
+				*/
 				/*
 				.product(
 					name: "NonEmpty",
