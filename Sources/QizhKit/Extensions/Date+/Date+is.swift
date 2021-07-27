@@ -28,9 +28,9 @@ public extension Date {
 	@inlinable var isReference0: Bool { equals(.reference0) }
 	@inlinable var isUnix0:      Bool { equals(.unix0) }
 	
-//	#if !canImport(DateToolsSwift)
 	@inlinable var isToday: Bool { Calendar.autoupdatingCurrent.isDateInToday(self) }
-//	#endif
+	@inlinable var isTomorrow: Bool { Calendar.autoupdatingCurrent.isDateInTomorrow(self) }
+	@inlinable var isYesterday: Bool { Calendar.autoupdatingCurrent.isDateInYesterday(self) }
 	
 	@inlinable var isInFuture: Bool { isLater(than: .today) }
 	@inlinable var isInPast: Bool { isEarlier(than: .today) }
@@ -64,6 +64,13 @@ public extension Date {
 			.forceUnwrap(because: .validDateComponents)
 			.addingTimeInterval(-1.thousandth)
 	}
+	
+	@inlinable var secondComponent: Int { Calendar.autoupdatingCurrent.component(.second, from: self) }
+	@inlinable var minuteComponent: Int { Calendar.autoupdatingCurrent.component(.minute, from: self) }
+	@inlinable var   hourComponent: Int { Calendar.autoupdatingCurrent.component(.hour, from: self) }
+	@inlinable var    dayComponent: Int { Calendar.autoupdatingCurrent.component(.day, from: self) }
+	@inlinable var  monthComponent: Int { Calendar.autoupdatingCurrent.component(.month, from: self) }
+	@inlinable var   yearComponent: Int { Calendar.autoupdatingCurrent.component(.year, from: self) }
 	
 	@inlinable var minuteStart: Date { start(.minute) }
 	@inlinable var   hourStart: Date { start(.hour)   }
