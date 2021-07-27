@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import Combine
 import Alamofire
 
 // MARK: Fetcher
@@ -16,6 +17,10 @@ public protocol Fetcher: ObservableObject {
 	var state: BackendFetchState<Value> { get set }
 	var debug: Bool { get set }
 	init()
+}
+
+public protocol GeneralFetchStatePublishing {
+	var basicStatePublisher: AnyPublisher<GeneralBackendFetchState, Never> { get }
 }
 
 public struct FetcherParametersKeys {
