@@ -38,11 +38,13 @@ let package = Package(
 			url: "https://github.com/malcommac/SwiftDate",
 			from: "6.2.0"
 		),
+		/*
 		.package(
 			name: "swift-nonempty",
 			url: "https://github.com/pointfreeco/swift-nonempty",
 			from: "0.3.1"
 		),
+		*/
 		.package(
 			name: "DeviceKit",
 			url: "https://github.com/devicekit/DeviceKit",
@@ -62,10 +64,12 @@ let package = Package(
 				"Introspect",
 				"Alamofire",
 				"SwiftDate",
+				/*
 				.product(
 					name: "NonEmpty",
 					package: "swift-nonempty"
 				),
+				*/
 				"DeviceKit",
 				"BetterSafariView",
 			]
