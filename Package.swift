@@ -18,11 +18,13 @@ let package = Package(
 		),
     ],
     dependencies: [
+		/*
 		.package(
 			name: "PhoneNumberKit",
 			url: "https://github.com/marmelroy/PhoneNumberKit",
 			from: "3.3.0"
 		),
+		*/
 		.package(
 			name: "Introspect",
 			url: "https://github.com/siteline/SwiftUI-Introspect",
@@ -60,7 +62,9 @@ let package = Package(
         .target(
             name: "QizhKit",
             dependencies: [
+				/*
 				"PhoneNumberKit",
+				*/
 				"Introspect",
 				"Alamofire",
 				"SwiftDate",

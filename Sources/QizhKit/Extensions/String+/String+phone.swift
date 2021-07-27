@@ -7,6 +7,8 @@
 //
 
 import Foundation
+
+#if canImport(PhoneNumberKit)
 import PhoneNumberKit
 
 public extension String {
@@ -48,3 +50,4 @@ public extension String {
 		return trimmed
 	}
 }
+#endif
