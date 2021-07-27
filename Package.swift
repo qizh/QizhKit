@@ -11,7 +11,7 @@ let package = Package(
     products: [
         .library(
             name: "QizhKit",
-//			type: .dynamic,
+			// type: .dynamic,
             targets: [
 				"QizhKit"
 			]
@@ -52,7 +52,7 @@ let package = Package(
 		.package(
 			name: "DeviceKit",
 			url: "https://github.com/devicekit/DeviceKit",
-			from: "4.2.1"
+			from: "4.4.0"
 		),
 		.package(
 			name: "BetterSafariView",
@@ -67,8 +67,12 @@ let package = Package(
 				/*
 				"PhoneNumberKit",
 				*/
+				/*
 				"Introspect",
+				*/
+				/*
 				"Alamofire",
+				*/
 				/*
 				"SwiftDate",
 				*/

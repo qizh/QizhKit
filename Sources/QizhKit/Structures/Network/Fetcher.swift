@@ -8,7 +8,9 @@
 
 import SwiftUI
 import Combine
+#if canImport(Alamofire)
 import Alamofire
+#endif
 
 // MARK: Fetcher
 
@@ -93,11 +95,12 @@ public protocol CollectionFetcher: Fetcher
 
 public extension SingleItemFetcher {
 	typealias Item = Value
-	typealias ItemResponse = AFDataResponse<Item>
+	typealias AirtableItemRecords = AirtableRecords<Item>
 	
+	#if canImport(Alamofire)
+	typealias ItemResponse = AFDataResponse<Item>
 	typealias RailsItemData = RailsResponse<Item>
 	typealias AFRailsItemResponse = AFDataResponse<RailsItemData>
-	typealias AirtableItemRecords = AirtableRecords<Item>
 	
 	func defaultResponse(_ response: ItemResponse) {
 		if debug { debugPrint(response) }
@@ -114,6 +117,7 @@ public extension SingleItemFetcher {
 		case .success(let item): state = .success(item.data)
 		}
 	}
+	#endif
 	
 	#if DEBUG
 	@inlinable static var demoFetched: Self { demo(.success(demoData)) }
@@ -125,19 +129,20 @@ public extension SingleItemFetcher {
 
 public extension CollectionFetcher {
 	typealias Item = Value.Element
-	typealias ItemResponse = AFDataResponse<Item>
 	typealias LossyValue = LossyArray<Item>
-	typealias LossyValueResponse = AFDataResponse<LossyValue>
-	
 	typealias AirtableItemRecords = AirtableRecords<Value.Element>
-	typealias AFAirtableResponse = AFDataResponse<AirtableItemRecords>
-	
 	typealias RailsLossyItemData = RailsLossyResponses<Value.Element>
 	typealias RailsStrictItemData = RailsStrictResponses<Value.Element>
+	typealias RailsItemData = RailsResponse<Item>
+	
+	#if canImport(Alamofire)
+	typealias ItemResponse = AFDataResponse<Item>
+	typealias LossyValueResponse = AFDataResponse<LossyValue>
+	
+	typealias AFAirtableResponse = AFDataResponse<AirtableItemRecords>
 	typealias AFRailsLossyResponse = AFDataResponse<RailsLossyItemData>
 	typealias AFRailsStrictResponse = AFDataResponse<RailsStrictItemData>
 	
-	typealias RailsItemData = RailsResponse<Item>
 	typealias AFRailsItemResponse = AFDataResponse<RailsItemData>
 	
 	func defaultResponse(_ response: LossyValueResponse, _ animate: Bool) {
@@ -282,6 +287,7 @@ public extension CollectionFetcher {
 	func nonEmptyResponse(animate: Bool) -> (AFRailsStrictResponse) -> Void {
 		{ self.nonEmptyResponse($0, animate) }
 	}
+	#endif
 	
 	#if DEBUG
 	@inlinable static var demoFetched: Self { demo(.success(Value(demoData))) }
@@ -301,6 +307,7 @@ extension CollectionFetcher {
 }
 #endif
 
+#if canImport(Alamofire)
 public extension CollectionFetcher where Item: Identifiable {
 	func defaultResponse(_ response: AFRailsLossyResponse, _ animate: Bool) {
 		if debug { debugPrint(response) }
@@ -374,6 +381,7 @@ public extension CollectionFetcher where Item: Identifiable {
 		{ self.nonEmptyResponse($0, animate) }
 	}
 }
+#endif
 
 public extension SingleItemFetcher where Item: AirtableModel {
 	typealias K = Item.Fields.CodingKeys
@@ -412,6 +420,7 @@ public extension ScreenWithFetcher {
 
 // MARK: AF Headers
 
+#if canImport(Alamofire)
 public extension Optional where Wrapped == HTTPHeader {
 	func mapAsHeaders() -> HTTPHeaders? {
 		switch self {
@@ -437,3 +446,4 @@ extension Optional where Wrapped == HTTPHeaders {
 		}
 	}
 }
+#endif

@@ -6,8 +6,10 @@
 //  Copyright © 2020 Serhii Shevchenko. All rights reserved.
 //
 
-import UIKit
 import SwiftUI
+
+#if canImport(Introspect)
+import UIKit
 import Introspect
 
 public extension View {
@@ -50,106 +52,9 @@ public extension ScrollView {
 		}
 		.scrollOffset(offset, delayed: delayed)
 	}
-	
-	/*
-	static func reading <SpaceName: Hashable, OriginalContent: View> (
-		offset: Binding<CGPoint>,
-		delayed: Bool = false,
-		in coordinateSpaceName: SpaceName,
-		_ axes: Axis.Set = .vertical,
-		showsIndicators: Bool = true,
-		@ViewBuilder content: () -> OriginalContent
-	) -> some View
-		where Content == _ConditionalContent<AnyView, OriginalContent>
-	{
-		ScrollView(axes, showsIndicators: showsIndicators) {
-			if #available(iOS 14.0, *) {
-				content()
-					.modifier(
-						ScrollOffsetReader(
-							offset: offset,
-							in: coordinateSpaceName
-						)
-					)
-			} else {
-				content()
-			}
-		}
-		.applyForIOS14 { view in
-			view
-				.coordinateSpace(name: coordinateSpaceName)
-		} else: { view in
-			view
-				.scrollOffset(offset, delayed: delayed)
-		}
-	}
-	*/
 }
 
 // MARK: Modifiers
-
-public struct ScrollOffsetReader <SpaceName: Hashable>: ViewModifier {
-	@Binding private var offset: CGPoint
-	private let coordinateSpaceName: SpaceName
-	
-	public init(
-		offset: Binding<CGPoint>,
-		in coordinateSpaceName: SpaceName
-	) {
-		self._offset = offset
-		self.coordinateSpaceName = coordinateSpaceName
-	}
-	
-	public func body(content: Content) -> some View {
-		content
-			.background(.topLeading) {
-				GeometryReader { geometry in
-					Color.almostClear
-						.transformPreference(OriginPreferenceKey.self) { value in
-							value = geometry.frame(in: .named(coordinateSpaceName)).origin
-						}
-						.onPreferenceChange(OriginPreferenceKey.self) { value in
-							offset = value
-						}
-				}
-				.size0()
-			}
-	}
-}
-
-fileprivate struct OriginPreferenceKey: PreferenceKey {
-	static var defaultValue: CGPoint = .zero
-	static func reduce(value: inout CGPoint, nextValue: () -> CGPoint) {
-		value = nextValue()
-	}
-}
-
-/*
-public struct ScrollOffsetProvider: ViewModifier {
-	private let coordinateSpace: Hashable
-	@Binding private var offset: CGPoint
-	
-	public init(
-		coordinateSpace: Hashable,
-		offset: Binding<CGPoint>
-	) {
-		self.coordinateSpace = coordinateSpace
-		self._offset = offset
-	}
-	
-	public func body(content: Content) -> some View {
-		content
-			.background(
-				GeometryReader { geometry in
-					Color.clear
-						.transformPreference(OriginPreferenceKey.self) {
-							$0 = geometry.frame(in: .global).origin
-						}
-				}
-			)
-	}
-}
-*/
 
 public struct ScrollViewEndDraggingDelegateModifier: ViewModifier {
 	public typealias Callback = () -> Void
@@ -234,4 +139,43 @@ class IntrospectedScrollViewDelegate: NSObject, UIScrollViewDelegate {
 		print("b: \(scrollView.adjustedContentInset.bottom)")
 	}
 	*/
+}
+#endif
+
+// MARK: Read Offset
+
+public struct ScrollOffsetReader <SpaceName: Hashable>: ViewModifier {
+	@Binding private var offset: CGPoint
+	private let coordinateSpaceName: SpaceName
+	
+	public init(
+		offset: Binding<CGPoint>,
+		in coordinateSpaceName: SpaceName
+	) {
+		self._offset = offset
+		self.coordinateSpaceName = coordinateSpaceName
+	}
+	
+	public func body(content: Content) -> some View {
+		content
+			.background(.topLeading) {
+				GeometryReader { geometry in
+					Color.almostClear
+						.transformPreference(OriginPreferenceKey.self) { value in
+							value = geometry.frame(in: .named(coordinateSpaceName)).origin
+						}
+						.onPreferenceChange(OriginPreferenceKey.self) { value in
+							offset = value
+						}
+				}
+				.size0()
+			}
+	}
+}
+
+fileprivate struct OriginPreferenceKey: PreferenceKey {
+	static var defaultValue: CGPoint = .zero
+	static func reduce(value: inout CGPoint, nextValue: () -> CGPoint) {
+		value = nextValue()
+	}
 }

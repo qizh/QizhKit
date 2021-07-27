@@ -7,6 +7,8 @@
 //
 
 import SwiftUI
+
+#if canImport(Introspect)
 import Introspect
 
 public struct BecomeFirstResponder: ViewModifier {
@@ -146,3 +148,4 @@ public extension View {
 		*/
 	}
 }
+#endif
