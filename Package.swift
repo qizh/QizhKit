@@ -67,12 +67,8 @@ let package = Package(
 				/*
 				"PhoneNumberKit",
 				*/
-				/*
 				"Introspect",
-				*/
-				/*
 				"Alamofire",
-				*/
 				/*
 				"SwiftDate",
 				*/
