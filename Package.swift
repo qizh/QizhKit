@@ -28,7 +28,7 @@ let package = Package(
 		.package(
 			name: "Introspect",
 			url: "https://github.com/siteline/SwiftUI-Introspect",
-			from: "0.1.0"
+			from: "0.1.3"
 		),
 		.package(
 			name: "Alamofire",
