@@ -30,8 +30,9 @@ public struct LossyArray <Item: Codable>: Codable, EmptyProvidable, ExpressibleB
 				do {
 					let value = try container.decode(Item.self)
 					elements.append(value)
+					// print("[LossyArray] decoded \(Item.self) element")
 				} catch {
-					print("[LossyArray] is skipping element because of decoding error: \(error)")
+					print("[LossyArray] is skipping \(Item.self) element because of decoding error: \(error)")
 					_ = try? container.decode(Blancodable.self)
 				}
 			}
@@ -75,11 +76,19 @@ public extension KeyedDecodingContainer {
 	) -> LossyArray<Wrapped> {
 		let result: LossyArray<Wrapped>?
 		do {
+			// print("[LossyArray] try to decode \(Wrapped.self) optionally")
 			result = try decodeIfPresent(LossyArray<Wrapped>.self, forKey: key)
 		} catch {
-			result = nil
 			print("[LossyArray] no value for `\(key)` key")
+			result = nil
 		}
+		/*
+		if let count = result?.wrappedValue.count {
+			print("[LossyArray] decoded \(count) \(Wrapped.self) elements")
+		} else {
+			print("[LossyArray] failed to decode any \(Wrapped.self), fallback to default")
+		}
+		*/
 		return result.orDefault
 	}
 }
