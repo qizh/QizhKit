@@ -13,6 +13,9 @@ public extension Date {
 	@inlinable static var today: Date     { Date() }
 	@inlinable static var tomorrow: Date  { .today + 1.daysInterval }
 	@inlinable static var yesterday: Date { .today - 1.daysInterval }
+	@inlinable static func `in`(_ interval: TimeInterval) -> Date {
+		Date(timeIntervalSinceNow: interval)
+	}
 	
 	@inlinable static var startOfToday: Date         { Date.today.start(.day) }
 	@inlinable static var startOfTomorrow: Date   { Date.tomorrow.start(.day) }
