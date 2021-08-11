@@ -12,9 +12,15 @@ public extension String {
 	@inlinable func replacing(_ set: CharacterSet, with replacement: String = .empty) -> String {
         components(separatedBy: set).joined(separator: replacement)
     }
-	@inlinable func replacing(_ occurances: String, with replacement: String = .empty) -> String {
-		replacingOccurrences(of: occurances, with: replacement)
+	
+	@inlinable func replacing(
+		_ occurances: String,
+		with replacement: String = .empty,
+		options: CompareOptions = []
+	) -> String {
+		replacingOccurrences(of: occurances, with: replacement, options: options)
 	}
+	
 	@inlinable var withSpacesTrimmed: String { trimmingCharacters(in: .whitespaces) }
 	@inlinable var withLinesNSpacesTrimmed: String { trimmingCharacters(in: .whitespacesAndNewlines) }
 	@inlinable var digits: String { replacing(CharacterSet.decimalDigits.inverted) }
