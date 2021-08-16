@@ -50,11 +50,11 @@ public extension Binding where Value == Date {
 }
 
 public extension Binding where Value == String {
-	func asOptional() -> Binding<String?> {
+	func asOptional(default defaultValue: String = .empty) -> Binding<String?> {
 		Binding<String?> {
-			wrappedValue.nonEmpty
+			wrappedValue == defaultValue ? .none : wrappedValue
 		} set: { value in
-			wrappedValue = value.orEmpty
+			wrappedValue = value ?? defaultValue
 		}
 	}
 }
