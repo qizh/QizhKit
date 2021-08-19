@@ -27,6 +27,7 @@ public extension View {
 		overlay(view, alignment: alignment)
 	}
 	
+	@available(iOS, obsoleted: 15, message: "Implemented in SwiftUI")
 	@inlinable
 	func background <Background> (
 		_ alignment: Alignment = .center,
@@ -35,6 +36,7 @@ public extension View {
 		background(view(), alignment: alignment)
 	}
 	
+	@available(iOS, obsoleted: 15, message: "Implemented in SwiftUI")
 	@inlinable
 	func overlay <Overlay> (
 		_ alignment: Alignment = .center,
