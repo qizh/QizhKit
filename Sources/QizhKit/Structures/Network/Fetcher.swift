@@ -53,6 +53,24 @@ public extension Fetcher {
 	#endif
 }
 
+// MARK: Debug Control
+
+public enum DebugDepth: Comparable, EasyCaseComparable {
+	case none
+	case minimum
+	case `default`
+	case extra
+	
+	public var maxDataCount: Int {
+		switch self {
+		case .none: 	return 0
+		case .minimum: 	return 500
+		case .default: 	return 5_000
+		case .extra: 	return 10_000
+		}
+	}
+}
+
 // MARK: Single Protocol
 
 public protocol SingleItemFetcher: Fetcher {
@@ -91,6 +109,8 @@ public protocol CollectionFetcher: Fetcher
 }
 #endif
 
+#warning("Move Fetcher's rails and airtable responses to BespokelyKit")
+
 // MARK: Single Extension
 
 public extension SingleItemFetcher {
@@ -102,8 +122,8 @@ public extension SingleItemFetcher {
 	typealias RailsItemData = RailsResponse<Item>
 	typealias AFRailsItemResponse = AFDataResponse<RailsItemData>
 	
-	func defaultResponse(_ response: ItemResponse) {
-		if debug { debugPrint(response) }
+	func defaultResponse(_ response: ItemResponse, animate: Bool, debug debugDepth: DebugDepth) {
+		if debug || debugDepth.is(not: .none, .default) { print(response.debugDescription(debugDepth)) }
 		switch response.result {
 		case .failure: state = .failed(response)
 		case .success(let item): state = .success(item)
@@ -116,6 +136,13 @@ public extension SingleItemFetcher {
 		case .failure: state = .failed(response)
 		case .success(let item): state = .success(item.data)
 		}
+	}
+	
+	func defaultResponse(_ response: ItemResponse) {
+		defaultResponse(response, animate: false, debug: .default)
+	}
+	func defaultResponse(animate: Bool, debug debugDepth: DebugDepth = .default) -> (ItemResponse) -> Void {
+		{ self.defaultResponse($0, animate: animate, debug: debugDepth) }
 	}
 	#endif
 	
@@ -446,4 +473,134 @@ extension Optional where Wrapped == HTTPHeaders {
 		}
 	}
 }
+
+// MARK: Response Debug
+
+extension DataResponse {
+	public func debugDescription(_ debugDepth: DebugDepth) -> String {
+		guard debugDepth.is(not: .none) else {
+			return "[Result]: \(result)"
+		}
+		
+		guard let request = request else {
+			return """
+			[Request]: None
+			[Result]: \(result)
+			"""
+		}
+		
+		let printableTypes = ["json", "xml", "text", "form-urlencoded"]
+		
+		// MARK: Request
+		
+		let requestBodyDescription: String
+		if let data = data, !data.isEmpty {
+			let isPrintableType = printableTypes
+				.compactMap { type in
+					request.headers["Content-Type"]?
+						.contains(type)
+				}
+				.contains(true)
+			if isPrintableType, data.count <= debugDepth.maxDataCount {
+				requestBodyDescription = """
+				[Body]:
+				    \(String(decoding: data, as: UTF8.self)
+						.withLinesNSpacesTrimmed
+						.offsettingNewLines())
+				"""
+			} else {
+				requestBodyDescription = debugDepth > .minimum ? "[Body]: \(data.count) bytes" : .empty
+			}
+		} else {
+			requestBodyDescription = debugDepth > .minimum ? "[Body]: None" : .empty
+		}
+		
+		var requestDescription: String = "[Request]: \(request.httpMethod!) \(request)"
+		if debugDepth > .minimum || not(request.headers.isEmpty) {
+			requestDescription += .newLine + """
+			    [Headers]:
+			        \("\(request.headers.sorted())".offsettingNewLines())
+			"""
+		}
+		if requestBodyDescription.isNotEmpty {
+			requestDescription += .newLine + """
+			    \(requestBodyDescription.offsettingNewLines())
+			"""
+		}
+		
+		// MARK: Response
+		
+		let responseDescription = response.map { response in
+			let responseBodyDescription: String
+			if let data = data, !data.isEmpty {
+				let isPrintableType = printableTypes
+					.compactMap { type in
+						response.headers["Content-Type"]?
+							.contains(type)
+					}
+					.contains(true)
+				if data.count <= debugDepth.maxDataCount,
+				   isPrintableType {
+					responseBodyDescription = """
+					[Body]:
+					    \(String(decoding: data, as: UTF8.self).withLinesNSpacesTrimmed.offsettingNewLines())
+					"""
+				} else {
+					responseBodyDescription = debugDepth > .minimum ? "[Body]: \(data.count) bytes" : .empty
+				}
+			} else {
+				responseBodyDescription = debugDepth > .minimum ? "[Body]: None" : .empty
+			}
+			
+			var description = ""
+			if debugDepth > .minimum || response.statusCode != 200 {
+				description += """
+				    [Status Code]: \(response.statusCode)
+				"""
+			}
+			if debugDepth > .minimum || not(response.headers.isEmpty) {
+				if description.isNotEmpty {
+					description += .newLine
+				}
+				description += """
+					[Headers]:
+				        \("\(response.headers.sorted())".offsettingNewLines(by: 8))
+				"""
+			}
+			if responseBodyDescription.isNotEmpty {
+				if description.isNotEmpty {
+					description += .newLine
+				}
+				description += """
+					\(responseBodyDescription.offsettingNewLines())
+				"""
+			}
+			if description.isNotEmpty {
+				description = "[Response]:" + .newLine + description
+			}
+			return description
+		} ?? (debugDepth > .minimum ? "[Response]: None" : .empty)
+		
+		// MARK: All together
+		
+		var output = requestDescription
+		if responseDescription.isNotEmpty {
+			output += .newLine + responseDescription
+		}
+		
+		if debugDepth > .minimum {
+			let networkDuration = metrics.map { "\($0.taskInterval.duration)s" } ?? "None"
+			output += .newLine + "[Network Duration]: \(networkDuration)"
+		}
+		
+		if debugDepth > .default {
+			output += .newLine + "[Serialization Duration]: \(serializationDuration)s"
+		}
+		
+		output += .newLine + "[Result]: \(result)"
+		
+		return output
+	}
+}
+
 #endif
