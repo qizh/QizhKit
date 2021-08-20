@@ -558,7 +558,7 @@ extension DataResponse {
 				    [Status Code]: \(response.statusCode)
 				"""
 			}
-			if debugDepth > .minimum || not(response.headers.isEmpty) {
+			if debugDepth > .minimum {
 				if description.isNotEmpty {
 					description += .newLine
 				}
