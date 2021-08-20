@@ -8,6 +8,13 @@
 
 import Foundation
 
+// MARK: 1. Backend Model
+
+/// Implements the most common model actions like
+/// - Initialize with String
+/// - Debug output as pretty printed JSON
+/// - Default Fetcher callbacks
+///
 public protocol BackendModel:
 	Decodable, /// `Encodable` is already in `PrettyStringConvertable`
 	Hashable,
@@ -18,8 +25,57 @@ public protocol BackendModel:
 	var id: ID { get }
 }
 
-public protocol RailsModel: BackendModel, EmptyProvidable {
+public extension BackendModel {
+	init(stringLiteral value: String) {
+		self = try! JSONDecoder.airtable.decode(Self.self, from: Data(value.utf8))
+	}
+	
+	var debugDescription: String {
+		caseName(of: Self.self, .name) + "(\(id))"
+	}
+}
+
+// MARK: 2. Keyed Backend Model
+
+/// In addition to `BackendModel`
+/// will provide an option to get the model value by string key
+public protocol KeyedBackendModel: BackendModel {
 	associatedtype CodingKeys: CodingKey & CaseIterable
+}
+
+// MARK: 3. Keyed Emptyable Model
+
+/// In addition to `KeyedBackendModel`
+/// requires a model to provide an empty variant of it
+public protocol KeyedEmptyableBackendModel: KeyedBackendModel, EmptyProvidable {
+	
+}
+
+public extension KeyedBackendModel {
+	/// Will convert model back to JSON
+	/// to decode one property out of it for the key provided
+	/// - Warning: **Heavy** but universal. Better create your own custom
+	/// method where you get the CodingKey and switch through your keys.
+	func value <T> (
+		for key: String
+	) -> T?
+		where T: Codable,
+			  T: LosslessStringConvertible
+	{
+		guard CodingKeys.allCases.contains(where: \.stringValue, equals: key),
+			  let data = try? JSONEncoder().encode(self)
+		else { return .none }
+		return try? KeyDecoder.decode(T.self, from: data, by: key)
+	}
+}
+
+// MARK: 4. Rails Model
+#warning("Move RailsModel to BespokelyKit")
+
+/// In addition to `KeyedEmptyableBackendModel`
+/// provides some default Fetcher callbacks and default responses
+public protocol RailsModel: KeyedEmptyableBackendModel {
+	
 }
 
 public struct RailsResponse <Item: Codable>: Codable {
@@ -39,6 +95,9 @@ public struct RailsStrictResponses <Item: Codable>: Codable {
 	public let message: String
 	public var data: [Item]
 }
+
+// MARK: Airtable
+#warning("Move AirtableModel to BespokelyKit")
 
 public struct AirtableRecords<Item: Codable>: Codable {
 	public let records: [Item]
@@ -69,18 +128,6 @@ public protocol AirtableModel: BackendModel, EmptyProvidable {
 	subscript<T>(dynamicMember key: KeyPath<Fields, T>) -> T { get }
 }
 
-public extension BackendModel {
-	var id: UInt8 { 0 }
-	
-	init(stringLiteral value: String) {
-		self = try! JSONDecoder.airtable.decode(Self.self, from: Data(value.utf8))
-	}
-	
-	var debugDescription: String {
-		caseName(of: Self.self, .name) + "(\(id))"
-	}
-}
-
 extension Array: ExpressibleByStringLiteral,
 				 ExpressibleByUnicodeScalarLiteral,
 				 ExpressibleByExtendedGraphemeClusterLiteral
@@ -102,21 +149,8 @@ public extension AirtableModel {
 	}
 }
 
-// MARK: Get key
-
-public extension RailsModel {
-	func value <T> (
-		for key: String
-	) -> T?
-		where T: Codable,
-			  T: LosslessStringConvertible
-	{
-		guard CodingKeys.allCases.contains(where: \.stringValue, equals: key),
-			  let data = try? JSONEncoder().encode(self)
-		else { return .none }
-		return try? KeyDecoder.decode(T.self, from: data, by: key)
-	}
-}
+// MARK: Key Decoder
+/// for KeyedBackendModel
 
 public struct KeyDecoder {
 	private static let userInfoKey = CodingUserInfoKey(rawValue: "key")!
