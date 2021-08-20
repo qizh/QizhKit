@@ -43,6 +43,18 @@ public extension String {
 	}
 }
 
+extension String {
+	@inlinable
+	public func offsettingLines(by spaceCount: UInt = 4) -> String {
+		.space * spaceCount + replacing(.newLine, with: .newLine + .space * spaceCount)
+	}
+	
+	@inlinable
+	public func offsettingNewLines(by spaceCount: UInt = 4) -> String {
+		replacing(.newLine, with: .newLine + .space * spaceCount)
+	}
+}
+
 public extension String {
 	@inlinable func deleting(prefix: String) -> String {
 		hasPrefix(prefix) ? String(dropFirst(prefix.count)) : self
