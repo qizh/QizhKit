@@ -9,6 +9,7 @@
 import Foundation
 
 public extension DateFormatter {
+	#warning("Rename airtable date formatter to something more general")
 	static let airtable: DateFormatter = {
 		let formatter = DateFormatter()
 		formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
@@ -18,6 +19,8 @@ public extension DateFormatter {
 		return formatter
 	}()
 }
+
+#warning("Move airtable and rails JSON coders to BespokelyKit or rename to something general")
 
 public extension JSONEncoder {
 	static let airtable: JSONEncoder = {
