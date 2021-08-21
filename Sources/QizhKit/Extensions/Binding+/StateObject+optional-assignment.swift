@@ -50,3 +50,16 @@ public extension Published {
 		}
 	}
 }
+
+// MARK: Common Initializers
+
+extension State {
+	public static func none<T>() -> Self where Value == T? {
+		.init(initialValue: .none)
+	}
+}
+extension Published {
+	public static func none<T>() -> Self where Value == T? {
+		.init(initialValue: .none)
+	}
+}
