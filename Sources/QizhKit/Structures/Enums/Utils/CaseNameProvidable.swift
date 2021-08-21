@@ -8,6 +8,8 @@
 
 import Foundation
 
+// MARK: Case Name Providable
+
 public protocol CaseNameProvidable {
 	var caseName: String { get }
 }
@@ -70,6 +72,17 @@ public extension ExpressibleByStringLiteral where Self: RawRepresentable {
 	init(stringLiteral value: RawValue) {
 		self = Self(rawValue: value)
 			.forceUnwrap(because: "A user is using a valid string")
+	}
+}
+
+// MARK: Adopt
+
+extension Result: CaseNameProvidable {
+	public var caseName: String {
+		switch self {
+		case .success(_): return "success"
+		case .failure(_): return "failure"
+		}
 	}
 }
 
