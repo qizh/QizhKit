@@ -84,6 +84,16 @@ public extension Decimal {
 	}
 }
 
+// MARK: Fraction
+
+extension Decimal {
+	/// Can count up to 9
+	@inlinable
+	public var decimalDigitsCount: Int {
+		max(-exponent, 0)
+	}
+}
+
 /*
 // MARK: Code through Data
 
