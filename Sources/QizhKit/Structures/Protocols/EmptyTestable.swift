@@ -6,7 +6,6 @@
 //  Copyright © 2020 Serhii Shevchenko. All rights reserved.
 //
 
-import Foundation
 import SwiftUI
 
 // MARK: Provide
@@ -67,5 +66,24 @@ extension URL: EmptyProvidable {
 extension Edge.Set: EmptyProvidable {
 	@inlinable public static var empty: Edge.Set {
 		[]
+	}
+}
+
+// MARK: SwiftUI
+
+@available(iOS 14.0, *)
+extension StateObject where ObjectType: EmptyProvidable {
+	public static var empty: Self {
+		.init(wrappedValue: .empty)
+	}
+}
+extension State where Value: EmptyProvidable {
+	public static var empty: Self {
+		.init(initialValue: .empty)
+	}
+}
+extension Published where Value: EmptyProvidable {
+	public static var empty: Self {
+		.init(initialValue: .empty)
 	}
 }
