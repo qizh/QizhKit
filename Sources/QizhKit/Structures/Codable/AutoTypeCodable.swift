@@ -119,10 +119,23 @@ extension AutoTypeCodable: Hashable where T: Hashable {
 
 extension Date: LosslessStringConvertible {
 	public init?(_ description: String) {
-		if let date = DateFormatter().date(from: description) {
+		if #available(iOS 15.0, *) {
+			do {
+				try self.init(
+					description,
+					strategy: Date.ParseStrategy(
+						format: "\(day: .twoDigits).\(month: .twoDigits).\(year: .defaultDigits) \(hour: .twoDigits(clock: .twentyFourHour, hourCycle: .zeroBased)):\(minute: .twoDigits)",
+						timeZone: .current
+					)
+				)
+			} catch {
+				return nil
+			}
+		} else if let date = DateFormatter().date(from: description) {
 			self = date
+		} else {
+			return nil
 		}
-		return nil
 	}
 }
 
