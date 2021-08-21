@@ -479,13 +479,13 @@ extension Optional where Wrapped == HTTPHeaders {
 extension DataResponse {
 	public func debugDescription(_ debugDepth: DebugDepth) -> String {
 		guard debugDepth.is(not: .none) else {
-			return "[Result]: \(result)"
+			return "[Result]: \(result.caseName)"
 		}
 		
 		guard let request = request else {
 			return """
 			[Request]: None
-			[Result]: \(result)
+			[Result]: \(result.caseName)
 			"""
 		}
 		
@@ -597,10 +597,9 @@ extension DataResponse {
 			output += .newLine + "[Serialization Duration]: \(serializationDuration)s"
 		}
 		
-		output += .newLine + "[Result]: \(result)"
+		output += .newLine + "[Result]: \(result.caseName)"
 		
 		return output
 	}
 }
-
 #endif
