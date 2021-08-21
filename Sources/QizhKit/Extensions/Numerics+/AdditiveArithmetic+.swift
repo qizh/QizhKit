@@ -10,19 +10,26 @@ import Foundation
 
 // MARK: Zero
 
-public extension AdditiveArithmetic {
-	@inlinable var isZero: Bool { self == .zero }
-	@inlinable var isNotZero: Bool { self != .zero }
-	@inlinable var nonZero: Self? { isZero ? nil : self }
+extension AdditiveArithmetic {
+	@inlinable public var isZero: Bool { self == .zero }
+	@inlinable public var isNotZero: Bool { self != .zero }
+	@inlinable public var nonZero: Self? { isZero ? nil : self }
 	
-	@inlinable var bool: Bool { isNotZero }
+	@inlinable public var bool: Bool { isNotZero }
 }
 
-public extension Collection {
+extension Collection {
 	@inlinable
-	func sum <Output: AdditiveArithmetic> (
+	public func sum <Output: AdditiveArithmetic> (
 		of transform: (Element) -> Output
 	) -> Output {
 		map(transform).reduce(.zero, +)
+	}
+}
+
+extension Collection where Element: AdditiveArithmetic {
+	@inlinable
+	public func elementsSum() -> Element {
+		reduce(.zero, +)
 	}
 }
