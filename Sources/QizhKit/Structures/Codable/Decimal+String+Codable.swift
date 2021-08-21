@@ -70,3 +70,9 @@ extension KeyedDecodingContainer {
 		}
 	}
 }
+
+extension Decimal: ExpressibleByStringLiteral {
+	public init(stringLiteral value: String) {
+		self = Decimal(string: value) ?? Decimal.zero
+	}
+}
