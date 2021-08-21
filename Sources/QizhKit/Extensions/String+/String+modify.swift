@@ -30,9 +30,11 @@ public extension Substring {
 	func asString() -> String { String(self) }
 }
 
-public extension String {
+extension String {
 	/// Repeat provided string provided amount of times
-	static func * (source: String, times: UInt) -> String {
+	public static func * (source: String, times: UInt) -> String {
+		.init(repeating: source, count: Int(times))
+		/*
 		var result: String = .empty
 		var n: UInt = times
 		while n > 0 {
@@ -40,6 +42,7 @@ public extension String {
 			n.decrease()
 		}
 		return result
+		*/
 	}
 }
 
