@@ -174,6 +174,38 @@ public extension View where Self: Initializable {
 	}
 }
 
+// MARK: iOS 15
+
+@available(iOS 15.0, *)
+extension View {
+	@inlinable
+	public func button(
+		role: ButtonRole,
+		action: @escaping () -> Void
+	) -> Button<Self> {
+		Button(role: role, action: action, label: selfmade)
+	}
+	
+	@inlinable
+	public func button <A> (
+		role: ButtonRole,
+		action: @escaping (A) -> Void,
+		_ argument: A
+	) -> Button<Self> {
+		Button(role: role, action: { action(argument) }, label: selfmade)
+	}
+	
+	@inlinable
+	public func button <A1, A2> (
+		role: ButtonRole,
+		action: @escaping (A1, A2) -> Void,
+		_ argument1: A1,
+		_ argument2: A2
+	) -> Button<Self> {
+		Button(role: role, action: { action(argument1, argument2) }, label: selfmade)
+	}
+}
+
 // MARK: Button > Selfmade | fallback
 
 public extension View {
