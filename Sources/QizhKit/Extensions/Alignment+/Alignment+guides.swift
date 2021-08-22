@@ -59,3 +59,17 @@ public extension Alignment {
 	static let leadingSide = Alignment(horizontal: .leadingSide, vertical: .center)
 	static let trailingSide = Alignment(horizontal: .trailingSide, vertical: .center)
 }
+
+// MARK: Common use case
+
+extension View {
+	@inlinable
+	public func alignmentGuide(_ g: HorizontalAlignment, value: CGFloat) -> some View {
+		alignmentGuide(g, computeValue: { _ in value })
+	}
+	
+	@inlinable
+	public func alignmentGuide(_ g: VerticalAlignment, value: CGFloat) -> some View {
+		alignmentGuide(g, computeValue: { _ in value })
+	}
+}
