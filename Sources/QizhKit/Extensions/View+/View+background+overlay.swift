@@ -27,22 +27,36 @@ public extension View {
 		overlay(view, alignment: alignment)
 	}
 	
-	@available(iOS, obsoleted: 15, message: "Implemented in SwiftUI")
 	@inlinable
 	func background <Background> (
-		_ alignment: Alignment = .center,
+		_ alignment: Alignment,
 		@ViewBuilder view: () -> Background
 	) -> some View where Background: View {
 		background(view(), alignment: alignment)
 	}
 	
-	@available(iOS, obsoleted: 15, message: "Implemented in SwiftUI")
 	@inlinable
 	func overlay <Overlay> (
-		_ alignment: Alignment = .center,
+		_ alignment: Alignment,
 		@ViewBuilder view: () -> Overlay
 	) -> some View where Overlay: View {
 		overlay(view(), alignment: alignment)
+	}
+	
+	@available(iOS, obsoleted: 15, message: "Implemented in SwiftUI")
+	@inlinable
+	func background <Background> (
+		@ViewBuilder view: () -> Background
+	) -> some View where Background: View {
+		background(view(), alignment: .center)
+	}
+	
+	@available(iOS, obsoleted: 15, message: "Implemented in SwiftUI")
+	@inlinable
+	func overlay <Overlay> (
+		@ViewBuilder view: () -> Overlay
+	) -> some View where Overlay: View {
+		overlay(view(), alignment: .center)
 	}
 }
 
