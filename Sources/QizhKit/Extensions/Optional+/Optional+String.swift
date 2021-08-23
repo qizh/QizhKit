@@ -11,10 +11,15 @@ import Foundation
 public extension Optional {
 	@inlinable var orNilString: String {
 		switch self {
-		case .none:
-			return "nil"
-		case .some(let value):
-			return "\(value)"
+		case .none: 			return "nil"
+		case .some(let value): 	return "\(value)"
+		}
+	}
+	
+	@inlinable var orEmptyString: String {
+		switch self {
+		case .none: 			return ""
+		case .some(let value): 	return "\(value)"
 		}
 	}
 }
