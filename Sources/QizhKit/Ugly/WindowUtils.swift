@@ -41,6 +41,26 @@ public struct WindowUtils {
 		originalWindow
 		// keyWindow ?? originalWindow
 	}
+	
+	public static func topViewController(
+		_ viewController: UIViewController? = .none
+	) -> UIViewController? {
+		let vc = viewController
+			?? UIApplication.shared.windows
+				.first(where: \.isKeyWindow)?
+				.rootViewController
+		
+		if let nc = vc as? UINavigationController {
+			return topViewController(nc.topViewController)
+		} else if let tc = vc as? UITabBarController {
+			return tc.presentedViewController.isSet
+				? topViewController(tc.presentedViewController)
+				: topViewController(tc.selectedViewController)
+		} else if let pc = vc?.presentedViewController {
+			return topViewController(pc)
+		}
+		return vc
+	}
 }
 
 @inlinable public func endEditing() {
