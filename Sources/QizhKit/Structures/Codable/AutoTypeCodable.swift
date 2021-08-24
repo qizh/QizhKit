@@ -119,6 +119,7 @@ extension AutoTypeCodable: Hashable where T: Hashable {
 
 extension Date: LosslessStringConvertible {
 	public init?(_ description: String) {
+		#if swift(>=5.5)
 		if #available(iOS 15.0, *) {
 			do {
 				try self.init(
@@ -131,7 +132,9 @@ extension Date: LosslessStringConvertible {
 			} catch {
 				return nil
 			}
-		} else if let date = DateFormatter().date(from: description) {
+		} else
+		#endif
+		if let date = DateFormatter().date(from: description) {
 			self = date
 		} else {
 			return nil

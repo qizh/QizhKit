@@ -176,6 +176,7 @@ public extension View where Self: Initializable {
 
 // MARK: iOS 15
 
+#if swift(>=5.5)
 @available(iOS 15.0, *)
 extension View {
 	@inlinable
@@ -205,6 +206,7 @@ extension View {
 		Button(role: role, action: { action(argument1, argument2) }, label: selfmade)
 	}
 }
+#endif
 
 // MARK: Button > Selfmade | fallback
 
