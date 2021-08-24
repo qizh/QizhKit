@@ -132,7 +132,11 @@ extension Date: LosslessStringConvertible {
 			} catch {
 				return nil
 			}
-		} else
+		} else if let date = DateFormatter().date(from: description) {
+			self = date
+		} else {
+			return nil
+		}
 		#endif
 		if let date = DateFormatter().date(from: description) {
 			self = date
