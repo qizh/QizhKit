@@ -78,6 +78,12 @@ public protocol RailsModel: KeyedEmptyableBackendModel {
 	
 }
 
+/// In case the model is a wrapper or a submit model
+/// and there's no id in it
+extension RailsModel {
+	public var id: UInt8 { 0 }
+}
+
 public struct RailsResponse <Item: Codable>: Codable {
 	public let status: Int
 	public let message: String
@@ -147,6 +153,12 @@ public extension AirtableModel {
 	subscript<T>(dynamicMember key: KeyPath<Fields, T>) -> T {
 		fields[keyPath: key]
 	}
+}
+
+/// In case the model is a wrapper or a submit model
+/// and there's no id in it
+extension AirtableModel {
+	public var id: UInt8 { 0 }
 }
 
 // MARK: Key Decoder
