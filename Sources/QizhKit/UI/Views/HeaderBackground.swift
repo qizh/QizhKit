@@ -157,7 +157,7 @@ public struct ShowHeaderBackgroundViewModifier: ViewModifier {
 }
 
 public struct NavigationBarDimension {
-	public static let height: CGFloat = 48
+	public static let height: CGFloat = 44
 }
 
 public extension UIBlurEffect.Style {
