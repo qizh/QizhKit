@@ -206,7 +206,7 @@ public extension View {
 	/// - Parameters:
 	///   - scroll: `UIScrollView` offset `CGPoint`
 	///   - offset: Scroll offset when header appears. Default value: `80`
-	///   - height: Header height. Default value: `48`
+	///   - height: Header height. Default value: `44`
 	///   - measure: Type of safe area measurement. Default value: `.single`
 	///   - style: Blur effect style.
 	///   `.auto(colorScheme)` value is used when no value provided
