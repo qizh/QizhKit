@@ -179,3 +179,89 @@ fileprivate struct OriginPreferenceKey: PreferenceKey {
 		value = nextValue()
 	}
 }
+
+
+// MARK: Native Offset Reader
+
+fileprivate struct ScrollOffsetStackPreferenceKey: PreferenceKey {
+	static var defaultValue: [CGPoint] = .just(.zero)
+	static func reduce(value: inout [CGPoint], nextValue: () -> [CGPoint]) {
+		value.append(contentsOf: nextValue())
+	}
+}
+
+public extension ScrollView {
+	@inlinable
+	static func nativeReading(
+		offset: Binding<CGPoint>,
+		_ axes: Axis.Set = .vertical,
+		showsIndicators: Bool = true,
+		@ViewBuilder content: () -> Content
+	) -> some View {
+		OffsetReadingScrollView(axes, showIndicators: showsIndicators, offset: offset) {
+			content()
+		}
+	}
+}
+
+public struct OffsetReadingScrollView <Content>: View where Content: View {
+	private let axes: Axis.Set
+	private let showIndicators: Bool
+	@Binding private var offset: CGPoint
+	private let content: Content
+	
+	public init(
+		_ axes: Axis.Set = .vertical,
+		showIndicators: Bool = true,
+		offset: Binding<CGPoint>,
+		@ViewBuilder content: () -> Content
+	) {
+		self.axes = axes
+		self.showIndicators = showIndicators
+		self._offset = offset
+		self.content = content()
+	}
+	
+	public var body: some View {
+		GeometryReader { outside in
+			ScrollView(axes, showsIndicators: showIndicators) {
+				content
+					.background(.topLeading) {
+						GeometryReader { inside in
+							Color.clear
+								.preference(
+									key: ScrollOffsetStackPreferenceKey.self,
+									value: .just(offset(of: inside, in: outside))
+								)
+						}
+					}
+				/*
+				ZStack(
+					alignment: Alignment(
+						horizontal: axes.contains(.horizontal) ? .leading : .center,
+						vertical: axes.contains(.vertical) ? .top : .center
+					)
+				) {
+					GeometryReader { inside in
+						Color.clear
+							.preference(
+								key: ScrollOffsetStackPreferenceKey.self,
+								value: .just(offset(of: inside, in: outside))
+							)
+					}
+					VStack {
+						content
+					}
+				}
+				*/
+			}
+			.onPreferenceChange(ScrollOffsetStackPreferenceKey.self) { value in
+				offset = value.first ?? .zero
+			}
+		}
+	}
+	
+	private func offset(of inside: GeometryProxy, in outside: GeometryProxy) -> CGPoint {
+		inside.frame(in: .global).topLeading - outside.frame(in: .global).topLeading
+	}
+}
