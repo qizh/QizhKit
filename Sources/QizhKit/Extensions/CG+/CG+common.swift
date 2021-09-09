@@ -320,6 +320,8 @@ public extension CGRect {
 	@inlinable var bottom           : CGPoint { CGPoint(midX, maxY) }
 	@inlinable var bottomTrailing   : CGPoint { CGPoint(maxX, maxY) }
 	
+	@inlinable var corners: [CGPoint] { [topLeading, topTrailing, bottomTrailing, bottomLeading] }
+	
 	@inlinable var smallerSide : CGFloat { size.smallerSide }
 	@inlinable var biggerSide  : CGFloat { size.biggerSide }
 	
