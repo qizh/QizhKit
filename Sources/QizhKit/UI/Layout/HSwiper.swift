@@ -211,6 +211,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 					.clipped()
 				}
 				.offset(x: currentOffset(in: geometry.size))
+				.allowsHitTesting(false)
 				.zIndex(10)
 				
 				indicator(
@@ -219,6 +220,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 					data.count
 				)
 				.size(geometry.size)
+				.allowsHitTesting(false)
 				.animation(.spring(), value: animationValue)
 				.zIndex(20)
 				
@@ -227,9 +229,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 				
 				Color.almostClear
 					.size(geometry.size)
-					.gesture(
-						dragGesture(in: geometry)
-					)
+					.gesture(dragGesture(in: geometry))
 					.zIndex(11)
 			}
 			.animation(.spring(), value: dragOffset.isZero)
