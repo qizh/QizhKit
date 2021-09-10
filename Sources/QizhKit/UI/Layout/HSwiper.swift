@@ -469,7 +469,7 @@ public struct HSwiper_Previews: PreviewProvider {
 					}
 					.expand()
 					.backgroundColor(
-						[
+						[Color]([
 							Color.white,
 							Color.blue,
 							Color.green,
@@ -478,7 +478,7 @@ public struct HSwiper_Previews: PreviewProvider {
 							Color.purple,
 							Color.red,
 							Color.yellow,
-						][cycle: offset]
+						])[cycle: offset]
 					)
 				}
 				.size(200, 180)
