@@ -6,7 +6,7 @@
 //  Copyright © 2020 Serhii Shevchenko. All rights reserved.
 //
 
-import Foundation
+import SwiftUI
 
 public extension Decimal {
 	@inlinable
@@ -19,15 +19,12 @@ public extension Decimal {
 		self / 100
 	}
 	
-	@inlinable
-	var number: NSDecimalNumber {
-		self as NSDecimalNumber
-	}
+	// MARK: Type convertion
 	
-	@inlinable
-	var intValue: Int {
-		number.intValue
-	}
+	@inlinable var number: NSDecimalNumber { self as NSDecimalNumber }
+	@inlinable var intValue: Int { number.intValue }
+	@inlinable var double: Double { number.doubleValue }
+	@inlinable var cg: CGFloat { CGFloat(double) }
 	
 	@inlinable
 	var cents: Int {
