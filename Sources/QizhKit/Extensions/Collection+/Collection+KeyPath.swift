@@ -396,7 +396,7 @@ public extension Collection {
 		by keyPath: KeyPath<Element, Value>,
 		using compare: (Value, Value) throws -> Bool
 	) rethrows -> Element? where Value: Comparable {
-		try self.max { left, right in
+		try self.min { left, right in
 			try compare(
 				left[keyPath: keyPath],
 				right[keyPath: keyPath]
