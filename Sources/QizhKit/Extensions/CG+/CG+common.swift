@@ -19,12 +19,24 @@ public extension CGFloat {
 	
 	@inlinable func scaled(_ factor: Factor) -> CGFloat { scaled(factor.value) }
 	
-	func fraction(of value: CGFloat) -> Factor {
+	@inlinable
+	func fractionFactor(of value: CGFloat) -> Factor {
+		Factor(fraction(of: value))
+	}
+	
+	func fraction(of value: CGFloat) -> CGFloat {
 		switch self {
 		case .zero: return .zero
 		case value: return .one
-		default: 	return .init(value / self)
+		default: 	return value / self
 		}
+	}
+	
+	@inlinable
+	func fraction(from: CGFloat, to: CGFloat) -> CGFloat {
+		let min = CGFloat.minimum(from, to)
+		let max = CGFloat.maximum(from, to)
+		return (max - min).fraction(of: self - min)
 	}
 	
 	@inlinable static func * (l: Int, r: CGFloat) -> CGFloat {
@@ -150,8 +162,8 @@ public extension CGPoint {
 	
 	func map(from: CGRect, to: CGRect) -> CGPoint {
 		CGPoint(
-			to.minX.scaled(from.width .fraction(of: x - from.minX)),
-			to.minY.scaled(from.height.fraction(of: y - from.minY))
+			to.minX.scaled(from.width .fractionFactor(of: x - from.minX)),
+			to.minY.scaled(from.height.fractionFactor(of: y - from.minY))
 		)
 	}
 }
@@ -321,6 +333,7 @@ public extension CGRect {
 	@inlinable var bottomTrailing   : CGPoint { CGPoint(maxX, maxY) }
 	
 	@inlinable var corners: [CGPoint] { [topLeading, topTrailing, bottomTrailing, bottomLeading] }
+	@inlinable var drawingCorners: [CGPoint] { [topLeading, topTrailing, bottomTrailing, bottomLeading, topLeading] }
 	
 	@inlinable var smallerSide : CGFloat { size.smallerSide }
 	@inlinable var biggerSide  : CGFloat { size.biggerSide }
