@@ -22,7 +22,8 @@ public protocol Fetcher: ObservableObject {
 }
 
 public protocol GeneralFetchStatePublishing {
-	var basicStatePublisher: AnyPublisher<GeneralBackendFetchState, Never> { get }
+	var basicStatePublisher: GeneralStatePublisher { get }
+	// var basicStatePublisher: AnyPublisher<GeneralBackendFetchState, Never> { get }
 }
 
 public struct FetcherParametersKeys {

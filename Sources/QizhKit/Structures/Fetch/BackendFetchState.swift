@@ -178,6 +178,8 @@ public extension GeneralBackendFetchState {
 	var asGeneral: GeneralBackendFetchState { self }
 }
 
+public typealias GeneralStatePublisher = AnyPublisher<GeneralBackendFetchState, Never>
+
 public extension GeneralBackendFetchState {
 	var importance: Int {
 		switch self.asBasic {
