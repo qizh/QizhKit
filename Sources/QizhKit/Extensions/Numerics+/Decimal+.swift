@@ -79,6 +79,15 @@ public extension Decimal {
 		NSDecimalRound(&result, &localCopy, scale, roundingMode)
 		return result
 	}
+	
+	mutating func round(toNearest: Decimal, _ roundingMode: NSDecimalNumber.RoundingMode) {
+		self = (self / toNearest).rounded(0, roundingMode) * toNearest
+	}
+	
+	@inlinable
+	func rounded(toNearest: Decimal, _ roundingMode: NSDecimalNumber.RoundingMode) -> Decimal {
+		(self / toNearest).rounded(0, roundingMode) * toNearest
+	}
 }
 
 // MARK: Fraction
@@ -88,6 +97,16 @@ extension Decimal {
 	@inlinable
 	public var decimalDigitsCount: Int {
 		max(-exponent, 0)
+	}
+}
+
+// MARK: Pow
+
+extension Decimal {
+	public func pow(_ p: Int) -> Decimal {
+		p < 0
+			? 1.0 / Foundation.pow(self, -p)
+			: Foundation.pow(self, p)
 	}
 }
 
