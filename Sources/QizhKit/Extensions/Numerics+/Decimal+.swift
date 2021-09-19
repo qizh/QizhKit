@@ -110,6 +110,36 @@ extension Decimal {
 	}
 }
 
+// MARK: Ticks
+
+extension Decimal {
+	public static func tickSize(from min: Decimal, to max: Decimal, steps: UInt) -> Decimal {
+		let range = (max - min).absolute
+		let guess = range / Decimal(steps)
+		let magnitude = log10(guess.double).rounded().int
+		let powered = Decimal.ten.pow(magnitude)
+		var digit = (guess/powered).rounded(0, .plain)
+		switch digit {
+		case ...1: digit = 1
+		case ...2: digit = 2
+		case ...5: digit = 5
+		default: digit = 10
+		}
+		return digit * powered
+	}
+	
+	public static func ticks(from min: Decimal, to max: Decimal, steps: UInt) -> [Decimal] {
+		let step = tickSize(from: min, to: max, steps: steps)
+		var results: [Decimal] = .empty
+		var current = min.rounded(toNearest: step, .up)
+		while current <= max {
+			results.append(current)
+			current += step
+		}
+		return results
+	}
+}
+
 /*
 // MARK: Code through Data
 
