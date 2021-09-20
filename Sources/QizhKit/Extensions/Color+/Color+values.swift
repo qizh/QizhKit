@@ -111,6 +111,18 @@ public extension Color {
 // MARK: Shape Style
 
 public extension ShapeStyle where Self == Color {
+	// MARK: System
+	
+	@inlinable static var label: Color { Color(.label) }
+	@inlinable static var systemBackground: Color { Color(.systemBackground) }
+	
+	@inlinable static func label(_ opacity: Double) -> Color {
+		Color(.label).opacity(opacity)
+	}
+	@inlinable static func systemBackground(_ opacity: Double) -> Color {
+		Color(.systemBackground).opacity(opacity)
+	}
+	
 	// MARK: B&W
 	
 	@inlinable static func white(_ opacity: Double) -> Color { Color.white.opacity(opacity) }
