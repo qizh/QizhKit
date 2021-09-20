@@ -17,11 +17,21 @@ extension View {
 extension Shape {
 	public func fill <Fill: ShapeStyle, Stroke: ShapeStyle> (
 		_ fillStyle: Fill,
-		strokeBorder strokeStyle: Stroke,
+		strokeBorder strokeColor: Stroke,
 		lineWidth: CGFloat = .one
 	) -> some View {
 		self
-			.stroke(strokeStyle, lineWidth: lineWidth)
+			.stroke(strokeColor, lineWidth: lineWidth)
+			.background(self.fill(fillStyle))
+	}
+	
+	public func fill <Fill: ShapeStyle, Stroke: ShapeStyle> (
+		_ fillStyle: Fill,
+		strokeBorder strokeColor: Stroke,
+		style strokeStyle: StrokeStyle
+	) -> some View {
+		self
+			.stroke(strokeColor, style: strokeStyle)
 			.background(self.fill(fillStyle))
 	}
 }
@@ -29,11 +39,21 @@ extension Shape {
 extension InsettableShape {
 	public func fill <Fill: ShapeStyle, Stroke: ShapeStyle> (
 		_ fillStyle: Fill,
-		strokeBorder strokeStyle: Stroke,
+		strokeBorder strokeColor: Stroke,
 		lineWidth: CGFloat = .one
 	) -> some View {
 		self
-			.strokeBorder(strokeStyle, lineWidth: lineWidth)
+			.strokeBorder(strokeColor, lineWidth: lineWidth)
+			.background(self.fill(fillStyle))
+	}
+	
+	public func fill <Fill: ShapeStyle, Stroke: ShapeStyle> (
+		_ fillStyle: Fill,
+		strokeBorder strokeColor: Stroke,
+		style strokeStyle: StrokeStyle
+	) -> some View {
+		self
+			.strokeBorder(strokeColor, style: strokeStyle)
 			.background(self.fill(fillStyle))
 	}
 }
