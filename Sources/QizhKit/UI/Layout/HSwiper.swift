@@ -354,7 +354,19 @@ fileprivate extension FloatingPointSign {
 
 // MARK: Indicator
 
-public struct HSwiperIndicator: View {
+public protocol HSwiperIndicatorShape {
+	static var indicatorMaxWidth: CGFloat { get }
+}
+public enum HSwiperIndicatorShapeRectangle: HSwiperIndicatorShape {
+	public static var indicatorMaxWidth: CGFloat { 20 }
+}
+public enum HSwiperIndicatorShapeCircle: HSwiperIndicatorShape {
+	public static var indicatorMaxWidth: CGFloat { 4 }
+}
+public typealias HSwiperIndicatorRectangle = HSwiperIndicator<HSwiperIndicatorShapeRectangle>
+public typealias HSwiperIndicatorCircle = HSwiperIndicator<HSwiperIndicatorShapeCircle>
+
+public struct HSwiperIndicator <IndicatorShape: HSwiperIndicatorShape>: View {
 	private let active: Int
 	private let offset: Int
 	private let total: Int
@@ -381,7 +393,7 @@ public struct HSwiperIndicator: View {
 				RoundedCornersRectangle(2)
 					.foregroundColor(.white(0.5))
 					.height(4)
-					.frame(minWidth: 4, maxWidth: 20)
+					.frame(minWidth: 4, maxWidth: IndicatorShape.indicatorMaxWidth)
 					.overlay(
 						RoundedCornersRectangle(2)
 							.stroke(
@@ -461,7 +473,7 @@ public struct HSwiper_Previews: PreviewProvider {
 					alignment: .topLeading,
 					spacing: 10,
 					selected: $page,
-					indicator: HSwiperIndicator.init
+					indicator: HSwiperIndicatorCircle.init
 				) { offset, title in
 					VStack.LabeledViews {
 						title.labeledView(label: "title")
