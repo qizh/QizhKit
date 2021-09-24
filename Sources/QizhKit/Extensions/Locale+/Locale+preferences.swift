@@ -14,10 +14,12 @@ extension Locale {
 	public static var preferredLanguageISOCodes: [String] {
 		preferredLanguages
 			.map { lang in
-				/// Language could be `en_US`, cutting out the `_US` part.
-				lang.deleting(.starting(with: .first, .underscore))
 				/// Language could be `en-US`, cutting out the `-US` part.
+				lang
 					.deleting(.starting(with: .first, .minus))
+				/// I thought language could be `en_US` and was cutting out the `_US` part.
+				/// But it looks like the standard separator is with `-`.
+				// .deleting(.starting(with: .first, .underscore))
 			}
 			.filter { code in
 				code.count == 2
