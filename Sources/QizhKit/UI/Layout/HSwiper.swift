@@ -271,9 +271,13 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 					dragOffset = (newDraggedPages - draggedPages) * pageSize + dragOffset
 					selected = newSelected
 					draggedPages = newDraggedPages
+					execute(in: 10) {
+						dragOffset = .zero
+					}
+				} else {
+					dragOffset = .zero
 				}
 				predictedOffset = .zero
-				dragOffset = .zero
 				draggedPages = .zero
 			}
 	}
