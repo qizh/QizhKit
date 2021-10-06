@@ -95,7 +95,34 @@ public extension View {
 				object[keyPath: keyPath] = value
 			}
 		}
-    }
+	}
+	
+	@inlinable
+	func animateForever <Value: Equatable> (
+		assigning value: Value,
+		to binding: Binding<Value>,
+		using anim: Animation = .linear(duration: 1),
+		autoreverses: Bool = false
+	) -> some View {
+		animation(
+			anim.repeatForever(autoreverses: autoreverses),
+			value: value
+		)
+		.onAppear {
+			binding.wrappedValue = value
+		}
+	}
+}
+
+extension Animation {
+	public func `repeat`(
+		while expression: Bool,
+		autoreverses: Bool = true
+	) -> Animation {
+		expression
+		? self.repeatForever(autoreverses: autoreverses)
+		: self
+	}
 }
 
 // MARK: Combine Transitions
