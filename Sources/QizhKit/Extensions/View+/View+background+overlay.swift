@@ -237,6 +237,39 @@ public extension View {
 	
 	@inlinable func foregroundAccent() -> some View { foregroundColor(.accentColor) }
 	
+	/// Setting `foregroundStyle(.secondary)` when on iOS 15
+	/// or `foregroundColor(.accentColor)` when on earlier iOS
+	@ViewBuilder
+	func foregroundAccentOrSecondary() -> some View {
+		if #available(iOS 15.0, *) {
+			self.foregroundStyle(.secondary)
+		} else {
+			self.foregroundAccent()
+		}
+	}
+	
+	/// Setting `foregroundStyle(.tertiary)` when on iOS 15
+	/// or `foregroundColor(.accentColor)` when on earlier iOS
+	@ViewBuilder
+	func foregroundAccentOrTertiary() -> some View {
+		if #available(iOS 15.0, *) {
+			self.foregroundStyle(.tertiary)
+		} else {
+			self.foregroundAccent()
+		}
+	}
+	
+	/// Setting `foregroundStyle(.quaternary)` when on iOS 15
+	/// or `foregroundColor(.accentColor)` when on earlier iOS
+	@ViewBuilder
+	func foregroundAccentOrQuaternary() -> some View {
+		if #available(iOS 15.0, *) {
+			self.foregroundStyle(.quaternary)
+		} else {
+			self.foregroundAccent()
+		}
+	}
+	
 	// MARK: > Common
 	
 	@inlinable func foregroundWhite() -> some View { foregroundColor(.white) }
