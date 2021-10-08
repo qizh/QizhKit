@@ -323,6 +323,7 @@ public extension CollectionFetcher {
 	@inlinable static var demoFetchedNone: Self { demo(.empty) }
 	@inlinable static var demoEmptyFailure: Self { demo(.emptyFailure) }
 	@inlinable static func demoFetched(_ items: [Item]) -> Self { demo(.success(Value(items))) }
+	@inlinable static func demoFetched(_ items: Item...) -> Self { demo(.success(Value(items))) }
 	#endif
 }
 
