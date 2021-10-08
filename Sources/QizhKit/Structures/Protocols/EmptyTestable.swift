@@ -58,15 +58,19 @@ extension Substring: EmptyTestable { }
 // MARK: Implement
 
 extension URL: EmptyProvidable {
-	@inlinable public static var empty: URL {
-		URL(string: "/").forceUnwrap(because: .created)
-	}
+	public static let empty: URL = URL(string: "/").forceUnwrap(because: .created)
 }
 
 extension Edge.Set: EmptyProvidable {
-	@inlinable public static var empty: Edge.Set {
-		[]
-	}
+	public static let empty: Edge.Set = []
+}
+
+extension LocalizedStringKey: EmptyComparable {
+	public static let empty: LocalizedStringKey = ""
+}
+
+extension Text: EmptyComparable {
+	public static let empty = Text(verbatim: .empty)
 }
 
 // MARK: SwiftUI
