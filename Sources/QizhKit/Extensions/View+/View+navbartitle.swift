@@ -27,11 +27,12 @@ extension View {
 		_ title: LocalizedStringKey,
 		_ displayMode: NavigationBarItem.TitleDisplayMode = .automatic
 	) -> some View {
+		let titleText = Text(title, comment: "Some navigation bar title")
 		if #available(iOS 14.0, *) {
-			self.navigationTitle(title)
+			self.navigationTitle(titleText)
 				.navigationBarTitleDisplayMode(displayMode)
 		} else {
-			self.navigationBarTitle(Text(title), displayMode: displayMode)
+			self.navigationBarTitle(titleText, displayMode: displayMode)
 		}
 	}
 	
