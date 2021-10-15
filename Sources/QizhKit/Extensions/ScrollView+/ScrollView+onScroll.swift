@@ -229,34 +229,29 @@ public struct OffsetReadingScrollView <Content>: View where Content: View {
 					.background(.topLeading) {
 						GeometryReader { inside in
 							Color.clear
+								/*
 								.preference(
 									key: ScrollOffsetStackPreferenceKey.self,
 									value: .just(offset(of: inside, in: outside))
 								)
+								*/
+								.transformPreference(OriginPreferenceKey.self) { value in
+									let offset = offset(of: inside, in: outside)
+									execute {
+										self.offset = offset
+									}
+									value = offset
+								}
 						}
 					}
-				/*
-				ZStack(
-					alignment: Alignment(
-						horizontal: axes.contains(.horizontal) ? .leading : .center,
-						vertical: axes.contains(.vertical) ? .top : .center
-					)
-				) {
-					GeometryReader { inside in
-						Color.clear
-							.preference(
-								key: ScrollOffsetStackPreferenceKey.self,
-								value: .just(offset(of: inside, in: outside))
-							)
-					}
-					VStack {
-						content
-					}
-				}
-				*/
 			}
+			/*
 			.onPreferenceChange(ScrollOffsetStackPreferenceKey.self) { value in
 				offset = value.first ?? .zero
+			}
+			*/
+			.onPreferenceChange(OriginPreferenceKey.self) { value in
+				offset = value
 			}
 		}
 	}
