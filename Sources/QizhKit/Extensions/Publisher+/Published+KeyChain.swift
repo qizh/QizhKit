@@ -11,6 +11,8 @@ import Combine
 
 private var cancellables = Set<AnyCancellable>()
 
+// MARK: String
+
 extension Published where Value == String {
 	public init(
 		wrappedValue defaultValue: Value,
@@ -54,6 +56,44 @@ extension Published where Value == String? {
 				if let value = value,
 				   let data = value.data(using: .utf8) {
 					KeyChain.save(data, for: key)
+				} else {
+					KeyChain.remove(for: key)
+				}
+			}
+			.store(in: &cancellables)
+	}
+}
+
+// MARK: Codable
+
+extension Published {
+	public init <Model> (
+		wrappedValue defaultValue: Value = .none,
+		keychainKey: String
+	) where Model: Codable, Value == Model? {
+		let key = keychainKey.localizedLowercase.replacing(.whitespaces, with: .underline)
+		
+		if let data = KeyChain.data(for: key) {
+			do {
+				let model = try JSONDecoder().decode(Model.self, from: data)
+				self.init(initialValue: model)
+			} catch {
+				self.init(initialValue: defaultValue)
+			}
+		} else {
+			self.init(initialValue: defaultValue)
+		}
+		
+		projectedValue
+			.sink { value in
+				if let value = value {
+					do {
+						let data = try JSONEncoder().encode(value)
+						KeyChain.save(data, for: key)
+					} catch {
+						print("::publisher: Can't encode \(Value.self) to save in KeyChain for `\(key)` key. KeyChain value removed.")
+						KeyChain.remove(for: key)
+					}
 				} else {
 					KeyChain.remove(for: key)
 				}
