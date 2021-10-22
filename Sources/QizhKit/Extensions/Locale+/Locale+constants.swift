@@ -8,8 +8,14 @@
 
 import Foundation
 
-public extension Locale {
-	static var en_US: Locale { .init(identifier: "en_US") }
-	static var ru_UA: Locale { .init(identifier: "ru_UA") }
-	static var th_TH: Locale { .init(identifier: "th_TH") }
+extension Locale {
+	@inlinable public static var en_US: Locale { "en_US" }
+	@inlinable public static var ru_UA: Locale { "ru_UA" }
+	@inlinable public static var th_TH: Locale { "th_TH" }
+}
+
+extension Locale: ExpressibleByStringLiteral {
+	@inlinable public init(stringLiteral value: String) {
+		self.init(identifier: value)
+	}
 }

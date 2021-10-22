@@ -138,10 +138,6 @@ public extension View {
 		previewLocales("en_US", "ru_UA", "th_TH", "en_UA")
 	}
 	
-	@inlinable func previewLocales(_ codes: String ...) -> some View {
-		previewLocales(codes.map(Locale.init))
-	}
-	
 	@inlinable func previewLocales(_ locales: Locale ...) -> some View {
 		previewLocales(locales)
 	}
