@@ -137,6 +137,11 @@ public enum SomeID: Hashable {
 	public static func == (lhs: SomeID, rhs: UUID) -> Bool {
 		lhs.uuid == rhs
 	}
+	
+	@inlinable
+	public static func == (lhs: SomeID, rhs: SomeID) -> Bool {
+		lhs.string == rhs.string
+	}
 }
 
 extension SomeID: ExpressibleByStringLiteral {
