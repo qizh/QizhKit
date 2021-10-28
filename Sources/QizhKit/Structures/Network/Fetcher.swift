@@ -110,6 +110,16 @@ public protocol CollectionFetcher: Fetcher
 }
 #endif
 
+// MARK: Publishable
+
+public protocol PublishableCollectionFetcher: CollectionFetcher {
+	var statePublisher: Published<BackendFetchState<Value>>.Publisher { get }
+}
+
+public protocol PublishableSingleItemFetcher: SingleItemFetcher {
+	var statePublisher: Published<BackendFetchState<Value>>.Publisher { get }
+}
+
 #warning("Move Fetcher's rails and airtable responses to BespokelyKit")
 
 // MARK: Single Extension
