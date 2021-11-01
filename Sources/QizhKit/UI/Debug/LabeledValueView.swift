@@ -29,7 +29,7 @@ public struct LabeledValueLibraryContent: LibraryContentProvider {
 			visible: true,
 			title: "Stack of labeled views",
 			category: .layout,
-			matchingSignature: String?.none
+			matchingSignature: "VStack.LabeledViews"
 		)
 	}
 }
