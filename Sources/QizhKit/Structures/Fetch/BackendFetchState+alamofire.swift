@@ -115,6 +115,7 @@ public struct FetchErrorDebugDetails: Codable {
 		case .accessForbidden: ()
 		case .emptyContentError: ()
 		case .unknown: ()
+		case .passwordResetTokenExpired: ()
 		}
 	}
 	

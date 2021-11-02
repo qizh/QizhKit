@@ -600,6 +600,7 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 	case sign(SignFailureReason)
 	case preconditionValidation(PreconditionValidationReason)
 	case priceMismatch(_ message: String)
+	case passwordResetTokenExpired
 	
 	case cancelled
 	case notFound
@@ -733,21 +734,18 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 			return "Wrong password"
 		case .sign(.tokenExpired):
 			return "Your session is expired, please login"
-		/*
-		case .sign(.tokenInvalid):
-			return "Invalid user permissions, please report"
-		*/
 		case .sign(.airtableUserNotFound):
 			return "Database record mismatch, please report"
 		case .sign(.createUserFirst):
 			return "All values should be provided"
 		case .sign(.wrongCode):
 			return "Code doesn't match"
-		
 		case .preconditionValidation(.illegalCharacters(_)):
 			return "Input contains illegal characters"
 		case .priceMismatch(_):
 			return "The price doesn't match"
+		case .passwordResetTokenExpired:
+			return "Password reset URL have expired"
 		}
 	}
 	
@@ -776,6 +774,7 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 		case .unknown: 						return false
 		case .preconditionValidation(_): 	return false
 		case .priceMismatch(_): 			return true
+		case .passwordResetTokenExpired: 	return true
 		}
 	}
 	
