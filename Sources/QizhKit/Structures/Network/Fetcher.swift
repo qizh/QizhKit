@@ -506,7 +506,7 @@ extension DataResponse {
 		// MARK: Request
 		
 		let requestBodyDescription: String
-		if let data = data, !data.isEmpty {
+		if let data = request.httpBody, !data.isEmpty {
 			let isPrintableType = printableTypes
 				.compactMap { type in
 					request.headers["Content-Type"]?
