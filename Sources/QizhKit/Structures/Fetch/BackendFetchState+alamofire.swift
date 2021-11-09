@@ -23,8 +23,22 @@ public extension BackendFetchState {
 }
 
 public extension FetchError {
+	var afError: AFError? {
+		switch self {
+		case .providerError(_, let error):
+			if let fetchError = error as? FetchError {
+				return fetchError.afError
+			}
+			return error.asAFError
+		case .afError(_, let response):
+			return response.underlying?.asAFError
+		default:
+			return .none
+		}
+	}
+	
 	var isNetworkError: Bool {
-		providerError?.asAFError?.isNetworkError == true
+		afError?.isNetworkError == true
 	}
 }
 
