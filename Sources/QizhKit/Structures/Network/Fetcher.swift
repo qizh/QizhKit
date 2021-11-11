@@ -142,7 +142,7 @@ public extension SingleItemFetcher {
 	}
 	
 	func defaultResponse(_ response: AFRailsItemResponse) {
-		if debug { debugPrint(response) }
+		if debug { print(response.debugDescription(.default)) }
 		switch response.result {
 		case .failure: state = .failed(response)
 		case .success(let item): state = .success(item.data)
@@ -184,7 +184,7 @@ public extension CollectionFetcher {
 	typealias AFRailsItemResponse = AFDataResponse<RailsItemData>
 	
 	func defaultResponse(_ response: LossyValueResponse, _ animate: Bool) {
-		if debug { debugPrint(response) }
+		if debug { print(response.debugDescription(.default)) }
 		withAnimation(animate ? .spring() : .none) {
 			switch response.result {
 			case .failure: state = .failed(response)
@@ -194,7 +194,7 @@ public extension CollectionFetcher {
 	}
 	
 	func defaultResponse(_ response: AFAirtableResponse) {
-		if debug { debugPrint(response) }
+		if debug { print(response.debugDescription(.default)) }
 		switch response.result {
 		case .failure: state = .failed(response)
 		case .success(let result): state = .success(Value(result.records))
@@ -202,7 +202,7 @@ public extension CollectionFetcher {
 	}
 	
 	func defaultResponse(_ response: AFRailsLossyResponse, _ animate: Bool) {
-		if debug { debugPrint(response) }
+		if debug { print(response.debugDescription(.default)) }
 		withAnimation(animate ? .spring() : .none) {
 			switch response.result {
 			case .failure: state = .failed(response)
@@ -212,7 +212,7 @@ public extension CollectionFetcher {
 	}
 	
 	func defaultResponse(_ response: AFRailsStrictResponse, _ animate: Bool) {
-		if debug { debugPrint(response) }
+		if debug { print(response.debugDescription(.default)) }
 		withAnimation(animate ? .spring() : .none) {
 			switch response.result {
 			case .failure: state = .failed(response)
@@ -222,7 +222,7 @@ public extension CollectionFetcher {
 	}
 	
 	func defaultResponse(_ response: ItemResponse) {
-		if debug { debugPrint(response) }
+		if debug { print(response.debugDescription(.default)) }
 		switch response.result {
 		case .failure: state = .failed(response)
 		case .success(let item): state = .success(item)
@@ -230,7 +230,7 @@ public extension CollectionFetcher {
 	}
 	
 	func defaultResponse(_ response: AFRailsItemResponse, _ animate: Bool) {
-		if debug { debugPrint(response) }
+		if debug { print(response.debugDescription(.default)) }
 		withAnimation(animate ? .spring() : .none) {
 			switch response.result {
 			case .failure: state = .failed(response)
@@ -240,7 +240,7 @@ public extension CollectionFetcher {
 	}
 	
 	func nonEmptyResponse(_ response: AFAirtableResponse) {
-		if debug { debugPrint(response) }
+		if debug { print(response.debugDescription(.default)) }
 		switch response.result {
 		case .failure: state = .failed(response)
 		case .success(let result): state = .nonEmptySuccess(Value(result.records))
@@ -248,7 +248,7 @@ public extension CollectionFetcher {
 	}
 	
 	func nonEmptyResponse(_ response: LossyValueResponse, _ animate: Bool) {
-		if debug { debugPrint(response) }
+		if debug { print(response.debugDescription(.default)) }
 		withAnimation(animate ? .spring() : .none) {
 			switch response.result {
 			case .failure: state = .failed(response)
@@ -258,7 +258,7 @@ public extension CollectionFetcher {
 	}
 	
 	func nonEmptyResponse(_ response: AFRailsLossyResponse, _ animate: Bool) {
-		if debug { debugPrint(response) }
+		if debug { print(response.debugDescription(.default)) }
 		withAnimation(animate ? .spring() : .none) {
 			switch response.result {
 			case .failure: state = .failed(response)
@@ -268,7 +268,7 @@ public extension CollectionFetcher {
 	}
 	
 	func nonEmptyResponse(_ response: AFRailsStrictResponse, _ animate: Bool) {
-		if debug { debugPrint(response) }
+		if debug { print(response.debugDescription(.default)) }
 		withAnimation(animate ? .spring() : .none) {
 			switch response.result {
 			case .failure: state = .failed(response)
@@ -349,7 +349,7 @@ extension CollectionFetcher {
 #if canImport(Alamofire)
 public extension CollectionFetcher where Item: Identifiable {
 	func defaultResponse(_ response: AFRailsLossyResponse, _ animate: Bool) {
-		if debug { debugPrint(response) }
+		if debug { print(response.debugDescription(.default)) }
 		withAnimation(animate ? .spring() : .none) {
 			switch response.result {
 			case .failure: state = .failed(response)
@@ -360,7 +360,7 @@ public extension CollectionFetcher where Item: Identifiable {
 	}
 	
 	func defaultResponse(_ response: AFRailsStrictResponse, _ animate: Bool) {
-		if debug { debugPrint(response) }
+		if debug { print(response.debugDescription(.default)) }
 		withAnimation(animate ? .spring() : .none) {
 			switch response.result {
 			case .failure: state = .failed(response)
@@ -385,7 +385,7 @@ public extension CollectionFetcher where Item: Identifiable {
 	}
 	
 	func nonEmptyResponse(_ response: AFRailsLossyResponse, _ animate: Bool) {
-		if debug { debugPrint(response) }
+		if debug { print(response.debugDescription(.default)) }
 		withAnimation(animate ? .spring() : .none) {
 			switch response.result {
 			case .failure: state = .failed(response)
@@ -396,7 +396,7 @@ public extension CollectionFetcher where Item: Identifiable {
 	}
 	
 	func nonEmptyResponse(_ response: AFRailsStrictResponse, _ animate: Bool) {
-		if debug { debugPrint(response) }
+		if debug { print(response.debugDescription(.default)) }
 		withAnimation(animate ? .spring() : .none) {
 			switch response.result {
 			case .failure: state = .failed(response)
@@ -531,7 +531,7 @@ extension DataResponse {
 		if debugDepth > .minimum || not(request.headers.isEmpty) {
 			requestDescription += .newLine + """
 			    [Headers]:
-			        \("\(request.headers.sorted())".offsettingNewLines())
+			        \("\(request.headers.sorted())".offsettingNewLines(by: 8))
 			"""
 		}
 		if requestBodyDescription.isNotEmpty {
