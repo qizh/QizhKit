@@ -465,6 +465,7 @@ extension BackendFetchState: BackendFetchStateWithCollectionResult
 	/// - `has value` -> `value.isNotEmpty`
 	/// - `nil value` -> `false`
 	@inlinable public var isNotEmpty: Bool { value?.isEmpty.toggled ?? false }
+	@inlinable public var didFetchNone: Bool { value?.isEmpty == true }
 }
 
 extension BackendFetchState: CaseNameProvidable { }
