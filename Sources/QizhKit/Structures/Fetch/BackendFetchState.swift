@@ -617,6 +617,7 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 	
 	public enum SignFailureReason: Equatable, EasyCaseComparable, CaseNameProvidable {
 		case userExists(_ loginMethod: ExistingUserLogin)
+		case inactiveUserExists
 		case usernameTaken
 		case wrongCredentials
 		case wrongPassword
@@ -727,6 +728,8 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 		case .sign(.userExists(.both)): fallthrough
 		case .sign(.userExists(.apple)):
 			return "You've signed up before, try logging in with Apple"
+		case .sign(.inactiveUserExists):
+			return "This email was used already, please sign up"
 		case .sign(.usernameTaken):
 			return "The username is taken, try again with another one"
 		case .sign(.wrongCredentials):
