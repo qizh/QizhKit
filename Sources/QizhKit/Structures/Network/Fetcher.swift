@@ -141,8 +141,8 @@ public extension SingleItemFetcher {
 		}
 	}
 	
-	func defaultResponse(_ response: AFRailsItemResponse) {
-		if debug { print(response.debugDescription(.default)) }
+	func defaultResponse(_ response: AFRailsItemResponse, animate: Bool, debug debugDepth: DebugDepth) {
+		if debug || debugDepth.is(not: .none, .default) { print(response.debugDescription(debugDepth)) }
 		switch response.result {
 		case .failure: state = .failed(response)
 		case .success(let item): state = .success(item.data)
@@ -153,6 +153,13 @@ public extension SingleItemFetcher {
 		defaultResponse(response, animate: false, debug: .default)
 	}
 	func defaultResponse(animate: Bool, debug debugDepth: DebugDepth = .default) -> (ItemResponse) -> Void {
+		{ self.defaultResponse($0, animate: animate, debug: debugDepth) }
+	}
+	
+	func defaultResponse(_ response: AFRailsItemResponse) {
+		defaultResponse(response, animate: false, debug: .default)
+	}
+	func defaultResponse(animate: Bool, debug debugDepth: DebugDepth = .default) -> (AFRailsItemResponse) -> Void {
 		{ self.defaultResponse($0, animate: animate, debug: debugDepth) }
 	}
 	#endif
