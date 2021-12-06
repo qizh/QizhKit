@@ -190,8 +190,8 @@ public extension CollectionFetcher {
 	
 	typealias AFRailsItemResponse = AFDataResponse<RailsItemData>
 	
-	func defaultResponse(_ response: LossyValueResponse, _ animate: Bool) {
-		if debug { print(response.debugDescription(.default)) }
+	func defaultResponse(_ response: LossyValueResponse, _ animate: Bool, debug debugDepth: DebugDepth) {
+		if debug || debugDepth.is(not: .none, .default) { print(response.debugDescription(debugDepth)) }
 		withAnimation(animate ? .spring() : .none) {
 			switch response.result {
 			case .failure: state = .failed(response)
@@ -208,8 +208,8 @@ public extension CollectionFetcher {
 		}
 	}
 	
-	func defaultResponse(_ response: AFRailsLossyResponse, _ animate: Bool) {
-		if debug { print(response.debugDescription(.default)) }
+	func defaultResponse(_ response: AFRailsLossyResponse, _ animate: Bool, debug debugDepth: DebugDepth) {
+		if debug || debugDepth.is(not: .none, .default) { print(response.debugDescription(debugDepth)) }
 		withAnimation(animate ? .spring() : .none) {
 			switch response.result {
 			case .failure: state = .failed(response)
@@ -218,8 +218,8 @@ public extension CollectionFetcher {
 		}
 	}
 	
-	func defaultResponse(_ response: AFRailsStrictResponse, _ animate: Bool) {
-		if debug { print(response.debugDescription(.default)) }
+	func defaultResponse(_ response: AFRailsStrictResponse, _ animate: Bool, debug debugDepth: DebugDepth) {
+		if debug || debugDepth.is(not: .none, .default) { print(response.debugDescription(debugDepth)) }
 		withAnimation(animate ? .spring() : .none) {
 			switch response.result {
 			case .failure: state = .failed(response)
@@ -236,8 +236,8 @@ public extension CollectionFetcher {
 		}
 	}
 	
-	func defaultResponse(_ response: AFRailsItemResponse, _ animate: Bool) {
-		if debug { print(response.debugDescription(.default)) }
+	func defaultResponse(_ response: AFRailsItemResponse, _ animate: Bool, debug debugDepth: DebugDepth) {
+		if debug || debugDepth.is(not: .none, .default) { print(response.debugDescription(debugDepth)) }
 		withAnimation(animate ? .spring() : .none) {
 			switch response.result {
 			case .failure: state = .failed(response)
@@ -254,8 +254,8 @@ public extension CollectionFetcher {
 		}
 	}
 	
-	func nonEmptyResponse(_ response: LossyValueResponse, _ animate: Bool) {
-		if debug { print(response.debugDescription(.default)) }
+	func nonEmptyResponse(_ response: LossyValueResponse, _ animate: Bool, debug debugDepth: DebugDepth) {
+		if debug || debugDepth.is(not: .none, .default) { print(response.debugDescription(debugDepth)) }
 		withAnimation(animate ? .spring() : .none) {
 			switch response.result {
 			case .failure: state = .failed(response)
@@ -264,8 +264,8 @@ public extension CollectionFetcher {
 		}
 	}
 	
-	func nonEmptyResponse(_ response: AFRailsLossyResponse, _ animate: Bool) {
-		if debug { print(response.debugDescription(.default)) }
+	func nonEmptyResponse(_ response: AFRailsLossyResponse, _ animate: Bool, debug debugDepth: DebugDepth) {
+		if debug || debugDepth.is(not: .none, .default) { print(response.debugDescription(debugDepth)) }
 		withAnimation(animate ? .spring() : .none) {
 			switch response.result {
 			case .failure: state = .failed(response)
@@ -274,8 +274,8 @@ public extension CollectionFetcher {
 		}
 	}
 	
-	func nonEmptyResponse(_ response: AFRailsStrictResponse, _ animate: Bool) {
-		if debug { print(response.debugDescription(.default)) }
+	func nonEmptyResponse(_ response: AFRailsStrictResponse, _ animate: Bool, debug debugDepth: DebugDepth) {
+		if debug || debugDepth.is(not: .none, .default) { print(response.debugDescription(debugDepth)) }
 		withAnimation(animate ? .spring() : .none) {
 			switch response.result {
 			case .failure: state = .failed(response)
@@ -285,52 +285,52 @@ public extension CollectionFetcher {
 	}
 	
 	func defaultResponse(_ response: LossyValueResponse) {
-		defaultResponse(response, false)
+		defaultResponse(response, false, debug: .default)
 	}
-	func defaultResponse(animate: Bool) -> (LossyValueResponse) -> Void {
-		{ self.defaultResponse($0, animate) }
+	func defaultResponse(animate: Bool, debug debugDepth: DebugDepth = .default) -> (LossyValueResponse) -> Void {
+		{ self.defaultResponse($0, animate, debug: debugDepth) }
 	}
 	
 	func defaultResponse(_ response: AFRailsLossyResponse) {
-		defaultResponse(response, false)
+		defaultResponse(response, false, debug: .default)
 	}
-	func defaultResponse(animate: Bool) -> (AFRailsLossyResponse) -> Void {
-		{ self.defaultResponse($0, animate) }
+	func defaultResponse(animate: Bool, debug debugDepth: DebugDepth = .default) -> (AFRailsLossyResponse) -> Void {
+		{ self.defaultResponse($0, animate, debug: debugDepth) }
 	}
 	
 	func defaultResponse(_ response: AFRailsStrictResponse) {
-		defaultResponse(response, false)
+		defaultResponse(response, false, debug: .default)
 	}
-	func defaultResponse(animate: Bool) -> (AFRailsStrictResponse) -> Void {
-		{ self.defaultResponse($0, animate) }
+	func defaultResponse(animate: Bool, debug debugDepth: DebugDepth = .default) -> (AFRailsStrictResponse) -> Void {
+		{ self.defaultResponse($0, animate, debug: debugDepth) }
 	}
 	
 	func defaultResponse(_ response: AFRailsItemResponse) {
-		defaultResponse(response, false)
+		defaultResponse(response, false, debug: .default)
 	}
-	func defaultResponse(animate: Bool) -> (AFRailsItemResponse) -> Void {
-		{ self.defaultResponse($0, animate) }
+	func defaultResponse(animate: Bool, debug debugDepth: DebugDepth = .default) -> (AFRailsItemResponse) -> Void {
+		{ self.defaultResponse($0, animate, debug: debugDepth) }
 	}
 	
 	func nonEmptyResponse(_ response: LossyValueResponse) {
-		nonEmptyResponse(response, false)
+		nonEmptyResponse(response, false, debug: .default)
 	}
-	func nonEmptyResponse(animate: Bool) -> (LossyValueResponse) -> Void {
-		{ self.nonEmptyResponse($0, animate) }
+	func nonEmptyResponse(animate: Bool, debug debugDepth: DebugDepth = .default) -> (LossyValueResponse) -> Void {
+		{ self.nonEmptyResponse($0, animate, debug: debugDepth) }
 	}
 	
 	func nonEmptyResponse(_ response: AFRailsLossyResponse) {
-		nonEmptyResponse(response, false)
+		nonEmptyResponse(response, false, debug: .default)
 	}
-	func nonEmptyResponse(animate: Bool) -> (AFRailsLossyResponse) -> Void {
-		{ self.nonEmptyResponse($0, animate) }
+	func nonEmptyResponse(animate: Bool, debug debugDepth: DebugDepth = .default) -> (AFRailsLossyResponse) -> Void {
+		{ self.nonEmptyResponse($0, animate, debug: debugDepth) }
 	}
 	
 	func nonEmptyResponse(_ response: AFRailsStrictResponse) {
-		nonEmptyResponse(response, false)
+		nonEmptyResponse(response, false, debug: .default)
 	}
-	func nonEmptyResponse(animate: Bool) -> (AFRailsStrictResponse) -> Void {
-		{ self.nonEmptyResponse($0, animate) }
+	func nonEmptyResponse(animate: Bool, debug debugDepth: DebugDepth = .default) -> (AFRailsStrictResponse) -> Void {
+		{ self.nonEmptyResponse($0, animate, debug: debugDepth) }
 	}
 	#endif
 	
@@ -355,8 +355,8 @@ extension CollectionFetcher {
 
 #if canImport(Alamofire)
 public extension CollectionFetcher where Item: Identifiable {
-	func defaultResponse(_ response: AFRailsLossyResponse, _ animate: Bool) {
-		if debug { print(response.debugDescription(.default)) }
+	func defaultResponse(_ response: AFRailsLossyResponse, _ animate: Bool, debug debugDepth: DebugDepth) {
+		if debug || debugDepth.is(not: .none, .default) { print(response.debugDescription(debugDepth)) }
 		withAnimation(animate ? .spring() : .none) {
 			switch response.result {
 			case .failure: state = .failed(response)
@@ -366,8 +366,8 @@ public extension CollectionFetcher where Item: Identifiable {
 		}
 	}
 	
-	func defaultResponse(_ response: AFRailsStrictResponse, _ animate: Bool) {
-		if debug { print(response.debugDescription(.default)) }
+	func defaultResponse(_ response: AFRailsStrictResponse, _ animate: Bool, debug debugDepth: DebugDepth) {
+		if debug || debugDepth.is(not: .none, .default) { print(response.debugDescription(debugDepth)) }
 		withAnimation(animate ? .spring() : .none) {
 			switch response.result {
 			case .failure: state = .failed(response)
@@ -378,21 +378,21 @@ public extension CollectionFetcher where Item: Identifiable {
 	}
 	
 	func defaultResponse(_ response: AFRailsLossyResponse) {
-		defaultResponse(response, false)
+		defaultResponse(response, false, debug: .default)
 	}
-	func defaultResponse(animate: Bool) -> (AFRailsLossyResponse) -> Void {
-		{ self.defaultResponse($0, animate) }
+	func defaultResponse(animate: Bool, debug debugDepth: DebugDepth = .default) -> (AFRailsLossyResponse) -> Void {
+		{ self.defaultResponse($0, animate, debug: debugDepth) }
 	}
 	
 	func defaultResponse(_ response: AFRailsStrictResponse) {
-		defaultResponse(response, false)
+		defaultResponse(response, false, debug: .default)
 	}
-	func defaultResponse(animate: Bool) -> (AFRailsStrictResponse) -> Void {
-		{ self.defaultResponse($0, animate) }
+	func defaultResponse(animate: Bool, debug debugDepth: DebugDepth = .default) -> (AFRailsStrictResponse) -> Void {
+		{ self.defaultResponse($0, animate, debug: debugDepth) }
 	}
 	
-	func nonEmptyResponse(_ response: AFRailsLossyResponse, _ animate: Bool) {
-		if debug { print(response.debugDescription(.default)) }
+	func nonEmptyResponse(_ response: AFRailsLossyResponse, _ animate: Bool, debug debugDepth: DebugDepth) {
+		if debug || debugDepth.is(not: .none, .default) { print(response.debugDescription(debugDepth)) }
 		withAnimation(animate ? .spring() : .none) {
 			switch response.result {
 			case .failure: state = .failed(response)
@@ -402,8 +402,8 @@ public extension CollectionFetcher where Item: Identifiable {
 		}
 	}
 	
-	func nonEmptyResponse(_ response: AFRailsStrictResponse, _ animate: Bool) {
-		if debug { print(response.debugDescription(.default)) }
+	func nonEmptyResponse(_ response: AFRailsStrictResponse, _ animate: Bool, debug debugDepth: DebugDepth) {
+		if debug || debugDepth.is(not: .none, .default) { print(response.debugDescription(debugDepth)) }
 		withAnimation(animate ? .spring() : .none) {
 			switch response.result {
 			case .failure: state = .failed(response)
@@ -414,17 +414,17 @@ public extension CollectionFetcher where Item: Identifiable {
 	}
 	
 	func nonEmptyResponse(_ response: AFRailsLossyResponse) {
-		nonEmptyResponse(response, false)
+		nonEmptyResponse(response, false, debug: .default)
 	}
-	func nonEmptyResponse(animate: Bool) -> (AFRailsLossyResponse) -> Void {
-		{ self.nonEmptyResponse($0, animate) }
+	func nonEmptyResponse(animate: Bool, debug debugDepth: DebugDepth = .default) -> (AFRailsLossyResponse) -> Void {
+		{ self.nonEmptyResponse($0, animate, debug: debugDepth) }
 	}
 	
 	func nonEmptyResponse(_ response: AFRailsStrictResponse) {
-		nonEmptyResponse(response, false)
+		nonEmptyResponse(response, false, debug: .default)
 	}
-	func nonEmptyResponse(animate: Bool) -> (AFRailsStrictResponse) -> Void {
-		{ self.nonEmptyResponse($0, animate) }
+	func nonEmptyResponse(animate: Bool, debug debugDepth: DebugDepth = .default) -> (AFRailsStrictResponse) -> Void {
+		{ self.nonEmptyResponse($0, animate, debug: debugDepth) }
 	}
 }
 #endif
