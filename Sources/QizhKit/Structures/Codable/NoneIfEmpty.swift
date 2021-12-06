@@ -13,11 +13,14 @@ public struct NoneIfEmpty <Wrapped> where Wrapped: EmptyTestable {
 	public var wrappedValue: Wrapped?
 	
 	public init(wrappedValue: Wrapped? = .none) {
-		if let value = wrappedValue?.nonEmpty {
+		self.wrappedValue = wrappedValue?.withLinesNSpacesTrimmed.nonEmpty
+		/*
+		if let value = wrappedValue?.withLinesNSpacesTrimmed.nonEmpty {
 			self.wrappedValue = value
 		} else {
 			self.wrappedValue = nil
 		}
+		*/
 	}
 	
 	public static var none: Self { .init() }
@@ -27,7 +30,7 @@ extension NoneIfEmpty: Codable where Wrapped: Codable {
 	public init(from decoder: Decoder) throws {
 		let container = try decoder.singleValueContainer()
 		let value = try container.decode(Wrapped.self)
-		self.wrappedValue = value.nonEmpty
+		self.init(wrappedValue: value)
 	}
 }
 
