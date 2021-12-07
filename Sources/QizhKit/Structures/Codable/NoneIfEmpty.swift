@@ -12,15 +12,12 @@ import Foundation
 public struct NoneIfEmpty <Wrapped> where Wrapped: EmptyTestable {
 	public var wrappedValue: Wrapped?
 	
-	public init(wrappedValue: Wrapped? = .none) {
+	public init(wrappedValue: Wrapped? = .none) where Wrapped == String {
 		self.wrappedValue = wrappedValue?.withLinesNSpacesTrimmed.nonEmpty
-		/*
-		if let value = wrappedValue?.withLinesNSpacesTrimmed.nonEmpty {
-			self.wrappedValue = value
-		} else {
-			self.wrappedValue = nil
-		}
-		*/
+	}
+	
+	public init(wrappedValue: Wrapped? = .none) {
+		self.wrappedValue = wrappedValue?.nonEmpty
 	}
 	
 	public static var none: Self { .init() }
