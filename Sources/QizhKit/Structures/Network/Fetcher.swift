@@ -67,7 +67,7 @@ public enum DebugDepth: Comparable, EasyCaseComparable {
 		case .none: 	return 0
 		case .minimum: 	return 500
 		case .default: 	return 5_000
-		case .extra: 	return 10_000
+		case .extra: 	return .max
 		}
 	}
 }
