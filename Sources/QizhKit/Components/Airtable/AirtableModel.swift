@@ -67,7 +67,7 @@ public extension KeyedBackendModel {
 		guard CodingKeys.allCases.contains(where: \.stringValue, equals: key),
 			  let data = try? JSONEncoder().encode(self)
 		else { return .none }
-		return try? KeyDecoder.decode(T.self, from: data, by: key)
+		return try? KeyDecoder.decodeConverting(to: T.self, from: data, by: key)
 	}
 }
 
@@ -169,7 +169,33 @@ extension AirtableModel {
 public struct KeyDecoder {
 	private static let userInfoKey = CodingUserInfoKey(rawValue: "key")!
 	
-	private struct SingleKeyWrapper <Wrapped: Codable & LosslessStringConvertible>: Decodable {
+	// MARK: Direct
+	
+	private struct SingleKeyWrapper <Wrapped: Codable>: Decodable {
+		var wrappedValue: Wrapped
+		
+		init(from decoder: Decoder) throws {
+			let keyName = decoder.userInfo[KeyDecoder.userInfoKey] as! String
+			let key = JSONCodingKeys(stringValue: keyName)
+			let values = try decoder.container(keyedBy: JSONCodingKeys.self)
+			wrappedValue = try values.decode(Wrapped.self, forKey: key)
+		}
+	}
+	
+	public static func decode <T: Codable> (
+		_ type: T.Type,
+		from data: Data,
+		by key: String
+	) throws -> T {
+		let decoder = JSONDecoder()
+		decoder.userInfo[KeyDecoder.userInfoKey] = key
+		let model = try decoder.decode(SingleKeyWrapper<T>.self, from: data).wrappedValue
+		return model
+	}
+	
+	// MARK: Convertable
+	
+	private struct SingleKeyConvertableWrapper <Wrapped: Codable & LosslessStringConvertible>: Decodable {
 		@AutoTypeCodable var wrappedValue: Wrapped
 		
 		init(from decoder: Decoder) throws {
@@ -180,14 +206,14 @@ public struct KeyDecoder {
 		}
 	}
 	
-	public static func decode <T: Codable & LosslessStringConvertible> (
-		_ type: T.Type,
+	public static func decodeConverting <T: Codable & LosslessStringConvertible> (
+		to type: T.Type,
 		from data: Data,
 		by key: String
 	) throws -> T {
 		let decoder = JSONDecoder()
 		decoder.userInfo[KeyDecoder.userInfoKey] = key
-		let model = try decoder.decode(SingleKeyWrapper<T>.self, from: data).wrappedValue
+		let model = try decoder.decode(SingleKeyConvertableWrapper<T>.self, from: data).wrappedValue
 		return model
 	}
 }
