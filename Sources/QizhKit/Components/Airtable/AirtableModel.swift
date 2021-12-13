@@ -185,9 +185,9 @@ public struct KeyDecoder {
 	public static func decode <T: Codable> (
 		_ type: T.Type,
 		from data: Data,
-		by key: String
+		by key: String,
+		using decoder: JSONDecoder = .init()
 	) throws -> T {
-		let decoder = JSONDecoder()
 		decoder.userInfo[KeyDecoder.userInfoKey] = key
 		let model = try decoder.decode(SingleKeyWrapper<T>.self, from: data).wrappedValue
 		return model
@@ -209,9 +209,9 @@ public struct KeyDecoder {
 	public static func decodeConverting <T: Codable & LosslessStringConvertible> (
 		to type: T.Type,
 		from data: Data,
-		by key: String
+		by key: String,
+		using decoder: JSONDecoder = .init()
 	) throws -> T {
-		let decoder = JSONDecoder()
 		decoder.userInfo[KeyDecoder.userInfoKey] = key
 		let model = try decoder.decode(SingleKeyConvertableWrapper<T>.self, from: data).wrappedValue
 		return model
