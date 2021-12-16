@@ -508,7 +508,7 @@ extension DataResponse {
 			"""
 		}
 		
-		let printableTypes = ["json", "xml", "text", "form-urlencoded"]
+		let printableTypes = ["json", "xml", "text", "form-urlencoded", "graphql"]
 		
 		// MARK: Request
 		
@@ -535,7 +535,7 @@ extension DataResponse {
 		}
 		
 		var requestDescription: String = "[Request]: \(request.httpMethod!) \(request)"
-		if debugDepth > .minimum || not(request.headers.isEmpty) {
+		if debugDepth > .minimum, not(request.headers.isEmpty) {
 			requestDescription += .newLine + """
 			    [Headers]:
 			        \("\(request.headers.sorted())".offsettingNewLines(by: 8))
