@@ -171,7 +171,7 @@ public struct KeyDecoder {
 	
 	// MARK: Direct
 	
-	private struct SingleKeyWrapper <Wrapped: Codable>: Decodable {
+	private struct SingleKeyWrapper <Wrapped: Decodable>: Decodable {
 		var wrappedValue: Wrapped
 		
 		init(from decoder: Decoder) throws {
@@ -182,7 +182,7 @@ public struct KeyDecoder {
 		}
 	}
 	
-	public static func decode <T: Codable> (
+	public static func decode <T: Decodable> (
 		_ type: T.Type,
 		from data: Data,
 		by key: String,
