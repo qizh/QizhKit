@@ -26,11 +26,9 @@ public protocol BackendModel:
 }
 
 public extension BackendModel {
-	#if DEBUG
 	init(stringLiteral value: String) {
 		self = try! JSONDecoder.airtable.decode(Self.self, from: Data(value.utf8))
 	}
-	#endif
 	
 	var debugDescription: String {
 		caseName(of: Self.self, .name) + "(\(id))"
