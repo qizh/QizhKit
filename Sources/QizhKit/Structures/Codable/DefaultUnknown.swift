@@ -8,6 +8,7 @@
 
 import Foundation
 
+@available(*, deprecated, message: "A model implementing both WithUnknown and Codable protocols will fallback to unknown already. There's no need for a special wrapper")
 @propertyWrapper
 public struct DefaultUnknown <Wrapped> where Wrapped: WithUnknown {
 	public var wrappedValue: Wrapped
@@ -17,6 +18,7 @@ public struct DefaultUnknown <Wrapped> where Wrapped: WithUnknown {
 	}
 }
 
+@available(*, deprecated)
 extension DefaultUnknown: Codable where Wrapped: Codable {
 	public init(from decoder: Decoder) throws {
 		let container = try decoder.singleValueContainer()
@@ -28,13 +30,17 @@ extension DefaultUnknown: Codable where Wrapped: Codable {
 	}
 }
 
+@available(*, deprecated)
 extension DefaultUnknown: Equatable where Wrapped: Equatable { }
+@available(*, deprecated)
 extension DefaultUnknown: Hashable where Wrapped: Hashable { }
 
+@available(*, deprecated)
 extension DefaultUnknown: WithUnknown {
 	@inlinable public static var unknown: DefaultUnknown<Wrapped> { .init() }
 }
 
+@available(*, deprecated)
 public extension KeyedDecodingContainer {
 	func decode <Wrapped: Codable> (
 		_: DefaultUnknown<Wrapped>.Type,
