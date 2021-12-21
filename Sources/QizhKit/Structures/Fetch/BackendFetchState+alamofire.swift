@@ -130,6 +130,7 @@ public struct FetchErrorDebugDetails: Codable {
 		case .emptyContentError: ()
 		case .unknown: ()
 		case .passwordResetTokenExpired: ()
+		case .notImplemented: ()
 		}
 	}
 	

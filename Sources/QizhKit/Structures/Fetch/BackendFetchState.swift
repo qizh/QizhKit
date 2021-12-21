@@ -609,6 +609,7 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 	case unauthorizedCallPrevented
 	case accessForbidden
 	case emptyContentError
+	case notImplemented
 	case unknown
 	
 	public enum PreconditionValidationReason: Equatable {
@@ -750,6 +751,8 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 			return "The price doesn't match"
 		case .passwordResetTokenExpired:
 			return "Password reset URL have expired"
+		case .notImplemented:
+			return "This functionality is not implemented"
 		}
 	}
 	
@@ -779,6 +782,7 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 		case .preconditionValidation(_): 	return false
 		case .priceMismatch(_): 			return true
 		case .passwordResetTokenExpired: 	return true
+		case .notImplemented: 				return true
 		}
 	}
 	
