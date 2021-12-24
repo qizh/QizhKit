@@ -29,6 +29,10 @@ extension NoneIfEmpty: Codable where Wrapped: Codable {
 		let value = try container.decode(Wrapped.self)
 		self.init(wrappedValue: value)
 	}
+	
+	public func encode(to encoder: Encoder) throws {
+		try wrappedValue?.encode(to: encoder)
+	}
 }
 
 extension NoneIfEmpty: Equatable where Wrapped: Equatable { }
