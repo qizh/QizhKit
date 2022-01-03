@@ -8,11 +8,6 @@
 
 import SwiftUI
 
-public enum IOSVersion: EasyCaseComparable {
-	case iOS13
-	case iOS14
-}
-
 public extension View {
 	@inlinable
 	func modifier <M: ViewModifier> (_ modifier: M?) -> some View {
@@ -96,46 +91,6 @@ public extension View {
 		}
 	}
 	
-	@ViewBuilder
-	func apply <Transformed: View> (
-		for iOS: IOSVersion,
-		_ transform: (Self) -> Transformed
-	) -> some View {
-		if #available(iOS 14.0, *),
-		   iOS.is(.iOS14) {
-			transform(self)
-		} else {
-			self
-		}
-	}
-	
-	@inlinable
-	@ViewBuilder
-	func applyForIOS14 <Transformed: View, Fallback: View> (
-		_ transform: (Self) -> Transformed,
-		else fallback: (Self) -> Fallback
-	) -> some View {
-		if #available(iOS 14.0, *) {
-			transform(self)
-		} else {
-			fallback(self)
-		}
-	}
-	
-	@inlinable
-	@ViewBuilder
-	func applyForIOS13 <Transformed: View, Fallback: View> (
-		_ transform: (Self) -> Transformed,
-		else fallback: (Self) -> Fallback
-	) -> some View {
-		if #available(iOS 14.0, *) {
-			fallback(self)
-		} else {
-			transform(self)
-		}
-	}
-	
-	@inlinable
 	func map <T, Modified: View> (
 		_ value: T?,
 		_ transform: (Self, T) -> Modified
@@ -143,6 +98,8 @@ public extension View {
 		   optionals(self, value).map(view: transform)
 		?? self
 	}
+	
+	// MARK: On Appear
 	
 	@inlinable
 	func onAppearModifier<Modifier: ViewModifier>(_ modifier: Modifier) -> ModifiedContent<Self, ModifyOnAppear<Modifier>> {
@@ -154,16 +111,6 @@ public extension View {
 		_ transform: (Self) -> Transformed
 	) -> ModifiedContent<Self, OnAppearChange<Transformed>> {
 		modifier(OnAppearChange(to: transform(self)))
-	}
-}
-
-public struct Views {
-	@inlinable
-	public static func produce <T, Output: View> (
-		using value: T,
-		@ViewBuilder in producer: (T) -> Output
-	) -> Output {
-		producer(value)
 	}
 }
 
@@ -199,6 +146,46 @@ public struct ModifyOnAppear<Modifier: ViewModifier>: ViewModifier {
 			content.modifier(modifier)
 		} else {
 			content.onAppear { self.didAppear = true }
+		}
+	}
+}
+
+// MARK: Views generation
+
+public struct Views {
+	@inlinable
+	public static func produce <T, Output: View> (
+		using value: T,
+		@ViewBuilder in producer: (T) -> Output
+	) -> Output {
+		producer(value)
+	}
+}
+
+// MARK: Available bug workaround
+
+public struct CallbackViewModifier <Transformed: View>: ViewModifier {
+	private let transform: (AnyView) -> Transformed
+	
+	public init(@ViewBuilder _ transform: @escaping (AnyView) -> Transformed) {
+		self.transform = transform
+	}
+	
+	public func body(content: Content) -> some View {
+		transform(content.asAnyView())
+	}
+}
+
+extension View {
+	@ViewBuilder
+	public func applyForIOS15 <Transformed: View, Fallback: View> (
+		@ViewBuilder _ transform: @escaping (AnyView) -> Transformed,
+		@ViewBuilder else fallback: @escaping (AnyView) -> Fallback
+	) -> some View {
+		if #available(iOS 15.0, *) {
+			self.modifier(CallbackViewModifier(transform))
+		} else {
+			self.modifier(CallbackViewModifier(fallback))
 		}
 	}
 }
