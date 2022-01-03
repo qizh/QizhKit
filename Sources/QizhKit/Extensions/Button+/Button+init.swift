@@ -19,7 +19,14 @@ public extension Button where Label == Text {
 	
 	/// A button with a text label with no action
 	/// - Parameter title: Title of the button
-	@inlinable init<S>(_ title: S) where S: StringProtocol {
+	@inlinable @_disfavoredOverload
+	init<S>(_ title: S) where S: StringProtocol {
+		self.init(title, action: {})
+	}
+	
+	/// A button with a text label with no action
+	@inlinable
+	init(_ title: LocalizedStringKey) {
 		self.init(title, action: {})
 	}
 }

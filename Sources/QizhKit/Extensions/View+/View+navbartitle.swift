@@ -9,7 +9,7 @@
 import SwiftUI
 
 extension View {
-	@ViewBuilder
+	@ViewBuilder @_disfavoredOverload
 	public func navTitle <S: StringProtocol> (
 		_ title: S,
 		_ displayMode: NavigationBarItem.TitleDisplayMode = .automatic
