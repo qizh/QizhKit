@@ -123,6 +123,7 @@ public struct FetchErrorDebugDetails: Codable {
 				"message": message
 			]
 		case .cancelled: ()
+		case .paymentFailed: ()
 		case .notFound: ()
 		case .unauthorized: ()
 		case .unauthorizedCallPrevented: ()

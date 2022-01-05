@@ -604,6 +604,7 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 	case passwordResetTokenExpired
 	
 	case cancelled
+	case paymentFailed
 	case notFound
 	case unauthorized
 	case unauthorizedCallPrevented
@@ -712,6 +713,8 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 			return "No items here"
 		case .cancelled:
 			return "Someone have canceled the action. It was you, right?"
+		case .paymentFailed:
+			return "We were not able to proceed with your payment."
 		case .notFound:
 			return "Not found"
 		case .unauthorized:
@@ -773,6 +776,7 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 		case .sign(.wrongCode): 			return false
 		case .sign(_): 						return true
 		case .cancelled: 					return false
+		case .paymentFailed: 				return true
 		case .notFound: 					return true
 		case .unauthorized: 				return true
 		case .unauthorizedCallPrevented: 	return true
