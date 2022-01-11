@@ -117,6 +117,8 @@ extension AutoTypeCodable: Hashable where T: Hashable {
 	}
 }
 
+// MARK: Adopt
+
 extension Date: LosslessStringConvertible {
 	public init?(_ description: String) {
 		#if swift(>=5.5)
@@ -152,37 +154,116 @@ extension Decimal: LosslessStringConvertible {
 	}
 }
 
-/*
-extension AutoTypeCodable: WithAnyDefault where T: WithDefault { }
-extension AutoTypeCodable: WithDefault where T: WithDefault {
-	public init() {
-		self.init(wrappedValue: .default)
+// MARK: - Defaulted
+
+@propertyWrapper
+public struct LossyAutoTypeCodable <T>: Codable
+	where T: LosslessStringConvertible,
+		  T: Codable
+{
+	private typealias LosslessStringCodable = LosslessStringConvertible & Codable
+	private let type: LosslessStringCodable.Type
+	
+	public var wrappedValue: T
+	
+	public init(wrappedValue: T) {
+		self.wrappedValue = wrappedValue
+		self.type = T.self
 	}
 	
-	public static var `default`: AutoTypeCodable<T> {
-		.init()
+	public init(from decoder: Decoder) throws {
+		do {
+			self.wrappedValue = try T.init(from: decoder)
+			self.type = T.self
+		} catch let error {
+			
+			func decode <T: LosslessStringCodable> (
+				_: T.Type
+			) -> (Decoder) -> LosslessStringCodable? {
+				{
+					try? T.init(from: $0)
+				}
+			}
+			
+			func decodeBoolFromNSNumber() -> (Decoder) -> LosslessStringCodable? {
+				{
+					(try? Int.init(from: $0))
+						.flatMap {
+							Bool(exactly: NSNumber(value: $0))
+						}
+				}
+			}
+			
+			let types: [(Decoder) -> LosslessStringCodable?] = [
+				decode(String.self),
+				decodeBoolFromNSNumber(),
+				decode(Bool.self),
+				decode(Int.self),
+				decode(UInt.self),
+				decode(Decimal.self),
+				decode(Double.self),
+				decode(Float.self),
+				decode(Date.self),
+				decode(Int8.self),
+				decode(Int16.self),
+				decode(Int64.self),
+				decode(UInt8.self),
+				decode(UInt16.self),
+				decode(UInt64.self),
+			]
+			
+			guard let rawValue = types.lazy.compactMap({ $0(decoder) }).first,
+				  let value = T.init("\(rawValue)")
+			else { throw error }
+			
+			self.wrappedValue = value
+			self.type = Swift.type(of: rawValue)
+		}
+	}
+	
+	public func encode(to encoder: Encoder) throws {
+		let string = String(describing: wrappedValue)
+		
+		guard let original = type.init(string) else {
+			let description = "Unable to encode `\(wrappedValue)` back to source type `\(type)`"
+			throw EncodingError.invalidValue(string, .init(codingPath: [], debugDescription: description))
+		}
+		
+		try original.encode(to: encoder)
 	}
 }
 
-extension AutoTypeCodable: WithAnyUnknown where T: WithUnknown { }
-extension AutoTypeCodable: WithUnknown where T: WithUnknown {
-	public init() {
-		self.init(wrappedValue: .unknown)
+public extension KeyedDecodingContainer {
+	func decode<T>(_: LossyAutoTypeCodable<T>.Type, forKey key: Key) throws -> LossyAutoTypeCodable<T> {
+		if let decoded = try? decodeIfPresent(LossyAutoTypeCodable<T>.self, forKey: key) {
+			return decoded
+		} else if let defaultValue = T("false") ?? T("0") {
+			return .init(wrappedValue: defaultValue)
+		} else {
+			throw DecodingError.dataCorruptedError(forKey: key, in: self, debugDescription: "Neither can decode \(T.self) value nor create a default one")
+		}
 	}
 	
-	public static var unknown: AutoTypeCodable<T> {
-		.init()
+	/// Optional
+	func decode<T>(_: LossyAutoTypeCodable<T>.Type, forKey key: Key) throws -> LossyAutoTypeCodable<T> where T: TypedOptionalConvertible {
+		if let decoded = try? decodeIfPresent(LossyAutoTypeCodable<T>.self, forKey: key) {
+			return decoded
+		} else if let defaultValue = T("false") ?? T("0") {
+			return .init(wrappedValue: defaultValue)
+		} else {
+			return .init(wrappedValue: .none)
+		}
 	}
 }
 
-extension AutoTypeCodable: AnyEmptyProvidable where T: EmptyProvidable { }
-extension AutoTypeCodable: EmptyProvidable where T: EmptyProvidable {
-	public init() {
-		self.init(wrappedValue: .empty)
-	}
-	
-	public static var empty: AutoTypeCodable<T> {
-		.init()
+extension LossyAutoTypeCodable: Equatable where T: Equatable {
+	public static func == (lhs: LossyAutoTypeCodable<T>, rhs: LossyAutoTypeCodable<T>) -> Bool {
+		lhs.wrappedValue == rhs.wrappedValue
 	}
 }
-*/
+
+extension LossyAutoTypeCodable: Hashable where T: Hashable {
+	public func hash(into hasher: inout Hasher) {
+		hasher.combine(wrappedValue)
+	}
+}
