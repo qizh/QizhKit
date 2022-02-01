@@ -280,10 +280,16 @@ public enum BackendFetchState<Value> {
 	public static func failed(with fetchError: FetchError) -> Self {
 		.fetched(.failure(fetchError))
 	}
+	
 	@inlinable
 	public static func failed(with error: Error) -> Self {
-		.failed(with: .providerError(error.localizedDescription, error))
+		if let fetchError = error as? FetchError {
+			return .failed(with: fetchError)
+		} else {
+			return .failed(with: .providerError(error.localizedDescription, error))
+		}
 	}
+	
 	@inlinable
 	public static func failed(with error: Error, description: String) -> Self {
 		.failed(with: .providerError(description, error))
