@@ -79,7 +79,8 @@ public extension View {
 	
 	@inlinable func onReceiveValue<StatePublisher, Value>(
 		_ publisher: StatePublisher,
-		perform action: @escaping (Value) -> Void
+		perform action: @escaping (Value) -> Void,
+		flow: ExecutionFlow = .current
 	) -> some View
 		where
 			StatePublisher: Publisher,
@@ -88,7 +89,7 @@ public extension View {
 	{
 		onReceive(publisher) { state in
 			state.value.map { value in
-				action(value)
+				flow.proceed(with: action, value)
 			}
 		}
 	}
