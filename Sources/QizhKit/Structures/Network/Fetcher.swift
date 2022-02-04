@@ -135,17 +135,21 @@ public extension SingleItemFetcher {
 	
 	func defaultResponse(_ response: ItemResponse, animate: Bool, debug debugDepth: DebugDepth) {
 		if debug || debugDepth.is(not: .none, .default) { print(response.debugDescription(debugDepth)) }
-		switch response.result {
-		case .failure: state = .failed(response)
-		case .success(let item): state = .success(item)
+		withAnimation(animate ? .spring() : .none) {
+			switch response.result {
+			case .failure: state = .failed(response)
+			case .success(let item): state = .success(item)
+			}
 		}
 	}
 	
 	func defaultResponse(_ response: AFRailsItemResponse, animate: Bool, debug debugDepth: DebugDepth) {
 		if debug || debugDepth.is(not: .none, .default) { print(response.debugDescription(debugDepth)) }
-		switch response.result {
-		case .failure: state = .failed(response)
-		case .success(let item): state = .success(item.data)
+		withAnimation(animate ? .spring() : .none) {
+			switch response.result {
+			case .failure: state = .failed(response)
+			case .success(let item): state = .success(item.data)
+			}
 		}
 	}
 	
