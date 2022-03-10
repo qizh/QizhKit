@@ -46,9 +46,7 @@ public struct WindowUtils {
 		_ viewController: UIViewController? = .none
 	) -> UIViewController? {
 		let vc = viewController
-			?? UIApplication.shared.windows
-				.first(where: \.isKeyWindow)?
-				.rootViewController
+			?? keyWindow?.rootViewController
 		
 		if let nc = vc as? UINavigationController {
 			return topViewController(nc.topViewController)
