@@ -176,6 +176,9 @@ public struct CallbackViewModifier <Transformed: View>: ViewModifier {
 	}
 }
 
+/// Doesn't make any sense since you still need to check for iOS 15 availability
+/// in the `transform` closure
+/*
 extension View {
 	@ViewBuilder
 	public func applyForIOS15 <Transformed: View, Fallback: View> (
@@ -189,3 +192,4 @@ extension View {
 		}
 	}
 }
+*/
