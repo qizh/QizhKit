@@ -9,10 +9,12 @@
 import UIKit
 
 public struct WindowUtils {
+	/*
 	public static private(set) var originalWindow: UIWindow?
 	public static func setOriginalWindow(_ window: UIWindow) {
 		originalWindow = window
 	}
+	*/
 	
 	// @available(iOSApplicationExtension, unavailable)
 	public static var windowScene: UIWindowScene? {
@@ -35,6 +37,10 @@ public struct WindowUtils {
 	
 	public static var rootViewController: UIViewController? {
 		originalWindow?.rootViewController
+	}
+	
+	public static var originalWindow: UIWindow? {
+		keyWindow
 	}
 	
 	public static var currentWindow: UIWindow? {
