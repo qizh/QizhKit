@@ -8,16 +8,20 @@
 
 import SwiftUI
 
+// MARK: Key
+
 public struct SafeFrameInsetsKey: EnvironmentKey {
-	public static let defaultValue: UIEdgeInsets = SafeFrame.currentInsets
+	public static let defaultValue: EdgeInsets = .zero
 }
 
 public extension EnvironmentValues {
-	var safeFrameInsets: UIEdgeInsets {
+	var safeFrameInsets: EdgeInsets {
 		get { self[SafeFrameInsetsKey.self] }
 		set { self[SafeFrameInsetsKey.self] = newValue }
 	}
 }
+
+// MARK: Set
 
 public extension View {
 	func safeFrameTop(_ value: CGFloat) -> some View {
@@ -43,4 +47,30 @@ public extension View {
 		}
 	}
 	#endif
+}
+
+// MARK: Provide
+
+public struct SafeFrameEnvironmentProvider: ViewModifier {
+	@State private var insets: EdgeInsets = SafeFrameInsetsKey.defaultValue
+	
+	public func body(content: Content) -> some View {
+		content
+			.background {
+				GeometryReader { geometry -> Color in
+					let current = geometry.safeAreaInsets
+					if insets.equals(current, precision: .two) != true {
+						execute { self.insets = current }
+					}
+					return Color.clear
+				}
+			}
+			.environment(\.safeFrameInsets, insets)
+	}
+}
+
+extension View {
+	public func provideSafeFrameEnvironment() -> some View {
+		modifier(SafeFrameEnvironmentProvider())
+	}
 }
