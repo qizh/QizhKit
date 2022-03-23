@@ -27,10 +27,14 @@ public struct WindowUtils {
 		UIApplication.shared.connectedScenes
 			.filter { $0.activationState == .foregroundActive }
 			.compactMap { $0 as? UIWindowScene }
+			.flatMap(\.windows)
+			.first(where: \.isKeyWindow)
+			/*
 			.first?
 			.windows
 			.filter { $0.isKeyWindow}
 			.first
+			*/
 	}
 	
 	public static var rootViewController: UIViewController? {
