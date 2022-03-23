@@ -9,12 +9,10 @@
 import UIKit
 
 public struct WindowUtils {
-	/*
-	public static private(set) var originalWindow: UIWindow?
+	private static var manuallyAssignedWindow: UIWindow?
 	public static func setOriginalWindow(_ window: UIWindow) {
-		originalWindow = window
+		manuallyAssignedWindow = window
 	}
-	*/
 	
 	// @available(iOSApplicationExtension, unavailable)
 	public static var windowScene: UIWindowScene? {
@@ -36,15 +34,15 @@ public struct WindowUtils {
 	}
 	
 	public static var rootViewController: UIViewController? {
-		originalWindow?.rootViewController
+		manuallyAssignedWindow?.rootViewController
 	}
 	
 	public static var originalWindow: UIWindow? {
-		keyWindow
+		manuallyAssignedWindow ?? keyWindow
 	}
 	
 	public static var currentWindow: UIWindow? {
-		originalWindow
+		manuallyAssignedWindow ?? keyWindow
 		// keyWindow ?? originalWindow
 	}
 	
@@ -72,7 +70,7 @@ public struct WindowUtils {
 }
 
 @inlinable public func endEditing(force: Bool) {
-	WindowUtils.originalWindow?.endEditing(force)
+	WindowUtils.currentWindow?.endEditing(force)
 }
 
 public struct SafeFrame {
