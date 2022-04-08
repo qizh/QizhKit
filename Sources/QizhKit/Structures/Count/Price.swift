@@ -27,6 +27,7 @@ public protocol PriceDetailsProvider {
 	var currency: Price.Code { get }
 	var discount: Price.Discount { get }
 	var taxes: [Price.Tax] { get }
+	func combined(with other: PriceDetailsProvider) -> PriceDetailsProvider
 }
 
 //public typealias PriceValueAndDetailsProvider = PriceValueProvider & PriceDetailsProvider
@@ -73,6 +74,33 @@ public struct Price:
 	
 	@inlinable public init(_ value: Decimal, _ currency: Code = .default) {
 		self.init(value: value, currency: currency)
+	}
+	
+	public func combined(with other: PriceDetailsProvider) -> PriceDetailsProvider {
+		if currency.code != other.currency.code {
+			print("Price warning: Skipped attempt to combine \(currency.code) with \(other.currency.code)")
+		}
+		
+		var copy = self
+		
+		if not(other.discount.isZero) {
+			if copy.discount.isZero {
+				copy.discount = other.discount
+			} else {
+				print("Price warning: Skipped attempt to combine \(copy.discount) with \(other.discount)")
+			}
+		}
+		
+		if not(other.taxes.isEmpty) {
+			if copy.taxes.isEmpty {
+				copy.taxes = other.taxes
+			} else {
+				print("Price warning: Combined unrelated taxes \(copy.taxes) with \(other.taxes)")
+				copy.taxes += other.taxes
+			}
+		}
+		
+		return copy
 	}
 }
 
@@ -207,6 +235,20 @@ public extension Price {
 		public init(_ value: Decimal, _ currency: Code = .default) {
 			self.value = value
 			self.currency = currency
+		}
+		
+		public var asPrice: Price {
+			Price(
+				value: value,
+				currency: currency,
+				discount: discount,
+				taxes: taxes
+			)
+		}
+		
+		@inlinable
+		public func combined(with other: PriceDetailsProvider) -> PriceDetailsProvider {
+			self.asPrice.combined(with: other)
 		}
 	}
 }

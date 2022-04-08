@@ -238,6 +238,12 @@ public extension Price {
 			calculate(value - roundedDiscount.value, "Discounted", nonNegative: true)
 		}
 		
+		/*
+		public var originalTaxes: [Price.Tax] {
+			details.taxes
+		}
+		*/
+		
 		public var taxes: [Output] {
 			details.taxes.map { tax in
 				switch tax {
@@ -316,7 +322,7 @@ public extension Price {
 		public static func + (l: Output, r: Output) -> Output {
 			Output(
 				value: l.value + r.value,
-				details: l.details,
+				details: l.details.combined(with: r.details),
 				amount: l.amount + r.amount,
 				name: l.name + .space + r.name
 			)
@@ -394,26 +400,15 @@ public extension Collection where Element: Price.Calculated {
 
 public extension Price.CalculatedItem {
 	@inlinable static func + (l: Self, r: Price.Calculated) -> Price.CalculatedSum { [l, r] }
-	/*
-	typealias Summ = Price.CalculatedSum
-	typealias Srvc = Price.CalculatedService
-	static func + (l: Self, r: Self) -> Summ { .init([l, r]) }
-	static func + (l: Self, r: Srvc) -> Summ { .init([l, r]) }
-	static func + (l: Self, r: Summ) -> Summ { .init([l] + r.items) }
-	*/
+	@inlinable static func + (l: Price.Calculated, r: Self) -> Price.CalculatedSum { [l, r] }
 }
 
 public extension Price.CalculatedService {
 	@inlinable static func + (l: Self, r: Price.Calculated) -> Price.CalculatedSum { [l, r] }
-	/*
-	typealias Summ = Price.CalculatedSum
-	typealias Item = Price.CalculatedItem
-	static func + (l: Self, r: Self) -> Summ { [l, r] }
-	static func + (l: Self, r: Item) -> Summ { .init([l, r]) }
-	static func + (l: Self, r: Summ) -> Summ { .init([l] + r.items) }
-	*/
+	@inlinable static func + (l: Price.Calculated, r: Self) -> Price.CalculatedSum { [l, r] }
 }
 
 public extension Price.CalculatedSum {
 	@inlinable static func + (l: Self, r: Price.Calculated) -> Self { [l, r] }
+	@inlinable static func + (l: Price.Calculated, r: Self) -> Self { [l, r] }
 }
