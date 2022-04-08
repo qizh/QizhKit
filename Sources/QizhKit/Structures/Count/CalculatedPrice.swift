@@ -30,9 +30,9 @@ public extension PriceCalculationProvider {
 
 // MARK: Calculated
 
-public extension Price {
-	typealias Calculated = PriceCalculationProvider
-	struct CalculatedItem: Calculated {
+extension Price {
+	public typealias Calculated = PriceCalculationProvider
+	public struct CalculatedItem: Calculated {
 		public let price: Price.Provider
 		fileprivate let amount: UInt
 		
@@ -195,12 +195,20 @@ public extension Price {
 		private func calculate(
 			_ value: Decimal,
 			_ name: String,
-			rounded: Bool = false
+			rounded: Bool = false,
+			nonNegative: Bool = false
 		) -> Output {
-			Output(
-				value: rounded
-					? value.rounded(details.currency.roundingScale, .bankers)
-					: value,
+			let outputValue: Decimal
+			if nonNegative, value < .zero {
+				outputValue = .zero
+			} else if rounded {
+				outputValue = value.rounded(details.currency.roundingScale, .bankers)
+			} else {
+				outputValue = value
+			}
+			
+			return Output(
+				value: outputValue,
 				details: details,
 				amount: amount,
 				name: name
@@ -223,11 +231,11 @@ public extension Price {
 		}
 		
 		public var discounted: Output {
-			calculate(value - discount.value, "Discounted")
+			calculate(value - discount.value, "Discounted", nonNegative: true)
 		}
 		
 		public var roundedDiscounted: Output {
-			calculate(value - roundedDiscount.value, "Discounted")
+			calculate(value - roundedDiscount.value, "Discounted", nonNegative: true)
 		}
 		
 		public var taxes: [Output] {
