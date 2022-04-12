@@ -77,21 +77,31 @@ public struct Price:
 	}
 	
 	public func combined(with other: PriceDetailsProvider) -> PriceDetailsProvider {
-		if currency.code != other.currency.code {
-			print("Price warning: Skipped attempt to combine \(currency.code) with \(other.currency.code)")
-		}
-		
 		var copy = self
 		
-		if not(other.discount.isZero) {
-			if copy.discount.isZero {
-				copy.discount = other.discount
+		if copy.currency.code != other.currency.code,
+		   not(other.currency.code.isEmpty)
+		{
+			if copy.currency.code.isEmpty {
+				copy.currency = other.currency
 			} else {
-				print("Price warning: Skipped attempt to combine \(copy.discount) with \(other.discount)")
+				print("Price warning: Skipped attempt to combine currency code \(currency.code) with \(other.currency.code)")
 			}
 		}
 		
-		if not(other.taxes.isEmpty) {
+		if copy.discount != other.discount,
+		   not(other.discount.isZero)
+		{
+			if copy.discount.isZero {
+				copy.discount = other.discount
+			} else {
+				print("Price warning: Skipped attempt to combine discount \(copy.discount) with \(other.discount)")
+			}
+		}
+		
+		if copy.taxes != other.taxes,
+		   not(other.taxes.isEmpty)
+		{
 			if copy.taxes.isEmpty {
 				copy.taxes = other.taxes
 			} else {
