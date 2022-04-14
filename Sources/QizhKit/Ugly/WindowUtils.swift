@@ -38,7 +38,7 @@ public struct WindowUtils {
 	}
 	
 	public static var rootViewController: UIViewController? {
-		manuallyAssignedWindow?.rootViewController
+		currentWindow?.rootViewController
 	}
 	
 	public static var originalWindow: UIWindow? {
