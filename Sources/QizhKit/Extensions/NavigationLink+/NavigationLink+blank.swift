@@ -8,22 +8,34 @@
 
 import SwiftUI
 
-public extension NavigationLink where Label == Pixel {
-	@inlinable init(_ destination: Destination) {
+extension NavigationLink where Label == Pixel {
+	@inlinable
+	public init(_ destination: Destination) {
 		self.init(destination: destination) {
 			Pixel()
 		}
 	}
 	
-	@inlinable init(destination: Destination) {
+	@inlinable
+	public init(destination: Destination) {
 		self.init(destination: destination) {
 			Pixel()
 		}
 	}
 	
-	@inlinable init(destination: Destination, isActive: Binding<Bool>) {
+	@inlinable
+	public init(destination: Destination, isActive: Binding<Bool>) {
 		self.init(destination: destination, isActive: isActive) {
 			Pixel()
+		}
+	}
+}
+
+extension NavigationLink where Label == EmptyView, Destination == EmptyView {
+	@inlinable
+	public static var empty: Self {
+		NavigationLink(destination: EmptyView()) {
+			EmptyView()
 		}
 	}
 }
