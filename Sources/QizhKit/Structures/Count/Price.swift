@@ -76,6 +76,24 @@ public struct Price:
 		self.init(value: value, currency: currency)
 	}
 	
+	public func with(discount: Discount) -> Price {
+		.init(
+			value: value,
+			currency: currency,
+			discount: discount,
+			taxes: taxes
+		)
+	}
+	
+	public func with(taxes: [Tax]) -> Price {
+		.init(
+			value: value,
+			currency: currency,
+			discount: discount,
+			taxes: taxes
+		)
+	}
+	
 	public func combined(with other: PriceDetailsProvider) -> PriceDetailsProvider {
 		var copy = self
 		
