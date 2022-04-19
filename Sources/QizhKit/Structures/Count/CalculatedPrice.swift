@@ -338,15 +338,16 @@ public extension Price {
 		}
 	}
 	
-	@inlinable func calculate(for amount: UInt) -> CalculatedItem {
+	@inlinable
+	func calculate(for amount: UInt) -> CalculatedItem {
 		CalculatedItem(self, amount)
 	}
 	
-	/*
-	@inlinable func calculate(for amount: UInt, service: Service) -> CalculatedSum {
-		CalculatedItem(self, amount) + service.calculated
+	/// `calculate(for: .one)`
+	@inlinable
+	var calculated: CalculatedItem {
+		calculate(for: .one)
 	}
-	*/
 }
 
 // MARK: Sum
