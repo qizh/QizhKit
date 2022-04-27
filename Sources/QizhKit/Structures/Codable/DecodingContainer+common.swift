@@ -8,8 +8,8 @@
 
 import Foundation
 
-public extension KeyedDecodingContainer {
-	func decodeIfPresent(_ type: URL.Type, forKey key: Key) throws -> URL? {
+extension KeyedDecodingContainer {
+	public func decodeIfPresent(_ type: URL.Type, forKey key: Key) throws -> URL? {
 		if let text = try? decodeIfPresent(String.self, forKey: key) {
 			var result: URL
 			
@@ -17,7 +17,7 @@ public extension KeyedDecodingContainer {
 				result = url
 			} else if
 				let encodedText = text.addingPercentEncoding(
-					withAllowedCharacters: .urlQueryAllowed
+					withAllowedCharacters: .urlFragmentAllowed
 				),
 				let url = URL(string: encodedText)
 			{
@@ -42,5 +42,17 @@ public extension KeyedDecodingContainer {
 			return result
 		}
 		return nil
+	}
+	
+	public func decode(_ type: URL.Type, forKey key: Key) throws -> URL {
+		if let url = try? decodeIfPresent(URL.self, forKey: key) {
+			return url
+		} else {
+			throw DecodingError.dataCorruptedError(
+				forKey: key,
+				in: self,
+				debugDescription: "Invalid or no URL string"
+			)
+		}
 	}
 }
