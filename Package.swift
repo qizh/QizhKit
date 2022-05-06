@@ -25,10 +25,17 @@ let package = Package(
 			from: "3.3.0"
 		),
 		*/
+		/*
 		.package(
 			name: "Introspect",
 			url: "https://github.com/siteline/SwiftUI-Introspect",
 			from: "0.1.3"
+		),
+		*/
+		.package(
+			name: "Introspect",
+			url: "https://github.com/qizh/SwiftUI-Introspect",
+			from: "0.1.5"
 		),
 		.package(
 			name: "Alamofire",
