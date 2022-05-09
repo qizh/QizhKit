@@ -666,6 +666,11 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 		)
 	}
 	
+	@inlinable
+	public static func providerError(_ error: Error) -> Self {
+		.providerError(.empty, error)
+	}
+	
 	public static func == (lhs: FetchError, rhs: FetchError) -> Bool {
 		switch (lhs, rhs) {
 		case (                    .cancelled,                     .cancelled): 	return true
@@ -700,7 +705,8 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 		case .error(let message): 					return message
 		case .deleteError(let message): 			return message
 		case .contentError(let message): 			return message
-		case .providerError(let message, _): 		return message
+		case .providerError(let message, let error):
+			return message.nonEmpty ?? error.localizedDescription
 		case .multipleProvidersError(let messages): return messages.joined(separator: .comaspace)
 		case .afError(let message, _): 				return message
 		case .appLogicError(let statement, _, _, _, _):
