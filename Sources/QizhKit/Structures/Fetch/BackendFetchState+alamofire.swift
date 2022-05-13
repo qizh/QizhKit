@@ -62,6 +62,10 @@ extension DataResponse: FetchResponse {
 	public var underlying: Error? { error }
 }
 
+public protocol DebugDetailsProvidingError {
+	var debugDetails: [String: Any] { get }
+}
+
 public struct FetchErrorDebugDetails: Codable {
 	public private(set) var type: String? = .none
 	public private(set) var description: String = "No description"
@@ -79,6 +83,8 @@ public struct FetchErrorDebugDetails: Codable {
 			self.details = ["note": details]
 		case .providerError(_, let fetchError as FetchError):
 			self.underlying = FetchErrorDebugDetails(of: fetchError).asDictionary()
+		case .providerError(_, let detailedError as DebugDetailsProvidingError):
+			self.underlying = detailedError.debugDetails
 		case .providerError(_, let generalError):
 			self.underlying = [
 				"description": generalError.localizedDescription
