@@ -8,7 +8,7 @@
 
 import Foundation
 
-public extension TimeInterval {
+extension TimeInterval {
 	/// Formats a string
 	/// - Parameters:
 	///   - units: Units to have in output
@@ -17,13 +17,13 @@ public extension TimeInterval {
 	///   - isRough: Includes approximation phrase like "About"
 	///   - isRemaining: Includes time remaining phrase like "30 minutes remaining"
 	///   - context: Position in a sentence
-	func format(
+	public func format(
 		using units: NSCalendar.Unit,
 		style: DateComponentsFormatter.UnitsStyle = .full,
 		same: DateComponentsFormatter.ZeroFormattingBehavior = .dropAll,
 		isRough: Bool = false,
 		isRemaining: Bool = false,
-		context: Formatter.Context = .unknown
+		context: Formatter.Context = .dynamic
 	) -> String? {
 		let formatter = DateComponentsFormatter()
         formatter.allowedUnits = units
@@ -33,5 +33,19 @@ public extension TimeInterval {
 		formatter.includesTimeRemainingPhrase = isRemaining
 		formatter.formattingContext = context
         return formatter.string(from: self)
+	}
+	
+	public func formatRelative(
+		dateStyle: RelativeDateTimeFormatter.DateTimeStyle = .named,
+		unitStyle: RelativeDateTimeFormatter.UnitsStyle = .full,
+		locale: Locale = .autoupdatingCurrent,
+		context: Formatter.Context = .dynamic
+	) -> String? {
+		let formatter = RelativeDateTimeFormatter()
+		formatter.dateTimeStyle = dateStyle
+		formatter.unitsStyle = unitStyle
+		formatter.locale = locale
+		formatter.formattingContext = context
+		return formatter.localizedString(fromTimeInterval: self)
 	}
 }
