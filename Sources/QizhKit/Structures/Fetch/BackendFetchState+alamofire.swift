@@ -12,16 +12,23 @@ import Foundation
 
 import Alamofire
 
-public extension BackendFetchState {
-	@inlinable static func failed<T>(_ response: DataResponse<T, AFError>) -> Self {
-		if case let .responseValidationFailed(.customValidationFailed(error)) = response.error {
-		   if let fetchError = error as? FetchError {
-			   return .failed(with: fetchError)
+extension DataResponse where Failure == AFError {
+	public var fetchError: FetchError {
+		if case let .responseValidationFailed(.customValidationFailed(validationError)) = error {
+		   if let fetchError = validationError as? FetchError {
+			   return fetchError
 		   } else {
-			   return .failed(with: .providerError("Known response validation error", error))
+			   return .providerError("Known response validation error", validationError)
 		   }
 		}
-		return .failed(with: .afError(response.error?.localizedDescription ?? "Unknown error", response))
+		return .afError(error?.localizedDescription ?? "Unknown error", self)
+	}
+}
+
+extension BackendFetchState {
+	@inlinable
+	public static func failed<T>(_ response: DataResponse<T, AFError>) -> Self {
+		.failed(with: response.fetchError)
 	}
 }
 
