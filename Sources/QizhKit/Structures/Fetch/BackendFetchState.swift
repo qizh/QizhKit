@@ -628,6 +628,7 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 		case inactiveUserExists
 		case usernameTaken
 		case wrongCredentials
+		case wrongEmail
 		case wrongPassword
 		case tokenExpired
 		// case tokenInvalid
@@ -750,6 +751,8 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 			return "The username is taken, try again with another one"
 		case .sign(.wrongCredentials):
 			return "Wrong password or no such user"
+		case .sign(.wrongEmail):
+			return "Wrong email"
 		case .sign(.wrongPassword):
 			return "Wrong password"
 		case .sign(.tokenExpired):
