@@ -8,42 +8,78 @@
 
 import Foundation
 
-public extension RangeReplaceableCollection {
-	mutating func prepend(_ element: Element?) {
+extension RangeReplaceableCollection {
+	
+	// MARK: prepend
+	
+	public mutating func prepend(_ element: Element?) {
 		guard let element = element else { return }
 		insert(element, at: startIndex)
 	}
 	
-	mutating func prepend(elements: Element...) {
+	public mutating func prepend(elements: Element...) {
 		insert(contentsOf: elements, at: startIndex)
 	}
 	
-	func prepending(_ element: Element?) -> Self {
-		guard let element = element else { return self }
-		var copy = self
-		copy.insert(element, at: startIndex)
-		return copy
+	public mutating func prepend(contentsOf elements: [Element]) {
+		insert(contentsOf: elements, at: startIndex)
 	}
 	
-	@inlinable func prepending(_ elements: Element...) -> Self {
+	// MARK: prepending
+	
+	public func prepending(_ element: Element?) -> Self {
+		switch element {
+		case .none:
+			return self
+		case .some(let element):
+			var copy = self
+			copy.insert(element, at: startIndex)
+			return copy
+		}
+	}
+	
+	@inlinable
+	public func prepending(_ elements: Element...) -> Self {
 		elements + self
 	}
 	
-	func appending(_ element: Element?) -> Self {
-		guard let element = element else { return self }
-		var copy = self
-		copy.append(element)
-		return copy
+	@inlinable
+	public func prepending(contentsOf elements: [Element]) -> Self {
+		elements + self
 	}
 	
-	@inlinable func appending(_ elements: Element...) -> Self {
+	// MARK: appending
+	
+	public func appending(_ element: Element?) -> Self {
+		switch element {
+		case .none:
+			return self
+		case .some(let element):
+			var copy = self
+			copy.append(element)
+			return copy
+		}
+	}
+	
+	@inlinable
+	public func appending(_ elements: Element...) -> Self {
 		self + elements
 	}
 	
-	@inlinable var reversed: Self {
+	@inlinable
+	public func appending(contentsOf elements: [Element]) -> Self {
+		self + elements
+	}
+	
+	// MARK: other
+	
+	@inlinable
+	public var reversed: Self {
 		Self(reversed())
 	}
 }
+
+// MARK: cut
 
 public extension RangeReplaceableCollection where Self: EmptyTestable {
 	mutating func cutFirst() -> Element? {
