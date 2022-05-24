@@ -25,7 +25,26 @@ public extension Collection {
 // MARK: Sorted
 	
 public extension Collection {
-	@inlinable func sorted<Value>(
+	@inlinable func sorted <Value> (
+		by transform: (Element) -> Value,
+		using valuesAreInIncreasingOrder: (Value, Value) throws -> Bool
+	) rethrows -> [Element] {
+		try sorted {
+			try valuesAreInIncreasingOrder(
+				transform($0),
+				transform($1)
+			)
+		}
+	}
+	
+	@inlinable func sorted <Value: Comparable> (
+		by transform: (Element) -> Value
+	) -> [Element] {
+		sorted(by: transform, using: <)
+	}
+	
+	/*
+	@inlinable func sorted <Value> (
 		by keyPath: KeyPath<Element, Value>,
 		using valuesAreInIncreasingOrder: (Value, Value) throws -> Bool
 	) rethrows -> [Element] {
@@ -42,6 +61,7 @@ public extension Collection {
 	) -> [Element] {
 		sorted(by: keyPath, using: <)
 	}
+	 */
 }
 
 // MARK: First
