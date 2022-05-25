@@ -30,6 +30,12 @@ public extension BinaryFloatingPoint {
 	@inlinable func int(_ rule: FloatingPointRoundingRule = .toNearestOrAwayFromZero) -> Int {
 		Int(rounded(rule))
 	}
+	
+	/// Rounded using `.toNearestOrAwayFromZero` rule
+	@inlinable var uint: UInt { UInt(rounded(.toNearestOrAwayFromZero)) }
+	@inlinable func uint(_ rule: FloatingPointRoundingRule = .toNearestOrAwayFromZero) -> UInt {
+		UInt(rounded(rule))
+	}
 }
 
 public extension FloatingPoint {
