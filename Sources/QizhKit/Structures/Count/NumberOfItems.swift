@@ -96,3 +96,9 @@ extension NumberOfItems: Updatable {
 		updating(\.unit, with: unit)
 	}
 }
+
+extension NumberOfItems: CustomDebugStringConvertible {
+	public var debugDescription: String {
+		value.s + .space + unit.rawValue.pluralize(count: Int(value))
+	}
+}
