@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-public struct UnitsAmount: Hashable, CustomStringConvertible, WithDefaultValue {
+public struct UnitsAmount: Hashable, WithDefaultValue {
 	public let unit: AnyCountableUnit
 	public let amount: UInt
 	
@@ -26,23 +26,6 @@ public struct UnitsAmount: Hashable, CustomStringConvertible, WithDefaultValue {
 		_ unit: PriceUnit
 	) {
 		self.init(unit: .known(unit), amount: amount)
-	}
-
-	public var description: String {
-		unit.string(for: amount, .current)
-	}
-	
-	public func description(_ locale: Locale) -> String {
-		unit.string(for: amount, locale)
-	}
-	
-	@inlinable public func format(spell: Bool = false, _ locale: Locale) -> String {
-		let formatter = NumberFormatter()
-		formatter.numberStyle = spell ? .spellOut : .decimal
-		formatter.formattingContext = .dynamic
-		formatter.locale = locale
-		return formatter.string(from: NSNumber(value: Int(amount)))
-			?? "\(amount)"
 	}
 	
 	@inlinable public static var oneItem: UnitsAmount { .init(unit: .known(.item)) }

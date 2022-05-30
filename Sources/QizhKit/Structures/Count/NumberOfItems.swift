@@ -87,12 +87,12 @@ extension NumberOfItems: Comparable {
 	}
 }
 
-extension NumberOfItems: CustomStringConvertible {
-	public var description: String {
-		unit.string(for: value, .autoupdatingCurrent)
+extension NumberOfItems: Updatable {
+	public func with(amount: UInt) -> Self {
+		updating(\.value, with: amount)
 	}
 	
-	public func description(in locale: Locale) -> String {
-		unit.string(for: value, locale)
+	public func with(unit: Unit) -> Self {
+		updating(\.unit, with: unit)
 	}
 }

@@ -42,21 +42,6 @@ public extension AnyCountableUnit {
 	static var night:   AnyCountableUnit { .known(.night) }
 	static var trip:    AnyCountableUnit { .known(.trip) }
 	static var coin:    AnyCountableUnit { .known(.coin) }
-
-	@inlinable func string(for amount: UInt, spell: Bool = false, _ locale: Locale) -> String {
-		string(for: Int(amount), spell: spell, locale)
-//		string(for: Int(amount.clippedFromZero(to: UInt(Int.max))), spell: spell, locale)
-	}
-	
-	@inlinable func string(for amount: Int, spell: Bool = false, _ locale: Locale) -> String {
-		let formatter = NumberFormatter()
-		formatter.numberStyle = spell ? .spellOut : .decimal
-		formatter.formattingContext = .dynamic
-		formatter.locale = locale
-		
-		return (formatter.string(from: NSNumber(value: amount)).map { $0 + .space } ?? .empty)
-			+ rawValue.pluralize(count: amount)
-	}
 	
 	@inlinable
 	var rawValue: String {
