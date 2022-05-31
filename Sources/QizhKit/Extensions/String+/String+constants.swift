@@ -30,6 +30,7 @@ public extension Character {
 	static let percentChar: Character      			= "%"
 	static let questionMarkChar: Character 			= "?"
 	static let atChar: Character 		   			= "@"
+	static let hashChar: Character 		   			= "#"
 	
 	static let dollarChar: Character       			= "$"
 	static let euroChar: Character         			= "€"
@@ -73,6 +74,7 @@ public extension String {
 	static let percent      		= String(Character.percentChar)
 	static let questionMark 		= String(Character.questionMarkChar)
 	static let at 					= String(Character.atChar)
+	static let hash 				= String(Character.hashChar)
 	
 	static let dollar       		= String(Character.dollarChar)
 	static let euro         		= String(Character.euroChar)
