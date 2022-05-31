@@ -26,13 +26,14 @@ public struct HexStringColor: Codable,
 	}
 	
 	public init(_ hexString: String) {
-		let hexString = hexString.trimmingCharacters(in: .whitespacesAndNewlines)
+		let hexString = hexString
+			.trimmingCharacters(in: .whitespacesAndNewlines.union(.init(charactersIn: .hash)))
 		let scanner = Scanner(string: hexString)
-		scanner.charactersToBeSkipped = CharacterSet(charactersIn: "#")
-
+		// scanner.charactersToBeSkipped = CharacterSet(charactersIn: "#")
+		
 		var color: UInt64 = 0
 		if scanner.scanHexInt64(&color) {
-			self.init(color, isWithAlpha: hexString.count > 7)
+			self.init(color, isWithAlpha: hexString.count >= 8)
 		} else {
 			self = .default
 		}
