@@ -182,19 +182,22 @@ public struct EnumeratedHashableElement<Base: Collection>: EnumeratedElement whe
 // MARK: Collections
 
 extension Collection {
-	@inlinable func enumeratedElements() -> [AnyEnumeratedElement<Self>] {
+	@inlinable
+	public func enumeratedElements() -> [AnyEnumeratedElement<Self>] {
 		enumerated().map(AnyEnumeratedElement<Self>.init)
 	}
 }
 
 extension Collection where Element: Identifiable {
-	@inlinable func enumeratedIdentifiableElements() -> [EnumeratedIdentifiableElement<Self>] {
+	@inlinable
+	public func enumeratedIdentifiableElements() -> [EnumeratedIdentifiableElement<Self>] {
 		enumerated().map(EnumeratedIdentifiableElement<Self>.init)
 	}
 }
 
 extension Collection where Element: Hashable {
-	@inlinable func enumeratedHashableElements() -> [EnumeratedHashableElement<Self>] {
+	@inlinable
+	public func enumeratedHashableElements() -> [EnumeratedHashableElement<Self>] {
 		enumerated().map(EnumeratedHashableElement<Self>.init)
 	}
 }
