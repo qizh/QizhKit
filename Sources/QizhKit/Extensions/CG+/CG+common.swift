@@ -514,3 +514,25 @@ public struct AxisFactor:
 	@inlinable public init(integerLiteral value: Int) 			{ self.init(.init(value)) }
 	@inlinable public init(    nilLiteral value: ()) 			{ self.init(.one) }
 }
+
+// MARK: Map Segment
+
+public struct CGSegment: ExpressibleByArrayLiteral {
+	public let a: CGFloat
+	public let b: CGFloat
+	
+	public init(from a: CGFloat, to b: CGFloat) {
+		self.a = a
+		self.b = b
+	}
+	
+	public init(arrayLiteral elements: CGFloat...) {
+		self.init(from: elements.first ?? .zero, to: elements.last ?? .zero)
+	}
+}
+
+extension CGFloat {
+	public func map(from source: CGSegment, to target: CGSegment) -> CGFloat {
+		target.a + (self - source.a) * (target.b - target.a) / (source.b - source.a)
+	}
+}
