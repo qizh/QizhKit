@@ -20,6 +20,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	public typealias IndicatorBuilder = (Int, Int, Int) -> IndicatorContent
 	
 	private let data: Data
+	private let style: Style
 	private let alignment: Alignment
 	private let spacing: CGFloat
 	@Binding private var selected: ID
@@ -35,6 +36,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	
 	public init(
 		_ data: Data,
+		style: Style = .full,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
 		selected: Binding<ID>,
@@ -42,6 +44,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		@ViewBuilder content: @escaping (Data.Element) -> Content
 	) {
 		self.data = data
+		self.style = style
 		self.alignment = alignment
 		self.spacing = spacing
 		self._selected = selected
@@ -51,6 +54,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 
 	public init(
 		_ data: Data,
+		style: Style = .full,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
 		selected: Binding<ID>,
@@ -58,6 +62,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	) where IndicatorContent == EmptyView {
 		self.init(
 			data,
+			style: style,
 			alignment: alignment,
 			spacing: spacing,
 			selected: selected,
@@ -68,6 +73,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	
 	public init <Source> (
 		enumerating data: Source,
+		style: Style = .full,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
 		selected: Binding<ID>,
@@ -79,6 +85,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	{
 		self.init(
 			data.enumeratedElements(),
+			style: style,
 			alignment: alignment,
 			spacing: spacing,
 			selected: selected,
@@ -89,6 +96,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	
 	public init <Source> (
 		enumerating data: Source,
+		style: Style = .full,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
 		selected: Binding<ID>,
@@ -100,6 +108,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	{
 		self.init(
 			enumerating: data,
+			style: style,
 			alignment: alignment,
 			spacing: spacing,
 			selected: selected,
@@ -110,6 +119,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	
 	public init <Source> (
 		hashing data: Source,
+		style: Style = .full,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
 		selected: Binding<ID>,
@@ -122,6 +132,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	{
 		self.init(
 			data.enumeratedHashableElements(),
+			style: style,
 			alignment: alignment,
 			spacing: spacing,
 			selected: selected,
@@ -132,6 +143,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	
 	public init <Source> (
 		hashing data: Source,
+		style: Style = .full,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
 		selected: Binding<ID>,
@@ -144,6 +156,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	{
 		self.init(
 			data.enumeratedHashableElements(),
+			style: style,
 			alignment: alignment,
 			spacing: spacing,
 			selected: selected,
@@ -154,6 +167,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	
 	public init <Source> (
 		identifying data: Source,
+		style: Style = .full,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
 		selected: Binding<ID>,
@@ -167,6 +181,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	{
 		self.init(
 			data.enumeratedIdentifiableElements(),
+			style: style,
 			alignment: alignment,
 			spacing: spacing,
 			selected: selected,
@@ -177,6 +192,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	
 	public init <Source> (
 		identifying data: Source,
+		style: Style = .full,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
 		selected: Binding<ID>,
@@ -190,6 +206,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	{
 		self.init(
 			data.enumeratedIdentifiableElements(),
+			style: style,
 			alignment: alignment,
 			spacing: spacing,
 			selected: selected,
@@ -198,50 +215,102 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		)
 	}
 	
+	// MARK: Style
+	
+	public enum Style {
+		case full
+		case carousel(_ width: CGFloat)
+		
+		public var isFull: Bool {
+			switch self {
+			case .full: return true
+			default: return false
+			}
+		}
+		
+		public var isCarousel: Bool {
+			switch self {
+			case .carousel(_): return true
+			default: return false
+			}
+		}
+		
+		public var carouselWidth: CGFloat? {
+			switch self {
+			case .full: return .none
+			case .carousel(let width): return width
+			}
+		}
+	}
+	
 	// MARK: Body
 	
 	public var body: some View {
-		GeometryReader { geometry in
-			ZStack(alignment: .topLeading) {
-				LazyHStack(alignment: alignment.vertical, spacing: spacing) {
-					ForEach(data) { item in
-						content(item)
+		GeometryReader { fullGeometry in
+			GeometryReader { geometry in
+				ZStack(alignment: .topLeading) {
+					let xOffset = currentOffset(in: geometry.size)
+					LazyHStack(alignment: alignment.vertical, spacing: spacing) {
+						switch style {
+						case .full:
+							ForEach(data) { item in
+								content(item)
+							}
+							.size(geometry.size, alignment)
+							.clipped()
+						case .carousel(_):
+							ForEach(identifying: data) { offset, item in
+								content(item)
+									.environment(\.centerDistance,
+												  (geometry.size.width + spacing) * offset.cg + xOffset)
+							}
+							.size(geometry.size, alignment)
+						}
 					}
-					.size(geometry.size, alignment)
-					.clipped()
-				}
-				.offset(x: currentOffset(in: geometry.size))
-				.allowsHitTesting(false)
-				.zIndex(10)
-				
-				indicator(
-					selectedPage,
-					pageOffset(in: geometry.size),
-					data.count
-				)
-				.size(geometry.size)
-				.allowsHitTesting(false)
-				.animation(.spring(), value: animationValue)
-				.zIndex(20)
-				
-				/// Debug Calculations
-				// debugCalculations(in: geometry.size).zIndex(30)
-				
-				Color.almostClear
+					.offset(x: xOffset)
+					.allowsHitTesting(false)
+					.zIndex(10)
+					
+					indicator(
+						selectedPage,
+						pageOffset(in: geometry.size),
+						data.count
+					)
 					.size(geometry.size)
-					.gesture(dragGesture(in: geometry))
-					.zIndex(11)
+					.allowsHitTesting(false)
+					.animation(.spring(), value: animationValue)
+					.zIndex(20)
+					
+					/// Debug Calculations
+					// debugCalculations(in: geometry.size).zIndex(30)
+					
+					Color.almostClear
+						.offset(
+							x: style.isCarousel
+								? fullGeometry.frame(in: .global).minX
+									- geometry.frame(in: .global).minX
+								: 0
+						)
+						.size(fullGeometry.size)
+						.gesture(dragGesture(card: geometry, full: fullGeometry))
+						.zIndex(11)
+				}
+				.animation(.spring(), value: dragOffset.isZero)
 			}
-			.animation(.spring(), value: dragOffset.isZero)
+			.width(style.carouselWidth, alignment)
+			.maxWidth(alignment)
 		}
 		.clipped()
     }
 	
-	private func dragGesture(in geometry: GeometryProxy) -> some Gesture {
-		let pageSize = geometry.size.width + spacing
+	private func dragGesture(
+		card cardGeometry: GeometryProxy,
+		full fullGeometry: GeometryProxy
+	) -> some Gesture {
+		let pageSize = cardGeometry.size.width + spacing
 		return DragGesture(minimumDistance: 10)
 			.onChanged { value in
-				guard geometry.frame(in: .local).contains(value.startLocation) else { return }
+				guard fullGeometry.frame(in: .local).contains(value.startLocation) else { return }
 				let dragOffsetSign = dragOffset.sign
 				let offset = value.translation.width + draggedPages * pageSize
 				let isEdgeSwiping =
@@ -250,8 +319,8 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 				
 				dragOffset = isEdgeSwiping ? offset.third : offset
 				if dragOffset.magnitude > pageSize.half {
-					let newDraggedPages = draggedPages + pagesCount(in: geometry.size)
-					let newSelected = currentSelected(in: geometry.size)
+					let newDraggedPages = draggedPages + pagesCount(in: cardGeometry.size)
+					let newSelected = currentSelected(in: cardGeometry.size)
 					dragOffset = (newDraggedPages - draggedPages) * pageSize + dragOffset
 					selected = newSelected
 					draggedPages = newDraggedPages
@@ -353,6 +422,19 @@ fileprivate extension FloatingPointSign {
 		case .minus: return -1
 		case .plus: return 1
 		}
+	}
+}
+
+// MARK: Environment
+
+public struct DistanceFromCenterEnvironmentKey: EnvironmentKey {
+	public static var defaultValue: CGFloat = .zero
+}
+
+public extension EnvironmentValues {
+	var centerDistance: CGFloat {
+		get { self[DistanceFromCenterEnvironmentKey.self] }
+		set { self[DistanceFromCenterEnvironmentKey.self] = newValue }
 	}
 }
 
