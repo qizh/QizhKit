@@ -285,8 +285,9 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 					// debugCalculations(in: geometry.size).zIndex(30)
 					
 					Color.almostClear
-						.offset(
-							x: style.isCarousel
+						.padding(
+							.leading,
+							style.isCarousel
 								? fullGeometry.frame(in: .global).minX
 									- geometry.frame(in: .global).minX
 								: 0
@@ -310,7 +311,23 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		let pageSize = cardGeometry.size.width + spacing
 		return DragGesture(minimumDistance: 10)
 			.onChanged { value in
-				guard fullGeometry.frame(in: .local).contains(value.startLocation) else { return }
+				/// Worakroud to exit when edge swipe back gesture starts
+				/// It moves frame to the edge of the screen: x = width
+				guard fullGeometry.frame(in: .global).minX < fullGeometry.frame(in: .global).width
+				else { return }
+				/// Calculate offset between full frame and card frame
+				let geometryDX = style.isCarousel
+					? fullGeometry.frame(in: .global).minX
+					- cardGeometry.frame(in: .global).minX
+					: 0
+				let tapFrame = fullGeometry.frame(in: .local)
+					/// Offset to cover full frame
+					.offset(x: geometryDX)
+					/// Offset from the side of the screen
+					/// to avoid glitches when using back swipe gesture
+					.inset(leading: fullGeometry.frame(in: .global).minX == 0 ? 32 : 0)
+				guard tapFrame.contains(value.startLocation) else { return }
+				
 				let dragOffsetSign = dragOffset.sign
 				let offset = value.translation.width + draggedPages * pageSize
 				let isEdgeSwiping =
