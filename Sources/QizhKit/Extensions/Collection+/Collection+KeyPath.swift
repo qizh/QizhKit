@@ -66,63 +66,67 @@ public extension Collection {
 
 // MARK: First
 
-public extension Collection {
-	@inlinable func first <Value: Equatable> (
-		where keyPath: KeyPath<Element, Value>,
+extension Collection {
+	@inlinable
+	public func first <Value: Equatable> (
+		where transform: (Element) -> Value,
 		equals value: Value
 	) -> Element? {
-		first(where: { $0[keyPath: keyPath] == value })
+		first(where: { transform($0) == value })
 	}
 	
-	@inlinable func first <Value: Equatable> (
-		where keyPath: KeyPath<Element, Value>,
+	@inlinable
+	public func first <Value: Equatable> (
+		where transform: (Element) -> Value,
 		equals value: Value?
 	) -> Element? {
-		first(where: { $0[keyPath: keyPath] == value })
+		first(where: { transform($0) == value })
 	}
 	
-	@inlinable func contains <Value: Equatable> (
-		where keyPath: KeyPath<Element, Value>,
+	@inlinable
+	public func contains <Value: Equatable> (
+		where transform: (Element) -> Value,
 		equals value: Value
 	) -> Bool {
-		contains(where: { $0[keyPath: keyPath] == value })
+		contains(where: { transform($0) == value })
 	}
 	
-	@inlinable func contains <Medium> (
+	@inlinable
+	public func contains <Medium> (
 		_ transform: (Element) -> Medium,
 		_ isIncluded: (Medium) -> Bool
 	) -> Bool {
 		contains(where: { isIncluded(transform($0)) })
 	}
 	
-	/*
 	@inlinable
-	func firstIndex <Value: Equatable> (
-		where keyPath: KeyPath<Element, Value>,
-		equals value: Value
-	) -> Self.Index? {
-		firstIndex(where: { $0[keyPath: keyPath] == value })
+	public func contains <Value: EasyComparable> (
+		where transform: (Element) -> Value,
+		is value: Value.Other
+	) -> Bool {
+		contains(where: { transform($0).is(value) })
 	}
-	*/
 	
 	@inlinable
-	func firstIndex <Medium: Equatable> (
+	public func firstIndex <Medium: Equatable> (
 		where transform: (Element) -> Medium,
 		equals value: Medium
 	) -> Self.Index? {
 		firstIndex(where: { transform($0) == value })
 	}
-
+	
 	// MARK: > of type
 	
-	@inlinable func first<Value, Cast>(
-		where keyPath: KeyPath<Element, Value>,
+	@inlinable
+	public func first<Value, Cast>(
+		where transform: (Element) -> Value,
 		is _: Cast.Type
 	) -> Element? {
-		first(where: { $0[keyPath: keyPath] is Cast })
+		first(where: { transform($0) is Cast })
 	}
 	
-	@inlinable func first<Cast>(
+	@inlinable
+	public func first<Cast>(
 		as _: Cast.Type
 	) -> Cast? {
 		first(where: { $0 is Cast }).flatMap({ $0 as? Cast })
@@ -130,18 +134,21 @@ public extension Collection {
 	
 	// MARK: > CC
 	
-	@inlinable func first<Value: CaseComparable>(
-		where keyPath: KeyPath<Element, Value>,
+	@available(*, deprecated, message: "Switch from `CaseComparable` to `EasyComparable`")
+	@inlinable
+	public func first<Value: CaseComparable>(
+		where transform: (Element) -> Value,
 		is value: Value
 	) -> Element? {
-		first(where: { $0[keyPath: keyPath].is(value) })
+		first(where: { transform($0).is(value) })
 	}
 	
-	@inlinable func first<Value: EasyComparable>(
-		where keyPath: KeyPath<Element, Value>,
+	@inlinable
+	public func first<Value: EasyComparable>(
+		where transform: (Element) -> Value,
 		is value: Value.Other
 	) -> Element? {
-		first(where: { $0[keyPath: keyPath].is(value) })
+		first(where: { transform($0).is(value) })
 	}
 }
 
