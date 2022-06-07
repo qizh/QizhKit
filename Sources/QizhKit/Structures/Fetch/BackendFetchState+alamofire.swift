@@ -80,6 +80,16 @@ public struct FetchErrorDebugDetails: Codable {
 	@CodableAnyDictionary public private(set) var underlying: [String: Any] = .empty
 	public private(set) var af: AFResponseDebugDetails? = .none
 	
+	public init(of error: Error) {
+		switch error {
+		case let fetchError as FetchError:
+			self = Self(of: fetchError)
+		default:
+			self.type = caseName(of: error, [.type, .name])
+			self.description = error.localizedDescription
+		}
+	}
+	
 	public init(of error: FetchError) {
 		self.type = caseName(of: error, [.type, .name])
 		self.description = error.localizedDescription
