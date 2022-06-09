@@ -11,48 +11,30 @@
         }
       },
       {
+        "package": "BetterSafariView",
+        "repositoryURL": "https://github.com/stleamist/BetterSafariView.git",
+        "state": {
+          "branch": null,
+          "revision": "be7248720af18c57c7a1348b20f6212379b28c6b",
+          "version": "2.4.0"
+        }
+      },
+      {
         "package": "DeviceKit",
         "repositoryURL": "https://github.com/devicekit/DeviceKit",
         "state": {
           "branch": null,
-          "revision": "dbddb0296e3ee4f83d52f9681e42705020a533e4",
-          "version": "4.2.1"
-        }
-      },
-      {
-        "package": "PhoneNumberKit",
-        "repositoryURL": "https://github.com/marmelroy/PhoneNumberKit",
-        "state": {
-          "branch": null,
-          "revision": "c7d7b0c91ef0ad7e413022edfcf5d6f75561e2d5",
-          "version": "3.3.1"
-        }
-      },
-      {
-        "package": "swift-nonempty",
-        "repositoryURL": "https://github.com/pointfreeco/swift-nonempty",
-        "state": {
-          "branch": null,
-          "revision": "a3dbd05f2b57cb0ea1b8138a720fc28a1629ca06",
-          "version": "0.3.1"
-        }
-      },
-      {
-        "package": "SwiftDate",
-        "repositoryURL": "https://github.com/malcommac/SwiftDate",
-        "state": {
-          "branch": null,
-          "revision": "6190d0cefff3013e77ed567e6b074f324e5c5bf5",
-          "version": "6.3.1"
+          "revision": "cc49d42dafd69c96abbf695cedbefab6441f1afa",
+          "version": "4.6.0"
         }
       },
       {
         "package": "Introspect",
-        "repositoryURL": "https://github.com/siteline/SwiftUI-Introspect",
+        "repositoryURL": "https://github.com/qizh/SwiftUI-Introspect",
         "state": {
           "branch": null,
-          "revision": "de5c32c15ae169cfcb27397ffb2734dcd0e1e6d5",
-          "version": "0.1.0"
+          "revision": "4f266731dda7612b1b32d717a6914246de4fee64",
+          "version": "0.1.5"
         }
       }
     ]
