@@ -25,6 +25,7 @@ public struct EncodeString <Value: Encodable>: Encodable {
 	public func encode(to encoder: Encoder) throws {
 		let jsonEncoder = JSONEncoder()
 		jsonEncoder.dateEncodingStrategy = .formatted(.airtable)
+		jsonEncoder.outputFormatting = .withoutEscapingSlashes
 		// jsonEncoder.userInfo[AnyEncodable.skipNilValues] = true
 		
 		var container = encoder.singleValueContainer()
