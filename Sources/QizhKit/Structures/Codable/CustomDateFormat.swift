@@ -112,9 +112,25 @@ public struct ISO8601DashedDateTimeFormatterProvider: DateFormatterProvidable {
 	}
 }
 
+/// `2022-04-27T18:19:15.363Z`
+public struct ISO8601FullDateTimeFormatterProvider: DateFormatterProvidable {
+	public static var dateFormatter: CanFormatDate {
+		let formatter = DateFormatter()
+		formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+		formatter.calendar = Calendar(identifier: .iso8601)
+		formatter.timeZone = TimeZone(abbreviation: "UTC") // TimeZone(secondsFromGMT: 0)
+		formatter.locale = Locale(identifier: "en_US_POSIX")
+		return formatter
+	}
+}
+
+/// `2020-11-25`
 public typealias ISO8601DashedDate = CustomDate<ISO8601DashedDateFormatterProvider>
+/// `2020-11-25 10:00:00 +0800`
 public typealias ISO8601DashedDateTime = CustomDate<ISO8601DashedDateTimeFormatterProvider>
+/// `2020-11-25`
 public typealias ISO8601MandatoryDashedDate =
 	MandatoryCustomDate<ISO8601DashedDateFormatterProvider>
+/// `2020-11-25 10:00:00 +0800`
 public typealias ISO8601MandatoryDashedDateTime =
 	MandatoryCustomDate<ISO8601DashedDateTimeFormatterProvider>
