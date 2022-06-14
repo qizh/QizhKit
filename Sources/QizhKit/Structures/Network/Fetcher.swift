@@ -91,9 +91,7 @@ public protocol CollectionFetcher: Fetcher, ExpressibleByArrayLiteral
 	Value: EmptyTestable,
 	Value.Element: Codable
 {
-	#if DEBUG
 	static var demoData: [Value.Element] { get }
-	#endif
 }
 #else
 public protocol CollectionFetcher: Fetcher
@@ -104,9 +102,7 @@ public protocol CollectionFetcher: Fetcher
 	Value: EmptyTestable,
 	Value.Element: Codable
 {
-	#if DEBUG
-	static var demoData: [Value.Element] { get }
-	#endif
+	
 }
 #endif
 
@@ -358,7 +354,7 @@ extension CollectionFetcher {
 #endif
 
 #if canImport(Alamofire)
-public extension CollectionFetcher where Item: Identifiable {
+public extension CollectionFetcher where Value.Element: Identifiable {
 	func defaultResponse(_ response: AFRailsLossyResponse, _ animate: Bool, debug debugDepth: DebugDepth) {
 		if debug || debugDepth.is(not: .none, .default) { print(response.debugDescription(debugDepth)) }
 		withAnimation(animate ? .spring() : .none) {
@@ -433,19 +429,19 @@ public extension CollectionFetcher where Item: Identifiable {
 }
 #endif
 
-public extension SingleItemFetcher where Item: AirtableModel {
+public extension SingleItemFetcher where Value: AirtableModel {
 	typealias K = Item.Fields.CodingKeys
 }
 
-public extension SingleItemFetcher where Item: RailsModel {
+public extension SingleItemFetcher where Value: RailsModel {
 	typealias Key = Item.CodingKeys
 }
 
-public extension CollectionFetcher where Item: AirtableModel {
+public extension CollectionFetcher where Value.Element: AirtableModel {
 	typealias K = Item.Fields.CodingKeys
 }
 
-public extension CollectionFetcher where Item: RailsModel {
+public extension CollectionFetcher where Value.Element: RailsModel {
 	typealias Key = Item.CodingKeys
 }
 
