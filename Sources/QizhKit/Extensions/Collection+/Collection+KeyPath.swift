@@ -421,10 +421,10 @@ public extension Collection {
 public extension Collection {
 	@inlinable func min<Value>(
 		by keyPath: KeyPath<Element, Value>,
-		using compare: (Value, Value) throws -> Bool
+		using areInIncreasingOrder: (Value, Value) throws -> Bool
 	) rethrows -> Element? where Value: Comparable {
 		try self.min { left, right in
-			try compare(
+			try areInIncreasingOrder(
 				left[keyPath: keyPath],
 				right[keyPath: keyPath]
 			)
@@ -434,7 +434,7 @@ public extension Collection {
 	@inlinable func min<Value>(
 		by keyPath: KeyPath<Element, Value>
 	) -> Element? where Value: Comparable {
-		self.min(by: keyPath, using: >)
+		self.min(by: keyPath, using: <)
 	}
 }
 
