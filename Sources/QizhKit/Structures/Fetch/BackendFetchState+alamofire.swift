@@ -14,14 +14,14 @@ import Alamofire
 
 extension DataResponse where Failure == AFError {
 	public var fetchError: FetchError {
-		if case let .responseValidationFailed(.customValidationFailed(validationError)) = error {
-		   if let fetchError = validationError as? FetchError {
-			   return fetchError
-		   } else {
-			   return .providerError("Known response validation error", validationError)
-		   }
+		switch error {
+		case .responseValidationFailed(.customValidationFailed(let fetchError as FetchError)):
+			return fetchError
+		case .responseValidationFailed(.customValidationFailed(let validationError)):
+			return .providerError("Known response validation error", validationError)
+		default:
+			return .afError(error?.localizedDescription ?? "Unknown error", self)
 		}
-		return .afError(error?.localizedDescription ?? "Unknown error", self)
 	}
 }
 
