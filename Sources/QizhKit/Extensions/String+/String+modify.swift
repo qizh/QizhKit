@@ -47,6 +47,9 @@ extension String {
 }
 
 extension String {
+	
+	/// Spaces
+	
 	@inlinable
 	public func offsettingLines(by spaceCount: UInt = 4) -> String {
 		.space * spaceCount + replacing(.newLine, with: .newLine + .space * spaceCount)
@@ -55,6 +58,18 @@ extension String {
 	@inlinable
 	public func offsettingNewLines(by spaceCount: UInt = 4) -> String {
 		replacing(.newLine, with: .newLine + .space * spaceCount)
+	}
+	
+	/// Tabs
+	
+	@inlinable
+	public func tabOffsettingLines(by tabCount: UInt = 1) -> String {
+		.tab * tabCount + replacing(.newLine, with: .newLine + .tab * tabCount)
+	}
+	
+	@inlinable
+	public func tabOffsettingNewLines(by tabsCount: UInt = 1) -> String {
+		replacing(.newLine, with: .newLine + .tab * tabsCount)
 	}
 }
 
