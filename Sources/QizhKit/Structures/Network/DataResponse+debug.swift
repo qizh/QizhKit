@@ -7,6 +7,8 @@
 //
 
 import Foundation
+
+#if canImport(Alamofire)
 import Alamofire
 
 // MARK: Debug Description
@@ -49,7 +51,7 @@ extension DataResponse {
 				[Body]:
 					\(String(decoding: data, as: UTF8.self)
 						.withLinesNSpacesTrimmed
-						.offsettingNewLines())
+						.tabOffsettingNewLines())
 				"""
 			} else {
 				requestBodyDescription = debugDepth > .minimum ? "[Body]: \(data.count) bytes" : .empty
@@ -62,12 +64,12 @@ extension DataResponse {
 		if debugDepth > .minimum, not(request.headers.isEmpty) {
 			requestDescription += .newLine + """
 				[Headers]:
-					\("\(request.headers.sorted())".offsettingNewLines(by: 8))
+					\("\(request.headers.sorted())".tabOffsettingNewLines(by: 2))
 			"""
 		}
 		if requestBodyDescription.isNotEmpty {
 			requestDescription += .newLine + """
-				\(requestBodyDescription.offsettingNewLines())
+				\(requestBodyDescription.tabOffsettingNewLines())
 			"""
 		}
 		
@@ -99,14 +101,14 @@ extension DataResponse {
 							let dataString = formattedJsonData.asString(encoding: .utf8).orEmpty
 							responseBodyDescription = """
 							[Body]: (formatted)
-								\(dataString.offsettingNewLines())
+								\(dataString.tabOffsettingNewLines())
 							"""
 						} catch {
 							let dataString = String(decoding: data, as: UTF8.self)
 								.withLinesNSpacesTrimmed
 							responseBodyDescription = """
 							[Body]: (json formatting failed)
-								\(dataString.offsettingNewLines())
+								\(dataString.tabOffsettingNewLines())
 							"""
 						}
 					} else {
@@ -114,7 +116,7 @@ extension DataResponse {
 							.withLinesNSpacesTrimmed
 						responseBodyDescription = """
 						[Body]:
-							\(dataString.offsettingNewLines())
+							\(dataString.tabOffsettingNewLines())
 						"""
 					}
 				} else {
@@ -136,7 +138,7 @@ extension DataResponse {
 				}
 				description += """
 					[Headers]:
-						\("\(response.headers.sorted())".offsettingNewLines(by: 8))
+						\("\(response.headers.sorted())".tabOffsettingNewLines(by: 2))
 				"""
 			}
 			if responseBodyDescription.isNotEmpty {
@@ -144,7 +146,7 @@ extension DataResponse {
 					description += .newLine
 				}
 				description += """
-					\(responseBodyDescription.offsettingNewLines())
+					\(responseBodyDescription.tabOffsettingNewLines())
 				"""
 			}
 			if description.isNotEmpty {
@@ -181,3 +183,4 @@ extension HTTPHeaders {
 		value(for: "Content-Type")
 	}
 }
+#endif
