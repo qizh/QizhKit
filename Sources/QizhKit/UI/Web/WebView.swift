@@ -29,6 +29,7 @@ public struct WebView: UIViewControllerRepresentable {
 			case unknown
 			case json
 			case csv
+			case log
 		}
 		
 		public var isDebug: Bool {
@@ -169,8 +170,12 @@ public struct WebView: UIViewControllerRepresentable {
 			  vertical-align: middle;
 			  font-family: Menlo,monospace;
 			  font-size: small;
+			  white-space: pre;
+			  tab-size: 2;
+			  /*
 			  white-space: pre-wrap;
 			  word-break: keep-all;
+			  */
 			}
 			@media (prefers-color-scheme: dark) {
 			  background-color: hsl(0, 0%, 0%)

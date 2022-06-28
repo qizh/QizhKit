@@ -115,6 +115,7 @@ public struct WebpageScreen: View {
 		case .unknown: 	fileExtension = "txt"
 		case .json: 	fileExtension = "json"
 		case .csv: 		fileExtension = "csv"
+		case .log: 		fileExtension = "log"
 		}
 		
 		let tempDirURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
@@ -139,7 +140,7 @@ public struct WebpageScreen: View {
 			applicationActivities: .empty
 		)
 		shareController.excludedActivityTypes = .empty
-		WindowUtils.currentWindow?.rootViewController?
+		WindowUtils.topViewController()?
 			.present(
 				shareController,
 				animated: true,
