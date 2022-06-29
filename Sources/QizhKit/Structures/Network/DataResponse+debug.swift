@@ -153,7 +153,11 @@ extension DataResponse {
 				description = "[Response]:" + .newLine + description
 			}
 			return description
-		} ?? (debugDepth > .minimum ? "[Response]: None" : .empty)
+		} ?? (
+			debugDepth > .minimum
+				? "[Response]: None"
+				: .empty
+		)
 		
 		// MARK: All together
 		
@@ -171,7 +175,11 @@ extension DataResponse {
 			output += .newLine + "[Serialization Duration]: \(serializationDuration)s"
 		}
 		
-		output += .newLine + "[Result]: \(result.caseName)"
+		let resultOutput = debugDepth > .default
+			? "\(result)"
+			: result.caseName
+		
+		output += .newLine + "[Result]: \(resultOutput)"
 		
 		return output
 	}
