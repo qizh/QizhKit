@@ -27,7 +27,10 @@ public struct QRCodeImage: View {
 		}
 	}
 	
-	public static func codeImage(from string: String, using context: CIContext) -> UIImage? {
+	public static func codeImage(
+		from string: String,
+		using context: CIContext = .init()
+	) -> UIImage? {
 		guard let data = string.data(using: .ascii) else { return nil }
 		
 		let filter = CIFilter.qrCodeGenerator()
