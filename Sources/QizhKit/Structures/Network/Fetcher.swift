@@ -139,8 +139,15 @@ public extension SingleItemFetcher {
 		}
 	}
 	
-	func defaultResponse(_ response: AFRailsItemResponse, animate: Bool, debug debugDepth: DebugDepth) {
-		if debug || debugDepth.is(not: .none, .default) { print(response.debugDescription(depth: debugDepth)) }
+	func defaultResponse(
+		_ response: AFRailsItemResponse,
+		animate: Bool,
+		debug debugDepth: DebugDepth,
+		format: Bool = false
+	) {
+		if debug || debugDepth.is(not: .none, .default) {
+			print(response.debugDescription(depth: debugDepth, format: format))
+		}
 		withAnimation(animate ? .spring() : .none) {
 			switch response.result {
 			case .failure: state = .failed(response)
@@ -159,8 +166,12 @@ public extension SingleItemFetcher {
 	func defaultResponse(_ response: AFRailsItemResponse) {
 		defaultResponse(response, animate: false, debug: .default)
 	}
-	func defaultResponse(animate: Bool, debug debugDepth: DebugDepth = .default) -> (AFRailsItemResponse) -> Void {
-		{ self.defaultResponse($0, animate: animate, debug: debugDepth) }
+	func defaultResponse(
+		animate: Bool = false,
+		debug debugDepth: DebugDepth = .default,
+		format: Bool = false
+	) -> (AFRailsItemResponse) -> Void {
+		{ self.defaultResponse($0, animate: animate, debug: debugDepth, format: format) }
 	}
 	#endif
 	
