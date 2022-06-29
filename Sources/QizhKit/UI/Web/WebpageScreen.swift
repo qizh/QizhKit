@@ -52,8 +52,7 @@ public struct WebpageScreen: View {
 							
 							ToolbarItem(placement: .navigationBarTrailing) {
 								if source.isDebug, source.string.isNotEmpty {
-									Label("Share", systemImage: "square.and.arrow.up")
-										.button(action: shareSourceFile)
+									shareButton
 								}
 							}
 						}
@@ -82,7 +81,9 @@ public struct WebpageScreen: View {
 		}
 	}
 	
-	@ViewBuilder private var trailingButtons: some View {
+	@available(iOS, obsoleted: 14, message: "Another implementation available for iOS 15 and higher")
+	@ViewBuilder
+	private var trailingButtons: some View {
 		HStack(alignment: .lastTextBaseline) {
 			if source.isDebug {
 				/// Copy
@@ -90,10 +91,11 @@ public struct WebpageScreen: View {
 					.padding(4)
 					.button(action: copySource)
 				
-				if source.string.isNotEmpty {
+				if source.string.isNotEmpty,
+				   let data = source.string.data(using: .utf8) {
 					Image(systemName: "square.and.arrow.up")
 						.padding(4)
-						.button(action: shareSourceFile)
+						.button(action: share(_:), data)
 				}
 			}
 		}
@@ -104,12 +106,85 @@ public struct WebpageScreen: View {
 		UIPasteboard.general.string = source.string
 	}
 	
-	private func shareSourceFile() {
-		guard let data = source.string.data(using: .utf8) else {
-			print("Failed to create data")
-			return
+	@available(iOS 14.0, *)
+	@ViewBuilder
+	private var shareButton: some View {
+		if #available(iOS 16.0, *) {
+			if let data = source.string.data(using: .utf8),
+			   let fileURL = sharedFileURL(
+					named: "\(title) \(Date.now.formatted(date: .abbreviated, time: .standard))",
+					for: data
+			   ) {
+				ShareLink(
+					item: fileURL,
+					subject: Text(title)
+				)
+			} else {
+				ShareLink(
+					item: source.string,
+					subject: Text(title),
+					preview: SharePreview(title)
+				)
+			}
+		} else if let data = source.string.data(using: .utf8) {
+			Label("Share", systemImage: "square.and.arrow.up")
+				.button(action: share(_:), data)
+		}
+	}
+	
+	@available(iOS 16.0, *)
+	private func sharedFileURL(named name: String, for data: Data) -> URL? {
+		let fileExtension: String
+		switch source.type {
+		case .unknown: 	fileExtension = "txt"
+		case .json: 	fileExtension = "json"
+		case .csv: 		fileExtension = "csv"
+		case .log: 		fileExtension = "log"
 		}
 		
+		do {
+			let manager = FileManager.default
+			let cachesURL = try manager.url(
+				for: .cachesDirectory,
+				in: .userDomainMask,
+				appropriateFor: .none,
+				create: true
+			)
+			
+			let folderURL = cachesURL
+				.appending(path: "Shared Files", directoryHint: .isDirectory)
+			
+			if !manager.fileExists(atPath: folderURL.path) {
+				try manager.createDirectory(
+					at: folderURL,
+					withIntermediateDirectories: true,
+					attributes: nil
+				)
+			}
+			
+			let url = folderURL
+				.appendingPathComponent(name)
+				.appendingPathExtension(fileExtension)
+			
+			let didCreateFile = manager.createFile(
+				atPath: url.path,
+				contents: data,
+				attributes: .none
+			)
+			
+			if didCreateFile {
+				return url
+			} else {
+				print("::web > failed to save file")
+				return .none
+			}
+		} catch {
+			print("::web > failed to create share file because \(error)")
+			return .none
+		}
+	}
+	
+	private func share(_ data: Data) {
 		let fileExtension: String
 		switch source.type {
 		case .unknown: 	fileExtension = "txt"
@@ -148,6 +223,8 @@ public struct WebpageScreen: View {
 			)
 	}
 }
+
+// MARK: Previews
 
 #if DEBUG
 struct WebpageScreen_Previews: PreviewProvider {
