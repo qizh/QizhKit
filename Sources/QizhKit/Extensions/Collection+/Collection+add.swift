@@ -77,6 +77,25 @@ extension RangeReplaceableCollection {
 	public var reversed: Self {
 		Self(reversed())
 	}
+	
+	// MARK: collection + element
+	
+	public static func + (lhs: Self, rhs: Element) -> Self {
+		var lhsCopy = lhs
+		lhsCopy.append(rhs)
+		return lhsCopy
+	}
+	
+	public static func + (lhs: Self, rhs: Element?) -> Self {
+		switch rhs {
+		case .none:
+			return lhs
+		case .some(let wrapped):
+			var lhsCopy = lhs
+			lhsCopy.append(wrapped)
+			return lhsCopy
+		}
+	}
 }
 
 // MARK: cut
