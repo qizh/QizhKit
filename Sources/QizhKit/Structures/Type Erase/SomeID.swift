@@ -144,7 +144,8 @@ public enum SomeID: Hashable {
 	}
 }
 
-extension SomeID: ExpressibleByStringLiteral {
+extension SomeID: ExpressibleByStringLiteral,
+				  ExpressibleByStringInterpolation {
 	public init(stringLiteral value: String) {
 		self.init(value)
 	}
