@@ -600,9 +600,9 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 	case appLogicError(
 			statement: String = "We deeply apologize for our developer's mistake, please be so kind to report this issue so we can justify the punishment",
 			reason: String,
-			func: String? = .none,
-			file: String? = .none,
-			line: Int? = .none
+			func: String? = #function,
+			file: String? = #file,
+			line: Int? = #line
 		 )
 	case sign(SignFailureReason)
 	case preconditionValidation(PreconditionValidationReason)
