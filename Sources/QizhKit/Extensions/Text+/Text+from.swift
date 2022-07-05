@@ -8,17 +8,29 @@
 
 import SwiftUI
 
-public extension String {
-	@inlinable func asText() -> Text {
+extension String {
+	@inlinable
+	public func asText() -> Text {
 		Text(self)
 	}
 }
 
-public extension Text {
-	static func + (lhs: Text, rhs: Text?) -> Text {
+extension Text {
+	public static func + (lhs: Text, rhs: Text?) -> Text {
 		switch rhs {
 		case .some(let text): return lhs + text
 		case .none: return lhs
+		}
+	}
+}
+
+extension Collection where Element == Text {
+	@inlinable
+	public func joined(separator: Text) -> Text {
+		reduce(.empty) { partialResult, nextText in
+			partialResult.isEmpty
+				? nextText
+				: partialResult + separator + nextText
 		}
 	}
 }
