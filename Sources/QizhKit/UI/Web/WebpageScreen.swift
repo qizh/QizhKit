@@ -9,15 +9,16 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
+@available(iOS 14.0, *)
 public struct WebpageScreen: View {
-	private let title: String
+	private let title: Text
 	private let source: WebView.Source
 	
 	@State private var scroll: CGPoint = .zero
 	
 	@Environment(\.colorScheme) private var colorScheme
 	
-	public init(title: String, name: String, subdirectory: String) {
+	public init(title: Text, name: String, subdirectory: String) {
 		self.init(
 			title: title,
 			source: Bundle.main.url(
@@ -30,45 +31,33 @@ public struct WebpageScreen: View {
 		)
 	}
 	
-	public init(title: String, source: WebView.Source) {
+	public init(title: Text, source: WebView.Source) {
 		self.title = title
 		self.source = source
 	}
 	
     public var body: some View {
-//		WebView(showing: source, scroll: $scroll)
 		WebView(showing: source)
-			.navTitle(title, .large)
-			.apply { view in
-				if #available(iOS 14, *) {
-					view
-						.toolbar {
-							ToolbarItem(placement: .navigationBarTrailing) {
-								if source.isDebug {
-									Label("Copy", systemImage: "doc.on.doc")
-										.button(action: copySource)
-								}
-							}
-							
-							ToolbarItem(placement: .navigationBarTrailing) {
-								if source.isDebug, source.string.isNotEmpty {
-									shareButton
-								}
-							}
+			.navigationTitle(title)
+			.navigationBarTitleDisplayMode(.large)
+			.toolbar {
+				ToolbarItem(placement: .navigationBarTrailing) {
+					if source.isDebug {
+						Label {
+							Text("Copy", comment: "Copy button text")
+						} icon: {
+							Image(systemName: "doc.on.doc")
 						}
-				} else {
-					view
-						.navigationBarItems(trailing: trailingButtons)
+						.button(action: copySource)
+					}
+				}
+				
+				ToolbarItem(placement: .navigationBarTrailing) {
+					if source.isDebug, source.string.isNotEmpty {
+						shareButton
+					}
 				}
 			}
-			/*
-			.autoShowHeaderBackground(
-				     on:  scroll,
-				  after:  10,
-				measure: .continuous,
-				  style: .auto(colorScheme)
-			)
-			*/
 			.edgesIgnoringSafeArea(.vertical)
 			
 			/// Debug Color Scheme
@@ -81,27 +70,6 @@ public struct WebpageScreen: View {
 		}
 	}
 	
-	@available(iOS, obsoleted: 14, message: "Another implementation available for iOS 15 and higher")
-	@ViewBuilder
-	private var trailingButtons: some View {
-		HStack(alignment: .lastTextBaseline) {
-			if source.isDebug {
-				/// Copy
-				Image(systemName: "doc.on.doc")
-					.padding(4)
-					.button(action: copySource)
-				
-				if source.string.isNotEmpty,
-				   let data = source.string.data(using: .utf8) {
-					Image(systemName: "square.and.arrow.up")
-						.padding(4)
-						.button(action: share(_:), data)
-				}
-			}
-		}
-		.imageScale(.large)
-	}
-	
 	private func copySource() {
 		UIPasteboard.general.string = source.string
 	}
@@ -110,25 +78,33 @@ public struct WebpageScreen: View {
 	@ViewBuilder
 	private var shareButton: some View {
 		if #available(iOS 16.0, *) {
+			let filenameDate = Date.now
+				.formatted(date: .abbreviated, time: .standard)
+				.replacing(.colon, with: .minus)
+			
 			if let data = source.string.data(using: .utf8),
 			   let fileURL = sharedFileURL(
-					named: "\(title) \(Date.now.formatted(date: .abbreviated, time: .standard))",
+					named: "\(title) \(filenameDate)",
 					for: data
 			   ) {
 				ShareLink(
 					item: fileURL,
-					subject: Text(title)
+					subject: title
 				)
 			} else {
 				ShareLink(
 					item: source.string,
-					subject: Text(title),
+					subject: title,
 					preview: SharePreview(title)
 				)
 			}
 		} else if let data = source.string.data(using: .utf8) {
-			Label("Share", systemImage: "square.and.arrow.up")
-				.button(action: share(_:), data)
+			Label {
+				Text("Share", comment: "Share button text, for prior to iOS 16")
+			} icon: {
+				Image(systemName: "square.and.arrow.up")
+			}
+			.button(action: share(_:), data)
 		}
 	}
 	
@@ -227,12 +203,13 @@ public struct WebpageScreen: View {
 // MARK: Previews
 
 #if DEBUG
+@available(iOS 14.0, *)
 struct WebpageScreen_Previews: PreviewProvider {
     static var previews: some View {
 		Group {
 			NavigationView {
 				WebpageScreen(
-					title: "Terms of Service",
+					title: Text(verbatim: "Terms of Service"),
 					name: "tos",
 					subdirectory: "Pages"
 				)
@@ -242,7 +219,7 @@ struct WebpageScreen_Previews: PreviewProvider {
 			
 			NavigationView {
 				WebpageScreen(
-					title: "Variables",
+					title: Text(verbatim: "Variables"),
 					source: .debug(#"{ "data": "none" }"#, .json)
 				)
 			}
