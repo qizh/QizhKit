@@ -27,7 +27,7 @@ public extension TextEditor {
 	/// `.textEditorClearBackgroundAppearance()` view modifier required to make it work.
 	/// Add it in you main app view, and in preview provider view
 	func placeholder(
-		_ placeholder: String,
+		_ placeholder: Text,
 		editing text: String,
 		compact: Bool
 	) -> some View {
@@ -41,7 +41,7 @@ public extension TextEditor {
 				.zIndex(20)
 			
 			if text.isEmpty {
-				Text(placeholder)
+				placeholder
 					.foregroundColor(\.placeholderText)
 					.padding(
 						compact
