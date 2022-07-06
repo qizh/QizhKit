@@ -413,3 +413,36 @@ public extension Price.CalculatedSum {
 	@inlinable static func + (l: Self, r: Price.Calculated) -> Self { [l, r] }
 	@inlinable static func + (l: Price.Calculated, r: Self) -> Self { [l, r] }
 }
+
+// MARK: SwiftUI
+
+import SwiftUI
+
+extension Price.Output {
+	@available(iOS 15.0, *)
+	public func formattedCurrencyText(
+		precision: Decimal.FormatStyle.Currency.Configuration.Precision = .fractionLength(0...),
+		locale: Locale
+	) -> Text {
+		Text(value, format: .currency(code: details.currency.code)
+							.precision(precision)
+							.locale(locale))
+	}
+	
+	@available(iOS 15.0, *)
+	public func formattedPercentText(
+		locale: Locale
+	) -> Text {
+		Text(value, format: .percent
+							.scale(.one)
+							.locale(locale))
+	}
+	
+	@available(iOS 15.0, *)
+	public func formattedNumber(
+		locale: Locale
+	) -> Text {
+		Text(value, format: .number
+							.locale(locale))
+	}
+}

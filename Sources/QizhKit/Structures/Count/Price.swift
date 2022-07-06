@@ -364,3 +364,19 @@ public extension Price.Formatted {
 }
 
 public typealias PriceUnitSeparator = Price.Formatted.UnitSeparator
+
+// MARK: SwiftUI
+
+import SwiftUI
+
+extension Price {
+	@available(iOS 15.0, *)
+	public func formattedCurrencyText(
+		precision: Decimal.FormatStyle.Currency.Configuration.Precision = .fractionLength(0...),
+		locale: Locale
+	) -> Text {
+		Text(value, format: .currency(code: currency.code)
+							.precision(precision)
+							.locale(locale))
+	}
+}
