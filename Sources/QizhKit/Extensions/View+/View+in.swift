@@ -7,14 +7,20 @@
 
 import SwiftUI
 
+@available(iOS 14.0, *)
 public extension View {
-	@inlinable
 	func inNavigationView(
 		_ title: String? = nil,
 		_ displayMode: NavigationBarItem.TitleDisplayMode = .automatic
 	) -> some View {
 		NavigationView {
-			navTitle(title.orEmpty, displayMode)
+			if let title = title?.nonEmpty {
+				self
+					.navigationTitle(title)
+					.navigationBarTitleDisplayMode(displayMode)
+			} else {
+				self
+			}
 		}
 	}
 }

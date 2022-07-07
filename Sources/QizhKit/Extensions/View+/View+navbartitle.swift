@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+/*
 extension View {
 	@ViewBuilder @_disfavoredOverload
 	public func navTitle <S: StringProtocol> (
@@ -49,6 +50,7 @@ extension View {
 		}
 	}
 }
+*/
 
 // MARK: Environment
 
