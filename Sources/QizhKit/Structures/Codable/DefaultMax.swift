@@ -33,14 +33,14 @@ public struct DefaultMax<Wrapped>: Codable
 	}
 }
 
-extension DefaultMax: ExpressibleByIntegerLiteral where Wrapped: ExpressibleByIntegerLiteral {
+extension DefaultMax: ExpressibleByIntegerLiteral {
 	public init(integerLiteral value: Wrapped.IntegerLiteralType) {
 		self.wrappedValue = Wrapped(integerLiteral: value)
 	}
 }
 
-extension DefaultMax: Equatable where Wrapped: Equatable { }
-extension DefaultMax: Hashable where Wrapped: Hashable { }
+extension DefaultMax: Equatable { }
+extension DefaultMax: Hashable { }
 
 public extension KeyedDecodingContainer {
 	func decode<Wrapped>(_: DefaultMax<Wrapped>.Type, forKey key: Key) -> DefaultMax<Wrapped> {

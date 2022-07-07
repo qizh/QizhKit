@@ -16,7 +16,7 @@ public extension Slice {
 	@inlinable func asArray() -> [Base.Element] { Array(self) }
 }
 
-public extension Collection where Element == SubSequence.Element {
+public extension Collection {
 	@inlinable func asArray() -> [Element] { Array(self) }
 }
 

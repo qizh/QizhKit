@@ -116,7 +116,7 @@ public protocol PublishableSingleItemFetcher: SingleItemFetcher {
 	var statePublisher: Published<BackendFetchState<Value>>.Publisher { get }
 }
 
-#warning("Move Fetcher's rails and airtable responses to BespokelyKit")
+#warning("TODO: Move Fetcher's rails and airtable responses to BespokelyKit")
 
 // MARK: Single Extension
 

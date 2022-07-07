@@ -37,10 +37,10 @@ public struct DefaultZero <Wrapped: Numeric & Codable>: Codable {
 	public static var zero: Self { .init() }
 }
 
-extension DefaultZero: Equatable where Wrapped: Equatable { }
+extension DefaultZero: Equatable { }
 extension DefaultZero: Hashable where Wrapped: Hashable { }
 
-extension DefaultZero: ExpressibleByIntegerLiteral where Wrapped: ExpressibleByIntegerLiteral {
+extension DefaultZero: ExpressibleByIntegerLiteral {
 	public init(integerLiteral value: Wrapped.IntegerLiteralType) {
 		self.wrappedValue = Wrapped(integerLiteral: value)
 	}
@@ -81,10 +81,10 @@ public struct DefaultValueOne <Wrapped: Numeric & Codable>: Codable, WithDefault
 	public static var one: Self { .init() }
 }
 
-extension DefaultValueOne: Equatable where Wrapped: Equatable { }
+extension DefaultValueOne: Equatable { }
 extension DefaultValueOne: Hashable where Wrapped: Hashable { }
 
-extension DefaultValueOne: ExpressibleByIntegerLiteral where Wrapped: ExpressibleByIntegerLiteral {
+extension DefaultValueOne: ExpressibleByIntegerLiteral {
 	public init(integerLiteral value: Wrapped.IntegerLiteralType) {
 		self.wrappedValue = Wrapped(integerLiteral: value)
 	}

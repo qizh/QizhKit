@@ -492,7 +492,7 @@ public struct HSwiperIndicator <IndicatorShape: HSwiperIndicatorShape>: View {
 	
 	public var body: some View {
 		HStack(spacing: spacing) {
-			ForEach(0 ..< total) { index in
+			ForEach(0 ..< total, id: \.self) { index in
 				RoundedCornersRectangle(2)
 					.foregroundColor(.white(0.5))
 					.height(4)

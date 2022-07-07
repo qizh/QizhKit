@@ -9,7 +9,7 @@
 import Foundation
 
 extension NumberFormatter {
-	open func string(from decimal: Decimal) -> String? {
+	public func string(from decimal: Decimal) -> String? {
 		string(from: decimal as NSDecimalNumber)
 	}
 	

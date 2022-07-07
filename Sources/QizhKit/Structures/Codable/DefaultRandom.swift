@@ -36,14 +36,14 @@ public struct DefaultRandom<Wrapped>: Codable
 	}
 }
 
-extension DefaultRandom: ExpressibleByIntegerLiteral where Wrapped: ExpressibleByIntegerLiteral {
+extension DefaultRandom: ExpressibleByIntegerLiteral {
 	public init(integerLiteral value: Wrapped.IntegerLiteralType) {
 		self.wrappedValue = Wrapped(integerLiteral: value)
 	}
 }
 
-extension DefaultRandom: Equatable where Wrapped: Equatable { }
-extension DefaultRandom: Hashable where Wrapped: Hashable { }
+extension DefaultRandom: Equatable { }
+extension DefaultRandom: Hashable { }
 
 extension DefaultRandom: WithDefault {
 	@inlinable public static var `default`: DefaultRandom<Wrapped> { .init() }

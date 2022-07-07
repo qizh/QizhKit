@@ -70,7 +70,7 @@ public extension KeyedBackendModel {
 }
 
 // MARK: 4. Rails Model
-#warning("Move RailsModel to BespokelyKit")
+#warning("TODO: Move RailsModel to BespokelyKit")
 
 /// In addition to `KeyedEmptyableBackendModel`
 /// provides some default Fetcher callbacks and default responses
@@ -103,7 +103,7 @@ public struct RailsStrictResponses <Item: Codable>: Codable {
 }
 
 // MARK: Airtable
-#warning("Move AirtableModel to BespokelyKit")
+#warning("TODO: Move AirtableModel to BespokelyKit")
 
 public struct AirtableRecords<Item: Codable>: Codable {
 	public let records: [Item]

@@ -51,7 +51,6 @@ extension ForEach where Content: View {
 		@ViewBuilder content: @escaping (Int, Source.Element) -> Content
 	) where
 		Source: Collection,
-		Source.Element: Hashable,
 		Data == [EnumeratedHashableElement<Source>],
 		ID == Source.Element
 	{
@@ -68,7 +67,6 @@ extension ForEach where Content: View {
 		@ViewBuilder content: @escaping (Source.Element) -> Content
 	) where
 		Source: Collection,
-		Source.Element: Hashable,
 		Data == [EnumeratedHashableElement<Source>],
 		ID == Source.Element
 	{
