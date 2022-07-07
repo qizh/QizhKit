@@ -67,7 +67,6 @@ public final class CooktourSafariViewController: UIViewController {
 
 public struct SafariButton<Content>: View where Content: View {
 	private let url: URL
-	private let title: String?
 	private let tint: UIColor?
 	private let content: Content
 	private let isActive: Binding<Bool>?
@@ -79,14 +78,12 @@ public struct SafariButton<Content>: View where Content: View {
 	
 	public init(
 		opening url: URL,
-		title: String? = .none,
 		tint: UIColor? = .none,
 		isActive: Binding<Bool>? = .none,
 		onDismiss: (() -> Void)? = .none,
 		@ViewBuilder content: () -> Content
 	) {
 		self.url = url
-		self.title = title
 		self.tint = tint
 		self.isActive = isActive
 		self.onDismiss = onDismiss
@@ -101,7 +98,6 @@ public struct SafariButton<Content>: View where Content: View {
 		onDismiss: (() -> Void)? = .none
 	) where S: StringProtocol, Content == Text {
 		self.url = url
-		self.title = String(title)
 		self.tint = tint
 		self.isActive = isActive
 		self.onDismiss = onDismiss
@@ -231,7 +227,6 @@ public extension View {
 	@ViewBuilder
 	func asSafariButton(
 		opening url: URL?,
-		      title: String? = .none,
 		       tint: UIColor? = .none,
 		   isActive: Binding<Bool>? = .none,
 		  onDismiss: (() -> Void)? = .none
@@ -239,7 +234,6 @@ public extension View {
 		if let url = url?.withSupportedSafariScheme {
 			SafariButton(
 				  opening: url,
-				    title: title,
 				     tint: tint,
 				 isActive: isActive,
 				onDismiss: onDismiss

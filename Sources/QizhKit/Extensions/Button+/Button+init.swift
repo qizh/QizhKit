@@ -408,7 +408,6 @@ public extension View {
 	func button(
 		opening url: URL?,
 		target: URLOpenTarget = .app,
-		title: String? = .none,
 		isActive: Binding<Bool>? = .none
 	) -> some View {
 		if let url = url {
@@ -417,7 +416,6 @@ public extension View {
 				case .app:
 					SafariButton(
 						opening: url,
-						title: title,
 						isActive: isActive,
 						content: selfmade
 					)
@@ -430,7 +428,6 @@ public extension View {
 			} else {
 				SafariButton(
 					opening: url,
-					title: title,
 					isActive: isActive,
 					content: selfmade
 				)
