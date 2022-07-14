@@ -205,9 +205,11 @@ public extension View {
 // MARK: Foreground Color
 
 public extension View {
+	/*
 	@inlinable func foregroundColor(_ key: BorderCrafterValues.UIColors.Key) -> some View {
 		foregroundColor(Color(BorderCrafterValues.UIColors.value(for: key)))
 	}
+	*/
 	
 	// MARK: > Regular
 	
