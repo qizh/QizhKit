@@ -111,3 +111,23 @@ public extension RangeReplaceableCollection where Self: EmptyTestable {
 		return remove(at: index(endIndex, offsetBy: .minusOne))
 	}
 }
+
+// MARK: Option Set
+
+extension OptionSet where Self == Self.Element {
+	public func inserting(_ newMembers: Self.Element...) -> Self {
+		var copy = self
+		for newMember in newMembers {
+			copy.insert(newMember)
+		}
+		return copy
+	}
+	
+	public func removing(_ members: Self.Element...) -> Self {
+		var copy = self
+		for member in members {
+			copy.remove(member)
+		}
+		return copy
+	}
+}
