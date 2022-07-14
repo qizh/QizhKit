@@ -8,8 +8,10 @@
 
 import SwiftUI
 
+/*
 extension Text {
 	public static let space = Text(String.space)
 	public static let nonBreakingSpace = Text(String.nonBreakingSpace)
 	public static let newLine = Text(String.newLine)
 }
+*/

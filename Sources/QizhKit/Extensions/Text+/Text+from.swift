@@ -22,6 +22,14 @@ extension Text {
 		case .none: return lhs
 		}
 	}
+	
+	public static func + (lhs: Text, rhs: String) -> Text {
+		lhs + Text(rhs)
+	}
+	
+	public static func + (lhs: String, rhs: Text) -> Text {
+		Text(lhs) + rhs
+	}
 }
 
 extension Collection where Element == Text {
