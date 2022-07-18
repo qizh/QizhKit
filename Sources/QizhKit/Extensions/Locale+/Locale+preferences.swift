@@ -10,7 +10,8 @@ import Foundation
 
 extension Locale {
 	/// An array of `Locale.preferredLanguages` with country part cut off.
-	/// - Experiment: Will return `en` for `en-US` or `en_US` language.
+	/// - Experiment: Will return `en` for `en-US` language.
+	// or `en_US` 
 	public static var preferredLanguageISOCodes: [String] {
 		preferredLanguages
 			.map { lang in
