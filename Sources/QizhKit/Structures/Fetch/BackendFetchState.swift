@@ -588,7 +588,7 @@ public protocol FetchResponse {
 	var underlying: Error? { get }
 }
 
-public enum FetchError: LocalizedError, EasyCaseComparable {
+public enum FetchError: Error, EasyCaseComparable {
 	case error(String)
 	case providerError(String, Error)
 	case multipleProvidersError([String])
@@ -701,6 +701,7 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 		}
 	}
 	
+	/*
 	public var errorDescription: String? {
 		switch self {
 		case .error(let message): 					return message
@@ -773,6 +774,7 @@ public enum FetchError: LocalizedError, EasyCaseComparable {
 			return "This functionality is not implemented"
 		}
 	}
+	*/
 	
 	public var haveSomethingImportantToSay: Bool {
 		switch self {
