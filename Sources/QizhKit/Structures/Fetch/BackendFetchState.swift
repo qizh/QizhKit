@@ -625,6 +625,7 @@ public enum FetchError: Error, EasyCaseComparable {
 	
 	public enum SignFailureReason: Equatable, EasyCaseComparable, CaseNameProvidable {
 		case userExists(_ loginMethod: ExistingUserLogin)
+		case userNotFound(_ loginMethod: ExistingUserLogin)
 		case inactiveUserExists
 		case usernameTaken
 		case wrongCredentials
@@ -791,6 +792,7 @@ public enum FetchError: Error, EasyCaseComparable {
 		case .appLogicError(_, _, _, _, _): return false
 		case .sign(.createUserFirst): 		return false
 		case .sign(.wrongCode): 			return false
+		case .sign(.userNotFound(.apple)): 	return true
 		case .sign(_): 						return true
 		case .cancelled: 					return false
 		case .paymentFailed: 				return true
