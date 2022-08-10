@@ -113,3 +113,12 @@ public extension DateInterval {
 		return dif.string(for: self).orEmpty
 	}
 }
+
+@available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
+extension Date.FormatStyle {
+	public func capitalizationContext(_ context: FormatStyleCapitalizationContext) -> Date.FormatStyle {
+		var copy = self
+		copy.capitalizationContext = context
+		return copy
+	}
+}
