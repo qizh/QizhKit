@@ -39,3 +39,12 @@ extension NavigationLink where Label == EmptyView, Destination == EmptyView {
 		}
 	}
 }
+
+@available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
+extension NavigationLink where Destination == Never, Label == EmptyView {
+	public init<P>(value: P?) where P: Hashable {
+		self.init(value: value) {
+			EmptyView()
+		}
+	}
+}
