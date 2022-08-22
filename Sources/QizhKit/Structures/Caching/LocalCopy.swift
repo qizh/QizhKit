@@ -87,7 +87,7 @@ public struct LocalCopy<Model: Codable> {
 	@discardableResult
 	public func save(
 		_ model: Model,
-		in priority: TaskPriority = .background,
+		in priority: TaskPriority? = .background,
 		using encoder: JSONEncoder? = .none
 	) async throws -> Bool {
 		try await Task(priority: priority) {
