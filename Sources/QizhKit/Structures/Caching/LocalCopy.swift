@@ -17,44 +17,42 @@ public struct LocalCopy<Model: Codable> {
 	///   - name: File name. Model class name by default.
 	///   - type: File type. json by default.
 	
-	public init?(
+	public init(
 		path: String,
 		name: String = "\(Model.self)",
-		type: FileType = .json
-	) {
+		type: CommonFileType = .json
+	) throws {
 		let manager = FileManager.default
-		do {
-			let cachesURL = try manager.url(
-				for: .cachesDirectory,
-				in: .userDomainMask,
-				appropriateFor: .none,
-				create: true
-			)
-			
-			var folderURL = cachesURL
-			if path.isNotEmpty {
-				let pathComponents = path.components(separatedBy: String.slash)
-				for folder in pathComponents {
-					folderURL = folderURL.appendingPathComponent(folder, isDirectory: true)
-				}
+		
+		let cachesURL = try manager.url(
+			for: .cachesDirectory,
+			in: .userDomainMask,
+			appropriateFor: .none,
+			create: true
+		)
+		
+		var folderURL = cachesURL
+		if path.isNotEmpty {
+			let pathComponents = path.components(separatedBy: String.slash)
+			for folder in pathComponents {
+				folderURL = folderURL.appendingPathComponent(folder, isDirectory: true)
 			}
-			
-			if !manager.fileExists(atPath: folderURL.path) {
-				try manager.createDirectory(
-					at: folderURL,
-					withIntermediateDirectories: true,
-					attributes: nil
-				)
-			}
-			
-			self.url = folderURL
-				.appendingPathComponent(name)
-				.appendingPathExtension(type.rawValue)
-		} catch {
-			print("LocalCopy failed to create an URL because \(error)")
-			return nil
 		}
+		
+		if !manager.fileExists(atPath: folderURL.path) {
+			try manager.createDirectory(
+				at: folderURL,
+				withIntermediateDirectories: true,
+				attributes: nil
+			)
+		}
+		
+		self.url = folderURL
+			.appendingPathComponent(name)
+			.appendingPathExtension(type.rawValue)
 	}
+	
+	// MARK: Properties
 	
 	public var date: Date? {
 		do {
@@ -66,51 +64,63 @@ public struct LocalCopy<Model: Codable> {
 		}
 	}
 	
+	@inlinable
+	public var isAvailable: Bool {
+		FileManager.default.fileExists(atPath: url.path)
+	}
+	
+	// MARK: Actions
+	
 	public func get(using decoder: JSONDecoder? = .none) async throws -> Model {
-		let data = try Data(contentsOf: url)
-		let decoder = decoder ?? JSONDecoder()
-		let model = try decoder.decode(Model.self, from: data)
-		return model
+		try await Task {
+			let data = try Data(contentsOf: url)
+			let jsonDecoder = decoder ?? JSONDecoder()
+			if #available(iOS 15.0, *), decoder.isNotSet {
+				jsonDecoder.allowsJSON5 = true
+			}
+			let model = try jsonDecoder.decode(Model.self, from: data)
+			return model
+		}
+		.value
 	}
 	
 	@discardableResult
-	public func save(_ model: Model, using encoder: JSONEncoder? = .none) async throws -> Bool {
-		let encoder = encoder ?? JSONEncoder()
-		
-		let encodeTask = Task(priority: .background) {
-			try encoder.encode(model)
-		}
-		
-		let data = try await encodeTask.value
-		
-		let saveTask = Task(priority: .background) {
-			FileManager.default
+	public func save(
+		_ model: Model,
+		in priority: TaskPriority = .background,
+		using encoder: JSONEncoder? = .none
+	) async throws -> Bool {
+		try await Task(priority: priority) {
+			let encoder = encoder ?? JSONEncoder()
+			let data = try encoder.encode(model)
+			
+			let success = FileManager.default
 				.createFile(
 					atPath: url.path,
 					contents: data,
 					attributes: nil
 				)
+			return success
 		}
-		
-		return await saveTask.value
+		.value
 	}
+}
+
+// MARK: File Type
+
+public struct CommonFileType: RawRepresentable,
+							  ExpressibleByStringLiteral,
+							  LosslessStringConvertible {
+	public let rawValue: String
+	public init(rawValue: String) { self.rawValue = rawValue }
 	
-	// MARK: File Type
+	@inlinable public init(stringLiteral value: String) { self.init(rawValue: value) }
+	@inlinable public init(_ description: String) { self.init(rawValue: description) }
 	
-	public struct FileType: RawRepresentable,
-							ExpressibleByStringLiteral,
-							LosslessStringConvertible {
-		public let rawValue: String
-		
-		public init(rawValue: String) { self.rawValue = rawValue }
-		public init(stringLiteral value: String) { self.rawValue = value }
-		public init(_ description: String) { self.rawValue = description }
-		
-		public var description: String { rawValue }
-		
-		@inlinable public static var json: FileType { "json" }
-		@inlinable public static var txt: FileType { "txt" }
-		@inlinable public static var html: FileType { "html" }
-		@inlinable public static var dat: FileType { "dat" }
-	}
+	@inlinable public var description: String { rawValue }
+	
+	@inlinable public static var json: CommonFileType { "json" }
+	@inlinable public static var txt: CommonFileType { "txt" }
+	@inlinable public static var html: CommonFileType { "html" }
+	@inlinable public static var dat: CommonFileType { "dat" }
 }
