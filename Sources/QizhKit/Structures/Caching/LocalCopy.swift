@@ -84,12 +84,11 @@ public struct LocalCopy<Model: Codable> {
 		.value
 	}
 	
-	@discardableResult
 	public func save(
 		_ model: Model,
 		in priority: TaskPriority? = .background,
 		using encoder: JSONEncoder? = .none
-	) async throws -> Bool {
+	) async throws {
 		try await Task(priority: priority) {
 			let encoder = encoder ?? JSONEncoder()
 			let data = try encoder.encode(model)
@@ -100,9 +99,22 @@ public struct LocalCopy<Model: Codable> {
 					contents: data,
 					attributes: nil
 				)
-			return success
+			
+			if not(success) {
+				throw LocalCopyError.fileCreationFailed
+			}
 		}
 		.value
+	}
+}
+
+public enum LocalCopyError: LocalizedError {
+	case fileCreationFailed
+	
+	public var errorDescription: String? {
+		switch self {
+		case .fileCreationFailed: return "FileManager's createFile function returned false"
+		}
 	}
 }
 
