@@ -31,7 +31,16 @@ public extension TimeInterval {
 	static let hour: TimeInterval = .sixty²
 	
 	/// One day (24 hours) interval
-	static let day: TimeInterval = .sixty² * .twentyFour
+	static let day: TimeInterval = .twentyFour * hour
+	
+	/// One week (7 days) interval
+	static let week: TimeInterval = .seven * day
+	
+	/// One month (30 days) interval
+	static let month: TimeInterval = .thirty * day
+
+	/// One year (365 days) interval
+	static let year: TimeInterval = 365 * day
 	
 	/// Creates an interval by leaving only remainder
 	/// after dividing current interval by day

@@ -116,6 +116,7 @@ public extension Int {
 	@inlinable var minutesInterval: TimeInterval { TimeInterval.minute * double }
 	@inlinable var   hoursInterval: TimeInterval { TimeInterval.hour * double }
 	@inlinable var    daysInterval: TimeInterval { TimeInterval.day * double }
+	@inlinable var   weeksInterval: TimeInterval { TimeInterval.week * double }
 }
 
 public extension Set where Element == Calendar.Component {
