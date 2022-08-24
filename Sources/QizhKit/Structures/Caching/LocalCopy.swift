@@ -60,6 +60,7 @@ public struct LocalCopy<Model: Codable> {
 				.attributesOfItem(atPath: url.path)
 			return attributes[.modificationDate] as? Date
 		} catch {
+			print("::copy > file attributes failure < \(error.localizedDescription)")
 			return .none
 		}
 	}
