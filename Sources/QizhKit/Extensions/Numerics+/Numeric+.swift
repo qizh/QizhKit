@@ -50,9 +50,11 @@ public extension BinaryInteger {
 	@inlinable var tenth:     Self { self / .ten }
 	@inlinable var hundredth: Self { self / .hundred }
 
-	@inlinable var doubled:  Self { self * .two }
-	@inlinable var hundred:  Self { self * .hundred }
-	@inlinable var thousand: Self { self * .thousand }
+	@inlinable var doubled:    Self { self * .two }
+	@inlinable var tripled:    Self { self * .three }
+	@inlinable var quadrupled: Self { self * .four }
+	@inlinable var hundred:    Self { self * .hundred }
+	@inlinable var thousand:   Self { self * .thousand }
 	
 	@inlinable var minutesInSeconds: Self { self * .sixty }
 	@inlinable var hoursInSeconds:   Self { self * .sixty² }
@@ -76,9 +78,11 @@ public extension FloatingPoint {
 	@inlinable var hundredth:  Self { self / .hundred  }
 	@inlinable var thousandth: Self { self / .thousand }
 	
-	@inlinable var doubled:  Self { self * .two }
-	@inlinable var hundred:  Self { self * .hundred }
-	@inlinable var thousand: Self { self * .thousand }
+	@inlinable var doubled:    Self { self * .two }
+	@inlinable var tripled:    Self { self * .three }
+	@inlinable var quadrupled: Self { self * .four }
+	@inlinable var hundred:    Self { self * .hundred }
+	@inlinable var thousand:   Self { self * .thousand }
 	
 	@inlinable var minutesInSeconds: Self { self * .sixty }
 	@inlinable var hoursInSeconds:   Self { self * .sixty² }
