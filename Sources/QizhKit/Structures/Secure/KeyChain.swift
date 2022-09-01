@@ -9,14 +9,35 @@
 import Foundation
 import Security
 
+public struct KeychainGroup: RawRepresentable, ExpressibleByStringLiteral {
+	public let rawValue: String
+	
+	public init(rawValue: String) {
+		self.rawValue = rawValue
+	}
+	
+	@inlinable
+	public init(stringLiteral value: String) {
+		self.init(rawValue: value)
+	}
+}
+
 public struct KeyChain {
 	@discardableResult
-	public static func save(_ data: Data, for key: String) -> OSStatus {
-		let query: [String: Any] = [
+	public static func save(
+		_ data: Data,
+		for key: String,
+		at group: KeychainGroup? = .none
+	) -> OSStatus {
+		var query: [String: Any] = [
 			      kSecClass as String: kSecClassGenericPassword as String,
 			kSecAttrAccount as String: key,
 			  kSecValueData as String: data
 		]
+		
+		if let group = group {
+			query[kSecAttrAccessGroup as String] = group.rawValue
+		}
 		
 		SecItemDelete(query as CFDictionary)
 		return SecItemAdd(query as CFDictionary, .none)

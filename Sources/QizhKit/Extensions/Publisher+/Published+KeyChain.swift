@@ -16,7 +16,8 @@ private var cancellables = Set<AnyCancellable>()
 extension Published where Value == String {
 	public init(
 		wrappedValue defaultValue: Value,
-		keychainKey: String
+		keychainKey: String,
+		keychainGroup: KeychainGroup? = .none
 	) {
 		let key = keychainKey.localizedLowercase.replacing(.whitespaces, with: .underline)
 		if let data = KeyChain.data(for: key),
@@ -29,7 +30,7 @@ extension Published where Value == String {
 		projectedValue
 			.sink { value in
 				if let data = value.data(using: .utf8) {
-					KeyChain.save(data, for: key)
+					KeyChain.save(data, for: key, at: keychainGroup)
 				} else {
 					KeyChain.remove(for: key)
 				}
@@ -41,7 +42,8 @@ extension Published where Value == String {
 extension Published where Value == String? {
 	public init(
 		wrappedValue defaultValue: Value,
-		keychainKey: String
+		keychainKey: String,
+		keychainGroup: KeychainGroup? = .none
 	) {
 		let key = keychainKey.localizedLowercase.replacing(.whitespaces, with: .underline)
 		if let data = KeyChain.data(for: key),
@@ -55,7 +57,7 @@ extension Published where Value == String? {
 			.sink { value in
 				if let value = value,
 				   let data = value.data(using: .utf8) {
-					KeyChain.save(data, for: key)
+					KeyChain.save(data, for: key, at: keychainGroup)
 				} else {
 					KeyChain.remove(for: key)
 				}
@@ -69,7 +71,8 @@ extension Published where Value == String? {
 extension Published {
 	public init <Model> (
 		wrappedValue defaultValue: Value = .none,
-		keychainKey: String
+		keychainKey: String,
+		keychainGroup: KeychainGroup? = .none
 	) where Model: Codable, Value == Model? {
 		let key = keychainKey.localizedLowercase.replacing(.whitespaces, with: .underline)
 		
@@ -89,7 +92,7 @@ extension Published {
 				if let value = value {
 					do {
 						let data = try JSONEncoder().encode(value)
-						KeyChain.save(data, for: key)
+						KeyChain.save(data, for: key, at: keychainGroup)
 					} catch {
 						print("::publisher: Can't encode \(Value.self) to save in KeyChain for `\(key)` key. KeyChain value removed.")
 						KeyChain.remove(for: key)
