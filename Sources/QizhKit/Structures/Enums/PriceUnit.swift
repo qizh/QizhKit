@@ -28,6 +28,7 @@ public enum PriceUnit:
 	case trip
 	case coin
 	case googleReview
+	case spot
 }
 
 public typealias AnyCountableUnit = ExtraCase<PriceUnit>
@@ -44,6 +45,7 @@ public extension AnyCountableUnit {
 	static var trip:    AnyCountableUnit { .known(.trip) }
 	static var coin:    AnyCountableUnit { .known(.coin) }
 	static var googleReview: AnyCountableUnit { .known(.googleReview) }
+	static var spot: 	AnyCountableUnit { .known(.spot) }
 	
 	@inlinable
 	var rawValue: String {
