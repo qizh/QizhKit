@@ -11,6 +11,7 @@ import SwiftUI
 @available(iOS, obsoleted: 15, message: "Implemented in SwiftUI")
 extension View {
 	@inlinable
+	@_disfavoredOverload
 	public func task(
 		priority: TaskPriority = .userInitiated,
 		_ action: @escaping @Sendable () async -> Void
@@ -22,6 +23,7 @@ extension View {
 	
 	@available(iOS 14.0, *)
 	@inlinable
+	@_disfavoredOverload
 	public func task<T>(
 		id value: T,
 		priority: TaskPriority = .userInitiated,
