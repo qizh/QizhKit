@@ -91,7 +91,8 @@ public struct ISO8601DashedDateFormatterProvider: DateFormatterProvidable {
 			.withFullDate,
 			.withDashSeparatorInDate
 		]
-		formatter.timeZone = .autoupdatingCurrent
+		formatter.timeZone = TimeZone(abbreviation: "UTC") // TimeZone(secondsFromGMT: 0)
+		// formatter.timeZone = .autoupdatingCurrent
 		return formatter
 	}
 }
