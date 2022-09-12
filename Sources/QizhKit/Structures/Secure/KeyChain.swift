@@ -41,6 +41,14 @@ public struct KeyChain {
 		
 		SecItemDelete(query as CFDictionary)
 		return SecItemAdd(query as CFDictionary, .none)
+		
+		/// Debug status
+		/*
+		let addStatus = SecItemAdd(query as CFDictionary, .none)
+		let readableStatus = SecCopyErrorMessageString(addStatus, .none)
+		print("=== keychain add status: \(readableStatus.orNilString)")
+		return addStatus
+		*/
 	}
 	
 	@discardableResult
