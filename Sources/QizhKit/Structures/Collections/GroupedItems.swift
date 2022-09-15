@@ -39,6 +39,13 @@ extension GroupedItems: Identifiable where Group: Identifiable {
 	public var id: Group.ID { group.id }
 }
 
+extension Collection {
+	@inlinable
+	public func groupedItems<G, I>() -> [I] where Element == GroupedItems<G, I> {
+		flatMap(\.items)
+	}
+}
+
 // MARK: Tools
 
 public struct GroupedItemsTools {
