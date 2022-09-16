@@ -59,7 +59,7 @@ let package = Package(
 		.package(
 			name: "DeviceKit",
 			url: "https://github.com/devicekit/DeviceKit",
-			from: "4.4.0"
+			from: "4.7.0"
 		),
 		.package(
 			name: "BetterSafariView",
