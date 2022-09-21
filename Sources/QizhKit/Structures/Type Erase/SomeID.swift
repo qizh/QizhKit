@@ -34,6 +34,11 @@ public enum SomeID: Hashable {
 	}
 	
 	@inlinable
+	public init(_ value: Substring?) {
+		self.init(value?.asString())
+	}
+	
+	@inlinable
 	public init(_ value: UUID?) {
 		self = value.map(Self.uuid) ?? .none
 	}
@@ -50,6 +55,11 @@ public enum SomeID: Hashable {
 	
 	@inlinable
 	public static func some(_ value: String?) -> SomeID {
+		.init(value)
+	}
+	
+	@inlinable
+	public static func some(_ value: Substring?) -> SomeID {
 		.init(value)
 	}
 	
