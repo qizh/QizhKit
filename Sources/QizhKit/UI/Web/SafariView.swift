@@ -70,6 +70,7 @@ public struct SafariButton<Content>: View where Content: View {
 	private let tint: UIColor?
 	private let content: Content
 	private let isActive: Binding<Bool>?
+	private let onOpen: (() -> Void)?
 	private let onDismiss: (() -> Void)?
 	
 	@State private var isPresented = false
@@ -80,12 +81,14 @@ public struct SafariButton<Content>: View where Content: View {
 		opening url: URL,
 		tint: UIColor? = .none,
 		isActive: Binding<Bool>? = .none,
+		onOpen: (() -> Void)? = .none,
 		onDismiss: (() -> Void)? = .none,
 		@ViewBuilder content: () -> Content
 	) {
 		self.url = url
 		self.tint = tint
 		self.isActive = isActive
+		self.onOpen = onOpen
 		self.onDismiss = onDismiss
 		self.content = content()
 	}
@@ -95,11 +98,13 @@ public struct SafariButton<Content>: View where Content: View {
 		opening url: URL,
 		tint: UIColor? = .none,
 		isActive: Binding<Bool>? = .none,
+		onOpen: (() -> Void)? = .none,
 		onDismiss: (() -> Void)? = .none
 	) where S: StringProtocol, Content == Text {
 		self.url = url
 		self.tint = tint
 		self.isActive = isActive
+		self.onOpen = onOpen
 		self.onDismiss = onDismiss
 		self.content = Text(title)
 	}
@@ -159,6 +164,7 @@ public struct SafariButton<Content>: View where Content: View {
 				options: [.universalLinksOnly: true]
 			) { success in
 				guard not(success) else { return }
+				onOpen?()
 				if let isActive = self.isActive {
 					isActive.wrappedValue = true
 				} else {
@@ -229,6 +235,7 @@ public extension View {
 		opening url: URL?,
 		       tint: UIColor? = .none,
 		   isActive: Binding<Bool>? = .none,
+		     onOpen: (() -> Void)? = .none,
 		  onDismiss: (() -> Void)? = .none
 	) -> some View {
 		if let url = url?.withSupportedSafariScheme {
@@ -236,6 +243,7 @@ public extension View {
 				  opening: url,
 				     tint: tint,
 				 isActive: isActive,
+				   onOpen: onOpen,
 				onDismiss: onDismiss
 			) {
 				self
