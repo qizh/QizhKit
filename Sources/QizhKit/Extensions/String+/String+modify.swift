@@ -8,26 +8,30 @@
 
 import Foundation
 
-public extension String {
-	@inlinable func replacing(_ set: CharacterSet, with replacement: String = .empty) -> String {
+extension StringProtocol {
+	@inlinable public func replacing(
+		_ set: CharacterSet,
+		with replacement: String = .empty
+	) -> String {
         components(separatedBy: set).joined(separator: replacement)
     }
 	
-	@inlinable func replacing(
+	@inlinable public func replacing(
 		_ occurances: String,
 		with replacement: String = .empty,
-		options: CompareOptions = []
+		options: String.CompareOptions = []
 	) -> String {
 		replacingOccurrences(of: occurances, with: replacement, options: options)
 	}
 	
-	@inlinable var withSpacesTrimmed: String { trimmingCharacters(in: .whitespaces) }
-	@inlinable var withLinesNSpacesTrimmed: String { trimmingCharacters(in: .whitespacesAndNewlines) }
-	@inlinable var digits: String { replacing(CharacterSet.decimalDigits.inverted) }
+	@inlinable public var withSpacesTrimmed: String { trimmingCharacters(in: .whitespaces) }
+	@inlinable public var withLinesNSpacesTrimmed: String { trimmingCharacters(in: .whitespacesAndNewlines) }
+	@inlinable public var digits: String { replacing(CharacterSet.decimalDigits.inverted) }
 }
 
-public extension Substring {
-	func asString() -> String { String(self) }
+extension Substring {
+	@inlinable public func asString() -> String { String(self) }
+	@inlinable public var string: String { String(self) }
 }
 
 extension String {
