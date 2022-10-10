@@ -72,6 +72,18 @@ public enum DebugDepth: Comparable, EasyCaseComparable {
 	}
 }
 
+extension DebugDepth: ExpressibleByBooleanLiteral {
+	@inlinable
+	public init(booleanLiteral value: Bool) {
+		self = value ? .default : .none
+	}
+	
+	@inlinable
+	public var isOn: Bool {
+		self > .none
+	}
+}
+
 // MARK: Single Protocol
 
 public protocol SingleItemFetcher: Fetcher {
