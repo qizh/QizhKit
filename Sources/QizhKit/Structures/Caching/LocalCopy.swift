@@ -107,6 +107,10 @@ public struct LocalCopy<Model: Codable> {
 		}
 		.value
 	}
+	
+	public func delete() {
+		try? FileManager.default.removeItem(atPath: url.path)
+	}
 }
 
 public enum LocalCopyError: LocalizedError {
