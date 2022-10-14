@@ -16,6 +16,7 @@ public extension Character {
 	static let tabChar: Character          			= "\t"
 	static let nbspChar: Character         			= "\u{00a0}"
 	static let quotChar: Character         			= "\""
+	/** | */ static let lineChar: Character 		= "|"
 	static let apostropheChar: Character   			= "'"
 	
 	static let plusChar: Character         			= "+"
@@ -61,6 +62,7 @@ public extension String {
 	static let tab          		= String(Character.tabChar)
 	static let nbsp         		= String(Character.nbspChar)
 	static let quot         		= String(Character.quotChar)
+	/** | */ static let line 		= String(Character.lineChar)
 	static let apostrophe   		= String(Character.apostropheChar)
 	
 	static let plus         		= String(Character.plusChar)
