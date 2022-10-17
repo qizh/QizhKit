@@ -9,7 +9,7 @@
 import Foundation
 
 @propertyWrapper
-public struct DefaultEmpty<Wrapped> where Wrapped: EmptyProvidable {
+public struct DefaultEmpty<Wrapped> where Wrapped: EmptyProvidable, Wrapped: Equatable {
 	public var wrappedValue: Wrapped
 	
 	public init(wrappedValue: Wrapped = .empty) {
@@ -24,7 +24,12 @@ extension DefaultEmpty: Codable where Wrapped: Codable {
 	}
 	
 	public func encode(to encoder: Encoder) throws {
-		try wrappedValue.encode(to: encoder)
+		if wrappedValue == .empty {
+			var container = encoder.singleValueContainer()
+			try container.encodeNil()
+		} else {
+			try wrappedValue.encode(to: encoder)
+		}
 	}
 }
 
