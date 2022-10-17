@@ -9,15 +9,22 @@
 import Foundation
 
 extension Optional: Comparable where Wrapped: Comparable {
+	/// Makes `some` bigger than `none`
 	public static func < (lhs: Wrapped?, rhs: Wrapped?) -> Bool {
-		if let r = rhs {
-			if let l = lhs {
+		switch rhs {
+		case .none:
+			/// lhs `<` nil
+			/// nil `<` nil
+			return false
+		case .some(let r):
+			switch lhs {
+			case .none:
+				/// nil `<` rhs
+				return true
+			case .some(let l):
+				/// lhs `<` rhs
 				return l < r
-			} else {
-				return false
 			}
-		} else {
-			return true
 		}
 	}
 }
