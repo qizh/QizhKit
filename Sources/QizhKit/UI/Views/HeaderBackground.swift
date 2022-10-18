@@ -8,6 +8,7 @@
 
 import SwiftUI
 import Combine
+import DeviceKit
 
 public struct ShowHeaderBackgroundViewModifier: ViewModifier {
 	private let height: CGFloat
@@ -157,7 +158,26 @@ public struct ShowHeaderBackgroundViewModifier: ViewModifier {
 }
 
 public struct NavigationBarDimension {
-	public static let height: CGFloat = 44
+	public static var height: CGFloat {
+		Device.current.hasDynamicIsland ? 39 : 44
+		/*
+		switch Device.current {
+		case .iPhone14Pro, .iPhone14ProMax: return 39
+		default: return 44
+		}
+		*/
+	}
+	
+	public static var safeFrameTop: CGFloat {
+		switch Device.current {
+		case .iPhone14Pro, .iPhone14ProMax: return 59
+		default: return 44
+		}
+	}
+	
+	public static var safeFrameBottom: CGFloat {
+		Device.current.hasRoundedDisplayCorners ? 34 : 0
+	}
 }
 
 public extension UIBlurEffect.Style {
