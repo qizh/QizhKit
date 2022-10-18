@@ -23,23 +23,23 @@ public extension EnvironmentValues {
 
 // MARK: Set
 
-public extension View {
-	func safeFrameTop(_ value: CGFloat) -> some View {
+extension View {
+	public func safeFrameTop(_ value: CGFloat) -> some View {
 		transformEnvironment(\.safeFrameInsets) { safeFrameInsets in
 			safeFrameInsets.top = value
 		}
 	}
 	
-	func safeFrameBottom(_ value: CGFloat) -> some View {
+	public func safeFrameBottom(_ value: CGFloat) -> some View {
 		transformEnvironment(\.safeFrameInsets) { safeFrameInsets in
 			safeFrameInsets.bottom = value
 		}
 	}
 	
 	#if DEBUG
-	func simulateSafeFrameInsets(
-		top: CGFloat = 44,
-		bottom: CGFloat = 34
+	public func simulateSafeFrameInsets(
+		top: CGFloat = NavigationBarDimension.safeFrameTop,
+		bottom: CGFloat = NavigationBarDimension.safeFrameBottom
 	) -> some View {
 		transformEnvironment(\.safeFrameInsets) { insets in
 			insets.top = top
