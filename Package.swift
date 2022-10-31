@@ -35,7 +35,7 @@ let package = Package(
 		.package(
 			name: "Introspect",
 			url: "https://github.com/qizh/SwiftUI-Introspect",
-			from: "0.1.5"
+			from: "0.1.6"
 		),
 		.package(
 			name: "Alamofire",

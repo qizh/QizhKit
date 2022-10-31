@@ -24,8 +24,8 @@
         "repositoryURL": "https://github.com/devicekit/DeviceKit",
         "state": {
           "branch": null,
-          "revision": "cc49d42dafd69c96abbf695cedbefab6441f1afa",
-          "version": "4.6.0"
+          "revision": "12cff4b02bb63ce90eb92dba4164b6555f2669a8",
+          "version": "4.8.0"
         }
       },
       {
@@ -33,8 +33,8 @@
         "repositoryURL": "https://github.com/qizh/SwiftUI-Introspect",
         "state": {
           "branch": null,
-          "revision": "4f266731dda7612b1b32d717a6914246de4fee64",
-          "version": "0.1.5"
+          "revision": "40cfc4f8291fafb71f2218d84127bf201daed2b9",
+          "version": "0.1.6"
         }
       }
     ]
