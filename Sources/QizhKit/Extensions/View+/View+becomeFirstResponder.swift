@@ -101,8 +101,8 @@ public struct ReturnKeyType: ViewModifier {
 }
 
 public extension View {
-	func becomeFirstResponder(when condition: Bool) -> some View {
-		modifier(BecomeFirstResponder(condition))
+	func becomeFirstResponder(when condition: Bool, in msDelay: Int = .zero) -> some View {
+		modifier(BecomeFirstResponder(condition, in: msDelay))
 		/*
 		apply(when: condition) { view in
 			view.introspectTextField { field in
