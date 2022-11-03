@@ -12,7 +12,7 @@ import Foundation
 
 public struct NumberOfItems {
 	public typealias Unit = PriceUnit.AnyValue
-	private(set) public var value: UInt
+	public var value: UInt
 	private(set) public var unit: Unit
 }
 
