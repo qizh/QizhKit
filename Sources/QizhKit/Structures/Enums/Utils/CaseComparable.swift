@@ -55,6 +55,22 @@ extension Optional: EasyComparable where Wrapped: EasyComparable {
 		case .some(let wrapped): return wrapped.is(other)
 		}
 	}
+	
+	@inlinable
+	public func `in`(_ set: Wrapped.Others) -> Bool {
+		switch self {
+		case .none: return false
+		case .some(let wrapped): return wrapped.in(set)
+		}
+	}
+	
+	@inlinable
+	public func `in`(_ set: Wrapped.Other ...) -> Bool {
+		switch self {
+		case .none: return false
+		case .some(let wrapped): return wrapped.in(set)
+		}
+	}
 }
 
 // MARK: V1
