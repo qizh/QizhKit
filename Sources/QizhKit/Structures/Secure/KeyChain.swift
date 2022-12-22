@@ -23,6 +23,16 @@ public struct KeychainGroup: RawRepresentable, ExpressibleByStringLiteral {
 }
 
 public struct KeyChain {
+	/// Save data to Key Chain
+	/// - Parameters:
+	///   - data: Data to save
+	///   - key: Key for the data
+	///   - group: Key Chain to use, defaults to first one from available:
+	///   	[Shared Keychain, Private Key Chain, Shared Group]
+	/// - Returns: Status
+	/// - Warning: When shared Key Chain is present, it will be used
+	/// 	as a default one if no group provided. When no shared Key Chain
+	/// 	present, a private app's Key Chain will be used.
 	@discardableResult
 	public static func save(
 		_ data: Data,
@@ -52,22 +62,54 @@ public struct KeyChain {
 	}
 	
 	@discardableResult
-	public static func remove(for key: String) -> OSStatus {
-		let query: [String: Any] = [
+	/// Remove data from Key Chain
+	/// - Parameters:
+	///   - key: Key for the data
+	///   - group: Key Chain to use, defaults to first one from available:
+	///   	[Shared Keychain, Private Key Chain, Shared Group]
+	/// - Returns: Status
+	/// - Warning: When shared Key Chain is present, it will be used
+	/// 	as a default one if no group provided. When no shared Key Chain
+	/// 	present, a private app's Key Chain will be used.
+	public static func remove(
+		for key: String,
+		at group: KeychainGroup? = .none
+	) -> OSStatus {
+		var query: [String: Any] = [
 				  kSecClass as String: kSecClassGenericPassword as String,
 			kSecAttrAccount as String: key
 		]
 		
+		if let group = group {
+			query[kSecAttrAccessGroup as String] = group.rawValue
+		}
+		
 		return SecItemDelete(query as CFDictionary)
 	}
 	
-	public static func data(for key: String) -> Data? {
-		let query: [String: Any] = [
+	/// Get data from Key Chain
+	/// - Parameters:
+	///   - key: Key for the data
+	///   - group: Key Chain to use, defaults to first one from available:
+	///   	[Shared Keychain, Private Key Chain, Shared Group]
+	/// - Returns: Data, if received with no errors
+	/// - Warning: When shared Key Chain is present, it will be used
+	/// 	as a default one if no group provided. When no shared Key Chain
+	/// 	present, a private app's Key Chain will be used.
+	public static func data(
+		for key: String,
+		at group: KeychainGroup? = .none
+	) -> Data? {
+		var query: [String: Any] = [
 			      kSecClass as String: kSecClassGenericPassword,
 			kSecAttrAccount as String: key,
 			 kSecReturnData as String: kCFBooleanTrue!,
 			 kSecMatchLimit as String: kSecMatchLimitOne
 		]
+		
+		if let group = group {
+			query[kSecAttrAccessGroup as String] = group.rawValue
+		}
 		
 		var data: AnyObject? = .none
 		let status: OSStatus = SecItemCopyMatching(query as CFDictionary, &data)
