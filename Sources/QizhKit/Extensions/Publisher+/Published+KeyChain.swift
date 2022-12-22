@@ -20,7 +20,7 @@ extension Published where Value == String {
 		keychainGroup: KeychainGroup? = .none
 	) {
 		let key = keychainKey.localizedLowercase.replacing(.whitespaces, with: .underline)
-		if let data = KeyChain.data(for: key),
+		if let data = KeyChain.data(for: key, at: keychainGroup),
 		   let string = String(data: data, encoding: .utf8) {
 			self.init(initialValue: string)
 		} else {
@@ -32,7 +32,7 @@ extension Published where Value == String {
 				if let data = value.data(using: .utf8) {
 					KeyChain.save(data, for: key, at: keychainGroup)
 				} else {
-					KeyChain.remove(for: key)
+					KeyChain.remove(for: key, at: keychainGroup)
 				}
 			}
 			.store(in: &cancellables)
@@ -46,7 +46,7 @@ extension Published where Value == String? {
 		keychainGroup: KeychainGroup? = .none
 	) {
 		let key = keychainKey.localizedLowercase.replacing(.whitespaces, with: .underline)
-		if let data = KeyChain.data(for: key),
+		if let data = KeyChain.data(for: key, at: keychainGroup),
 		   let string = String(data: data, encoding: .utf8) {
 			self.init(initialValue: string)
 		} else {
@@ -59,7 +59,7 @@ extension Published where Value == String? {
 				   let data = value.data(using: .utf8) {
 					KeyChain.save(data, for: key, at: keychainGroup)
 				} else {
-					KeyChain.remove(for: key)
+					KeyChain.remove(for: key, at: keychainGroup)
 				}
 			}
 			.store(in: &cancellables)
@@ -76,7 +76,7 @@ extension Published {
 	) where Model: Codable, Value == Model? {
 		let key = keychainKey.localizedLowercase.replacing(.whitespaces, with: .underline)
 		
-		if let data = KeyChain.data(for: key) {
+		if let data = KeyChain.data(for: key, at: keychainGroup) {
 			do {
 				let model = try JSONDecoder().decode(Model.self, from: data)
 				self.init(initialValue: model)
@@ -95,10 +95,10 @@ extension Published {
 						KeyChain.save(data, for: key, at: keychainGroup)
 					} catch {
 						print("::publisher: Can't encode \(Value.self) to save in KeyChain for `\(key)` key. KeyChain value removed.")
-						KeyChain.remove(for: key)
+						KeyChain.remove(for: key, at: keychainGroup)
 					}
 				} else {
-					KeyChain.remove(for: key)
+					KeyChain.remove(for: key, at: keychainGroup)
 				}
 			}
 			.store(in: &cancellables)
