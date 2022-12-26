@@ -484,3 +484,106 @@ public extension Collection {
 		)
 	}
 }
+
+// MARK: Replace
+
+extension Collection where Self: MutableCollection & RangeReplaceableCollection {
+	/// Replace an element matching condition
+	/// - Parameters:
+	///   - element: Element
+	///   - add: Append element if no elements matching condition found
+	///   - condition: Replacing condition
+	/// - Returns: Element matching condition was found
+	@discardableResult
+	mutating public func replaceFirst(
+		with element: Element,
+		add: Bool = false,
+		where condition: (Element) -> Bool
+	) -> Bool {
+		if let index = firstIndex(where: condition) {
+			self[index] = element
+			return true
+		} else if add {
+			append(element)
+		}
+		return false
+	}
+	
+	/// Replace all elements matching condition
+	/// - Parameters:
+	///   - element: Element
+	///   - add: Append element if no elements matching condition found
+	///   - condition: Replacing condition
+	/// - Returns: Elements matching condition were found
+	@discardableResult
+	mutating public func replaceAll(
+		with element: Element,
+		add: Bool = false,
+		where condition: (Element) -> Bool
+	) -> Bool {
+		var wasAdded = false
+		for index in indices {
+			if condition(self[index]) {
+				self[index] = element
+				wasAdded = true
+			}
+		}
+		if add, not(wasAdded) {
+			append(element)
+		}
+		return wasAdded
+	}
+	
+	/// Creates a copy with a replaced element matching condition
+	/// - Parameters:
+	///   - element: Element
+	///   - add: Append element if no elements matching condition found
+	///   - condition: Replacing condition
+	/// - Returns: A copy with a replaced element
+	public func replacingFirst(
+		with element: Element,
+		add: Bool = false,
+		where condition: (Element) -> Bool
+	) -> Self {
+		if let index = firstIndex(where: condition) {
+			var copy = self
+			copy[index] = element
+			return copy
+		} else if add {
+			return appending(element)
+		} else {
+			return self
+		}
+	}
+	
+	/// Creates a copy with all element matching condition being replaced
+	/// - Parameters:
+	///   - element: Element
+	///   - add: Append element if no elements matching condition found
+	///   - condition: Replacing condition
+	/// - Returns: A copy with replaced elements
+	public func replacingAll(
+		with element: Element,
+		add: Bool = false,
+		where condition: (Element) -> Bool
+	) -> Self {
+		var wasAdded = false
+		var copy = self
+		
+		for index in copy.indices {
+			if condition(copy[index]) {
+				copy[index] = element
+				wasAdded = true
+			}
+		}
+		
+		if wasAdded {
+			return copy
+		} else if add {
+			return appending(element)
+		} else {
+			return self
+		}
+	}
+
+}
