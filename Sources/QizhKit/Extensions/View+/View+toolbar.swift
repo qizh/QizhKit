@@ -11,10 +11,12 @@ import SwiftUI
 extension View {
 	@available(iOS 14.0, *)
 	@inlinable
-	public func hideInlineNavigationBarTitle() -> some View {
+	public func hideInlineNavigationBarTitle(hide: Bool = true) -> some View {
 		toolbar {
 			ToolbarItem(placement: .principal) {
-				Text.empty
+				if hide {
+					Text.empty
+				}
 			}
 		}
 	}
