@@ -26,7 +26,8 @@ extension TextEditor {
 extension View {
 	/// `TextEditor` placeholder text placed under the editor
 	/// - Parameters:
-	///   - placeholder: Placeholder string visible when no text enetered
+	///   - placeholder: Placeholder view visible when no text enetered
+	///   - alignment: `ZStack` alignment
 	///   - text: Text produced by TextEditor
 	///   - compact: Removes extra editor padding when set to `true`
 	/// - Note:
@@ -34,8 +35,8 @@ extension View {
 	/// to make it work on iOS 15 or earlier.
 	/// Add it in you main app view, and in preview provider view.
 	@inlinable
-	public func placeholder(
-		_ placeholder: Text,
+	public func placeholder <Placeholder: View> (
+		_ placeholder: Placeholder,
 		alignment: Alignment = .topLeading,
 		editing text: String,
 		compact: Bool
@@ -50,18 +51,41 @@ extension View {
 	
 	/// `TextEditor` placeholder text placed under the editor
 	/// - Parameters:
-	///   - placeholder: Placeholder string visible when no text enetered
+	///   - placeholder: Placeholder view visible when no text enetered
+	///   - alignment: `ZStack` alignment
 	///   - visible: Condition for showing placeholder
 	///   - compact: Removes extra editor padding when set to `true`
 	/// - Note:
 	/// `.textEditorClearBackgroundAppearance()` view modifier required
 	/// to make it work on iOS 15 or earlier.
 	/// Add it in you main app view, and in preview provider view.
-	public func placeholder(
-		_ placeholder: Text,
+	@inlinable
+	public func placeholder <Placeholder: View> (
+		_ placeholder: Placeholder,
 		alignment: Alignment = .topLeading,
 		visible: Bool,
 		compact: Bool
+	) -> some View {
+		self.placeholder(alignment: alignment, visible: visible, compact: compact) {
+			placeholder
+		}
+	}
+	
+	/// `TextEditor` placeholder text placed under the editor
+	/// - Parameters:
+	///   - alignment: `ZStack` alignment
+	///   - visible: Condition for showing placeholder
+	///   - compact: Removes extra editor padding when set to `true`
+	///   - placeholder: Placeholder view visible when no text enetered
+	/// - Note:
+	/// `.textEditorClearBackgroundAppearance()` view modifier required
+	/// to make it work on iOS 15 or earlier.
+	/// Add it in you main app view, and in preview provider view.
+	public func placeholder <Placeholder: View> (
+		alignment: Alignment = .topLeading,
+		visible: Bool,
+		compact: Bool,
+		placeholder: () -> Placeholder
 	) -> some View {
 		ZStack(alignment: alignment) {
 			self
@@ -80,8 +104,8 @@ extension View {
 				.zIndex(20)
 			
 			if visible {
-				placeholder
-					.foregroundColor(\.placeholderText)
+				placeholder()
+					.foregroundPlaceholder()
 					.padding(
 						compact
 							? .zero
