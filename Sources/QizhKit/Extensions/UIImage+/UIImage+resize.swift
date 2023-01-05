@@ -43,14 +43,14 @@ public extension Image {
 extension UIImage {
 	/// Keeping aspect ratio
 	public func resized(
-		to size: CGFloat,
+		to size: CGSize,
 		contentMode: ContentMode = .fit,
 		opaque: Bool
 	) -> UIImage {
 		let scale: CGFloat
 		switch contentMode {
-		case .fit:  scale = size / self.size.biggerSide
-		case .fill: scale = size / self.size.smallerSide
+		case .fit:  scale = min(size.width / self.size.width, size.height / self.size.height)
+		case .fill: scale = max(size.width / self.size.width, size.height / self.size.height)
 		}
 		
 		let renderFormat = UIGraphicsImageRendererFormat.default()

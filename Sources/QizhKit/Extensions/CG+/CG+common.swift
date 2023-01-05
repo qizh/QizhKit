@@ -209,6 +209,14 @@ public extension CGSize {
 	@inlinable func scaled(_ horizontal: Factor, _ vertical: Factor) -> CGSize {
 		CGSize(width.scaled(horizontal), height.scaled(vertical))
 	}
+	func scaled(to size: CGSize, contentMode: ContentMode) -> CGSize {
+		let factor: CGFloat
+		switch contentMode {
+		case .fit: factor = min(size.width / self.width, size.height / self.height)
+		case .fill: factor = max(size.width / self.width, size.height / self.height)
+		}
+		return scaled(.factor(factor))
+	}
 }
 
 public extension CGSize {
