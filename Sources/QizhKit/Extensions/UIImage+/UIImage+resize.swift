@@ -38,17 +38,25 @@ public extension Image {
 	}
 }
 
-public extension UIImage {
-	func resized(to size: CGFloat, _ mode: ResizeMode) -> UIImage {
+// MARK: Resize
+
+extension UIImage {
+	/// Keeping aspect ratio
+	public func resized(
+		to size: CGFloat,
+		contentMode: ContentMode = .fit,
+		opaque: Bool
+	) -> UIImage {
 		let scale: CGFloat
-		switch mode {
+		switch contentMode {
 		case .fit:  scale = size / self.size.biggerSide
 		case .fill: scale = size / self.size.smallerSide
 		}
 		
 		let renderFormat = UIGraphicsImageRendererFormat.default()
-		renderFormat.opaque = true
+		renderFormat.opaque = opaque
 		renderFormat.scale = scale
+		
 		let renderer = UIGraphicsImageRenderer(size: self.size, format: renderFormat)
 		let redrawnImage = renderer.image { context in
 			self.draw(in: CGRect(origin: .zero, size: self.size))
@@ -56,17 +64,17 @@ public extension UIImage {
 		return redrawnImage
 	}
 	
-	enum ResizeMode {
-		case fit
-		case fill
-	}
-	
-	func resized(to size: CGSize) -> UIImage {
+	/// Can change aspect ratio
+	public func resized(to size: CGSize) -> UIImage {
 		UIGraphicsImageRenderer(size: size).image { _ in
 			draw(in: CGRect(origin: .zero, size: size))
 		}
 	}
-	
+}
+
+// MARK: Symbol Configuration
+
+public extension UIImage {
 	@inlinable
 	convenience init?(
 		systemName name: String,
