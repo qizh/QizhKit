@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/Alamofire/Alamofire",
         "state": {
           "branch": null,
-          "revision": "becd9a729a37bdbef5bc39dc3c702b99f9e3d046",
-          "version": "5.2.2"
+          "revision": "78424be314842833c04bc3bef5b72e85fff99204",
+          "version": "5.6.4"
         }
       },
       {
@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/stleamist/BetterSafariView.git",
         "state": {
           "branch": null,
-          "revision": "be7248720af18c57c7a1348b20f6212379b28c6b",
-          "version": "2.4.0"
+          "revision": "dffd42bc70287e761979bc81dd278db5c80f0deb",
+          "version": "2.4.1"
         }
       },
       {
@@ -24,8 +24,8 @@
         "repositoryURL": "https://github.com/devicekit/DeviceKit",
         "state": {
           "branch": null,
-          "revision": "12cff4b02bb63ce90eb92dba4164b6555f2669a8",
-          "version": "4.8.0"
+          "revision": "d37e70cb2646666dcf276d7d3d4a9760a41ff8a6",
+          "version": "4.9.0"
         }
       },
       {

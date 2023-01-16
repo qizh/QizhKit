@@ -1,99 +1,36 @@
-// swift-tools-version:5.3
+// swift-tools-version: 5.7
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
+let settings: [SwiftSetting] = [
+	.unsafeFlags(["-warn-deprecated-declarations"], .when(configuration: .debug))
+]
+
 let package = Package(
     name: "QizhKit",
-	platforms: [
-		.iOS(.v13),
-	],
+	platforms: [.iOS(.v13)],
     products: [
         .library(
             name: "QizhKit",
-			// type: .dynamic,
-            targets: [
-				"QizhKit"
-			]
+            targets: ["QizhKit"]
 		),
     ],
-    dependencies: [
-		/*
-		.package(
-			name: "PhoneNumberKit",
-			url: "https://github.com/marmelroy/PhoneNumberKit",
-			from: "3.3.0"
-		),
-		*/
-		/*
-		.package(
-			name: "Introspect",
-			url: "https://github.com/siteline/SwiftUI-Introspect",
-			from: "0.1.3"
-		),
-		*/
-		.package(
-			name: "Introspect",
-			url: "https://github.com/qizh/SwiftUI-Introspect",
-			from: "0.1.6"
-		),
-		.package(
-			name: "Alamofire",
-			url: "https://github.com/Alamofire/Alamofire",
-			from: "5.0.0"
-		),
-		/*
-		.package(
-			name: "SwiftDate",
-			url: "https://github.com/malcommac/SwiftDate",
-			from: "6.2.0"
-		),
-		*/
-		/*
-		.package(
-			name: "swift-nonempty",
-			url: "https://github.com/pointfreeco/swift-nonempty",
-			from: "0.3.1"
-		),
-		*/
-		.package(
-			name: "DeviceKit",
-			url: "https://github.com/devicekit/DeviceKit",
-			from: "4.7.0"
-		),
-		.package(
-			name: "BetterSafariView",
-			url: "https://github.com/stleamist/BetterSafariView.git",
-			from: "2.3.1"
-		),
-    ],
+	dependencies: [
+		.package(url: "https://github.com/qizh/SwiftUI-Introspect", from: "0.1.6"),
+		.package(url: "https://github.com/Alamofire/Alamofire", from: "5.6.4"),
+		.package(url: "https://github.com/devicekit/DeviceKit", from: "4.9.0"),
+		.package(url: "https://github.com/stleamist/BetterSafariView", from: "2.4.1"),
+	],
     targets: [
         .target(
             name: "QizhKit",
-            dependencies: [
-				/*
-				"PhoneNumberKit",
-				*/
-				"Introspect",
+			dependencies: [
+				.product(name: "Introspect", package: "SwiftUI-Introspect"),
 				"Alamofire",
-				/*
-				"SwiftDate",
-				*/
-				/*
-				.product(
-					name: "NonEmpty",
-					package: "swift-nonempty"
-				),
-				*/
 				"DeviceKit",
 				"BetterSafariView",
 			]
 		),
-		/*
-        .testTarget(
-            name: "QizhKitTests",
-            dependencies: ["QizhKit"]
-		),
-		*/
     ]
 )
