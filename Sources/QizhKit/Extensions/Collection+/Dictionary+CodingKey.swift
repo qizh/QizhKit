@@ -8,13 +8,16 @@
 
 import Foundation
 
-extension Dictionary
-	where Key == String,
-		  Value == Any
-{
+extension Dictionary where Key == String {
 	/// Use key's `stringValue` as a dictionary key
-	public subscript(key: CodingKey) -> Value? {
+	@inlinable public subscript(_ key: CodingKey) -> Value? {
 		get { self[key.stringValue] }
 		set { self[key.stringValue] = newValue }
+	}
+	
+	/// Use key's `rawValue` as a dictionary key
+	@inlinable public subscript(_ key: some RawRepresentable<String>) -> Value? {
+		get { self[key.rawValue] }
+		set { self[key.rawValue] = newValue }
 	}
 }
