@@ -23,7 +23,7 @@ extension DataResponse {
 		format shouldFormat: Bool = false
 	) -> String {
 		guard debugDepth.is(not: .none) else {
-			return "[Result]: \(result.caseName)" + .newLine
+			return "[Result]: \(result.caseName)"
 		}
 		
 		guard let request = request else {
@@ -31,7 +31,6 @@ extension DataResponse {
 			[Request]: None
 			[Result]: \(result.caseName)
 			"""
-			+ .newLine
 		}
 		
 		let jsonType = "json"
@@ -153,7 +152,7 @@ extension DataResponse {
 			if description.isNotEmpty {
 				description = "[Response]:" + .newLine + description
 			}
-			return description + .newLine
+			return description
 		} ?? (
 			debugDepth > .minimum
 				? "[Response]: None"
@@ -180,7 +179,7 @@ extension DataResponse {
 			? "\(result)"
 			: result.caseName
 		
-		output += .newLine + "[Result]: \(resultOutput)" + .newLine
+		output += .newLine + "[Result]: \(resultOutput)"
 		
 		return output
 	}
