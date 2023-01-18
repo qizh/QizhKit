@@ -70,7 +70,7 @@ public enum StringOffset {
 
 extension String {
 	@inlinable
-	public func offsetting(by offset: StringOffset, first: Bool = true) -> String {
+	public func offsetting(by offset: StringOffset, first: Bool) -> String {
 			(first ? offset.value : .empty)
 		+ 	self.replacing(.newLine, with: .newLine + offset.value)
 	}

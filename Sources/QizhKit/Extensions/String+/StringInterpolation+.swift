@@ -200,7 +200,7 @@ extension DefaultStringInterpolation {
 	public mutating func appendInterpolation<T>(
 		_ value: T,
 		offset: StringOffset,
-		first: Bool = true
+		first: Bool = false
 	) {
 		appendLiteral("\(value)".offsetting(by: offset, first: first))
 	}
