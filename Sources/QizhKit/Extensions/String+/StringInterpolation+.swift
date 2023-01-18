@@ -193,3 +193,15 @@ public extension DefaultStringInterpolation {
 		}
 	}
 }
+
+// MARK: Offset
+
+extension DefaultStringInterpolation {
+	public mutating func appendInterpolation<T>(
+		_ value: T,
+		offset: StringOffset,
+		first: Bool = true
+	) {
+		appendLiteral("\(value)".offsetting(by: offset, first: first))
+	}
+}

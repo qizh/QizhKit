@@ -50,6 +50,32 @@ extension String {
 	}
 }
 
+// MARK: Offset
+
+public enum StringOffset {
+	case spaces(_ amount: UInt, prefix: String = .empty, suffix: String = .empty)
+	case tabs(_ amount: UInt, prefix: String = .empty, suffix: String = .empty)
+	
+	public static let space: Self = .spaces(1)
+	public static let tab: Self = .tabs(1)
+	public static let tabArrow: Self = .tabs(1, suffix: "> ")
+	
+	public var value: String {
+		switch self {
+		case let .spaces(amount, prefix, suffix): return prefix + .space * amount + suffix
+		case let .tabs(amount, prefix, suffix): return prefix + .tab * amount + suffix
+		}
+	}
+}
+
+extension String {
+	@inlinable
+	public func offsetting(by offset: StringOffset, first: Bool = true) -> String {
+			(first ? offset.value : .empty)
+		+ 	self.replacing(.newLine, with: .newLine + offset.value)
+	}
+}
+
 extension String {
 	
 	/// Spaces
