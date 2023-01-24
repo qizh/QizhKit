@@ -10,6 +10,7 @@ import Foundation
 
 public extension Date {
 	@available(iOS, obsoleted: 15, message: "Implemented in Foundation")
+	@_disfavoredOverload
 	@inlinable static var now: Date       { Date() }
 	@inlinable static var today: Date     { Date() }
 	@inlinable static var tomorrow: Date  { .today + 1.daysInterval }
