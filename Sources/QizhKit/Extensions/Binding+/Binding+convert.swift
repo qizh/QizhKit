@@ -49,9 +49,31 @@ public extension Binding where Value == Date {
 	}
 }
 
-public extension Binding where Value == String {
-	func asOptional(default defaultValue: String = .empty) -> Binding<String?> {
+// MARK: Optional
+
+extension Binding where Value == String {
+	public func asOptional(default defaultValue: String = .empty) -> Binding<String?> {
 		Binding<String?> {
+			wrappedValue == defaultValue ? .none : wrappedValue
+		} set: { value in
+			wrappedValue = value ?? defaultValue
+		}
+	}
+}
+
+extension Binding where Value: AdditiveArithmetic {
+	public func asOptional(default defaultValue: Value = .zero) -> Binding<Value?> {
+		Binding<Value?> {
+			wrappedValue == defaultValue ? .none : wrappedValue
+		} set: { value in
+			wrappedValue = value ?? defaultValue
+		}
+	}
+}
+
+extension Binding where Value: Equatable {
+	public func asOptional(default defaultValue: Value) -> Binding<Value?> {
+		Binding<Value?> {
 			wrappedValue == defaultValue ? .none : wrappedValue
 		} set: { value in
 			wrappedValue = value ?? defaultValue
