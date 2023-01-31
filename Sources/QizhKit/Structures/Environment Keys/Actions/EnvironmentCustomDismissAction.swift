@@ -1,5 +1,5 @@
 //
-//  CustomDismissEnvironmentKey.swift
+//  EnvironmentCustomDismissAction.swift
 //  QizhKit
 //
 //  Created by Serhii Shevchenko on 21.08.2021.
@@ -8,26 +8,12 @@
 
 import SwiftUI
 
-public struct CustomDismissAction: EmptyProvidable {
-	private let callback: () -> Void
-	
-	internal init(_ callback: @escaping () -> Void) {
-		self.callback = callback
-	}
-	
-	public func callAsFunction() {
-		callback()
-	}
-	
-	public static let empty: CustomDismissAction = .init({})
-}
-
 public struct CustomDismissActionKey: EnvironmentKey {
-	public static var defaultValue: CustomDismissAction = .empty
+	public static var defaultValue: CustomEnvironmentAction = .doNothing
 }
 
 extension EnvironmentValues {
-	public internal(set) var customDismiss: CustomDismissAction {
+	public internal(set) var customDismiss: CustomEnvironmentAction {
 		get { self[CustomDismissActionKey.self] }
 		set { self[CustomDismissActionKey.self] = newValue }
 	}
@@ -41,7 +27,7 @@ extension View {
 	public func dismissable(toggling toggle: Binding<Bool>) -> some View {
 		environment(
 			\.customDismiss,
-			CustomDismissAction {
+			CustomEnvironmentAction {
 				toggle.wrappedValue = false
 			}
 		)
@@ -50,7 +36,7 @@ extension View {
 	public func dismissable <Value> (resetting optional: Binding<Value?>) -> some View {
 		environment(
 			\.customDismiss,
-			CustomDismissAction {
+			CustomEnvironmentAction {
 				optional.wrappedValue = .none
 			}
 		)
@@ -62,7 +48,7 @@ extension View {
 	) -> some View {
 		environment(
 			\.customDismiss,
-			CustomDismissAction {
+			CustomEnvironmentAction {
 				property.wrappedValue = value
 			}
 		)
