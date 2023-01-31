@@ -463,6 +463,7 @@ public enum URLOpenTarget {
 	case safari
 }
 
+/*
 // MARK: Action
 
 public protocol ExecutableAction {
@@ -517,3 +518,4 @@ public extension ExecutableAction {
 		Action.Assign(value, to: keyPath, on: object)
 	}
 }
+*/
