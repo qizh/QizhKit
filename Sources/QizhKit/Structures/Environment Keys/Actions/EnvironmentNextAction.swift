@@ -21,10 +21,10 @@ extension EnvironmentValues {
 
 extension View {
 	public func onNext(_ action: @escaping () -> Void) -> some View {
-		environment(\.customDismiss, .init(action))
+		environment(\.next, .init(action))
 	}
 	
 	public func onNext(_ action: CustomEnvironmentAction) -> some View {
-		environment(\.customDismiss, action)
+		environment(\.next, action)
 	}
 }

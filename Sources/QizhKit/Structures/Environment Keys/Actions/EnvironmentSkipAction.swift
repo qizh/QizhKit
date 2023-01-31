@@ -21,10 +21,10 @@ extension EnvironmentValues {
 
 extension View {
 	public func onSkip(_ action: @escaping () -> Void) -> some View {
-		environment(\.customDismiss, .init(action))
+		environment(\.skip, .init(action))
 	}
 	
 	public func onSkip(_ action: CustomEnvironmentAction) -> some View {
-		environment(\.customDismiss, action)
+		environment(\.skip, action)
 	}
 }
