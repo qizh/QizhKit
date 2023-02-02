@@ -7,8 +7,10 @@
 //
 
 import SwiftUI
+import Combine
 
 extension View {
+	@available(*, deprecated, renamed: "selectAllOnTextEditingBegin", message: "This modifier only affects TextField, use another one that affects both TextField and TextEditor")
 	public func selectAllOnTextFieldFocus() -> some View {
 		onReceive(
 			NotificationCenter.default.publisher(for: UITextField.textDidBeginEditingNotification)
@@ -19,6 +21,21 @@ extension View {
 				to: textField.endOfDocument
 			)
 		}
-
+	}
+	
+	/// On `textDidBeginEditingNotification` notification will change text input's `selectedTextRange` to the whole document range
+	public func selectAllOnTextEditingBegin() -> some View {
+		onReceive(
+			Publishers.Merge(
+				NotificationCenter.default.publisher(for: UITextField.textDidBeginEditingNotification),
+				NotificationCenter.default.publisher(for: UITextView.textDidBeginEditingNotification)
+			)
+		) { notification in
+			guard let field = notification.object as? UITextInput else { return }
+			field.selectedTextRange = field.textRange(
+				from: field.beginningOfDocument,
+				to: field.endOfDocument
+			)
+		}
 	}
 }
