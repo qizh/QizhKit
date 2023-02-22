@@ -224,13 +224,3 @@ public struct MainQueue {
 	
 	// TODO: Finish for 3 values, do the same for `function(calling:in:)`")
 }
-
-// MARK: Transaction
-
-extension Transaction {
-	public static var withNoAnimations: Transaction {
-		var transaction = Transaction()
-		transaction.disablesAnimations = true
-		return transaction
-	}
-}
