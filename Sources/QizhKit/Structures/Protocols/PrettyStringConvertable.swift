@@ -8,15 +8,18 @@
 
 import Foundation
 
+/// Provides default implementations.
+/// ``description``: Entity name (and id when ``Identifiable``),
+/// ``debugDescription``: JSON representation
 public protocol PrettyStringConvertable:
 	CustomDebugStringConvertible,
 	CustomStringConvertible,
 	Encodable
 { }
 
-public extension PrettyStringConvertable {
-	/// JSON representation of the model
-	var description: String {
+extension PrettyStringConvertable {
+	/// JSON representation
+	public var debugDescription: String {
 		let encoder = JSONEncoder()
 		encoder.outputFormatting = .prettyPrinted
 		
@@ -25,12 +28,20 @@ public extension PrettyStringConvertable {
 			let string = String(decoding: encoded, as: UTF8.self)
 			return string
 		} catch {
-			return error.localizedDescription
+			print(
+				"""
+				⚠️ [PrettyStringConvertable]
+					┣ `debugDescription` failed for > \(Self.self)
+					┣ JSON encoding error > \(error.localizedDescription)
+					┣ fallback to > \(description)
+				"""
+			)
+			return description
 		}
 	}
 	
 	/// Model entity name and id
-	var debugDescription: String {
+	public var description: String {
 		caseName(of: Self.self, .name) + debugIdentifier()
 	}
 	
