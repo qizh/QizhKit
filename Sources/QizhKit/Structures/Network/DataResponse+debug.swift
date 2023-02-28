@@ -36,6 +36,7 @@ extension DataResponse {
 		let jsonType = "json"
 		let printableTypes = [jsonType, "xml", "text", "form-urlencoded", "graphql"]
 		
+		/*
 		// MARK: Request
 		
 		let requestBodyDescription: String
@@ -72,6 +73,9 @@ extension DataResponse {
 				\(requestBodyDescription.tabOffsettingNewLines())
 			"""
 		}
+		*/
+		
+		let requestDescription = request.debugDescription(depth: debugDepth)
 		
 		// MARK: Response
 		
