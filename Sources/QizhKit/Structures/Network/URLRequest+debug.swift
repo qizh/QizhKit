@@ -41,7 +41,7 @@ extension URLRequest {
 					\(headers.sorted().description, offset: .tabs(2))
 			"""
 		}
-		if description.isNotEmpty {
+		if bodyDescription.isNotEmpty {
 			description += .newLine + """
 				\(bodyDescription, offset: .tab)
 			"""
