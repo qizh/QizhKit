@@ -188,3 +188,19 @@ public extension String {
 	}
 }
 */
+
+// MARK: Wrap
+
+extension String {
+	/// - Parameters:
+	///   - prefix: String to prepend.
+	///   - suffix: String to append. If not provided, reversed prefix is used instead.
+	/// - Returns: prefix + self + suffix or reversed prefix
+	@inlinable public func wrapped(
+		in prefix: String,
+		and suffix: String? = .none
+	) -> String {
+		prefix + self + (suffix ?? String(prefix.reversed()))
+	}
+}
+
