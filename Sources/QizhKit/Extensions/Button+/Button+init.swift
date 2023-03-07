@@ -224,7 +224,7 @@ public extension View {
 	@inlinable
 	func asyncButton(
 		priority: TaskPriority? = .none,
-		action: @escaping () async -> Void
+		action: @escaping @Sendable () async -> Void
 	) -> Button<Self> {
 		button {
 			Task(priority: priority) {
@@ -236,7 +236,7 @@ public extension View {
 	@inlinable
 	func asyncButton <A> (
 		priority: TaskPriority? = .none,
-		action: @escaping (A) async -> Void,
+		action: @escaping @Sendable (A) async -> Void,
 		_ argument: A
 	) -> Button<Self> {
 		button {
@@ -249,7 +249,7 @@ public extension View {
 	@inlinable
 	func asyncButton <A1, A2> (
 		priority: TaskPriority? = .none,
-		action: @escaping (A1, A2) async -> Void,
+		action: @escaping @Sendable (A1, A2) async -> Void,
 		_ argument1: A1,
 		_ argument2: A2
 	) -> Button<Self> {
