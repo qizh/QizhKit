@@ -1,3 +1,3 @@
 # QizhKit
 
-Serhii's mainly SwiftUI framework
+Collection of Swift and SwiftUI small tools and extensions
