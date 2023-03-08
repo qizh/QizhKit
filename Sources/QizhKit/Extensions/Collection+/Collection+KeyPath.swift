@@ -169,12 +169,32 @@ public extension Collection where Element: EasyComparable {
 
 // MARK: Last
 
-public extension BidirectionalCollection {
-	@inlinable func last <Value: EasyComparable> (
-		where keyPath: KeyPath<Element, Value>,
+extension BidirectionalCollection {
+	@inlinable public func last <Value: EasyComparable> (
+		where transform: (Element) -> Value,
 		is value: Value.Other
 	) -> Element? {
-		last(where: { $0[keyPath: keyPath].is(value) })
+		last(where: { transform($0).is(value) })
+	}
+	
+	@inlinable public func last <Value: EasyComparable, Sortable> (
+		by sortTransform: (Element) -> Sortable,
+		using valuesAreInIncreasingOrder: (Sortable, Sortable) throws -> Bool,
+		where compareTransform: (Element) -> Value,
+		is value: Value.Other
+	) rethrows -> Element? {
+		try self
+			.filter({ compareTransform($0).is(value) })
+			.max(by: sortTransform, using: valuesAreInIncreasingOrder)
+	}
+	
+	@inlinable public func last <Value: EasyComparable> (
+		by sortTransform: (Element) -> some Comparable,
+		where compareTransform: (Element) -> Value,
+		is value: Value.Other
+	) -> Element? {
+		self.filter({ compareTransform($0).is(value) })
+			.max(by: sortTransform)
 	}
 }
 
