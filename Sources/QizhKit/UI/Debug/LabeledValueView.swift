@@ -845,7 +845,7 @@ public struct LabeledValueView_Previews: PreviewProvider {
 							LabeledValueView(describing: [1, 5, [0.2, 0.67]].last, label: "Opt Array")
 							CGSize.zero.labeledView()
 							Date().labeledView()
-							[1, "2"].count.labeledView()
+							([1, "2"] as [Any]).count.labeledView()
 							CGPoint(x: 2, y: 6).labeledView()
 							CGRect(x: 0, y: 100, width: 410, height: 800).labeledView()
 						}

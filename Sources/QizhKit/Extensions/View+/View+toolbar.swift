@@ -9,29 +9,27 @@
 import SwiftUI
 
 extension View {
-	@available(iOS 14.0, *)
-	@inlinable
-	public func hideInlineNavigationBarTitle(hide: Bool = true) -> some View {
+	/// Adds `.principal` toolabar item with empty ``Text``
+	@inlinable public func hideInlineNavigationBarTitle(hide: Bool = true) -> some View {
 		toolbar {
 			ToolbarItem(placement: .principal) {
 				if hide {
-					Text.empty
+					Text(String.empty)
 				}
 			}
 		}
 	}
 	
-	/// An iOS 14 only hack to make `ToolbarItem` treat the `Label` or `Text` as `View`
-	@available(iOS 14.0, *)
-	@inlinable
+	/// An iOS 14 only hack to make `ToolbarItem` treat the `Label` or `Text` as `View` – wraps it in an `HStack` with emtpy `Text`
+	@ViewBuilder
 	public func asToolbarView() -> some View {
-		HStack(spacing: 0) {
+		if #available(iOS 15, *) {
 			self
-			if #unavailable(iOS 15) {
-				Text.empty
+		} else {
+			HStack(spacing: 0) {
+				self
+				Text(String.empty)
 			}
 		}
-		
-		// add(.trailing, spacing: .zero) { Text.empty }
 	}
 }
