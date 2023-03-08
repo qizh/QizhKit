@@ -114,21 +114,49 @@ extension Collection {
 	
 	// MARK: > CC
 	
+	/*
 	@available(*, deprecated, message: "Switch from `CaseComparable` to `EasyComparable`")
-	@inlinable
-	public func first<Value: CaseComparable>(
+	@inlinable public func first <Value: CaseComparable> (
 		where transform: (Element) -> Value,
 		is value: Value
 	) -> Element? {
 		first(where: { transform($0).is(value) })
 	}
+	*/
 	
-	@inlinable
-	public func first<Value: EasyComparable>(
+	@inlinable public func first <Value: EasyComparable> (
 		where transform: (Element) -> Value,
 		is value: Value.Other
 	) -> Element? {
 		first(where: { transform($0).is(value) })
+	}
+	
+	@inlinable public func first <Value: EasyComparable, Sortable> (
+		by sortTransform: (Element) -> Sortable,
+		using valuesAreInIncreasingOrder: (Sortable, Sortable) throws -> Bool,
+		where compareTransform: (Element) -> Value,
+		is value: Value.Other
+	) rethrows -> Element? {
+		try self
+			.filter({ compareTransform($0).is(value) })
+			.min(by: sortTransform, using: valuesAreInIncreasingOrder)
+			/*
+			.sorted(by: sortBy, using: valuesAreInIncreasingOrder)
+			.first(where: { transform($0).is(value) })
+			*/
+	}
+	
+	@inlinable public func first <Value: EasyComparable> (
+		by sortTransform: (Element) -> some Comparable,
+		where compareTransform: (Element) -> Value,
+		is value: Value.Other
+	) -> Element? {
+		self.filter({ compareTransform($0).is(value) })
+			.min(by: sortTransform)
+			/*
+			.sorted(by: sortBy, using: <)
+			.first(where: { transform($0).is(value) })
+			*/
 	}
 }
 
@@ -378,21 +406,21 @@ public extension Collection where Element: EasyComparable {
 
 public extension Collection {
 	@inlinable func max<Value>(
-		by keyPath: KeyPath<Element, Value>,
+		by transform: (Element) -> Value,
 		using compare: (Value, Value) throws -> Bool
-	) rethrows -> Element? where Value: Comparable {
+	) rethrows -> Element? {
 		try self.max { left, right in
 			try compare(
-				left[keyPath: keyPath],
-				right[keyPath: keyPath]
+				transform(left),
+				transform(right)
 			)
 		}
 	}
 	
-	@inlinable func max<Value>(
-		by keyPath: KeyPath<Element, Value>
-	) -> Element? where Value: Comparable {
-		self.max(by: keyPath, using: <)
+	@inlinable func max(
+		by transform: (Element) -> some Comparable
+	) -> Element? {
+		self.max(by: transform, using: <)
 	}
 }
 
@@ -400,21 +428,21 @@ public extension Collection {
 
 public extension Collection {
 	@inlinable func min<Value>(
-		by keyPath: KeyPath<Element, Value>,
+		by transform: (Element) -> Value,
 		using areInIncreasingOrder: (Value, Value) throws -> Bool
-	) rethrows -> Element? where Value: Comparable {
+	) rethrows -> Element? {
 		try self.min { left, right in
 			try areInIncreasingOrder(
-				left[keyPath: keyPath],
-				right[keyPath: keyPath]
+				transform(left),
+				transform(right)
 			)
 		}
 	}
 	
-	@inlinable func min<Value>(
-		by keyPath: KeyPath<Element, Value>
-	) -> Element? where Value: Comparable {
-		self.min(by: keyPath, using: <)
+	@inlinable func min(
+		by transform: (Element) -> some Comparable
+	) -> Element? {
+		self.min(by: transform, using: <)
 	}
 }
 
