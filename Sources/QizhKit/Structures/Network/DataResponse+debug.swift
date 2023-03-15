@@ -19,9 +19,16 @@ extension DataResponse {
 	///   - shouldFormat: Format json responce
 	/// - Returns: Request and response description
 	public func debugDescription(
-		depth debugDepth: DebugDepth,
+		depth debug: DebugDepth,
 		format shouldFormat: Bool = false
 	) -> String {
+		let debugDepth: DebugDepth
+		if case .success = result {
+			debugDepth = .extra
+		} else {
+			debugDepth = debug
+		}
+		
 		guard debugDepth.is(not: .none) else {
 			return "[Result]: \(result.caseName)"
 		}
