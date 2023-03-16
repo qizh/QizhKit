@@ -23,7 +23,7 @@ extension DataResponse {
 		format shouldFormat: Bool = false
 	) -> String {
 		let debugDepth: DebugDepth
-		if case .success = result {
+		if case .failure = result {
 			debugDepth = .extra
 		} else {
 			debugDepth = debug
