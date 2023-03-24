@@ -79,7 +79,11 @@ public struct HeightBindingModifier: ViewModifier {
 				GeometryReader { geometry in
 					Color.almostClear
 						.transformPreference(HeightPreferenceKey.self) { $0 = geometry.size.height }
-						.onPreferenceChange(HeightPreferenceKey.self) { self.height = $0 }
+						.onPreferenceChange(HeightPreferenceKey.self) {
+							if height != $0 {
+								height = $0
+							}
+						}
 				}
 			)
 	}
