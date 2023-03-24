@@ -59,6 +59,12 @@ public enum StringOffset {
 	public static let space: Self = .spaces(1)
 	public static let tab: Self = .tabs(1)
 	public static let tabArrow: Self = .tabs(1, suffix: "> ")
+	public static let empty: Self = .spaces(0)
+	
+	public static let tree: Self = .tree(tabs: 1)
+	public static func tree(tabs: UInt) -> Self {
+		.tabs(tabs, suffix: "┣ ")
+	}
 	
 	public var value: String {
 		switch self {
