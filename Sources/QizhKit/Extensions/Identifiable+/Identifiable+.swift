@@ -11,8 +11,8 @@ import Foundation
 // MARK: + CaseIterable
 
 public protocol IdentifiableCaseIterable: Identifiable, CaseIterable, Equatable { }
-public extension IdentifiableCaseIterable {
-	var id: AllCases.Index {
+extension IdentifiableCaseIterable {
+	public var id: AllCases.Index {
 		Self.allCases.firstIndex(of: self)
 			?? Self.allCases.startIndex
 	}
@@ -21,6 +21,14 @@ public extension IdentifiableCaseIterable {
 // MARK: + RawRepresentable
 
 public protocol IdentifiableRawRepresentable: Identifiable, RawRepresentable { }
-public extension IdentifiableRawRepresentable {
-	var id: RawValue { rawValue }
+extension IdentifiableRawRepresentable {
+	public var id: RawValue { rawValue }
+}
+
+// MARK: Collection -> ids
+
+extension Collection where Element: Identifiable {
+	@inlinable public var ids: [Element.ID] {
+		map(\.id)
+	}
 }
