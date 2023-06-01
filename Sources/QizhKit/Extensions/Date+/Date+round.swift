@@ -1,6 +1,6 @@
 //
 //  Date+round.swift
-//  Cooktour Concierge
+//  QizhKit
 //
 //  Created by Serhii Shevchenko on 26.12.2019.
 //  Copyright © 2019 Serhii Shevchenko. All rights reserved.
@@ -9,46 +9,56 @@
 
 import Foundation
 
-public extension Date {
+extension Date {
 	/// To nearest or away from zero
-	@inlinable func round(precision: TimeInterval) -> Date {
+	@inlinable public func rounded(precision: TimeInterval) -> Date {
+		rounded(precision: precision, .toNearestOrAwayFromZero)
+	}
+	
+	/// Up
+	@inlinable public func ceiled(precision: TimeInterval) -> Date {
+		rounded(precision: precision, .up)
+	}
+	
+	/// Down
+	@inlinable public func floored(precision: TimeInterval) -> Date {
+		rounded(precision: precision, .down)
+	}
+	
+	@inlinable public func rounded(
+		precision: TimeInterval,
+		_ rule: FloatingPointRoundingRule
+	) -> Date {
+		Date(timeIntervalSinceReferenceDate: timeIntervalSinceReferenceDate.rounded(precision: precision, rule))
+	}
+}
+
+// MARK: Deprecated
+
+extension Date {
+	/// To nearest or away from zero
+	@available(*, deprecated, renamed: "rounded(precision:)")
+	@inlinable public func round(precision: TimeInterval) -> Date {
 		round(precision: precision, .toNearestOrAwayFromZero)
 	}
 	
 	/// Up
-	@inlinable func ceil(precision: TimeInterval) -> Date {
+	@available(*, deprecated, renamed: "ceiled(precision:)")
+	@inlinable public func ceil(precision: TimeInterval) -> Date {
 		round(precision: precision, .up)
 	}
 	
 	/// Down
-	@inlinable func floor(precision: TimeInterval) -> Date {
+	@available(*, deprecated, renamed: "floored(precision:)")
+	@inlinable public func floor(precision: TimeInterval) -> Date {
 		round(precision: precision, .down)
 	}
 	
-	@inlinable func round(precision: TimeInterval, _ rule: FloatingPointRoundingRule) -> Date {
-		Date(timeIntervalSinceReferenceDate: (timeIntervalSinceReferenceDate / precision).rounded(rule) * precision)
+	@available(*, deprecated, renamed: "rounded(precision:_:)")
+	@inlinable public func round(
+		precision: TimeInterval,
+		_ rule: FloatingPointRoundingRule
+	) -> Date {
+		Date(timeIntervalSinceReferenceDate: timeIntervalSinceReferenceDate.rounded(precision: precision, rule))
 	}
 }
-
-/*
-#if canImport(DateToolsSwift)
-import DateToolsSwift
-
-public extension Date {
-	/// To nearest or away from zero
-	@inlinable func round(precision: TimeChunk) -> Date {
-		round(precision: TimeInterval(precision.to(.seconds)), .toNearestOrAwayFromZero)
-	}
-	
-	/// Up
-	@inlinable func ceil(precision: TimeChunk) -> Date {
-		round(precision: TimeInterval(precision.to(.seconds)), .up)
-	}
-	
-	/// Down
-	@inlinable func floor(precision: TimeChunk) -> Date {
-		round(precision: TimeInterval(precision.to(.seconds)), .down)
-	}
-}
-#endif
-*/
