@@ -131,6 +131,13 @@ extension Collection {
 		first(where: { transform($0).is(value) })
 	}
 	
+	@inlinable public func first <Value: EasyComparable> (
+		where transform: (Element) -> Value,
+		in values: [Value.Other]
+	) -> Element? {
+		first(where: { transform($0).in(values) })
+	}
+	
 	@inlinable public func first <Value: EasyComparable, Sortable> (
 		by sortTransform: (Element) -> Sortable,
 		using valuesAreInIncreasingOrder: (Sortable, Sortable) throws -> Bool,
@@ -175,6 +182,13 @@ extension BidirectionalCollection {
 		is value: Value.Other
 	) -> Element? {
 		last(where: { transform($0).is(value) })
+	}
+	
+	@inlinable public func last <Value: EasyComparable> (
+		where transform: (Element) -> Value,
+		in values: [Value.Other]
+	) -> Element? {
+		last(where: { transform($0).in(values) })
 	}
 	
 	@inlinable public func last <Value: EasyComparable, Sortable> (
