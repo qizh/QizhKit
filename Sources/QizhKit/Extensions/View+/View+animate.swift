@@ -127,9 +127,11 @@ extension Animation {
 
 // MARK: Combine Transitions
 
-public extension View {
+extension View {
+	@_disfavoredOverload
 	@ViewBuilder
-	func transition(_ transitions: AnyTransition...) -> some View {
+	public func transition(_ transitions: AnyTransition...) -> some View {
+		// transition(transitions.combined() ?? .identity)
 		if let combination = transitions.combined() {
 			self.transition(combination)
 		} else {
