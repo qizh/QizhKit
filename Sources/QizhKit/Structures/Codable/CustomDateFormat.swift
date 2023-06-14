@@ -32,14 +32,13 @@ public struct CustomDate<FormatterProvider: DateFormatterProvidable>: Codable, H
     }
     
     public func encode(to encoder: Encoder) throws {
-        try wrappedValue.encode(to: encoder)
+		try wrappedValue
+			.map { value in
+				FormatterProvider.dateFormatter.string(from: value)
+			}
+			.encode(to: encoder)
+        // try wrappedValue.encode(to: encoder)
     }
-	
-	/*
-    public enum CustomDateError: Error {
-        case general
-    }
-	*/
 }
 
 @propertyWrapper
@@ -64,7 +63,10 @@ public struct MandatoryCustomDate<FormatterProvider: DateFormatterProvidable>: C
 	}
 	
 	public func encode(to encoder: Encoder) throws {
-		try wrappedValue.encode(to: encoder)
+		try FormatterProvider.dateFormatter
+			.string(from: wrappedValue)
+			.encode(to: encoder)
+		// try wrappedValue.encode(to: encoder)
 	}
 }
 
