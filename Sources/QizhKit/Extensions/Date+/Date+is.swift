@@ -19,15 +19,6 @@ public extension Date {
 		Date(timeIntervalSinceNow: interval)
 	}
 	
-	@inlinable static var startOfToday: Date         { Date.today.start(.day) }
-	@inlinable static var startOfTomorrow: Date   { Date.tomorrow.start(.day) }
-	@inlinable static var startOfYesterday: Date { Date.yesterday.start(.day) }
-	@inlinable static var startOfThisHour: Date        { Date.now.start(.hour) }
-	@inlinable static var startOfNextHour: Date { (Date.now + 1.hoursInterval).start(.hour) }
-	
-	@inlinable static var endOfThisHour: Date { startOfNextHour - 1.secondsInterval }
-	@inlinable static var endOfNextHour: Date { endOfThisHour + 1.hoursInterval }
-	
 	@inlinable static var reference0: Date { Date(timeIntervalSinceReferenceDate: 0) }
 	@inlinable static var unix0: Date { Date(timeIntervalSince1970: 0) }
 	@inlinable var isReference0: Bool { equals(.reference0) }
@@ -46,42 +37,12 @@ public extension Date {
 	@inlinable func   isLater(than date: Date) -> Bool { compare(date) == .orderedDescending }
 	@inlinable func isEarlier(than date: Date) -> Bool { compare(date) == .orderedAscending }
 	
-	@inlinable func start(_ components: Set<Calendar.Component>) -> Date {
-		Calendar.auto
-			.date(from: Calendar.auto.dateComponents(components, from: self))
-			.forceUnwrap(because: .validDateComponents)
-	}
-	
-	@inlinable func end(_ targetComponents: Set<Calendar.Component>) -> Date {
-		var components = Calendar.auto.dateComponents(targetComponents, from: self)
-		if targetComponents.contains(.minute) {
-			components.setValue(components.minute.orZero.next, for: .minute)
-		} else if targetComponents.contains(.hour) {
-			components.setValue(components.hour.orZero.next, for: .hour)
-		} else if targetComponents.contains(.day) {
-			components.setValue(components.day.orZero.next, for: .day)
-		} else if targetComponents.contains(.month) {
-			components.setValue(components.month.orZero.next, for: .month)
-		} else if targetComponents.contains(.year) {
-			components.setValue(components.year.orZero.next, for: .year)
-		}
-		return Calendar.auto.date(from: components)
-			.forceUnwrap(because: .validDateComponents)
-			.addingTimeInterval(-1.thousandth)
-	}
-	
 	@inlinable var secondComponent: Int { Calendar.autoupdatingCurrent.component(.second, from: self) }
 	@inlinable var minuteComponent: Int { Calendar.autoupdatingCurrent.component(.minute, from: self) }
 	@inlinable var   hourComponent: Int { Calendar.autoupdatingCurrent.component(.hour, from: self) }
 	@inlinable var    dayComponent: Int { Calendar.autoupdatingCurrent.component(.day, from: self) }
 	@inlinable var  monthComponent: Int { Calendar.autoupdatingCurrent.component(.month, from: self) }
 	@inlinable var   yearComponent: Int { Calendar.autoupdatingCurrent.component(.year, from: self) }
-	
-	@inlinable var minuteStart: Date { start(.minute) }
-	@inlinable var   hourStart: Date { start(.hour)   }
-	@inlinable var    dayStart: Date { start(.day)    }
-	@inlinable var  monthStart: Date { start(.month)  }
-	@inlinable var   yearStart: Date { start(.year)   }
 	
 	@inlinable var minuteEnd: Date { end(.minute) }
 	@inlinable var   hourEnd: Date { end(.hour)   }
@@ -128,10 +89,6 @@ public extension Set where Element == Calendar.Component {
 	static let year:   Set<Calendar.Component> = [.era, .year]
 }
 
-public extension Calendar {
-	@inlinable static var auto: Calendar { .autoupdatingCurrent }
-}
-
 public extension Date {
 	@inlinable var timeIntervalToday: TimeInterval { timeIntervalSinceDayStart }
 	@inlinable var timeIntervalSinceDayStart: TimeInterval {
@@ -139,8 +96,71 @@ public extension Date {
 	}
 }
 
+// MARK: Start
+
 public extension Date {
+	@inlinable func start(
+		_ components: Set<Calendar.Component>,
+		calendar: Calendar = .autoupdatingCurrent
+	) -> Date {
+		calendar
+			.date(from: calendar.dateComponents(components, from: self))
+			.forceUnwrap(because: .validDateComponents)
+	}
+	
+	@inlinable var minuteStart: Date { start(.minute) }
+	@inlinable var   hourStart: Date { start(.hour)   }
+	@inlinable var    dayStart: Date { start(.day)    }
+	@inlinable var  monthStart: Date { start(.month)  }
+	@inlinable var   yearStart: Date { start(.year)   }
+	
+	@inlinable var minuteStartUTC: Date { start(.minute, calendar: .utc) }
+	@inlinable var   hourStartUTC: Date { start(.hour, calendar: .utc)   }
+	@inlinable var    dayStartUTC: Date { start(.day, calendar: .utc)    }
+	@inlinable var  monthStartUTC: Date { start(.month, calendar: .utc)  }
+	@inlinable var   yearStartUTC: Date { start(.year, calendar: .utc)   }
+	
+	@inlinable static var startOfToday: Date         { Date.today.start(.day) }
+	@inlinable static var startOfTomorrow: Date   { Date.tomorrow.start(.day) }
+	@inlinable static var startOfYesterday: Date { Date.yesterday.start(.day) }
+	@inlinable static var startOfThisHour: Date        { Date.now.start(.hour) }
+	@inlinable static var startOfNextHour: Date { (Date.now + 1.hoursInterval).start(.hour) }
+	
+	@inlinable static var startOfTodayUTC: Date         { Date.today.start(.day, calendar: .utc) }
+	@inlinable static var startOfTomorrowUTC: Date   { Date.tomorrow.start(.day, calendar: .utc) }
+	@inlinable static var startOfYesterdayUTC: Date { Date.yesterday.start(.day, calendar: .utc) }
+	@inlinable static var startOfThisHourUTC: Date        { Date.now.start(.hour, calendar: .utc) }
+	@inlinable static var startOfNextHourUTC: Date { (Date.now + 1.hoursInterval).start(.hour, calendar: .utc) }
+}
+
+// MARK: End
+
+public extension Date {
+	@inlinable func end(
+		_ targetComponents: Set<Calendar.Component>,
+		calendar: Calendar = .autoupdatingCurrent
+	) -> Date {
+		var components = calendar.dateComponents(targetComponents, from: self)
+		if targetComponents.contains(.minute) {
+			components.setValue(components.minute.orZero.next, for: .minute)
+		} else if targetComponents.contains(.hour) {
+			components.setValue(components.hour.orZero.next, for: .hour)
+		} else if targetComponents.contains(.day) {
+			components.setValue(components.day.orZero.next, for: .day)
+		} else if targetComponents.contains(.month) {
+			components.setValue(components.month.orZero.next, for: .month)
+		} else if targetComponents.contains(.year) {
+			components.setValue(components.year.orZero.next, for: .year)
+		}
+		return calendar
+			.date(from: components)
+			.forceUnwrap(because: .validDateComponents)
+			.addingTimeInterval(-1.thousandth)
+	}
+	
 	@inlinable static var endOfToday:     Date { Date    .today.end(.day) }
 	@inlinable static var endOfTomorrow:  Date { Date .tomorrow.end(.day) }
 	@inlinable static var endOfYesterday: Date { Date.yesterday.end(.day) }
+	@inlinable static var endOfThisHour: Date { startOfNextHour - 1.secondsInterval }
+	@inlinable static var endOfNextHour: Date { endOfThisHour + 1.hoursInterval }
 }

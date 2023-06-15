@@ -85,33 +85,63 @@ public extension KeyedDecodingContainer {
 extension DateFormatter: CanFormatDate { }
 extension ISO8601DateFormatter: CanFormatDate { }
 
-public struct ISO8601DashedDateFormatterProvider: DateFormatterProvidable {
-	/// "2020-11-25"
-	public static var dateFormatter: CanFormatDate {
-		let formatter = ISO8601DateFormatter()
-		formatter.formatOptions = [
-			.withFullDate,
-			.withDashSeparatorInDate
-		]
-		formatter.timeZone = TimeZone(abbreviation: "UTC") // TimeZone(secondsFromGMT: 0)
-		// formatter.timeZone = .autoupdatingCurrent
-		return formatter
+@available(iOS 15.0, *)
+extension Date.ISO8601FormatStyle: CanFormatDate {
+	@inlinable public func string(from date: Date) -> String {
+		date.formatted(self)
+	}
+	
+	@inlinable public func date(from string: String) -> Date? {
+		try? self.parse(string)
 	}
 }
 
+/// "2020-11-25" in UTC TimeZone
+public struct ISO8601DashedDateFormatterProvider: DateFormatterProvidable {
+	/// "2020-11-25" in UTC TimeZone
+	@inlinable public static var dateFormatter: CanFormatDate {
+		if #available(iOS 15.0, *) {
+			return Date.ISO8601FormatStyle(timeZone: .utc)
+				.dateSeparator(.dash)
+				.year().month().day()
+		} else {
+			let formatter = ISO8601DateFormatter()
+			formatter.formatOptions = [
+				.withFullDate,
+				.withDashSeparatorInDate
+			]
+			formatter.timeZone = .utc
+			// TimeZone(abbreviation: "UTC")
+			// TimeZone(secondsFromGMT: 0)
+			// .autoupdatingCurrent
+			return formatter
+		}
+	}
+}
+
+/// "2020-11-25 10:00:00 +0800", in UTC TimeZone by default
 public struct ISO8601DashedDateTimeFormatterProvider: DateFormatterProvidable {
-	/// "2020-11-25 10:00:00 +0800"
+	/// "2020-11-25 10:00:00 +0800", in UTC TimeZone by default
 	public static var dateFormatter: CanFormatDate {
-		let formatter = ISO8601DateFormatter()
-		formatter.formatOptions = [
-			.withFullDate,
-			.withDashSeparatorInDate,
-			.withFullTime,
-			.withSpaceBetweenDateAndTime,
-			.withColonSeparatorInTime,
-			.withTimeZone,
-		]
-		return formatter
+		if #available(iOS 15.0, *) {
+			return Date.ISO8601FormatStyle(timeZone: .utc)
+				.year().month().day()
+				.time(includingFractionalSeconds: false)
+				.timeZone(separator: .omitted)
+				.dateSeparator(.dash)
+				.dateTimeSeparator(.space)
+		} else {
+			let formatter = ISO8601DateFormatter()
+			formatter.formatOptions = [
+				.withFullDate,
+				.withDashSeparatorInDate,
+				.withFullTime,
+				.withSpaceBetweenDateAndTime,
+				.withColonSeparatorInTime,
+				.withTimeZone,
+			]
+			return formatter
+		}
 	}
 }
 
@@ -127,13 +157,13 @@ public struct ISO8601FullDateTimeFormatterProvider: DateFormatterProvidable {
 	}
 }
 
-/// `2020-11-25`
+/// `2020-11-25` in UTC
 public typealias ISO8601DashedDate = CustomDate<ISO8601DashedDateFormatterProvider>
-/// `2020-11-25 10:00:00 +0800`
+/// `2020-11-25 10:00:00 +0800`, in UTC TimeZone by default
 public typealias ISO8601DashedDateTime = CustomDate<ISO8601DashedDateTimeFormatterProvider>
-/// `2020-11-25`
+/// `2020-11-25` in UTC
 public typealias ISO8601MandatoryDashedDate =
 	MandatoryCustomDate<ISO8601DashedDateFormatterProvider>
-/// `2020-11-25 10:00:00 +0800`
+/// `2020-11-25 10:00:00 +0800`, in UTC TimeZone by default
 public typealias ISO8601MandatoryDashedDateTime =
 	MandatoryCustomDate<ISO8601DashedDateTimeFormatterProvider>
