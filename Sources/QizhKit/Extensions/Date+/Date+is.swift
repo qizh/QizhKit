@@ -12,9 +12,10 @@ public extension Date {
 	@available(iOS, obsoleted: 15, message: "Implemented in Foundation")
 	@_disfavoredOverload
 	@inlinable static var now: Date       { Date() }
+	@available(*, deprecated, renamed: "now", message: "Use Date.now instead")
 	@inlinable static var today: Date     { Date() }
-	@inlinable static var tomorrow: Date  { .today + 1.daysInterval }
-	@inlinable static var yesterday: Date { .today - 1.daysInterval }
+	@inlinable static var tomorrow: Date  { .now + 1.daysInterval }
+	@inlinable static var yesterday: Date { .now - 1.daysInterval }
 	@inlinable static func `in`(_ interval: TimeInterval) -> Date {
 		Date(timeIntervalSinceNow: interval)
 	}
@@ -24,37 +25,39 @@ public extension Date {
 	@inlinable var isReference0: Bool { equals(.reference0) }
 	@inlinable var isUnix0:      Bool { equals(.unix0) }
 	
-	@inlinable var isToday: Bool { Calendar.autoupdatingCurrent.isDateInToday(self) }
-	@inlinable var isTomorrow: Bool { Calendar.autoupdatingCurrent.isDateInTomorrow(self) }
-	@inlinable var isYesterday: Bool { Calendar.autoupdatingCurrent.isDateInYesterday(self) }
+	@inlinable var isToday: Bool { Calendar.auto.isDateInToday(self) }
+	@inlinable var isTomorrow: Bool { Calendar.auto.isDateInTomorrow(self) }
+	@inlinable var isYesterday: Bool { Calendar.auto.isDateInYesterday(self) }
 	
-	@inlinable var isInFuture: Bool { isLater(than: .today) }
-	@inlinable var isInPast: Bool { isEarlier(than: .today) }
+	@inlinable var isTodayUTC: Bool { Calendar.utc.isDateInToday(self) }
+	@inlinable var isTomorrowUTC: Bool { Calendar.utc.isDateInTomorrow(self) }
+	@inlinable var isYesterdayUTC: Bool { Calendar.utc.isDateInYesterday(self) }
+	
+	@inlinable var isInFuture: Bool { isLater(than: .now) }
+	@inlinable var isInPast: Bool { isEarlier(than: .now) }
 	@inlinable var isTodayOrInFuture: Bool { isToday || isInFuture }
 	@inlinable var isTodayOrInPast: Bool   { isToday || isInPast }
-
+	
+	@inlinable var isTodayOrInFutureUTC: Bool { isTodayUTC || isInFuture }
+	@inlinable var isTodayOrInPastUTC: Bool   { isTodayUTC || isInPast }
+	
 	@inlinable func    equals(   _ date: Date) -> Bool { compare(date) == .orderedSame }
 	@inlinable func   isLater(than date: Date) -> Bool { compare(date) == .orderedDescending }
 	@inlinable func isEarlier(than date: Date) -> Bool { compare(date) == .orderedAscending }
 	
-	@inlinable var secondComponent: Int { Calendar.autoupdatingCurrent.component(.second, from: self) }
-	@inlinable var minuteComponent: Int { Calendar.autoupdatingCurrent.component(.minute, from: self) }
-	@inlinable var   hourComponent: Int { Calendar.autoupdatingCurrent.component(.hour, from: self) }
-	@inlinable var    dayComponent: Int { Calendar.autoupdatingCurrent.component(.day, from: self) }
-	@inlinable var  monthComponent: Int { Calendar.autoupdatingCurrent.component(.month, from: self) }
-	@inlinable var   yearComponent: Int { Calendar.autoupdatingCurrent.component(.year, from: self) }
+	@inlinable var secondComponent: Int { Calendar.auto.component(.second, from: self) }
+	@inlinable var minuteComponent: Int { Calendar.auto.component(.minute, from: self) }
+	@inlinable var   hourComponent: Int { Calendar.auto.component(.hour, from: self) }
+	@inlinable var    dayComponent: Int { Calendar.auto.component(.day, from: self) }
+	@inlinable var  monthComponent: Int { Calendar.auto.component(.month, from: self) }
+	@inlinable var   yearComponent: Int { Calendar.auto.component(.year, from: self) }
 	
-	@inlinable var minuteEnd: Date { end(.minute) }
-	@inlinable var   hourEnd: Date { end(.hour)   }
-	@inlinable var    dayEnd: Date { end(.day)    }
-	@inlinable var  monthEnd: Date { end(.month)  }
-	@inlinable var   yearEnd: Date { end(.year)   }
-	
-	@inlinable var isMinuteStart: Bool { compare(minuteStart) == .orderedSame }
-	@inlinable var   isHourStart: Bool { compare(hourStart)   == .orderedSame }
-	@inlinable var    isDayStart: Bool { compare(dayStart) 	  == .orderedSame }
-	@inlinable var  isMonthStart: Bool { compare(monthStart)  == .orderedSame }
-	@inlinable var   isYearStart: Bool { compare(yearStart)   == .orderedSame }
+	@inlinable var secondComponentUTC: Int { Calendar.utc.component(.second, from: self) }
+	@inlinable var minuteComponentUTC: Int { Calendar.utc.component(.minute, from: self) }
+	@inlinable var   hourComponentUTC: Int { Calendar.utc.component(.hour, from: self) }
+	@inlinable var    dayComponentUTC: Int { Calendar.utc.component(.day, from: self) }
+	@inlinable var  monthComponentUTC: Int { Calendar.utc.component(.month, from: self) }
+	@inlinable var   yearComponentUTC: Int { Calendar.utc.component(.year, from: self) }
 	
 	@inlinable func isSameMinute(as other: Date) -> Bool { minuteStart.equals(other.minuteStart) }
 	@inlinable func isSameHour  (as other: Date) -> Bool {   hourStart.equals(other  .hourStart) }
@@ -94,6 +97,11 @@ public extension Date {
 	@inlinable var timeIntervalSinceDayStart: TimeInterval {
 		timeIntervalSince(dayStart)
 	}
+	
+	@inlinable var timeIntervalTodayUTC: TimeInterval { timeIntervalSinceDayStartUTC }
+	@inlinable var timeIntervalSinceDayStartUTC: TimeInterval {
+		timeIntervalSince(dayStartUTC)
+	}
 }
 
 // MARK: Start
@@ -108,29 +116,41 @@ public extension Date {
 			.forceUnwrap(because: .validDateComponents)
 	}
 	
+	// MARK: > Properties
+	
 	@inlinable var minuteStart: Date { start(.minute) }
 	@inlinable var   hourStart: Date { start(.hour)   }
 	@inlinable var    dayStart: Date { start(.day)    }
 	@inlinable var  monthStart: Date { start(.month)  }
 	@inlinable var   yearStart: Date { start(.year)   }
 	
-	@inlinable var minuteStartUTC: Date { start(.minute, calendar: .utc) }
-	@inlinable var   hourStartUTC: Date { start(.hour, calendar: .utc)   }
 	@inlinable var    dayStartUTC: Date { start(.day, calendar: .utc)    }
 	@inlinable var  monthStartUTC: Date { start(.month, calendar: .utc)  }
 	@inlinable var   yearStartUTC: Date { start(.year, calendar: .utc)   }
 	
-	@inlinable static var startOfToday: Date         { Date.today.start(.day) }
+	// MARK: > static
+	
+	@inlinable static var startOfToday: Date           { Date.now.start(.day) }
 	@inlinable static var startOfTomorrow: Date   { Date.tomorrow.start(.day) }
 	@inlinable static var startOfYesterday: Date { Date.yesterday.start(.day) }
 	@inlinable static var startOfThisHour: Date        { Date.now.start(.hour) }
 	@inlinable static var startOfNextHour: Date { (Date.now + 1.hoursInterval).start(.hour) }
 	
-	@inlinable static var startOfTodayUTC: Date         { Date.today.start(.day, calendar: .utc) }
+	@inlinable static var startOfTodayUTC: Date           { Date.now.start(.day, calendar: .utc) }
 	@inlinable static var startOfTomorrowUTC: Date   { Date.tomorrow.start(.day, calendar: .utc) }
 	@inlinable static var startOfYesterdayUTC: Date { Date.yesterday.start(.day, calendar: .utc) }
-	@inlinable static var startOfThisHourUTC: Date        { Date.now.start(.hour, calendar: .utc) }
-	@inlinable static var startOfNextHourUTC: Date { (Date.now + 1.hoursInterval).start(.hour, calendar: .utc) }
+	
+	// MARK: > is
+	
+	@inlinable var isMinuteStart: Bool { compare(minuteStart) == .orderedSame }
+	@inlinable var   isHourStart: Bool { compare(hourStart)   == .orderedSame }
+	@inlinable var    isDayStart: Bool { compare(dayStart) 	  == .orderedSame }
+	@inlinable var  isMonthStart: Bool { compare(monthStart)  == .orderedSame }
+	@inlinable var   isYearStart: Bool { compare(yearStart)   == .orderedSame }
+	
+	@inlinable var    isDayStartUTC: Bool { compare(dayStartUTC) 	== .orderedSame }
+	@inlinable var  isMonthStartUTC: Bool { compare(monthStartUTC) 	== .orderedSame }
+	@inlinable var   isYearStartUTC: Bool { compare(yearStartUTC) 	== .orderedSame }
 }
 
 // MARK: End
@@ -158,7 +178,17 @@ public extension Date {
 			.addingTimeInterval(-1.thousandth)
 	}
 	
-	@inlinable static var endOfToday:     Date { Date    .today.end(.day) }
+	// MARK: > Properties
+	
+	@inlinable var minuteEnd: Date { end(.minute) }
+	@inlinable var   hourEnd: Date { end(.hour)   }
+	@inlinable var    dayEnd: Date { end(.day)    }
+	@inlinable var  monthEnd: Date { end(.month)  }
+	@inlinable var   yearEnd: Date { end(.year)   }
+	
+	// MARK: > static
+	
+	@inlinable static var endOfToday:     Date { Date      .now.end(.day) }
 	@inlinable static var endOfTomorrow:  Date { Date .tomorrow.end(.day) }
 	@inlinable static var endOfYesterday: Date { Date.yesterday.end(.day) }
 	@inlinable static var endOfThisHour: Date { startOfNextHour - 1.secondsInterval }
