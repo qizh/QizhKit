@@ -194,3 +194,25 @@ public extension Date {
 	@inlinable static var endOfThisHour: Date { startOfNextHour - 1.secondsInterval }
 	@inlinable static var endOfNextHour: Date { endOfThisHour + 1.hoursInterval }
 }
+
+// MARK: Convert Timezone
+
+extension Date {
+	/// Keeps the date and time, but changes the timezone.
+	/// - Warning: It's not converting to another timezone
+	/// - Parameters:
+	///   - sourceTimeZone: Current date's ``TimeZone``, UTC by default
+	///   - targetTimeZone: Target ``TimeZone``, ``current`` by default
+	/// - Returns: Changed ``Date``
+	@inlinable public func withTimeZoneChanged(
+		from sourceTimeZone: TimeZone = .utc,
+		to targetTimeZone: TimeZone = .current
+	) -> Date {
+		self.addingTimeInterval(
+			TimeInterval(
+				  targetTimeZone.secondsFromGMT()
+				- sourceTimeZone.secondsFromGMT()
+			)
+		)
+	}
+}
