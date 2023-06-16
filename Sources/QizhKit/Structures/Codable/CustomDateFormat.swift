@@ -233,12 +233,12 @@ public typealias ISO8601MandatoryDashedDateTime =
 	MandatoryCustomDate<ISO8601DashedDateTimeFormatterProvider>
 
 /// `2020-11-25` in UTC
-public typealias ISO8601DashedDateUTC = CustomDate<ISO8601DashedDateFormatterProvider>
+public typealias ISO8601DashedDateUTC = CustomDate<ISO8601DashedDateFormatterProviderUTC>
 /// `2020-11-25 10:00:00 +0800`, in UTC TimeZone by default
-public typealias ISO8601DashedDateTimeUTC = CustomDate<ISO8601DashedDateTimeFormatterProvider>
+public typealias ISO8601DashedDateTimeUTC = CustomDate<ISO8601DashedDateTimeFormatterProviderUTC>
 /// `2020-11-25` in UTC
 public typealias ISO8601MandatoryDashedDateUTC =
-	MandatoryCustomDate<ISO8601DashedDateFormatterProvider>
+	MandatoryCustomDate<ISO8601DashedDateFormatterProviderUTC>
 /// `2020-11-25 10:00:00 +0800`, in UTC TimeZone by default
 public typealias ISO8601MandatoryDashedDateTimeUTC =
-	MandatoryCustomDate<ISO8601DashedDateTimeFormatterProvider>
+	MandatoryCustomDate<ISO8601DashedDateTimeFormatterProviderUTC>
