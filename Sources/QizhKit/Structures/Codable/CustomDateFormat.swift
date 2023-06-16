@@ -109,7 +109,7 @@ public struct ISO8601DashedDateFormatterProvider: DateFormatterProvidable {
 	/// "2020-11-25" in current TimeZone
 	@inlinable public static var dateFormatter: CanFormatDate {
 		if #available(iOS 15.0, *) {
-			return Date.ISO8601FormatStyle(timeZone: .utc)
+			return Date.ISO8601FormatStyle(timeZone: .current)
 				.dateSeparator(.dash)
 				.year().month().day()
 		} else {
