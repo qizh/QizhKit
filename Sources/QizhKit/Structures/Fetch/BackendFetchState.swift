@@ -39,6 +39,14 @@ public struct FetchProgress:
 		else { self.init(.undetermined) }
 	}
 	
+	@inlinable public static func finished<T: BinaryInteger>(_ current: T, of total: T) -> Self {
+		.init(current: Double(current), total: Double(total))
+	}
+	
+	@inlinable public static func finished<T: BinaryFloatingPoint>(_ current: T, of total: T) -> Self {
+		.init(current: Double(current), total: Double(total))
+	}
+	
 	public enum State: Hashable, CaseComparable {
 		case none
 		case undetermined
