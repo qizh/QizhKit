@@ -25,6 +25,8 @@ public extension SignedNumeric where Self: Comparable {
 	
 	@inlinable var positive: Self? { isPositive ? self : nil }
 	@inlinable var negative: Self? { isNegative ? self : nil }
+	@inlinable var nonPositive: Self? { isPositive ? nil : self }
+	@inlinable var nonNegative: Self? { isNegative ? nil : self }
 	@inlinable var negated: Self? { -self }
 	@inlinable var isPositive    : Bool { self > 0 }
 	@inlinable var isNotPositive : Bool { self <= 0 }
