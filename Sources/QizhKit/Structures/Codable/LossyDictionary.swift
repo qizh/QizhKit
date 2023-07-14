@@ -26,15 +26,15 @@ public struct LossyDictionary <Key: Hashable, Value> {
 
 extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
 	private struct AnyDecodableValue: Decodable {}
-	private struct LossyDecodableValue<Value: Decodable>: Decodable {
-		let value: Value
-
+	private struct LossyDecodableValue<Wrapped: Decodable>: Decodable {
+		let value: Wrapped
+		
 		public init(from decoder: Decoder) throws {
 			let container = try decoder.singleValueContainer()
-			value = try container.decode(Value.self)
+			value = try container.decode(Wrapped.self)
 		}
 	}
-
+	
 	public init(from decoder: Decoder) throws {
 		var elements: [Key: Value] = [:]
 		do {
