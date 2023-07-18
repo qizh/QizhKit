@@ -105,6 +105,10 @@ extension DataResponse {
 							let json = try JSONSerialization
 								.jsonObject(with: data, options: serializationOptions)
 							
+							if not(JSONSerialization.isValidJSONObject(json)) {
+								throw FetchError.contentError("Invalid JSON object")
+							}
+							
 							let formattedJsonData = try JSONSerialization.data(
 								withJSONObject: json,
 								options: [.prettyPrinted, .withoutEscapingSlashes]
