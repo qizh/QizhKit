@@ -24,3 +24,52 @@ public extension Array where Element == Character {
 		String(self)
 	}
 }
+
+extension String {
+	/// Splits the string into chunks to accommodate a specified maximum length,
+	/// considering line breaks as the preferred splitting points.
+	///
+	/// - Parameters:
+	///   - maxLength: The maximum length of each output chunk. The default value is 1024.
+	/// - Returns: An array of `Substring` chunks.
+	///
+	/// - Note: The function iterates through the original string and creates chunks of text
+	///         based on the specified maximum length. If a line break character (`\n`) is
+	///         found within the chunk, the split occurs at the line break. If no line break
+	///         character is present, the function tries to split at the last space character
+	///         before the maxLength. If no space is found, the chunk is split at the
+	///         maxLength. The line break character or space character (if used for
+	///         splitting) is dropped from the output.
+	///
+	/// - Complexity: The time complexity is O(n), where n is the number of characters
+	/// 		in the string.
+	///               The function iterates through the string once to create the chunks.
+	public func splittedForLogger(maxLength: Int = 1024) -> [Substring] {
+		var chunks: [Substring] = []
+		var currentIndex = self.startIndex
+		
+		while currentIndex < self.endIndex {
+			let remainingLength = self.distance(from: currentIndex, to: self.endIndex)
+			let chunkLength = min(maxLength, remainingLength)
+			let nextIndex = self.index(currentIndex, offsetBy: chunkLength)
+			let chunk = self[currentIndex..<nextIndex]
+			
+			let splitIndex: String.Index
+			
+			/// Attempt to find the last line break character within the chunk
+			/// If not found, attempt to find the last space character
+			/// If neither line break nor space character is found, split at the maxLength
+			splitIndex = chunk.lastIndex { character in
+				CharacterSet.newlines.contains(character.unicodeScalars.first ?? .init(0))
+			} ?? chunk.lastIndex { character in
+				CharacterSet.whitespaces.contains(character.unicodeScalars.first ?? .init(0))
+			} ?? chunk.endIndex
+			
+			let splitChunk = self[currentIndex..<splitIndex]
+			chunks.append(splitChunk)
+			currentIndex = splitIndex < chunk.endIndex ? self.index(after: splitIndex) : nextIndex
+		}
+		
+		return chunks
+	}
+}
