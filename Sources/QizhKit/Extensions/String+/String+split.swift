@@ -54,12 +54,16 @@ extension String {
 			let nextIndex = self.index(currentIndex, offsetBy: chunkLength)
 			let chunk = self[currentIndex..<nextIndex]
 			
-			let splitIndex: String.Index
+			if chunkLength == remainingLength {
+				/// Last chunk
+				chunks.append(chunk)
+				break
+			}
 			
 			/// Attempt to find the last line break character within the chunk
 			/// If not found, attempt to find the last space character
 			/// If neither line break nor space character is found, split at the maxLength
-			splitIndex = chunk.lastIndex { character in
+			let splitIndex = chunk.lastIndex { character in
 				CharacterSet.newlines.contains(character.unicodeScalars.first ?? .init(0))
 			} ?? chunk.lastIndex { character in
 				CharacterSet.whitespaces.contains(character.unicodeScalars.first ?? .init(0))
