@@ -53,11 +53,12 @@ public extension KeyedDecodingContainer {
 // MARK: Encodable -> Dictionary
 
 public extension Encodable {
-	func asDictionary() -> [String: Any] {
+	func asDictionary(
+		encoder: JSONEncoder = .init(),
+		decoder: JSONDecoder = .init()
+	) -> [String: Any] {
 		do {
-			let encoder = JSONEncoder()
 			let data = try encoder.encode(self)
-			let decoder = JSONDecoder()
 			let dictionary = try decoder.decode(CodableAnyDictionary.self, from: data)
 			return dictionary.wrappedValue
 		} catch {

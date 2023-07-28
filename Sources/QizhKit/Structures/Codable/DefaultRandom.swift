@@ -15,30 +15,43 @@ public struct DefaultRandom<Wrapped>: Codable
 	Wrapped: Codable
 {
 	public var wrappedValue: Wrapped
+	private let isDefault: Bool
 	
 	@inlinable public static var defaultValue: Wrapped { Wrapped.random(in: .min ... .max) }
 	@inlinable public static var zero: Self { .init(wrappedValue: .zero) }
 	
-	public init(wrappedValue: Wrapped = Self.defaultValue) {
+	public init() {
+		self.wrappedValue = Self.defaultValue
+		self.isDefault = true
+	}
+	
+	public init(wrappedValue: Wrapped) {
 		self.wrappedValue = wrappedValue
+		self.isDefault = false
 	}
 	
 	public init(from decoder: Decoder) throws {
 		guard let value = try? decoder.singleValueContainer().decode(Wrapped.self) else {
-			wrappedValue = Self.defaultValue
+			self.init()
 			return
 		}
-		wrappedValue = value
+		self.init(wrappedValue: value)
 	}
 	
 	public func encode(to encoder: Encoder) throws {
-		try wrappedValue.encode(to: encoder)
+		var container = encoder.singleValueContainer()
+		
+		if isDefault {
+			try container.encodeNil()
+		} else {
+			try container.encode(wrappedValue)
+		}
 	}
 }
 
 extension DefaultRandom: ExpressibleByIntegerLiteral {
-	public init(integerLiteral value: Wrapped.IntegerLiteralType) {
-		self.wrappedValue = Wrapped(integerLiteral: value)
+	@inlinable public init(integerLiteral value: Wrapped.IntegerLiteralType) {
+		self.init(wrappedValue: Wrapped(integerLiteral: value))
 	}
 }
 

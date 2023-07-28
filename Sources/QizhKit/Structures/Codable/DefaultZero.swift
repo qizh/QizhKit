@@ -13,36 +13,51 @@ import Foundation
 @propertyWrapper
 public struct DefaultZero <Wrapped: Numeric & Codable>: Codable {
 	public var wrappedValue: Wrapped
+	private let isDefault: Bool
+	
+	public init() {
+		self.wrappedValue = .zero
+		self.isDefault = true
+	}
 	
 	public init(wrappedValue: Wrapped) {
 		self.wrappedValue = wrappedValue
+		self.isDefault = false
 	}
 	
-	public init(_ value: Wrapped = Self.defaultValue) {
-		self.wrappedValue = value
+	@inlinable public init(_ value: Wrapped) {
+		self.init(wrappedValue: value)
 	}
 	
 	public init(from decoder: Decoder) throws {
 		let container = try decoder.singleValueContainer()
-		wrappedValue = (try? container.decode(Wrapped.self)) ?? Self.defaultValue
+		if let wrappedValue = (try? container.decode(Wrapped.self)) {
+			self.init(wrappedValue: wrappedValue)
+		} else {
+			self.init()
+		}
 	}
 	
 	public func encode(to encoder: Encoder) throws {
 		var container = encoder.singleValueContainer()
-		try container.encode(wrappedValue)
+		if isDefault {
+			try container.encodeNil()
+		} else {
+			try container.encode(wrappedValue)
+		}
 	}
 	
-	public static var `default`: Self { .init() }
-	public static var defaultValue: Wrapped { .zero }
-	public static var zero: Self { .init() }
+	@inlinable public static var `default`: Self { .init() }
+	@inlinable public static var defaultValue: Wrapped { .zero }
+	@inlinable public static var zero: Self { .init() }
 }
 
 extension DefaultZero: Equatable { }
 extension DefaultZero: Hashable where Wrapped: Hashable { }
 
 extension DefaultZero: ExpressibleByIntegerLiteral {
-	public init(integerLiteral value: Wrapped.IntegerLiteralType) {
-		self.wrappedValue = Wrapped(integerLiteral: value)
+	@inlinable public init(integerLiteral value: Wrapped.IntegerLiteralType) {
+		self.init(wrappedValue: Wrapped(integerLiteral: value))
 	}
 }
 
@@ -57,36 +72,51 @@ public extension KeyedDecodingContainer {
 @propertyWrapper
 public struct DefaultValueOne <Wrapped: Numeric & Codable>: Codable, WithDefault {
 	public var wrappedValue: Wrapped
+	private let isDefault: Bool
+	
+	public init() {
+		self.wrappedValue = Self.defaultValue
+		self.isDefault = true
+	}
 	
 	public init(wrappedValue: Wrapped) {
 		self.wrappedValue = wrappedValue
+		self.isDefault = false
 	}
 	
-	public init(_ value: Wrapped = Self.defaultValue) {
-		self.wrappedValue = value
+	@inlinable public init(_ value: Wrapped) {
+		self.init(wrappedValue: value)
 	}
-
+	
 	public init(from decoder: Decoder) throws {
 		let container = try decoder.singleValueContainer()
-		wrappedValue = (try? container.decode(Wrapped.self)) ?? Self.defaultValue
+		if let wrappedValue = (try? container.decode(Wrapped.self)) {
+			self.init(wrappedValue: wrappedValue)
+		} else {
+			self.init()
+		}
 	}
 	
 	public func encode(to encoder: Encoder) throws {
 		var container = encoder.singleValueContainer()
-		try container.encode(wrappedValue)
+		if isDefault {
+			try container.encodeNil()
+		} else {
+			try container.encode(wrappedValue)
+		}
 	}
 	
-	public static var `default`: Self { .init() }
-	public static var defaultValue: Wrapped { .one }
-	public static var one: Self { .init() }
+	@inlinable public static var `default`: Self { .init() }
+	@inlinable public static var defaultValue: Wrapped { .one }
+	@inlinable public static var one: Self { .init() }
 }
 
 extension DefaultValueOne: Equatable { }
 extension DefaultValueOne: Hashable where Wrapped: Hashable { }
 
 extension DefaultValueOne: ExpressibleByIntegerLiteral {
-	public init(integerLiteral value: Wrapped.IntegerLiteralType) {
-		self.wrappedValue = Wrapped(integerLiteral: value)
+	@inlinable public init(integerLiteral value: Wrapped.IntegerLiteralType) {
+		self.init(wrappedValue: Wrapped(integerLiteral: value))
 	}
 }
 

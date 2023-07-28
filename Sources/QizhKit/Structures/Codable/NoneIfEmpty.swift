@@ -31,7 +31,13 @@ extension NoneIfEmpty: Codable where Wrapped: Codable {
 	}
 	
 	public func encode(to encoder: Encoder) throws {
-		try wrappedValue?.encode(to: encoder)
+		var container = encoder.singleValueContainer()
+		if let wrappedValue {
+			try container.encode(wrappedValue)
+		} else {
+			try container.encodeNil()
+		}
+		// try wrappedValue?.encode(to: encoder)
 	}
 }
 
@@ -53,7 +59,11 @@ extension NoneIfEmpty: WithUnknown where Wrapped: WithUnknown {
 }
 
 public extension KeyedDecodingContainer {
-	func decode <Wrapped: Codable> (_: NoneIfEmpty<Wrapped>.Type, forKey key: Key) -> NoneIfEmpty<Wrapped> {
-		(try? decodeIfPresent(NoneIfEmpty<Wrapped>.self, forKey: key)) ?? NoneIfEmpty<Wrapped>()
+	func decode <Wrapped: Codable> (
+		_: NoneIfEmpty<Wrapped>.Type,
+		forKey key: Key
+	) -> NoneIfEmpty<Wrapped> {
+		(try? decodeIfPresent(NoneIfEmpty<Wrapped>.self, forKey: key))
+		?? NoneIfEmpty<Wrapped>()
 	}
 }

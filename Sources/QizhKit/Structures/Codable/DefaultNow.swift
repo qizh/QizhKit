@@ -11,18 +11,32 @@ import Foundation
 @propertyWrapper
 public struct DefaultNow: Codable, Hashable {
 	public var wrappedValue: Date
+	private let isDefault: Bool
 	
-	public init(wrappedValue: Date = .now) {
+	public init(wrappedValue: Date) {
 		self.wrappedValue = wrappedValue
+		self.isDefault = false
+	}
+	
+	public init() {
+		self.wrappedValue = .now
+		self.isDefault = true
 	}
 	
 	public init(from decoder: Decoder) throws {
 		let container = try decoder.singleValueContainer()
-		wrappedValue = try container.decode(Date.self)
+		self.wrappedValue = try container.decode(Date.self)
+		self.isDefault = false
 	}
 	
 	public func encode(to encoder: Encoder) throws {
-		try wrappedValue.encode(to: encoder)
+		var container = encoder.singleValueContainer()
+		
+		if isDefault {
+			try container.encodeNil()
+		} else {
+			try container.encode(wrappedValue)
+		}
 	}
 }
 

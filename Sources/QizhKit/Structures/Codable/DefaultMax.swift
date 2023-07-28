@@ -29,7 +29,13 @@ public struct DefaultMax<Wrapped>: Codable
 	}
 	
 	public func encode(to encoder: Encoder) throws {
-		try wrappedValue.encode(to: encoder)
+		var container = encoder.singleValueContainer()
+		
+		if wrappedValue == Self.defaultValue {
+			try container.encodeNil()
+		} else {
+			try container.encode(wrappedValue)
+		}
 	}
 }
 
@@ -68,7 +74,13 @@ public struct DefaultOneDay: Codable, Hashable {
 	}
 	
 	public func encode(to encoder: Encoder) throws {
-		try wrappedValue.encode(to: encoder)
+		var container = encoder.singleValueContainer()
+		
+		if wrappedValue == Self.defaultValue {
+			try container.encodeNil()
+		} else {
+			try container.encode(wrappedValue)
+		}
 	}
 }
 

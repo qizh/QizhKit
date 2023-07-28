@@ -11,25 +11,45 @@ import Foundation
 @propertyWrapper
 public struct DefaultEmpty<Wrapped> where Wrapped: EmptyProvidable, Wrapped: Equatable {
 	public var wrappedValue: Wrapped
+	private let isDefault: Bool
 	
-	public init(wrappedValue: Wrapped = .empty) {
+	public init() {
+		self.wrappedValue = .empty
+		self.isDefault = true
+	}
+	
+	public init(wrappedValue: Wrapped) {
 		self.wrappedValue = wrappedValue
+		self.isDefault = false
 	}
 }
 
 extension DefaultEmpty: Codable where Wrapped: Codable {
 	public init(from decoder: Decoder) throws {
 		let container = try decoder.singleValueContainer()
-		wrappedValue = (try? container.decode(Wrapped.self)) ?? .empty
+		if let wrappedValue = (try? container.decode(Wrapped.self)) {
+			self.init(wrappedValue: wrappedValue)
+		} else {
+			self.init()
+		}
 	}
 	
 	public func encode(to encoder: Encoder) throws {
+		var container = encoder.singleValueContainer()
+		if isDefault {
+			try container.encodeNil()
+		} else {
+			try container.encode(wrappedValue)
+		}
+		
+		/*
 		if wrappedValue == .empty {
 			var container = encoder.singleValueContainer()
 			try container.encodeNil()
 		} else {
 			try wrappedValue.encode(to: encoder)
 		}
+		*/
 	}
 }
 
@@ -45,7 +65,10 @@ extension DefaultEmpty: EmptyProvidable {
 }
 
 public extension KeyedDecodingContainer {
-	func decode <Wrapped: Codable> (_: DefaultEmpty<Wrapped>.Type, forKey key: Key) -> DefaultEmpty<Wrapped> {
+	func decode <Wrapped: Codable> (
+		_: DefaultEmpty<Wrapped>.Type,
+		forKey key: Key
+	) -> DefaultEmpty<Wrapped> {
 		(try? decodeIfPresent(DefaultEmpty<Wrapped>.self, forKey: key))
 			?? DefaultEmpty<Wrapped>()
 	}

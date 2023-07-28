@@ -28,9 +28,9 @@ import Foundation
 ///
 /// # Avoid Compiler Bug
 /// Initialize optional types with `nil` to silence confused swift compiler error.
-/// ~~~
+/// ```swift
 /// @CodeAsArray var label: String? = nil
-/// ~~~
+/// ```
 ///
 /// - Author: [Serhii Shevchenko](mailto:zh.send@gmail.com)
 

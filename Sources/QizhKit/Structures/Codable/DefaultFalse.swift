@@ -11,22 +11,35 @@ import Foundation
 @propertyWrapper
 public struct DefaultFalse: Codable, Hashable {
     public var wrappedValue: Bool
+	private let isDefault: Bool
     
-    public init(wrappedValue: Bool = Self.defaultValue) {
+	public init() {
+		self.wrappedValue = Self.defaultValue
+		self.isDefault = true
+	}
+	
+    public init(wrappedValue: Bool) {
         self.wrappedValue = wrappedValue
+		self.isDefault = false
     }
     
     public init(from decoder: Decoder) throws {
 		do {
 			let container = try decoder.singleValueContainer()
-			wrappedValue = try container.decode(Bool.self)
+			let wrappedValue = try container.decode(Bool.self)
+			self.init(wrappedValue: wrappedValue)
 		} catch {
-			wrappedValue = Self.defaultValue
+			self.init()
 		}
     }
     
     public func encode(to encoder: Encoder) throws {
-        try wrappedValue.encode(to: encoder)
+		var container = encoder.singleValueContainer()
+		if isDefault {
+			try container.encodeNil()
+		} else {
+			try container.encode(wrappedValue)
+		}
     }
 	
 	public static let defaultValue: Bool = false
@@ -40,8 +53,8 @@ extension DefaultFalse: WithDefault {
 }
 
 extension DefaultFalse: ExpressibleByBooleanLiteral {
-	public init(booleanLiteral value: Bool) {
-		self.wrappedValue = value
+	@inlinable public init(booleanLiteral value: Bool) {
+		self.init(wrappedValue: value)
 	}
 }
 

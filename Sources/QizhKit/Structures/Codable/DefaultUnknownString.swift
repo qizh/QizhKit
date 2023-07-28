@@ -10,34 +10,46 @@ import Foundation
 
 @propertyWrapper
 public struct DefaultUnknownString: Codable, Hashable {
-	public static let defaultValue: String = "Unknown"
-	
 	public var wrappedValue: String
+	public var isDefault: Bool
 	
-	public init(wrappedValue: String = Self.defaultValue) {
+	public init() {
+		self.wrappedValue = Self.defaultValue
+		self.isDefault = true
+	}
+	
+	public init(wrappedValue: String) {
 		self.wrappedValue = wrappedValue
+		self.isDefault = false
 	}
 	
 	public init(from decoder: Decoder) throws {
 		guard let value = try? decoder.singleValueContainer().decode(String.self) else {
-			wrappedValue = Self.defaultValue
+			self.init()
 			return
 		}
-		wrappedValue = value
+		self.init(wrappedValue: value)
 	}
 	
 	public func encode(to encoder: Encoder) throws {
-		try wrappedValue.encode(to: encoder)
+		var container = encoder.singleValueContainer()
+		
+		if isDefault {
+			try container.encodeNil()
+		} else {
+			try container.encode(wrappedValue)
+		}
 	}
 }
 
 extension DefaultUnknownString: ExpressibleByStringLiteral {
-	public init(stringLiteral value: StringLiteralType) {
-		self.wrappedValue = value
+	@inlinable public init(stringLiteral value: StringLiteralType) {
+		self.init(wrappedValue: value)
 	}
 }
 
 extension DefaultUnknownString: WithDefault {
+	public static let defaultValue: String = "Unknown"
 	public static let `default`: DefaultUnknownString = .init()
 }
 

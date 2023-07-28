@@ -33,4 +33,9 @@ extension Bundle {
 		app.bundleIdentifier
 			.forceUnwrap(because: "App will always have an identifier")
 	}
+	
+	public static var mainIdentifier: String {
+		main.bundleIdentifier
+			.forceUnwrap(because: "Bundle always have an identifier")
+	}
 }

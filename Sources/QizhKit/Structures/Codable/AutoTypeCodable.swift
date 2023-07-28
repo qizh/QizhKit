@@ -29,11 +29,11 @@ public struct AutoTypeCodable <T>: Codable
 			self.type = T.self
 		} catch let error {
 			
-			func decode <T: LosslessStringCodable> (
-				_: T.Type
+			func decode <D: LosslessStringCodable> (
+				_: D.Type
 			) -> (Decoder) -> LosslessStringCodable? {
 				{
-					try? T.init(from: $0)
+					try? D.init(from: $0)
 				}
 			}
 			
@@ -177,11 +177,11 @@ public struct LossyAutoTypeCodable <T>: Codable
 			self.type = T.self
 		} catch let error {
 			
-			func decode <T: LosslessStringCodable> (
-				_: T.Type
+			func decode <D: LosslessStringCodable> (
+				_: D.Type
 			) -> (Decoder) -> LosslessStringCodable? {
 				{
-					try? T.init(from: $0)
+					try? D.init(from: $0)
 				}
 			}
 			
