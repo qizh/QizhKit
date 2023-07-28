@@ -7,6 +7,12 @@
 //
 
 import Foundation
+import os.log
+
+fileprivate let logger = Logger(
+	subsystem: "\(Bundle.mainIdentifier).property_wrappers",
+	category: "Lossy Dictionary"
+)
 
 /// Decodes Dictionaries filtering invalid key-value pairs if applicable.
 /// `@LossyDictionary` decodes Dictionaries and filters invalid key-value pairs
@@ -36,7 +42,7 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
 	}
 	
 	public init(from decoder: Decoder) throws {
-		var elements: [Key: Value] = [:]
+		var elements: [Key: Value] = .empty
 		do {
 			if Key.self == String.self {
 				let container = try decoder.container(keyedBy: JSONCodingKeys.self)
@@ -47,7 +53,7 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
 						let value = try container.decode(LossyDecodableValue<Value>.self, forKey: key).value
 						elements[stringKey as! Key] = value
 					} catch {
-						print("[LossyDictionary] is skipping \(Value.self) element because of decoding error: \(error)")
+						logger.warning("Skipping \(Value.self) element while decoding. \(error)")
 						_ = try? container.decode(AnyDecodableValue.self, forKey: key)
 					}
 				}
@@ -71,7 +77,7 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
 						let value = try container.decode(LossyDecodableValue<Value>.self, forKey: key).value
 						elements[key.intValue! as! Key] = value
 					} catch {
-						print("[LossyDictionary] is skipping \(Value.self) element because of decoding error: \(error)")
+						logger.warning("Skipping \(Value.self) element while decoding. \(error)")
 						_ = try? container.decode(AnyDecodableValue.self, forKey: key)
 					}
 				}
@@ -84,7 +90,7 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
 				 )
 			}
 		} catch {
-			print("[LossyArray] value is not a dictionary: \(error)")
+			logger.error("Non-dictionary skipped. \(error)")
 		}
 		
 		self.wrappedValue = elements

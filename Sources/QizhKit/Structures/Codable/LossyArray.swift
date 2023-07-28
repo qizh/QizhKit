@@ -7,6 +7,12 @@
 //
 
 import Foundation
+import os.log
+
+fileprivate let logger = Logger(
+	subsystem: "\(Bundle.mainIdentifier).property_wrappers",
+	category: "Lossy Array"
+)
 
 /// Decodes Arrays and filters invalid values if the Decoder is unable to decode the value.
 @propertyWrapper
@@ -30,14 +36,14 @@ public struct LossyArray <Item: Codable>: Codable, EmptyProvidable, ExpressibleB
 				do {
 					let value = try container.decode(Item.self)
 					elements.append(value)
-					// print("[LossyArray] decoded \(Item.self) element")
+					// logger.debug("[LossyArray] decoded \(Item.self) element")
 				} catch {
-					print("[LossyArray] is skipping \(Item.self) element because of decoding error: \(error)")
+					logger.warning("Skipping \(Item.self) element while decoding because of error: \(error)")
 					_ = try? container.decode(Blancodable.self)
 				}
 			}
 		} catch {
-			print("[LossyArray] value is not an array: \(error)")
+			logger.error("Non-array skipped: \(error)")
 		}
 		
 		self.wrappedValue = elements
@@ -79,7 +85,7 @@ public extension KeyedDecodingContainer {
 			// print("[LossyArray] try to decode \(Wrapped.self) optionally")
 			result = try decodeIfPresent(LossyArray<Wrapped>.self, forKey: key)
 		} catch {
-			print("[LossyArray] no value for `\(key)` key")
+			logger.warning("No value for `\(key)` key")
 			result = nil
 		}
 		/*
