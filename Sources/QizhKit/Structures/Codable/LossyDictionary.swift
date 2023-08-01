@@ -10,7 +10,7 @@ import Foundation
 import os.log
 
 fileprivate let logger = Logger(
-	subsystem: "\(Bundle.mainIdentifier).property_wrappers",
+	subsystem: "Coding",
 	category: "Lossy Dictionary"
 )
 
@@ -52,6 +52,12 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
 					do {
 						let value = try container.decode(LossyDecodableValue<Value>.self, forKey: key).value
 						elements[stringKey as! Key] = value
+					} catch let error as DecodingError {
+						logger.warning("""
+							Skipping \(Value.self) element while decoding
+							┗ \(error.humanReadableDescription)
+							""")
+						_ = try? container.decode(AnyDecodableValue.self, forKey: key)
 					} catch {
 						logger.warning("Skipping \(Value.self) element while decoding. \(error)")
 						_ = try? container.decode(AnyDecodableValue.self, forKey: key)
@@ -76,6 +82,12 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
 					do {
 						let value = try container.decode(LossyDecodableValue<Value>.self, forKey: key).value
 						elements[key.intValue! as! Key] = value
+					} catch let error as DecodingError {
+						logger.warning("""
+							Skipping \(Value.self) element while decoding
+							┗ \(error.humanReadableDescription)
+							""")
+						_ = try? container.decode(AnyDecodableValue.self, forKey: key)
 					} catch {
 						logger.warning("Skipping \(Value.self) element while decoding. \(error)")
 						_ = try? container.decode(AnyDecodableValue.self, forKey: key)
@@ -89,6 +101,11 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
 						)
 				 )
 			}
+		} catch let error as DecodingError {
+			logger.warning("""
+				Skipping the whole non-dictionary
+				┗ \(error.humanReadableDescription)
+				""")
 		} catch {
 			logger.error("Non-dictionary skipped. \(error)")
 		}
