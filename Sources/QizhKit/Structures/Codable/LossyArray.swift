@@ -39,18 +39,18 @@ public struct LossyArray <Item: Codable>: Codable, EmptyProvidable, ExpressibleB
 					// logger.debug("[LossyArray] decoded \(Item.self) element")
 				} catch let error as DecodingError {
 					logger.warning("""
-						Skipping \(Item.self) element while decoding because of error
+						Skipping \(Item.self) element while decoding
 						┗ \(error.humanReadableDescription)
 						""")
 					_ = try? container.decode(Blancodable.self)
 				} catch {
-					logger.warning("Skipping \(Item.self) element while decoding because of error: \(error)")
+					logger.warning("Skipping \(Item.self) element while decoding. \(error)")
 					_ = try? container.decode(Blancodable.self)
 				}
 			}
 		} catch let error as DecodingError {
 			logger.warning("""
-				Skipping the whole array because of error
+				Skipping the whole non-array
 				┗ \(error.humanReadableDescription)
 				""")
 		} catch {
