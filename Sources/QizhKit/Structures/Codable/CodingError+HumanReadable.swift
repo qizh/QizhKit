@@ -11,13 +11,21 @@ extension DecodingError {
 	public var humanReadableDescription: String {
 		switch self {
 		case let .keyNotFound(key, context):
-			return "DecodingError.keyNotFound(\"\(key.stringValue)\" key at \(context.codingPath.humanReadableDescription))"
+			let debugDescription = context.debugDescription
+				.nonEmpty.map { ", description: \($0)" } ?? .empty
+			return "DecodingError.keyNotFound(\"\(key.stringValue)\" key at \(context.codingPath.humanReadableDescription)\(debugDescription))"
 		case let .typeMismatch(type, context):
-			return "DecodingError.typeMismatch(\(type) type at \(context.codingPath.humanReadableDescription))"
+			let debugDescription = context.debugDescription
+				.nonEmpty.map { ", description: \($0)" } ?? .empty
+			return "DecodingError.typeMismatch(\(type) type at \(context.codingPath.humanReadableDescription)\(debugDescription))"
 		case let .valueNotFound(type, context):
-			return "DecodingError.valueNotFound(\(type) type at \(context.codingPath.humanReadableDescription))"
+			let debugDescription = context.debugDescription
+				.nonEmpty.map { ", description: \($0)" } ?? .empty
+			return "DecodingError.valueNotFound(\(type) type at \(context.codingPath.humanReadableDescription)\(debugDescription))"
 		case let .dataCorrupted(context):
-			return "DecodingError.dataCorrupted(at \(context.codingPath.humanReadableDescription))"
+			let debugDescription = context.debugDescription
+				.nonEmpty.map { ", description: \($0)" } ?? .empty
+			return "DecodingError.dataCorrupted(at \(context.codingPath.humanReadableDescription)\(debugDescription))"
 		@unknown default:
 			return "\(self)"
 		}
