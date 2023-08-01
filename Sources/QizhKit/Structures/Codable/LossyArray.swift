@@ -10,7 +10,7 @@ import Foundation
 import os.log
 
 fileprivate let logger = Logger(
-	subsystem: "\(Bundle.mainIdentifier).property_wrappers",
+	subsystem: "Coding",
 	category: "Lossy Array"
 )
 
@@ -37,13 +37,24 @@ public struct LossyArray <Item: Codable>: Codable, EmptyProvidable, ExpressibleB
 					let value = try container.decode(Item.self)
 					elements.append(value)
 					// logger.debug("[LossyArray] decoded \(Item.self) element")
+				} catch let error as DecodingError {
+					logger.warning("""
+						Skipping \(Item.self) element while decoding because of error
+						┗ \(error.humanReadableDescription)
+						""")
+					_ = try? container.decode(Blancodable.self)
 				} catch {
 					logger.warning("Skipping \(Item.self) element while decoding because of error: \(error)")
 					_ = try? container.decode(Blancodable.self)
 				}
 			}
+		} catch let error as DecodingError {
+			logger.warning("""
+				Skipping the whole array because of error
+				┗ \(error.humanReadableDescription)
+				""")
 		} catch {
-			logger.error("Non-array skipped: \(error)")
+			logger.warning("Non-array skipped: \(error)")
 		}
 		
 		self.wrappedValue = elements
@@ -85,7 +96,7 @@ public extension KeyedDecodingContainer {
 			// print("[LossyArray] try to decode \(Wrapped.self) optionally")
 			result = try decodeIfPresent(LossyArray<Wrapped>.self, forKey: key)
 		} catch {
-			logger.warning("No value for `\(key)` key")
+			logger.warning("No value for \"\(key)\" key")
 			result = nil
 		}
 		/*
