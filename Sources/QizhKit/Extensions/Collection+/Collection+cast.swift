@@ -8,20 +8,25 @@
 
 import Foundation
 
-public extension ArraySlice {
-	@inlinable func asArray() -> [Element] { Array(self) }
+extension ArraySlice {
+	@inlinable public func asArray() -> [Element] { Array(self) }
 }
 
-public extension Slice {
-	@inlinable func asArray() -> [Base.Element] { Array(self) }
+extension Slice {
+	@inlinable public func asArray() -> [Base.Element] { Array(self) }
 }
 
-public extension Collection {
-	@inlinable func asArray() -> [Element] { Array(self) }
+extension Collection {
+	@inlinable public func asArray() -> [Element] { Array(self) }
 }
 
-public extension RangeReplaceableCollection where Self == Self.SubSequence {
-	@inlinable func asCollection <C> () -> C where C: RangeReplaceableCollection, C.Element == Element {
+extension RangeReplaceableCollection where Self == Self.SubSequence {
+	@inlinable public func asCollection <C> () -> C 
+	where C: RangeReplaceableCollection, C.Element == Element {
 		C(self)
 	}
+}
+
+extension Sequence where Element: Hashable {
+	@inlinable public func asSet() -> Set<Element> { Set(self) }
 }
