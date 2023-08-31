@@ -131,3 +131,26 @@ extension OptionSet where Self == Self.Element {
 		return copy
 	}
 }
+
+// MARK: Dictionary + add / rem
+
+extension Dictionary {
+	/// Alias for ``updatingValue(_:forKey:)``
+	@inlinable public func addingValue(_ value: Value, forKey key: Key) -> Self {
+		updatingValue(value, forKey: key)
+	}
+	
+	/// Create a copy with value updated (or added) for key
+	public func updatingValue(_ value: Value, forKey key: Key) -> Self {
+		var copy = self
+		copy.updateValue(value, forKey: key)
+		return copy
+	}
+	
+	/// Create a copy with value removed for key
+	public func removingValue(forKey key: Key) -> Self {
+		var copy = self
+		copy.removeValue(forKey: key)
+		return copy
+	}
+}
