@@ -29,15 +29,22 @@ extension DataResponse {
 			debugDepth = debug
 		}
 		
-		guard debugDepth.is(not: .none) else {
-			return "[Result]: \(result.caseName)"
-		}
-		
 		guard let request = request else {
 			return """
 			[Request]: None
 			[Result]: \(result.caseName)
 			"""
+		}
+		
+		guard debugDepth.is(not: .none) else {
+			/// `debugDepth` won't be `.none` for `.failure` `result`
+			return "Successfully called \(request.httpMethod!) \(request)"
+			/*
+			return """
+			[Request]: \(request.httpMethod!) \(request)
+			[Result]: \(result.caseName)
+			"""
+			*/
 		}
 		
 		let jsonType = "json"
@@ -181,8 +188,8 @@ extension DataResponse {
 			output += .newLine + responseDescription
 		}
 		
-		if debugDepth > .minimum {
-			let networkDuration = metrics.map { "\($0.taskInterval.duration)s" } ?? "None"
+		if debugDepth > .minimum || metrics?.taskInterval.duration > 1 {
+			let networkDuration = metrics.map { "\($0.taskInterval.duration, f: 3)s" } ?? "None"
 			output += .newLine + "[Network Duration]: \(networkDuration)"
 		}
 		
