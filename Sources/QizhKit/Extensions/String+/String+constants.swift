@@ -23,6 +23,7 @@ public extension Character {
 	static let minusChar: Character        			= "-"
 	static let multiplyChar: Character     			= "✕"
 	static let xMarkChar: Character        			= "✕"
+	static let checkMarkChar: Character        		= "✔︎"
 	static let divideChar: Character       			= "÷"
 	static let plusminusChar: Character    			= "±"
 	static let degreesChar: Character      			= "°"
@@ -69,6 +70,7 @@ public extension String {
 	static let minus        		= String(Character.minusChar)
 	static let multiply     		= String(Character.multiplyChar)
 	static let xMark        		= String(Character.xMarkChar)
+	static let checkMark        	= String(Character.checkMarkChar)
 	static let divide       		= String(Character.divideChar)
 	static let plusminus    		= String(Character.plusminusChar)
 	static let degrees      		= String(Character.degreesChar)

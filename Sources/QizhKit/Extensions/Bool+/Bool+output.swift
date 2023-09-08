@@ -8,12 +8,16 @@
 
 import SwiftUI
 
-public extension Bool {
-	var sign: Character {
+extension Bool {
+	public var sign: Character {
 		self ? .boltChar : .xMarkChar
 	}
 	
-	var imageCircle: some View {
+	public var mark: Character {
+		self ? .checkMarkChar : .xMarkChar
+	}
+	
+	public var imageCircle: some View {
 		Image(systemName: self ? "checkmark.circle" : "xmark.circle")
 			.foregroundColor(self ? .green : .red)
 	}
