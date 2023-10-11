@@ -14,6 +14,10 @@ extension Device {
 		[
 			.iPhone14Pro,
 			.iPhone14ProMax,
+			.iPhone15,
+			.iPhone15Plus,
+			.iPhone15Pro,
+			.iPhone15ProMax,
 		]
 	}
 	
