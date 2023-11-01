@@ -20,7 +20,11 @@ public struct WebView: UIViewControllerRepresentable {
 	public enum Source {
 		case none
 		case embed(_ code: String)
-		case debug(_ code: String, _ type: SourceType = .unknown)
+		case debug(
+			_ code: String,
+			_ type: SourceType = .unknown,
+			_ name: String = Self.defaultDebugName
+		)
 		case  html(_ code: String)
 		case  file(_ url: URL)
 		case   url(_ url: URL)
@@ -32,6 +36,8 @@ public struct WebView: UIViewControllerRepresentable {
 			case log
 		}
 		
+		public static let defaultDebugName = "Debug"
+		
 		public var isDebug: Bool {
 			switch self {
 			case .debug: return true
@@ -41,30 +47,37 @@ public struct WebView: UIViewControllerRepresentable {
 		
 		public var type: SourceType {
 			switch self {
-			case .debug(_, let type): return type
+			case .debug(_, let type, _): return type
 			default: return .unknown
+			}
+		}
+		
+		public var debugName: String {
+			switch self {
+			case .debug(_, _, let name): 	return name
+			default: 						return Self.defaultDebugName
 			}
 		}
 		
 		public var string: String {
 			switch self {
-			case .none:               return .empty
-			case .embed(let code):    return code
-			case .debug(let code, _): return code
-			case  .html(let code):    return code
-			case  .file(let url):     return url.absoluteString
-			case   .url(let url):     return url.absoluteString
+			case .none:               		return .empty
+			case .embed(let code):    		return code
+			case .debug(let code, _, _): 	return code
+			case  .html(let code):    		return code
+			case  .file(let url):     		return url.absoluteString
+			case   .url(let url):     		return url.absoluteString
 			}
 		}
 		
 		public var url: URL? {
 			switch self {
-			case .embed(_):       fallthrough
-			case .debug(_, _):    fallthrough
-			case  .html(_):       fallthrough
-			case .none: 	      return .none
-			case  .file(let url): return url
-			case   .url(let url): return url
+			case .embed,
+				 .debug,
+				 .html,
+				 .none: 	      	return .none
+			case .file(let url): 	return url
+			case .url(let url): 	return url
 			}
 		}
 	}
@@ -83,7 +96,7 @@ public struct WebView: UIViewControllerRepresentable {
 	) {
 		if case .embed(let code) = source {
 			self.source = .html(WebView.emptyPage(withEmbedded: code))
-		} else if case .debug(let code, _) = source {
+		} else if case .debug(let code, _, _) = source {
 			self.source = .html(WebView.debugPage(for: code))
 		} else {
 			self.source = source
@@ -211,8 +224,8 @@ public struct WebView: UIViewControllerRepresentable {
 	public func updateUIViewController(_ vc: EmbeddedWebViewController, context: Context) {
 		if !context.coordinator.havePageSet {
 			switch source {
-			case .embed(_): preconditionFailure("`.embed` source should be converted to `.html` upon init")
-			case .debug(_, _): preconditionFailure("`.debug` source should be converted to `.html` upon init")
+			case .embed: preconditionFailure("`.embed` source should be converted to `.html` upon init")
+			case .debug: preconditionFailure("`.debug` source should be converted to `.html` upon init")
 			case .html(let code): vc.webView.loadHTMLString(code, baseURL: baseUrl)
 			case .file(let url): vc.webView.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
 			case .url(let url): vc.webView.load(URLRequest(url: url))

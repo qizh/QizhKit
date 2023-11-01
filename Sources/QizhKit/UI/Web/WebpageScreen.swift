@@ -84,7 +84,7 @@ public struct WebpageScreen: View {
 			
 			if let data = source.string.data(using: .utf8),
 			   let fileURL = sharedFileURL(
-					named: "\(title) \(filenameDate)",
+					named: "\(source.debugName) \(filenameDate)",
 					for: data
 			   ) {
 				ShareLink(
