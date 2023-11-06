@@ -45,6 +45,7 @@ extension PrettyStringConvertable {
 		caseName(of: Self.self, .name) + debugIdentifier()
 	}
 	
+	@_disfavoredOverload
 	private func debugIdentifier() -> String { .empty }
 	private func debugIdentifier() -> String where Self: Identifiable {
 		"(\(self.id))"
