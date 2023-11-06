@@ -39,15 +39,19 @@ extension PrettyStringConvertable {
 			return description
 		}
 	}
-	
+}
+
+extension PrettyStringConvertable where Self: Identifiable {
 	/// Model entity name and id
 	public var description: String {
-		caseName(of: Self.self, .name) + debugIdentifier()
+		caseName(of: Self.self, .name) + "(\(id))"
 	}
-	
+}
+
+extension PrettyStringConvertable {
+	/// Model entity name
 	@_disfavoredOverload
-	private func debugIdentifier() -> String { .empty }
-	private func debugIdentifier() -> String where Self: Identifiable {
-		"(\(self.id))"
+	public var description: String {
+		caseName(of: Self.self, .name)
 	}
 }
