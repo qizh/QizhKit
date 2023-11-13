@@ -31,6 +31,20 @@ extension InitializableWithJsonString where Self: Decodable {
 	}
 }
 
+#if DEBUG
+fileprivate struct TestInitializableWithJsonString: BackendModel {
+	let id: UInt
+	let name: String
+	
+	enum CodingKeys: String, CodingKey {
+		case id, name
+	}
+	
+	static let demo: Self = "{ id: 5, name: Serhii }"
+}
+
+#endif
+
 // MARK: 1. Backend Model
 
 /// Implements the most common model actions like
@@ -43,7 +57,8 @@ public protocol BackendModel:
 	Hashable,
 	Identifiable,
 	PrettyStringConvertable,
-	InitializableWithJsonString
+	InitializableWithJsonString,
+	ExpressibleByStringLiteral
 {
 	var id: ID { get }
 }
