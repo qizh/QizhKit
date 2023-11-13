@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import os.log
 
 // MARK: 1. Backend Model
 
@@ -25,9 +26,21 @@ public protocol BackendModel:
 	var id: ID { get }
 }
 
+fileprivate let backendModelCodingLogger = Logger(subsystem: "Coding", category: "Backend Model")
+
 public extension BackendModel {
 	init(stringLiteral value: String) {
-		self = try! JSONDecoder.airtable.decode(Self.self, from: Data(value.utf8))
+		do {
+			self = try JSONDecoder.airtable.decode(Self.self, from: Data(value.utf8))
+		} catch {
+			let message = """
+				Failed to decode BackendModel string when initializing \(Self.self)
+				┗ \(error)
+				"""
+			backendModelCodingLogger.error("\(message)")
+			print(message)
+			fatalError(message)
+		}
 	}
 	
 	var debugDescription: String {
@@ -70,7 +83,6 @@ public extension KeyedBackendModel {
 }
 
 // MARK: 4. Rails Model
-#warning("TODO: Move RailsModel to BespokelyKit")
 
 /// In addition to `KeyedEmptyableBackendModel`
 /// provides some default Fetcher callbacks and default responses
@@ -103,7 +115,6 @@ public struct RailsStrictResponses <Item: Codable>: Codable {
 }
 
 // MARK: Airtable
-#warning("TODO: Move AirtableModel to BespokelyKit")
 
 public struct AirtableRecords<Item: Codable>: Codable {
 	public let records: [Item]
@@ -140,7 +151,17 @@ extension Array: ExpressibleByStringLiteral,
 				 where Element: BackendModel
 {
 	public init(stringLiteral value: String) {
-		self = try! JSONDecoder.airtable.decode(Self.self, from: Data(value.utf8))
+		do {
+			self = try JSONDecoder.airtable.decode(Self.self, from: Data(value.utf8))
+		} catch {
+			let message = """
+				Failed to decode BackendModel array string when initializing \(Self.self)
+				┗ \(error)
+				"""
+			backendModelCodingLogger.error("\(message)")
+			print(message)
+			fatalError(message)
+		}
 	}
 	
 	@inlinable public init(unicodeScalarLiteral value: String) { self.init(stringLiteral: value) }
