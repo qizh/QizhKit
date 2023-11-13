@@ -11,12 +11,12 @@ import os.log
 
 // MARK: 1. Backend Model
 
-public protocol InitializableWithString { }
+public protocol InitializableWithJsonString { }
 
 fileprivate let backendModelCodingLogger = Logger(subsystem: "Coding", category: "String Literal Decoding")
 
-extension InitializableWithString where Self: Decodable {
-	public init?(decoding value: String, with decoder: JSONDecoder) {
+extension InitializableWithJsonString where Self: Decodable {
+	public init(decoding value: String, with decoder: JSONDecoder = .init()) throws {
 		do {
 			self = try decoder.decode(Self.self, from: Data(value.utf8))
 		} catch {
@@ -26,7 +26,7 @@ extension InitializableWithString where Self: Decodable {
 				"""
 			backendModelCodingLogger.error("\(message)")
 			print(message)
-			return nil
+			throw error
 		}
 	}
 }
@@ -43,22 +43,18 @@ public protocol BackendModel:
 	Hashable,
 	Identifiable,
 	PrettyStringConvertable,
-	InitializableWithString
+	InitializableWithJsonString
 {
 	var id: ID { get }
 }
 
+#if DEBUG
 public extension BackendModel {
 	@inlinable init(stringLiteral value: String) {
-		self.init(decoding: value, with: .airtable)!
+		(try? self.init(decoding: value, with: .airtable))!
 	}
-	
-	/*
-	var debugDescription: String {
-		caseName(of: Self.self, .name) + "(\(id))"
-	}
-	*/
 }
+#endif
 
 // MARK: 2. Keyed Backend Model
 
@@ -160,19 +156,20 @@ public protocol AirtableModel: BackendModel, EmptyProvidable {
 	subscript<T>(dynamicMember key: KeyPath<Fields, T>) -> T { get }
 }
 
+#if DEBUG
 extension Array: ExpressibleByStringLiteral,
 				 ExpressibleByUnicodeScalarLiteral,
 				 ExpressibleByExtendedGraphemeClusterLiteral,
-				 InitializableWithString,
-				 where Element: BackendModel
-{
-	@inlinable public init(stringLiteral value: String) {
-		self.init(decoding: value, with: .airtable)!
+				 InitializableWithJsonString where Element: Decodable {
+	
+	public init(stringLiteral value: String) {
+		(try? self.init(decoding: value, with: .airtable))!
 	}
 	
-	@inlinable public init(unicodeScalarLiteral value: String) { self.init(stringLiteral: value) }
-	@inlinable public init(extendedGraphemeClusterLiteral value: String) { self.init(stringLiteral: value) }
+	public init(unicodeScalarLiteral value: String) { self.init(stringLiteral: value) }
+	public init(extendedGraphemeClusterLiteral value: String) { self.init(stringLiteral: value) }
 }
+#endif
 
 public extension AirtableModel {
 	var createdTime: Date { .reference0 }
