@@ -11,6 +11,28 @@ import os.log
 
 // MARK: 1. Backend Model
 
+public protocol InitializableWithString { }
+
+fileprivate let backendModelCodingLogger = Logger(subsystem: "Coding", category: "String Literal Decoding")
+
+extension InitializableWithString where Self: Decodable {
+	public init?(decoding value: String, with decoder: JSONDecoder) {
+		do {
+			self = try decoder.decode(Self.self, from: Data(value.utf8))
+		} catch {
+			let message = """
+				Failed to decode string when initializing \(Self.self)
+				┗ \(error)
+				"""
+			backendModelCodingLogger.error("\(message)")
+			print(message)
+			return nil
+		}
+	}
+}
+
+// MARK: 1. Backend Model
+
 /// Implements the most common model actions like
 /// - Initialize with String
 /// - Debug output as pretty printed JSON
@@ -21,31 +43,21 @@ public protocol BackendModel:
 	Hashable,
 	Identifiable,
 	PrettyStringConvertable,
-	ExpressibleByStringLiteral where StringLiteralType == String
+	InitializableWithString
 {
 	var id: ID { get }
 }
 
-fileprivate let backendModelCodingLogger = Logger(subsystem: "Coding", category: "Backend Model")
-
 public extension BackendModel {
-	init(stringLiteral value: String) {
-		do {
-			self = try JSONDecoder.airtable.decode(Self.self, from: Data(value.utf8))
-		} catch {
-			let message = """
-				Failed to decode BackendModel string when initializing \(Self.self)
-				┗ \(error)
-				"""
-			backendModelCodingLogger.error("\(message)")
-			print(message)
-			fatalError(message)
-		}
+	@inlinable init(stringLiteral value: String) {
+		self.init(decoding: value, with: .airtable)!
 	}
 	
+	/*
 	var debugDescription: String {
 		caseName(of: Self.self, .name) + "(\(id))"
 	}
+	*/
 }
 
 // MARK: 2. Keyed Backend Model
@@ -108,6 +120,7 @@ public struct RailsLossyResponses <Item: Codable>: Codable {
 	@LossyArray public var data: [Item]
 }
 
+/// Used in ``Fetcher``
 public struct RailsStrictResponses <Item: Codable>: Codable {
 	public let status: Int
 	public let message: String
@@ -116,6 +129,7 @@ public struct RailsStrictResponses <Item: Codable>: Codable {
 
 // MARK: Airtable
 
+/// Used in ``Fetcher``
 public struct AirtableRecords<Item: Codable>: Codable {
 	public let records: [Item]
 	
@@ -136,6 +150,7 @@ public protocol AirtableModelFields:
 	associatedtype CodingKeys: CodingKey & CaseIterable
 }
 
+/// Used in ``Fetcher``
 @dynamicMemberLookup
 public protocol AirtableModel: BackendModel, EmptyProvidable {
 	associatedtype Fields: AirtableModelFields
@@ -147,21 +162,12 @@ public protocol AirtableModel: BackendModel, EmptyProvidable {
 
 extension Array: ExpressibleByStringLiteral,
 				 ExpressibleByUnicodeScalarLiteral,
-				 ExpressibleByExtendedGraphemeClusterLiteral
+				 ExpressibleByExtendedGraphemeClusterLiteral,
+				 InitializableWithString,
 				 where Element: BackendModel
 {
-	public init(stringLiteral value: String) {
-		do {
-			self = try JSONDecoder.airtable.decode(Self.self, from: Data(value.utf8))
-		} catch {
-			let message = """
-				Failed to decode BackendModel array string when initializing \(Self.self)
-				┗ \(error)
-				"""
-			backendModelCodingLogger.error("\(message)")
-			print(message)
-			fatalError(message)
-		}
+	@inlinable public init(stringLiteral value: String) {
+		self.init(decoding: value, with: .airtable)!
 	}
 	
 	@inlinable public init(unicodeScalarLiteral value: String) { self.init(stringLiteral: value) }
