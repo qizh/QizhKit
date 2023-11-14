@@ -720,7 +720,7 @@ import OrderedCollections
 // MARK: OrderedDictionary
 
 extension OrderedDictionary {
-	@ViewBuilder func labeledViews(label: String? = .none) -> some View {
+	@ViewBuilder public func labeledViews(label: String? = .none) -> some View {
 		if isEmpty {
 			NilReplacement.emptySet.labeledView(label: label)
 		} else {
