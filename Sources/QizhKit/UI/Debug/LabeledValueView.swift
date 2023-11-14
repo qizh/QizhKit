@@ -8,6 +8,25 @@
 
 import SwiftUI
 
+// MARK: Environment Value
+
+public struct LabeledViewLengthLimitKey: EnvironmentKey {
+	public static let defaultValue: Int = 50
+}
+
+extension EnvironmentValues {
+	public var labeledViewLengthLimit: Int {
+		get { self[LabeledViewLengthLimitKey.self] }
+		set { self[LabeledViewLengthLimitKey.self] = newValue }
+	}
+}
+
+extension View {
+	public func labeledViewLengthLimit(_ length: Int) -> some View {
+		environment(\.labeledViewLengthLimit, length)
+	}
+}
+
 // MARK: Stack
 
 public extension VStack {
@@ -40,7 +59,7 @@ public struct LabeledValueView: View {
 	private var valueView: AnyView
 	private var label: String?
 	
-	@Environment(\.colorScheme) private var colorScheme: ColorScheme
+	@Environment(\.colorScheme) private var colorScheme
 	
 	private func prepare(_ label: String?) -> String? {
 		label.map(\.withLinesNSpacesTrimmed)
@@ -65,14 +84,25 @@ public struct LabeledValueView: View {
 			self.init(valueView: Self.bool(value: false).asAnyView(), label: label)
 		case .some(let wrapped):
 			self.init(
-				valueView: AnyView(
-					Text(wrapped.prefix(50))
-						.semibold(8)
-						.padding(EdgeInsets(top: 3, leading: 5, bottom: 2, trailing: 5))
-						.foregroundLabel()
-				),
+				valueView: ValueView(for: wrapped).asAnyView(),
 				label: label
 			)
+		}
+	}
+	
+	fileprivate struct ValueView: View {
+		private let value: String
+		@Environment(\.labeledViewLengthLimit) private var lengthLimit
+		
+		internal init <S: StringProtocol> (for value: S) {
+			self.value = String(value)
+		}
+		
+		var body: some View {
+			Text(value.prefix(lengthLimit))
+				.semibold(8)
+				.padding(EdgeInsets(top: 3, leading: 5, bottom: 2, trailing: 5))
+				.foregroundLabel()
 		}
 	}
 	
