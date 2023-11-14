@@ -620,18 +620,7 @@ public extension Binding where Value == Bool {
 	}
 }
 
-/*
-public extension CaseNameProvidable {
-	@inlinable func labeledView(label: String? = nil) -> LabeledValueView {
-		LabeledValueView(self, label: label)
-	}
-}
-public extension Optional where Wrapped: CaseNameProvidable {
-	@inlinable func labeledView(label: String? = nil) -> LabeledValueView {
-		LabeledValueView(self, label: label)
-	}
-}
-*/
+// MARK: Case View
 
 public extension EasySelfComparable {
 	@inlinable func caseView(label: String? = nil) -> LabeledValueView {
@@ -661,8 +650,10 @@ public extension Binding where Value: EasySelfComparable {
 	}
 }
 
-public extension Collection {
-	@ViewBuilder func labeledViews(label: String? = nil) -> some View {
+// MARK: Collection
+
+extension Collection {
+	@ViewBuilder public func labeledViews(label: String? = nil) -> some View {
 		if isEmpty {
 			NilReplacement.emptySet.labeledView(label: label)
 		} else {
@@ -687,8 +678,10 @@ public extension Collection {
 	}
 }
 
-public extension Dictionary {
-	@ViewBuilder func labeledViews(label: String? = nil) -> some View {
+// MARK: Dictionary
+
+extension Dictionary {
+	@ViewBuilder public func labeledViews(label: String? = nil) -> some View {
 		if isEmpty {
 			NilReplacement.emptySet.labeledView(label: label)
 		} else {
@@ -702,21 +695,60 @@ public extension Dictionary {
 	}
 }
 
-public extension Optional where Wrapped: Collection, Wrapped: Hashable, Wrapped.Element: Hashable {
-//	@inlinable
-	@ViewBuilder func labeledViews(label: String? = nil) -> some View {
-		if isSet {
-			forceUnwrapBecauseTested().labeledViews(label: label)
+// MARK: Set
+
+extension Set {
+	@ViewBuilder public func labeledViews(label: String? = .none) -> some View {
+		if isEmpty {
+			NilReplacement.emptySet.labeledView(label: label)
 		} else {
-			LabeledValueView(String?.none, label: label)
+			VStack.LabeledViews {
+				"[\(Element.self)]".labeledView(label: label)
+				ForEach(enumerating: self) { offset, element in
+					"\(element)".labeledView(label: "\(offset)")
+				}
+			}
 		}
-		
-		/*
-		mapView { $0.labeledViews(label: label) }
-			?? LabeledValueView(String?.none, label: label)
-		*/
 	}
 }
+
+// MARK: Ordered Collections
+
+#if canImport(OrderedCollections)
+import OrderedCollections
+
+// MARK: OrderedDictionary
+
+extension OrderedDictionary {
+	@ViewBuilder func labeledViews(label: String? = .none) -> some View {
+		if isEmpty {
+			NilReplacement.emptySet.labeledView(label: label)
+		} else {
+			VStack.LabeledViews {
+				"[\(Key.self): \(Value.self)]".labeledView(label: label)
+				ForEach(enumerating: self) { offset, element in
+					"\(element.value)".labeledView(label: "\(element.key)")
+				}
+			}
+		}
+	}
+}
+#endif
+
+// MARK: Optional Collection
+
+extension Optional where Wrapped: Collection { //, Wrapped: Hashable, Wrapped.Element: Hashable {
+	@ViewBuilder public func labeledViews(label: String? = .none) -> some View {
+		switch self {
+		case .none:
+			LabeledValueView(String?.none, label: label)
+		case .some(let wrapped):
+			wrapped.labeledViews(label: label)
+		}
+	}
+}
+
+// MARK: String Convertable
 
 public extension CustomStringConvertible {
 	@inlinable func labeledView(label: String? = nil) -> LabeledValueView {
