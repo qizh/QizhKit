@@ -726,8 +726,8 @@ extension OrderedDictionary {
 		} else {
 			VStack.LabeledViews {
 				"[\(Key.self): \(Value.self)]".labeledView(label: label)
-				ForEach(enumerating: self) { offset, element in
-					"\(element.value)".labeledView(label: "\(element.key)")
+				ForEach(self.keys.asArray(), id: \.self) { key in
+					"\(self[key].orNilString)".labeledView(label: "\(key)")
 				}
 			}
 		}
