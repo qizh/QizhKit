@@ -77,6 +77,7 @@ extension String {
 		return chunks
 	}
 	
+	@available(*, deprecated, message: "Splitting a string into parts is no longer necessary, logger can output long strings now")
 	@inlinable public func forEachLoggerChunk(
 		maxLength: Int = 1000,
 		_ body: (Substring) throws -> Void
