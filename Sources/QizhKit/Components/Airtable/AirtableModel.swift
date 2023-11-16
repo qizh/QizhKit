@@ -11,11 +11,32 @@ import os.log
 
 // MARK: 1. Backend Model
 
-public protocol InitializableWithJsonString { }
+#if DEBUG
+public protocol InitializableWithJsonString: Decodable, ExpressibleByStringLiteral { }
+
+public extension InitializableWithJsonString {
+	@inlinable init(stringLiteral value: String) {
+		(try? self.init(decoding: value, with: .airtable))!
+	}
+}
+
+fileprivate struct TestInitializableWithJsonString: InitializableWithJsonString {
+	let id: UInt
+	let name: String
+	
+	enum CodingKeys: String, CodingKey {
+		case id, name
+	}
+	
+	static let demo: Self = "{ id: 5, name: Serhii }"
+}
+#else
+public protocol InitializableWithJsonString: Decodable { }
+#endif
 
 fileprivate let backendModelCodingLogger = Logger(subsystem: "Coding", category: "String Literal Decoding")
 
-extension InitializableWithJsonString where Self: Decodable {
+extension InitializableWithJsonString {
 	public init(decoding value: String, with decoder: JSONDecoder = .init()) throws {
 		do {
 			self = try decoder.decode(Self.self, from: Data(value.utf8))
@@ -31,20 +52,6 @@ extension InitializableWithJsonString where Self: Decodable {
 	}
 }
 
-#if DEBUG
-fileprivate struct TestInitializableWithJsonString: BackendModel {
-	let id: UInt
-	let name: String
-	
-	enum CodingKeys: String, CodingKey {
-		case id, name
-	}
-	
-	static let demo: Self = "{ id: 5, name: Serhii }"
-}
-
-#endif
-
 // MARK: 1. Backend Model
 
 /// Implements the most common model actions like
@@ -57,19 +64,10 @@ public protocol BackendModel:
 	Hashable,
 	Identifiable,
 	PrettyStringConvertable,
-	InitializableWithJsonString,
-	ExpressibleByStringLiteral
+	InitializableWithJsonString
 {
 	var id: ID { get }
 }
-
-#if DEBUG
-public extension BackendModel {
-	@inlinable init(stringLiteral value: String) {
-		(try? self.init(decoding: value, with: .airtable))!
-	}
-}
-#endif
 
 // MARK: 2. Keyed Backend Model
 
