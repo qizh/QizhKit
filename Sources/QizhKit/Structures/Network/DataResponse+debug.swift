@@ -222,15 +222,22 @@ extension Logger {
 	/// - Parameters:
 	///   - response: Alamofire's `DataResponse`
 	///   - debug: Debug level
-	///   - format: Will format the json body
+	///   - format: Set if you need to format the json output,
+	///   			in other case will format when `debug > .minimum`
 	public func logDebugDescription <Success, Failure: Error> (
 		of response: DataResponse<Success, Failure>,
 		debug: DebugDepth,
-		format: Bool = true
+		format: Bool? = .none
 	) {
+		let doFormat = if let format {
+			format
+		} else {
+			debug > .minimum
+		}
+		
 		self.log(
 			level: response.result.logType,
-			"\(response.debugDescription(depth: debug, format: format))"
+			"\(response.debugDescription(depth: debug, format: doFormat))"
 		)
 	}
 	
@@ -238,11 +245,12 @@ extension Logger {
 	/// - Parameters:
 	///   - response: Alamofire's `DataResponse`
 	///   - debug: Debug level
-	///   - format: Will format the json body
+	///   - format: Set if you need to format the json output,
+	///   			in other case will format when `debug > .minimum`
 	@inlinable public func logDebugDescriptionIfNeeded <Success, Failure: Error> (
 		of response: DataResponse<Success, Failure>,
 		debug: DebugDepth,
-		format: Bool = true
+		format: Bool? = .none
 	) {
 		if debug.isOn {
 			logDebugDescription(of: response, debug: debug, format: format)
