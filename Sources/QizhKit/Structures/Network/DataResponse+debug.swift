@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import os.log
 
 #if canImport(Alamofire)
 import Alamofire
@@ -208,9 +209,56 @@ extension DataResponse {
 }
 
 extension HTTPHeaders {
-	@inlinable
-	public var contentType: String? {
+	/// Value for the `Content-Type` header
+	@inlinable public var contentType: String? {
 		value(for: "Content-Type")
 	}
 }
+
+// MARK: Logger shortcut
+
+extension Logger {
+	/// Will log the `debugDescription` with `response.result.logType` log level
+	/// - Parameters:
+	///   - response: Alamofire's `DataResponse`
+	///   - debug: Debug level
+	///   - format: Will format the json body
+	public func logDebugDescription <Success, Failure: Error> (
+		of response: DataResponse<Success, Failure>,
+		debug: DebugDepth,
+		format: Bool = true
+	) {
+		self.log(
+			level: response.result.logType,
+			"\(response.debugDescription(depth: debug, format: format))"
+		)
+	}
+	
+	/// Will call ``logDebugDescription(of:debug:format:)`` when `debug.isOn`
+	/// - Parameters:
+	///   - response: Alamofire's `DataResponse`
+	///   - debug: Debug level
+	///   - format: Will format the json body
+	@inlinable public func logDebugDescriptionIfNeeded <Success, Failure: Error> (
+		of response: DataResponse<Success, Failure>,
+		debug: DebugDepth,
+		format: Bool = true
+	) {
+		if debug.isOn {
+			logDebugDescription(of: response, debug: debug, format: format)
+		}
+	}
+}
 #endif
+
+// MARK: Log type of result
+
+extension Result {
+	/// `.debug` for `.success`, `.error` for `.failure`
+	@inlinable public var logType: OSLogType {
+		switch self {
+		case .success(_): return .debug
+		case .failure(_): return .error
+		}
+	}
+}
