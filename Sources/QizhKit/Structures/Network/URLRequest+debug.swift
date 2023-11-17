@@ -31,7 +31,7 @@ extension URLRequest {
 				bodyDescription = debugDepth >= .minimum ? "[Body]: \(data.count) bytes" : .empty
 			}
 		} else {
-			bodyDescription = debugDepth >= .minimum ? "[Body]: None" : .empty
+			bodyDescription = debugDepth > .minimum ? "[Body]: None" : .empty
 		}
 		
 		var description: String = "[Request]: \(self.httpMethod!) \(self)"
