@@ -28,14 +28,14 @@ extension URLRequest {
 					\(String(decoding: data, as: UTF8.self).withLinesNSpacesTrimmed, offset: .tab)
 				"""
 			} else {
-				bodyDescription = debugDepth > .minimum ? "[Body]: \(data.count) bytes" : .empty
+				bodyDescription = debugDepth >= .minimum ? "[Body]: \(data.count) bytes" : .empty
 			}
 		} else {
-			bodyDescription = debugDepth > .minimum ? "[Body]: None" : .empty
+			bodyDescription = debugDepth >= .minimum ? "[Body]: None" : .empty
 		}
 		
 		var description: String = "[Request]: \(self.httpMethod!) \(self)"
-		if debugDepth > .minimum, not(headers.isEmpty) {
+		if debugDepth >= .minimum, not(headers.isEmpty) {
 			description += .newLine + """
 				[Headers]:
 					\(headers.sorted().description, offset: .tabs(2))
