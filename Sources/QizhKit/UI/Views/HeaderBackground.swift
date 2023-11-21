@@ -160,19 +160,10 @@ public struct ShowHeaderBackgroundViewModifier: ViewModifier {
 public struct NavigationBarDimension {
 	public static var height: CGFloat {
 		Device.current.hasDynamicIsland ? 39 : 44
-		/*
-		switch Device.current {
-		case .iPhone14Pro, .iPhone14ProMax: return 39
-		default: return 44
-		}
-		*/
 	}
 	
 	public static var safeFrameTop: CGFloat {
-		switch Device.current {
-		case .iPhone14Pro, .iPhone14ProMax: return 59
-		default: return 44
-		}
+		Device.current.hasDynamicIsland ? 59 : 44
 	}
 	
 	public static var safeFrameBottom: CGFloat {
