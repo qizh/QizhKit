@@ -17,10 +17,10 @@ let package = Package(
 		),
     ],
 	dependencies: [
-		.package(url: "https://github.com/siteline/SwiftUI-Introspect", from: "0.2.3"),
-		.package(url: "https://github.com/Alamofire/Alamofire", from: "5.8.0"),
+		.package(url: "https://github.com/siteline/SwiftUI-Introspect", from: "0.12.0"),
+		.package(url: "https://github.com/Alamofire/Alamofire", from: "5.8.1"),
 		.package(url: "https://github.com/devicekit/DeviceKit", from: "5.1.0"),
-		.package(url: "https://github.com/stleamist/BetterSafariView", from: "2.4.1"),
+		.package(url: "https://github.com/stleamist/BetterSafariView", from: "2.4.2"),
 	],
     targets: [
         .target(
