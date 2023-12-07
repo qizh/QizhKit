@@ -235,10 +235,10 @@ extension Logger {
 			debug > .minimum
 		}
 		
-		self.log(
-			level: response.result.logType,
-			"\(response.debugDescription(depth: debug, format: doFormat))"
-		)
+		response.debugDescription(depth: debug, format: doFormat)
+			.forEachLoggerChunk {
+				self.log(level: response.result.logType, "\($0)")
+			}
 	}
 	
 	/// Will call ``logDebugDescription(of:debug:format:)`` when `debug.isOn`
