@@ -44,7 +44,7 @@ extension String {
 	/// - Complexity: The time complexity is O(n), where n is the number of characters
 	/// 		in the string.
 	///               The function iterates through the string once to create the chunks.
-	public func splittedForLogger(maxLength: Int = 1000) -> [Substring] {
+	public func splittedForLogger(maxLength: Int = 30000) -> [Substring] {
 		var chunks: [Substring] = []
 		var currentIndex = self.startIndex
 		
@@ -77,9 +77,8 @@ extension String {
 		return chunks
 	}
 	
-	@available(*, deprecated, message: "Splitting a string into parts is no longer necessary, logger can output long strings now")
 	@inlinable public func forEachLoggerChunk(
-		maxLength: Int = 1000,
+		maxLength: Int = 30000,
 		_ body: (Substring) throws -> Void
 	) rethrows {
 		try self
