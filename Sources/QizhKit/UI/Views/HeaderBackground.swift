@@ -159,7 +159,17 @@ public struct ShowHeaderBackgroundViewModifier: ViewModifier {
 
 public struct NavigationBarDimension {
 	public static var height: CGFloat {
-		Device.current.hasDynamicIsland ? 39 : 44
+		if Device.current.isPad {
+			50
+		} else if Device.current.isPhone {
+			if Device.current.hasDynamicIsland {
+				39 /// Maybe `40`?
+			} else {
+				44
+			}
+		} else {
+			44
+		}
 	}
 	
 	public static var safeFrameTop: CGFloat {
