@@ -1,4 +1,4 @@
-// swift-tools-version: 5.7
+// swift-tools-version: 5.9
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -9,7 +9,10 @@ let settings: [SwiftSetting] = [
 
 let package = Package(
     name: "QizhKit",
-	platforms: [.iOS(.v14)],
+	platforms: [
+		.iOS(.v15),
+		.visionOS(.v1),
+	],
     products: [
         .library(
             name: "QizhKit",
@@ -17,16 +20,19 @@ let package = Package(
 		),
     ],
 	dependencies: [
-		.package(url: "https://github.com/siteline/SwiftUI-Introspect", from: "0.12.0"),
+		.package(url: "https://github.com/siteline/swiftui-introspect", from: "1.0.0"),
 		.package(url: "https://github.com/Alamofire/Alamofire", from: "5.8.1"),
-		.package(url: "https://github.com/devicekit/DeviceKit", from: "5.1.0"),
-		.package(url: "https://github.com/stleamist/BetterSafariView", from: "2.4.2"),
+		// .package(url: "https://github.com/devicekit/DeviceKit", from: "5.1.0"),
+		.package(url: "https://github.com/qizh/DeviceKit", from: "5.2.3"),
+		// .package(url: "https://github.com/stleamist/BetterSafariView", from: "2.4.2"),
+		// .package(url: "https://github.com/shantanubala/BetterSafariView", branch: "main"),
+		.package(url: "https://github.com/qizh/BetterSafariView", from: "2.4.3"),
 	],
     targets: [
         .target(
             name: "QizhKit",
 			dependencies: [
-				.product(name: "Introspect", package: "SwiftUI-Introspect"),
+				.product(name: "SwiftUIIntrospect", package: "swiftui-introspect"),
 				"Alamofire",
 				"DeviceKit",
 				"BetterSafariView",

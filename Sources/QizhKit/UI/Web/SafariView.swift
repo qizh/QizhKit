@@ -52,9 +52,11 @@ public final class CooktourSafariViewController: UIViewController {
 		let newSafariViewController = SFSafariViewController(url: url)
 		newSafariViewController.title = safariTitle
 		title = safariTitle
+		#if os(iOS)
 		if let tintColor = tintColor {
 			newSafariViewController.preferredControlTintColor = tintColor
 		}
+		#endif
 		addChild(newSafariViewController)
 		newSafariViewController.view.frame = view.frame
 		view.addSubview(newSafariViewController.view)
@@ -117,7 +119,11 @@ public struct SafariButton<Content>: View where Content: View {
 				onDismiss: onDismiss
 			) {
 				BetterSafariView.SafariView(url: url)
+					#if os(iOS)
 					.preferredControlTintColor(tint)
+					#elseif os(visionOS)
+					.preferredControlAccentColor(tint.map(Color.init(uiColor:)))
+					#endif
 				/*
 				if let tint = tint, #available(iOS 14.0, *) {
 					return BetterSafariView.SafariView(url: url)

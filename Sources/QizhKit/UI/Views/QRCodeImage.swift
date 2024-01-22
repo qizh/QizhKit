@@ -36,7 +36,7 @@ public struct QRCodeImage: View {
 		let filter = CIFilter.qrCodeGenerator()
 		filter.message = data
 		
-		let scale: CGFloat = UIScreen.main.scale // .three
+		let scale: CGFloat = UITraitCollection.current.displayScale // UIScreen.main.scale // .three
 		let transform = CGAffineTransform(scaleX: scale, y: scale)
 		
 		if let output = filter.outputImage?.transformed(by: transform),
@@ -62,7 +62,12 @@ struct QRCodeImage_Previews: PreviewProvider {
 //				.previewDifferentDevices(names: true)
 				.previewDisplayName("some much longer value")
 		}
-		.previewLayout(.fixed(width: UIScreen.main.scale * 150, height: UIScreen.main.scale * 150))
+		.previewLayout(
+			.fixed(
+				width: UITraitCollection.current.displayScale * 150,
+				height: UITraitCollection.current.displayScale * 150
+			)
+		)
     }
 }
 #endif

@@ -34,6 +34,7 @@ public enum HapticAction: CaseIterable, CaseComparable, DefaultCaseFirst {
 	case warningNotification
 	
 	public func produceHapticFeedback() {
+		#if os(iOS)
 		switch self {
 		case .none: break
 		case .random: HapticAction.randomAction.produceHapticFeedback()
@@ -47,6 +48,9 @@ public enum HapticAction: CaseIterable, CaseComparable, DefaultCaseFirst {
 		case .successNotification: 	UINotificationFeedbackGenerator().notificationOccurred(.success)
 		case .warningNotification: 	UINotificationFeedbackGenerator().notificationOccurred(.warning)
 		}
+		#elseif os(visionOS)
+		/// No haptic
+		#endif
 	}
 	
 	@inlinable public static func produceHapticFeedback(_ action: HapticAction) {

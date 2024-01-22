@@ -11,6 +11,7 @@ import DeviceKit
 
 extension Device {
 	public static var allDevicesWithDynamicIsland: [Device] {
+		#if os(iOS)
 		[
 			.iPhone14Pro,
 			.iPhone14ProMax,
@@ -19,6 +20,9 @@ extension Device {
 			.iPhone15Pro,
 			.iPhone15ProMax,
 		]
+		#elseif os(visionOS)
+		.empty
+		#endif
 	}
 	
 	public var hasDynamicIsland: Bool {
