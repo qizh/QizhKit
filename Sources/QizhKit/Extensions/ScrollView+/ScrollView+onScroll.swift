@@ -8,9 +8,9 @@
 
 import SwiftUI
 
-#if canImport(Introspect)
+#if canImport(SwiftUIIntrospect)
 import UIKit
-import Introspect
+import SwiftUIIntrospect
 
 public extension View {
 	@inlinable func onScrollRelease(
@@ -68,7 +68,7 @@ public struct ScrollViewEndDraggingDelegateModifier: ViewModifier {
 	
 	public func body(content: Content) -> some View {
 		content
-			.introspectScrollView { scrollView in
+			.introspect(.scrollView, on: .iOS(.v15, .v16, .v17)) { scrollView in
 				if let delegateAssigned = scrollView.delegate as? IntrospectedScrollViewDelegate {
 					self.delegate = delegateAssigned
 				} else {
@@ -91,7 +91,7 @@ public struct ScrollViewContentOffsetDelegateModifier: ViewModifier {
 	
 	public func body(content: Content) -> some View {
 		content
-			.introspectScrollView { scrollView in
+			.introspect(.scrollView, on: .iOS(.v15, .v16, .v17)) { scrollView in
 				if let delegateAssigned = scrollView.delegate as? IntrospectedScrollViewDelegate {
 					if self.delegate != delegateAssigned {
 						self.delegate = delegateAssigned

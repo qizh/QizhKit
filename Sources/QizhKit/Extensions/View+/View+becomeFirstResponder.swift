@@ -8,8 +8,8 @@
 
 import SwiftUI
 
-#if canImport(Introspect)
-import Introspect
+#if canImport(SwiftUIIntrospect)
+import SwiftUIIntrospect
 
 public struct BecomeFirstResponder: ViewModifier {
 	@State private var textField: UITextField?
@@ -30,7 +30,7 @@ public struct BecomeFirstResponder: ViewModifier {
 	public func body(content: Content) -> some View {
 		ZStack(alignment: .topLeading) {
 			content
-				.introspectTextField { textField in
+				.introspect(.textField, on: .iOS(.v15, .v16, .v17)) { textField in
 					self.textField ??= textField
 				}
 				/*
@@ -77,7 +77,7 @@ public struct ReturnKeyType: ViewModifier {
 	public func body(content: Content) -> some View {
 		ZStack(alignment: .topLeading) {
 			content
-				.introspectTextField { textField in
+				.introspect(.textField, on: .iOS(.v15, .v16, .v17)) { textField in
 					self.textField ??= textField
 				}
 				/*
