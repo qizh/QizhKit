@@ -8,11 +8,13 @@
 
 import SwiftUI
 
+#if os(iOS)
 public extension UIScreen {
 	@inlinable static var width  : CGFloat { main.bounds.width }
 	@inlinable static var height : CGFloat { main.bounds.height }
 	@inlinable static var size   : CGSize  { main.bounds.size }
 }
+#endif
 
 public extension UIApplication {
 	@inlinable

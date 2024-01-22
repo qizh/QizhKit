@@ -13,13 +13,18 @@ extension Device: Identifiable {
 	@inlinable public var id: String { description }
 	
 	public var previewName: String {
+		#if os(iOS)
 		switch self {
-		case .iPhoneSE: return "iPhone SE (1st generation)"
-		default: return description
+		case .iPhoneSE: "iPhone SE (1st generation)"
+		default: description
 		}
+		#elseif os(visionOS)
+		description
+		#endif
 	}
 }
 
+#if os(iOS)
 public extension Collection where Element == Device {
 	static var iPhones12: [Device] {
 		[
@@ -61,6 +66,7 @@ public extension Collection where Element == Device {
 		]
 	}
 }
+#endif
 
 public extension View {
 	@inlinable
@@ -81,6 +87,7 @@ public extension View {
 		}
 	}
 	
+	#if os(iOS)
 	@ViewBuilder
 	func previewDifferentScreenSizes() -> some View {
 		ForEach([Device].iOS14x2sizes) { device in
@@ -92,10 +99,19 @@ public extension View {
 				.previewDisplayName(device.previewName + .space + "@3")
 		}
 	}
+	#endif
+	
+	static var defaultPreviewDevicesSet: [Device] {
+		#if os(iOS)
+		.iPhones12
+		#elseif os(visionOS)
+		.empty
+		#endif
+	}
 	
 	@inlinable
 	func previewDifferentDevices(
-		devices: [Device] = .iPhones12,
+		devices: [Device] = defaultPreviewDevicesSet,
 		names: Bool = false
 	) -> some View {
 		ForEach(devices) { device in

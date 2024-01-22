@@ -20,16 +20,19 @@ let package = Package(
 		),
     ],
 	dependencies: [
-		.package(url: "https://github.com/siteline/SwiftUI-Introspect", from: "0.12.0"),
+		.package(url: "https://github.com/siteline/swiftui-introspect", from: "1.0.0"),
 		.package(url: "https://github.com/Alamofire/Alamofire", from: "5.8.1"),
-		.package(url: "https://github.com/devicekit/DeviceKit", from: "5.1.0"),
-		.package(url: "https://github.com/stleamist/BetterSafariView", from: "2.4.2"),
+		// .package(url: "https://github.com/devicekit/DeviceKit", from: "5.1.0"),
+		.package(url: "https://github.com/qizh/DeviceKit", from: "5.2.3"),
+		// .package(url: "https://github.com/stleamist/BetterSafariView", from: "2.4.2"),
+		// .package(url: "https://github.com/shantanubala/BetterSafariView", branch: "main"),
+		.package(url: "https://github.com/qizh/BetterSafariView", from: "2.4.3"),
 	],
     targets: [
         .target(
             name: "QizhKit",
 			dependencies: [
-				.product(name: "Introspect", package: "SwiftUI-Introspect"),
+				.product(name: "SwiftUIIntrospect", package: "swiftui-introspect"),
 				"Alamofire",
 				"DeviceKit",
 				"BetterSafariView",

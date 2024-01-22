@@ -101,8 +101,11 @@ public extension FloatingPoint {
 	
 	/// 1/3 (of a point)
 	@inlinable static var hairline: Self { Self.one.third }
-	/// 1/3, 1/2, or the whole point depending on a current screen scale
-	@inlinable static var pixel: Self { .one / Self(UIScreen.main.scale.int) }
+	/// 1/3, 1/2, or the whole point depending on a current display scale
+	@inlinable static var pixel: Self {
+		// .one / Self(UIScreen.main.scale.int)
+		.one / Self(UITraitCollection.current.displayScale.int)
+	}
 }
 
 // MARK: Decode as Data
