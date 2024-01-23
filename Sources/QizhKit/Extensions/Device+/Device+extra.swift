@@ -6,6 +6,8 @@
 //  Copyright © 2022 Serhii Shevchenko. All rights reserved.
 //
 
+/// Already implemented in `DeviceKit`
+/*
 import Foundation
 import DeviceKit
 
@@ -30,3 +32,4 @@ extension Device {
 		|| 	isOneOf(Device.allDevicesWithDynamicIsland.map(Device.simulator))
 	}
 }
+*/
