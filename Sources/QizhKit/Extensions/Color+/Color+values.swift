@@ -11,7 +11,7 @@ import SwiftUI
 // MARK: Almost Clear
 
 public extension Color {
-	static let almostClear = Color(.systemBackground).opacity(0.001)
+	static let almostClear = Color(uiColor: .systemBackground).opacity(0.001)
 }
 
 public extension UIColor {
@@ -21,46 +21,46 @@ public extension UIColor {
 // MARK: From UIColor
 
 public extension Color {
-	static let systemBackground          = Color(.systemBackground)
-	static let secondarySystemBackground = Color(.secondarySystemBackground)
-	static let tertiarySystemBackground  = Color(.tertiarySystemBackground)
+	static let systemBackground          = Color(uiColor: .systemBackground)
+	static let secondarySystemBackground = Color(uiColor: .secondarySystemBackground)
+	static let tertiarySystemBackground  = Color(uiColor: .tertiarySystemBackground)
 	
-	static let label                     = Color(.label)
-	static let secondaryLabel            = Color(.secondaryLabel)
-	static let tertiaryLabel             = Color(.tertiaryLabel)
-	static let quaternaryLabel           = Color(.quaternaryLabel)
+	static let label                     = Color(uiColor: .label)
+	static let secondaryLabel            = Color(uiColor: .secondaryLabel)
+	static let tertiaryLabel             = Color(uiColor: .tertiaryLabel)
+	static let quaternaryLabel           = Color(uiColor: .quaternaryLabel)
 	
-	static let systemFill                = Color(.systemFill)
-	static let secondarySystemFill       = Color(.secondarySystemFill)
-	static let tertiarySystemFill        = Color(.tertiarySystemFill)
-	static let quaternarySystemFill      = Color(.quaternarySystemFill)
+	static let systemFill                = Color(uiColor: .systemFill)
+	static let secondarySystemFill       = Color(uiColor: .secondarySystemFill)
+	static let tertiarySystemFill        = Color(uiColor: .tertiarySystemFill)
+	static let quaternarySystemFill      = Color(uiColor: .quaternarySystemFill)
 	
-	static let link 			= Color(.link)
-	static let placeholderText 	= Color(.placeholderText)
-	static let separator 		= Color(.separator)
-	static let opaqueSeparator 	= Color(.opaqueSeparator)
-	static let lightText 		= Color(.lightText)
-	static let darkText 		= Color(.darkText)
+	static let link 			= Color(uiColor: .link)
+	static let placeholderText 	= Color(uiColor: .placeholderText)
+	static let separator 		= Color(uiColor: .separator)
+	static let opaqueSeparator 	= Color(uiColor: .opaqueSeparator)
+	static let lightText 		= Color(uiColor: .lightText)
+	static let darkText 		= Color(uiColor: .darkText)
 	
 	// MARK: System
 	
 	@inlinable static func systemBackground(_ opacity: Double) -> Color {
-		Color(.systemBackground).opacity(opacity)
+		Color(uiColor: .systemBackground).opacity(opacity)
 	}
 	@inlinable static func secondarySystemBackground(_ opacity: Double) -> Color {
-		Color(.secondarySystemBackground).opacity(opacity)
+		Color(uiColor: .secondarySystemBackground).opacity(opacity)
 	}
 	@inlinable static func label(_ opacity: Double) -> Color {
-		Color(.label).opacity(opacity)
+		Color(uiColor: .label).opacity(opacity)
 	}
 	@inlinable static func secondaryLabel(_ opacity: Double) -> Color {
-		Color(.secondaryLabel).opacity(opacity)
+		Color(uiColor: .secondaryLabel).opacity(opacity)
 	}
 	@inlinable static func systemFill(_ opacity: Double) -> Color {
-		Color(.systemFill).opacity(opacity)
+		Color(uiColor: .systemFill).opacity(opacity)
 	}
 	@inlinable static func secondarySystemFill(_ opacity: Double) -> Color {
-		Color(.secondarySystemFill).opacity(opacity)
+		Color(uiColor: .secondarySystemFill).opacity(opacity)
 	}
 	@inlinable static func accentColor(_ opacity: Double) -> Color {
 		Color.accentColor.opacity(opacity)
@@ -94,12 +94,12 @@ public extension Color {
 	
 	// MARK: System Grayscale
 	
-	static let systemGray = Color(.systemGray)
-	static let systemGray2 = Color(.systemGray2)
-	static let systemGray3 = Color(.systemGray3)
-	static let systemGray4 = Color(.systemGray4)
-	static let systemGray5 = Color(.systemGray5)
-	static let systemGray6 = Color(.systemGray6)
+	static let systemGray = Color(uiColor: .systemGray)
+	static let systemGray2 = Color(uiColor: .systemGray2)
+	static let systemGray3 = Color(uiColor: .systemGray3)
+	static let systemGray4 = Color(uiColor: .systemGray4)
+	static let systemGray5 = Color(uiColor: .systemGray5)
+	static let systemGray6 = Color(uiColor: .systemGray6)
 }
 
 // MARK: White
@@ -113,14 +113,14 @@ public extension Color {
 public extension ShapeStyle where Self == Color {
 	// MARK: System
 	
-	@inlinable static var label: Color { Color(.label) }
-	@inlinable static var systemBackground: Color { Color(.systemBackground) }
+	@inlinable static var label: Color { Color(uiColor: .label) }
+	@inlinable static var systemBackground: Color { Color(uiColor: .systemBackground) }
 	
 	@inlinable static func label(_ opacity: Double) -> Color {
-		Color(.label).opacity(opacity)
+		Color(uiColor: .label).opacity(opacity)
 	}
 	@inlinable static func systemBackground(_ opacity: Double) -> Color {
-		Color(.systemBackground).opacity(opacity)
+		Color(uiColor: .systemBackground).opacity(opacity)
 	}
 	
 	// MARK: B&W
@@ -151,10 +151,10 @@ public extension ShapeStyle where Self == Color {
 	
 	// MARK: System Grayscale
 	
-	@inlinable static var systemGray: Color { Color(.systemGray) }
-	@inlinable static var systemGray2: Color { Color(.systemGray2) }
-	@inlinable static var systemGray3: Color { Color(.systemGray3) }
-	@inlinable static var systemGray4: Color { Color(.systemGray4) }
-	@inlinable static var systemGray5: Color { Color(.systemGray5) }
-	@inlinable static var systemGray6: Color { Color(.systemGray6) }
+	@inlinable static var systemGray: Color { Color(uiColor: .systemGray) }
+	@inlinable static var systemGray2: Color { Color(uiColor: .systemGray2) }
+	@inlinable static var systemGray3: Color { Color(uiColor: .systemGray3) }
+	@inlinable static var systemGray4: Color { Color(uiColor: .systemGray4) }
+	@inlinable static var systemGray5: Color { Color(uiColor: .systemGray5) }
+	@inlinable static var systemGray6: Color { Color(uiColor: .systemGray6) }
 }

@@ -167,7 +167,7 @@ public extension View {
 	
 	@inlinable func previewFitting(
 		padding edges: Edge.Set = .all,
-		color: Color = Color(.systemBackground)
+		color: Color = Color(uiColor: .systemBackground)
 	) -> some View {
 		self
 			.padding(edges)
@@ -178,7 +178,7 @@ public extension View {
 	@inlinable func previewBig() -> some View {
 		self
 			.padding()
-			.background(Color(.systemBackground))
+			.background(Color(uiColor: .systemBackground))
 			.previewLayout(.fixed(width: 600, height: 900))
 	}
 }

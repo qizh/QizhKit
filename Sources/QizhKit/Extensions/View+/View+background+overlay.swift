@@ -151,13 +151,13 @@ public extension View {
 	/// White for default ColorScheme
 	@inlinable
 	func systemBackground() -> some View {
-		background(Color(.systemBackground))
+		background(Color(uiColor: .systemBackground))
 	}
 	
 	/// Light Gray for default ColorScheme
 	@inlinable
 	func secondarySystemBackground() -> some View {
-		background(Color(.secondarySystemBackground))
+		background(Color(uiColor: .secondarySystemBackground))
 	}
 
 	// MARK: > Inverted
@@ -165,13 +165,13 @@ public extension View {
 	/// Black for default ColorScheme
 	@inlinable
 	func backgroundLabelColor() -> some View {
-		background(Color(.label))
+		background(Color(uiColor: .label))
 	}
 	
 	/// Dark Gray for default ColorScheme
 	@inlinable
 	func backgroundSecondaryLabelColor() -> some View {
-		background(Color(.secondaryLabel))
+		background(Color(uiColor: .secondaryLabel))
 	}
 	
 	// MARK: > Accent
@@ -186,13 +186,13 @@ public extension View {
 	@available(*, deprecated, renamed: "backgroundLabelColor", message: "Use `backgroundLabelColor` instead")
 	@inlinable
 	func labelBackground() -> some View {
-		background(Color(.label))
+		background(Color(uiColor: .label))
 	}
 	
 	@available(*, deprecated, renamed: "backgroundSecondaryLabelColor", message: "Use `backgroundSecondaryLabelColor` instead")
 	@inlinable
 	func secondaryLabelBackground() -> some View {
-		background(Color(.secondaryLabel))
+		background(Color(uiColor: .secondaryLabel))
 	}
 	
 	@available(*, deprecated, renamed: "backgroundAccentColor", message: "Use `backgroundAccentColor` instead")
@@ -215,24 +215,24 @@ public extension View {
 	
 	/// Black for default ColorScheme
 	@inlinable func foregroundLabel() -> some View {
-		foregroundColor(Color(.label))
+		foregroundColor(Color(uiColor: .label))
 	}
 	
 	/// Dark Gray for default ColorScheme
 	@inlinable func foregroundSecondaryLabel() -> some View {
-		foregroundColor(Color(.secondaryLabel))
+		foregroundColor(Color(uiColor: .secondaryLabel))
 	}
 	
 	// MARK: > Inverted
 	
 	/// White for default ColorScheme
 	@inlinable func foregroundSystemBackground() -> some View {
-		foregroundColor(Color(.systemBackground))
+		foregroundColor(Color(uiColor: .systemBackground))
 	}
 	
 	/// > Light Gran for default ColorScheme
 	@inlinable func foregroundSecondarySystemBackground() -> some View {
-		foregroundColor(Color(.secondarySystemBackground))
+		foregroundColor(Color(uiColor: .secondarySystemBackground))
 	}
 	
 	// MARK: > Accent
@@ -276,7 +276,7 @@ public extension View {
 	
 	@inlinable func foregroundWhite() -> some View { foregroundColor(.white) }
 	@inlinable func foregroundBlack() -> some View { foregroundColor(.black) }
-	@inlinable func foregroundPlaceholder() -> some View { foregroundColor(Color(.placeholderText)) }
+	@inlinable func foregroundPlaceholder() -> some View { foregroundColor(Color(uiColor: .placeholderText)) }
 	
 	// MARK: > Deprecated
 	
@@ -289,13 +289,13 @@ public extension View {
 	@available(*, deprecated, renamed: "foregroundLabel", message: "Use `foregroundLabel` instead")
 	@inlinable
 	func labelForeground() -> some View {
-		foregroundColor(Color(.label))
+		foregroundColor(Color(uiColor: .label))
 	}
 	
 	@available(*, deprecated, renamed: "foregroundSecondaryLabel", message: "Use `foregroundSecondaryLabel` instead")
 	@inlinable
 	func secondaryLabelForeground() -> some View {
-		foregroundColor(Color(.secondaryLabel))
+		foregroundColor(Color(uiColor: .secondaryLabel))
 	}
 }
 
@@ -308,24 +308,24 @@ public extension Text {
 	
 	/// Black for default ColorScheme
 	@inlinable func foregroundLabel() -> Text {
-		foregroundColor(Color(.label))
+		foregroundColor(Color(uiColor: .label))
 	}
 	
 	/// Dark Gray for default ColorScheme
 	@inlinable func foregroundSecondaryLabel() -> Text {
-		foregroundColor(Color(.secondaryLabel))
+		foregroundColor(Color(uiColor: .secondaryLabel))
 	}
 	
 	// MARK: > Inverted
 	
 	/// White for default ColorScheme
 	@inlinable func foregroundSystemBackground() -> Text {
-		foregroundColor(Color(.systemBackground))
+		foregroundColor(Color(uiColor: .systemBackground))
 	}
 	
 	/// > Light Gran for default ColorScheme
 	@inlinable func foregroundSecondarySystemBackground() -> Text {
-		foregroundColor(Color(.secondarySystemBackground))
+		foregroundColor(Color(uiColor: .secondarySystemBackground))
 	}
 	
 	// MARK: > Accent
@@ -336,7 +336,7 @@ public extension Text {
 	
 	@inlinable func foregroundWhite() -> Text { foregroundColor(.white) }
 	@inlinable func foregroundBlack() -> Text { foregroundColor(.black) }
-	@inlinable func foregroundPlaceholder() -> Text { foregroundColor(Color(.placeholderText)) }
+	@inlinable func foregroundPlaceholder() -> Text { foregroundColor(Color(uiColor: .placeholderText)) }
 }
 
 // MARK: Max

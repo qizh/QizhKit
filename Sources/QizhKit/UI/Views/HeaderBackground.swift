@@ -97,7 +97,7 @@ public struct ShowHeaderBackgroundViewModifier: ViewModifier {
 			BlurredBackgroundView(style: self.style)
 				.height(show ? height + safeFrameInsets.top : 0)
 				.padding(.bottom, .hairline)
-				.overlay(.bottom, Color(.separator).height(.hairline))
+				.overlay(.bottom, Color(uiColor: .separator).height(.hairline))
 				.apply(when: topSafeInset.isNotZero) {
 					$0.offset(y: -topSafeInset)
 				}
@@ -222,7 +222,7 @@ public extension UIBlurEffect.Style {
 		case .systemThickMaterial: fallthrough
 		case .systemChromeMaterial: fallthrough
 		@unknown default:
-			return Color(.label)
+			return Color(uiColor: .label)
 		}
 	}
 }

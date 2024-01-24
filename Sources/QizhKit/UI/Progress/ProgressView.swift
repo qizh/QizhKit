@@ -758,7 +758,7 @@ public struct ProgressView: View {
 // MARK: .secondaryColor
 
 public struct SecondaryColorKey: EnvironmentKey {
-	public static let defaultValue: Color = Color(.systemGray3)
+	public static let defaultValue: Color = Color(uiColor: .systemGray3)
 }
 
 public extension EnvironmentValues {
@@ -880,7 +880,7 @@ struct ProgressView_Previews: PreviewProvider {
 			.previewLayout(.sizeThatFits)
 		}
 		.accentColor(.pink)
-		.secondaryColor(Color(.systemGray4))
+		.secondaryColor(Color(uiColor: .systemGray4))
 	}
 	
 	/*
@@ -894,7 +894,7 @@ struct ProgressView_Previews: PreviewProvider {
 						Spacer()
 						ProgressView(state: state)
 					}
-					.background(aligned: .bottom, Color(.systemGray5).height(1).offset(y: 8))
+					.background(aligned: .bottom, Color(uiColor: .systemGray5).height(1).offset(y: 8))
 				}
 				
 				Text("Progresses").foregroundAccent()
@@ -904,7 +904,7 @@ struct ProgressView_Previews: PreviewProvider {
 						Spacer()
 						ProgressView(progress: progress)
 					}
-					.background(aligned: .bottom, Color(.systemGray5).height(1).offset(y: 8))
+					.background(aligned: .bottom, Color(uiColor: .systemGray5).height(1).offset(y: 8))
 				}
 				
 				Text("Sizes").foregroundAccent()
@@ -917,7 +917,7 @@ struct ProgressView_Previews: PreviewProvider {
 						ProgressView(state: .failed("Demo failure reason"), size: size)
 						ProgressView(state: .success(.demo), size: size)
 					}
-					.background(aligned: .bottom, Color(.systemGray5).height(1).offset(y: 8))
+					.background(aligned: .bottom, Color(uiColor: .systemGray5).height(1).offset(y: 8))
 				}
 			}
 			
@@ -926,7 +926,7 @@ struct ProgressView_Previews: PreviewProvider {
 		.previewFitting()
 //		.previewAllColorSchemes()
 		.accentColor(.pink)
-		.secondaryColor(Color(.systemGray4))
+		.secondaryColor(Color(uiColor: .systemGray4))
 	}
 	*/
 }
