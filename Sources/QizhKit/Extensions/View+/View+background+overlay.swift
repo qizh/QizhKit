@@ -143,7 +143,7 @@ public extension View {
 	
 	@inlinable
 	func backgroundColor(_ key: BorderCrafterValues.UIColors.Key) -> some View {
-		background(Color(BorderCrafterValues.UIColors.value(for: key)))
+		background(Color(uiColor: BorderCrafterValues.UIColors.value(for: key)))
 	}
 	
 	// MARK: > Regular
@@ -207,7 +207,7 @@ public extension View {
 public extension View {
 	/*
 	@inlinable func foregroundColor(_ key: BorderCrafterValues.UIColors.Key) -> some View {
-		foregroundColor(Color(BorderCrafterValues.UIColors.value(for: key)))
+		foregroundColor(Color(uiColor: BorderCrafterValues.UIColors.value(for: key)))
 	}
 	*/
 	
@@ -301,7 +301,7 @@ public extension View {
 
 public extension Text {
 	@inlinable func foregroundColor(_ key: BorderCrafterValues.UIColors.Key) -> Text {
-		foregroundColor(Color(BorderCrafterValues.UIColors.value(for: key)))
+		foregroundColor(Color(uiColor: BorderCrafterValues.UIColors.value(for: key)))
 	}
 	
 	// MARK: > Regular

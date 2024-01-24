@@ -301,7 +301,7 @@ public struct BorderCrafter <Source : View> : Updatable {
 	
 	public subscript(dynamicMember key: UIColors.Key) -> Self {
 		updating(\.color)
-			.with(Color(UIColors.value(for: key)))
+			.with(Color(uiColor: UIColors.value(for: key)))
 	}
 	
 	public subscript(dynamicMember key: Opacities.Key) -> Self {
@@ -323,7 +323,7 @@ public struct BorderCrafter <Source : View> : Updatable {
 	
 	public func uiColor(_ value: UIColors.Value) -> Self {
 		updating(\.color)
-			.with(Color(value))
+			.with(Color(uiColor: value))
 	}
 	
 	public func opacity(_ value: Opacities.Value) -> Self {

@@ -84,7 +84,7 @@ public struct HexStringColor: Codable,
 	
 	@inlinable
 	public func combinedColor(dark: HexStringColor) -> Color {
-		return Color(combinedColor(dark: dark))
+		Color(uiColor: combinedColor(dark: dark))
 	}
 
 	public var uiColor: UIColor {
