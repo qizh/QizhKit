@@ -11,7 +11,9 @@ import SwiftUI
 public enum RelativeDimension: ExpressibleByFloatLiteral, ExpressibleByIntegerLiteral {
 	case maximum
 	case exactly(_ value: CGFloat)
-	case minimum
+	case minimum(_ extraPadding: CGFloat)
+	
+	public static let minimum: Self = .minimum(.zero)
 	
 	public init(  floatLiteral value: Double) { self = .exactly(CGFloat(value)) }
 	public init(integerLiteral value: Int)    { self = .exactly(value.cg) }
@@ -27,6 +29,13 @@ public enum RelativeDimension: ExpressibleByFloatLiteral, ExpressibleByIntegerLi
 		switch self {
 		case .maximum: return .infinity
 		default: 	   return nil
+		}
+	}
+	
+	public var extraPadding: CGFloat {
+		switch self {
+		case .minimum(let extraPadding): extraPadding
+		default: 						.zero
 		}
 	}
 }
