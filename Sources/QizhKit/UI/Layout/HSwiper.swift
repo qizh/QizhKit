@@ -23,7 +23,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	private let style: Style
 	private let alignment: Alignment
 	private let spacing: CGFloat
-	@Binding private var current: ID
+	@Binding private var selected: ID
 	private let content: (Data.Element) -> Content
 	private let indicator: IndicatorBuilder
 	
@@ -39,7 +39,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		style: Style = .full,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
-		current: Binding<ID>,
+		selected: Binding<ID>,
 		@ViewBuilder indicator: @escaping IndicatorBuilder,
 		@ViewBuilder content: @escaping (Data.Element) -> Content
 	) {
@@ -47,7 +47,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		self.style = style
 		self.alignment = alignment
 		self.spacing = spacing
-		self._current = current
+		self._selected = selected
 		self.content = content
 		self.indicator = indicator
 	}
@@ -57,7 +57,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		style: Style = .full,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
-		current: Binding<ID>,
+		selected: Binding<ID>,
 		@ViewBuilder content: @escaping (Data.Element) -> Content
 	) where IndicatorContent == EmptyView {
 		self.init(
@@ -65,7 +65,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 			style: style,
 			alignment: alignment,
 			spacing: spacing,
-			current: current,
+			selected: selected,
 			indicator: { _, _, _ in EmptyView() },
 			content: content
 		)
@@ -76,7 +76,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		style: Style = .full,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
-		current: Binding<ID>,
+		selected: Binding<ID>,
 		@ViewBuilder indicator: @escaping IndicatorBuilder,
 		@ViewBuilder content: @escaping (Int, Source.Element) -> Content
 	) where
@@ -88,7 +88,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 			style: style,
 			alignment: alignment,
 			spacing: spacing,
-			current: current,
+			selected: selected,
 			indicator: indicator,
 			content: { content($0.offset, $0.element) }
 		)
@@ -99,7 +99,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		style: Style = .full,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
-		current: Binding<ID>,
+		selected: Binding<ID>,
 		@ViewBuilder content: @escaping (Int, Source.Element) -> Content
 	) where
 		Source: Collection,
@@ -111,7 +111,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 			style: style,
 			alignment: alignment,
 			spacing: spacing,
-			current: current,
+			selected: selected,
 			indicator: { _, _, _ in EmptyView() },
 			content: content
 		)
@@ -122,7 +122,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		style: Style = .full,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
-		current: Binding<ID>,
+		selected: Binding<ID>,
 		@ViewBuilder indicator: @escaping IndicatorBuilder,
 		@ViewBuilder content: @escaping (Int, Source.Element) -> Content
 	) where
@@ -135,7 +135,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 			style: style,
 			alignment: alignment,
 			spacing: spacing,
-			current: current,
+			selected: selected,
 			indicator: indicator,
 			content: { content($0.offset, $0.element) }
 		)
@@ -146,7 +146,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		style: Style = .full,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
-		current: Binding<ID>,
+		selected: Binding<ID>,
 		@ViewBuilder content: @escaping (Int, Source.Element) -> Content
 	) where
 		Source: Collection,
@@ -159,7 +159,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 			style: style,
 			alignment: alignment,
 			spacing: spacing,
-			current: current,
+			selected: selected,
 			indicator: { _, _, _ in EmptyView() },
 			content: { content($0.offset, $0.element) }
 		)
@@ -170,7 +170,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		style: Style = .full,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
-		current: Binding<ID>,
+		selected: Binding<ID>,
 		@ViewBuilder indicator: @escaping IndicatorBuilder,
 		@ViewBuilder content: @escaping (Int, Source.Element) -> Content
 	) where
@@ -184,7 +184,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 			style: style,
 			alignment: alignment,
 			spacing: spacing,
-			current: current,
+			selected: selected,
 			indicator: indicator,
 			content: { content($0.offset, $0.element) }
 		)
@@ -195,7 +195,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		style: Style = .full,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
-		current: Binding<ID>,
+		selected: Binding<ID>,
 		@ViewBuilder content: @escaping (Int, Source.Element) -> Content
 	) where
 		Source: Collection,
@@ -209,7 +209,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 			style: style,
 			alignment: alignment,
 			spacing: spacing,
-			current: current,
+			selected: selected,
 			indicator: { _, _, _ in EmptyView() },
 			content: { content($0.offset, $0.element) }
 		)
@@ -331,15 +331,15 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 				let dragOffsetSign = dragOffset.sign
 				let offset = value.translation.width + draggedPages * pageSize
 				let isEdgeSwiping =
-					   current == data.first?.id && offset.isPositive
-					|| current == data.last?.id  && offset.isNegative
+					   selected == data.first?.id && offset.isPositive
+					|| selected == data.last?.id  && offset.isNegative
 				
 				dragOffset = isEdgeSwiping ? offset.third : offset
 				if dragOffset.magnitude > pageSize.half {
 					let newDraggedPages = draggedPages + pagesCount(in: cardGeometry.size)
 					let newSelected = currentSelected(in: cardGeometry.size)
 					dragOffset = (newDraggedPages - draggedPages) * pageSize + dragOffset
-					current = newSelected
+					selected = newSelected
 					draggedPages = newDraggedPages
 				} else {
 					predictedOffset = value.predictedEndTranslation.width
@@ -355,7 +355,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 				{
 					let newDraggedPages = draggedPages - predictedOffset.sign.offset
 					dragOffset = (newDraggedPages - draggedPages) * pageSize + dragOffset
-					current = newSelected
+					selected = newSelected
 					draggedPages = newDraggedPages
 					execute(in: 10) {
 						dragOffset = .zero
@@ -416,7 +416,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	}
 	
 	private var selectedIndex: Data.Index {
-		data.firstIndex(id: current) ?? data.startIndex
+		data.firstIndex(id: selected) ?? data.startIndex
 	}
 	
 	private func selectedIndex(with offset: Int) -> Data.Index {
@@ -552,9 +552,24 @@ public struct HSwiperIndicator <IndicatorShape: HSwiperIndicatorShape>: View {
 
 #if DEBUG
 fileprivate struct Demo1: View {
-	@State var page: Int = 0
+	struct Source: Identifiable, ExpressibleByStringLiteral {
+		public let value: String
+		public var id: String { value }
+		
+		init(value: String) {
+			self.value = value
+		}
+		
+		init(stringLiteral value: String) {
+			self.init(value: value)
+		}
+	}
 	
-	var data: [String] {
+	private let isSelectable: Bool
+	@State var page: Source.ID = .empty
+	// @State var selected: Int = 0
+	
+	let data: [Source] =
 		[
 			"Hello",
 			"World",
@@ -563,22 +578,26 @@ fileprivate struct Demo1: View {
 			"it",
 			"going?",
 		]
-	}
 	
-	public init() { }
+	public init(
+		isSelectable: Bool,
+		page: Source.ID? = .empty
+	) {
+		self.isSelectable = isSelectable
+		self._page =? page
+	}
 	
 	public var body: some View {
 		VStack {
 			HSwiper(
-				enumerating: data,
-				alignment: .topLeading,
+				data,
 				spacing: 10,
-				current: $page,
+				selected: $page,
 				indicator: HSwiperIndicatorCircle.init
-			) { offset, title in
+			) { source in
 				VStack.LabeledViews {
-					title.labeledView(label: "title")
-					offset.labeledView(label: "offset")
+					(self.data.firstIndex(id: source.id) ?? 0).labeledView(label: "index")
+					source.id.labeledView(label: "id")
 				}
 				.expand()
 				.backgroundColor(
@@ -591,14 +610,25 @@ fileprivate struct Demo1: View {
 						Color.purple,
 						Color.red,
 						Color.yellow,
-					])[cycle: offset]
+					])[cycle: data.firstIndex(id: source.id) ?? 0]
 				)
 			}
 			.size(200, 180)
 			.border.c1()
 			
-			Stepper(value: $page.animation(.spring()), in: 0 ... data.count - 1) {
-				page.labeledView()
+			Stepper(
+				// value: $page.animation(.spring()),
+				value: Binding(get: {
+					data.firstIndex(id: page) ?? 0
+				}, set: { index in
+					page = (data[safe: index] ?? data[0]).id
+				}),
+				in: 0 ... data.count - 1
+			) {
+				VStack.LabeledViews {
+					(data.firstIndex(id: page) ?? 0).labeledView()
+					page.labeledView()
+				}
 			}
 			.fixedSize()
 		}
@@ -606,9 +636,21 @@ fileprivate struct Demo1: View {
 }
 
 @available(iOS 17, *)
-#Preview("Demo 1", traits: .sizeThatFitsLayout) {
-	Demo1()
-		.padding()
-		.background(.systemBackground)
+#Preview("Demo", traits: .sizeThatFitsLayout) {
+	Demo1(
+		isSelectable: false
+	)
+	.padding()
+	.background(.systemBackground)
+}
+
+@available(iOS 17, *)
+#Preview("Demo Selectable", traits: .sizeThatFitsLayout) {
+	Demo1(
+		isSelectable: true,
+		page: "How"
+	)
+	.padding()
+	.background(.systemBackground)
 }
 #endif
