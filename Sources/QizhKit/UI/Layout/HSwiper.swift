@@ -548,68 +548,67 @@ public struct HSwiperIndicator <IndicatorShape: HSwiperIndicatorShape>: View {
 	}
 }
 
-// MARK: Previews
+// MARK: - Previews
 
 #if DEBUG
-@available(iOS 14.0, *)
-public struct HSwiper_Previews: PreviewProvider {
-	public struct Demo1: View {
-		@State var page: Int = 0
-		
-		var data: [String] {
-			[
-				"Hello",
-				"World",
-				"How",
-				"is",
-				"it",
-				"going?",
-			]
-		}
-		
-		public init() { }
-		
-		public var body: some View {
-			VStack {
-				HSwiper(
-					enumerating: data,
-					alignment: .topLeading,
-					spacing: 10,
-					selected: $page,
-					indicator: HSwiperIndicatorCircle.init
-				) { offset, title in
-					VStack.LabeledViews {
-						title.labeledView(label: "title")
-						offset.labeledView(label: "offset")
-					}
-					.expand()
-					.backgroundColor(
-						[Color]([
-							Color.white,
-							Color.blue,
-							Color.green,
-							Color.orange,
-							Color.pink,
-							Color.purple,
-							Color.red,
-							Color.yellow,
-						])[cycle: offset]
-					)
-				}
-				.size(200, 180)
-				.border.c1()
-				
-				Stepper(value: $page.animation(.spring()), in: 0 ... data.count - 1) {
-					page.labeledView()
-				}
-				.fixedSize()
-			}
-		}
+fileprivate struct Demo1: View {
+	@State var page: Int = 0
+	
+	var data: [String] {
+		[
+			"Hello",
+			"World",
+			"How",
+			"is",
+			"it",
+			"going?",
+		]
 	}
 	
-	public static var previews: some View {
-		Demo1()
-			.previewFitting()
-    }
+	public init() { }
+	
+	public var body: some View {
+		VStack {
+			HSwiper(
+				enumerating: data,
+				alignment: .topLeading,
+				spacing: 10,
+				selected: $page,
+				indicator: HSwiperIndicatorCircle.init
+			) { offset, title in
+				VStack.LabeledViews {
+					title.labeledView(label: "title")
+					offset.labeledView(label: "offset")
+				}
+				.expand()
+				.backgroundColor(
+					[Color]([
+						Color.white,
+						Color.blue,
+						Color.green,
+						Color.orange,
+						Color.pink,
+						Color.purple,
+						Color.red,
+						Color.yellow,
+					])[cycle: offset]
+				)
+			}
+			.size(200, 180)
+			.border.c1()
+			
+			Stepper(value: $page.animation(.spring()), in: 0 ... data.count - 1) {
+				page.labeledView()
+			}
+			.fixedSize()
+		}
+	}
+}
+
+@available(iOS 17, *)
+#Preview("Demo 1", traits: .sizeThatFitsLayout) {
+	Demo1()
+		.padding()
+		.background(.systemBackground)
 }
 #endif
