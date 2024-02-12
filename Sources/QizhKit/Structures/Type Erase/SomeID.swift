@@ -68,7 +68,11 @@ public enum SomeID: Hashable {
 		.init(value)
 	}
 	
+	/// Returns `.zero` value in `.int` case. Same as `SomeID.zero`
+	/// - Returns: `.int(.zero)`
 	public static let none: SomeID = .int(.zero)
+	/// Returns `.zero` value in `.int` case. Same as `SomeID.none`
+	public static let zero: SomeID = .int(.zero)
 	
 	public var int: Int {
 		switch self {
