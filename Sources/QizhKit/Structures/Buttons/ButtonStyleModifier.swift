@@ -13,6 +13,7 @@ public protocol ButtonStyleColorSchemeDependable 	{ var colorScheme: ColorScheme
 public protocol ButtonStyleHighlighted 				{ var highlightColor: Color? { get set } }
 public protocol ButtonStyleSelectable 				{ var selected: Bool { get set } }
 public protocol ButtonStyleCurrentFontAware 		{ var font: Font? { get set } }
+public protocol ButtonStyleHoverable 				{ var isHovering: Bool { get set } }
 
 public struct ButtonStyleModifier<Style: ButtonStyle>: ViewModifier {
 	@Environment(\.isEnabled) 		private var isEnabled: Bool
@@ -21,6 +22,8 @@ public struct ButtonStyleModifier<Style: ButtonStyle>: ViewModifier {
 	@Environment(\.selected) 		private var selected: Bool
 	@Environment(\.font) 			private var font: Font?
 	
+	@State private var isHovering: Bool = false
+	
 	private let style: Style
 	
 	public init(style: Style) {
@@ -28,7 +31,11 @@ public struct ButtonStyleModifier<Style: ButtonStyle>: ViewModifier {
 	}
 	
 	public func body(content: Content) -> some View {
-		content.buttonStyle(updatedStyle())
+		content
+			.buttonStyle(updatedStyle())
+			.onHover { hovering in
+				isHovering = hovering
+			}
 	}
 	
 	private func updatedStyle() -> Style {
@@ -53,6 +60,10 @@ public struct ButtonStyleModifier<Style: ButtonStyle>: ViewModifier {
 		var fontAware = updated as? ButtonStyleCurrentFontAware
 		fontAware?.font = font
 		updated = (fontAware as? Style) ?? updated
+		
+		var hoverable = updated as? ButtonStyleHoverable
+		hoverable?.isHovering = isHovering
+		updated = (hoverable as? Style) ?? updated
 		
 		return updated
 	}
