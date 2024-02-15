@@ -25,6 +25,10 @@ public extension Color {
 	static let secondarySystemBackground = Color(uiColor: .secondarySystemBackground)
 	static let tertiarySystemBackground  = Color(uiColor: .tertiarySystemBackground)
 	
+	static let systemGroupedBackground  		= Color(uiColor: .systemGroupedBackground)
+	static let secondarySystemGroupedBackground = Color(uiColor: .secondarySystemGroupedBackground)
+	static let tertiarySystemGroupedBackground 	= Color(uiColor: .tertiarySystemGroupedBackground)
+	
 	static let label                     = Color(uiColor: .label)
 	static let secondaryLabel            = Color(uiColor: .secondaryLabel)
 	static let tertiaryLabel             = Color(uiColor: .tertiaryLabel)
@@ -113,14 +117,39 @@ public extension Color {
 public extension ShapeStyle where Self == Color {
 	// MARK: System
 	
-	@inlinable static var label: Color { Color(uiColor: .label) }
-	@inlinable static var systemBackground: Color { Color(uiColor: .systemBackground) }
+	@inlinable static var systemBackground: Color 			{ Color(uiColor: .systemBackground) }
+	@inlinable static var secondarySystemBackground: Color 	{ Color(uiColor: .secondarySystemBackground) }
+	@inlinable static var tertiarySystemBackground: Color 	{ Color(uiColor: .tertiarySystemBackground) }
+	
+	@inlinable static var systemGroupedBackground: Color 			{ Color(uiColor: .systemGroupedBackground) }
+	@inlinable static var secondarySystemGroupedBackground: Color 	{ Color(uiColor: .secondarySystemGroupedBackground) }
+	@inlinable static var tertiarySystemGroupedBackground: Color 	{ Color(uiColor: .tertiarySystemGroupedBackground) }
+	
+	@inlinable static var label: Color 					{ Color(uiColor: .label) }
+	@inlinable static var secondaryLabel: Color 		{ Color(uiColor: .secondaryLabel) }
+	@inlinable static var tertiaryLabel: Color 			{ Color(uiColor: .tertiaryLabel) }
+	@inlinable static var quaternaryLabel: Color 		{ Color(uiColor: .quaternaryLabel) }
+
+	@inlinable static var systemFill: Color 			{ Color(uiColor: .systemFill) }
+	@inlinable static var secondarySystemFill: Color 	{ Color(uiColor: .secondarySystemFill) }
+	@inlinable static var tertiarySystemFill: Color 	{ Color(uiColor: .tertiarySystemFill) }
+	@inlinable static var quaternarySystemFill: Color 	{ Color(uiColor: .quaternarySystemFill) }
+	
+	@inlinable static var link: Color 					{ Color(uiColor: .link) }
+	@inlinable static var placeholderText: Color 		{ Color(uiColor: .placeholderText) }
+	@inlinable static var separator: Color 				{ Color(uiColor: .separator) }
+	@inlinable static var opaqueSeparator: Color 		{ Color(uiColor: .opaqueSeparator) }
+	@inlinable static var lightText: Color 				{ Color(uiColor: .lightText) }
+	@inlinable static var darkText: Color 				{ Color(uiColor: .darkText) }
 	
 	@inlinable static func label(_ opacity: Double) -> Color {
 		Color(uiColor: .label).opacity(opacity)
 	}
 	@inlinable static func systemBackground(_ opacity: Double) -> Color {
 		Color(uiColor: .systemBackground).opacity(opacity)
+	}
+	@inlinable static func tint(_ opacity: Double) -> some ShapeStyle {
+		TintShapeStyle.tint.opacity(opacity)
 	}
 	
 	// MARK: B&W
