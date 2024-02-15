@@ -148,9 +148,6 @@ public extension ShapeStyle where Self == Color {
 	@inlinable static func systemBackground(_ opacity: Double) -> Color {
 		Color(uiColor: .systemBackground).opacity(opacity)
 	}
-	@inlinable static func tint(_ opacity: Double) -> some ShapeStyle {
-		TintShapeStyle.tint.opacity(opacity)
-	}
 	
 	// MARK: B&W
 	
