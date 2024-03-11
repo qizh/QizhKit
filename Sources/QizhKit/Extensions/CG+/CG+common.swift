@@ -242,9 +242,15 @@ public extension CGSize {
 	@inlinable var center     : CGPoint { CGPoint(width.half, height.half) }
 }
 
-public extension CGSize {
-	@inlinable func expandBy(dx: CGFloat = .zero, dy: CGFloat = .zero) -> CGSize {
+extension CGSize {
+	/// Opposize for ``shrinkBy``
+	public func expandBy(dx: CGFloat = .zero, dy: CGFloat = .zero) -> CGSize {
 		CGSize(width: width + dx, height: height + dy)
+	}
+	
+	/// Opposize for ``expandBy``
+	public func shrinkBy(dx: CGFloat = .zero, dy: CGFloat = .zero) -> CGSize {
+		CGSize(width: width - dx, height: height - dy)
 	}
 }
 
@@ -253,9 +259,9 @@ public extension CGSize {
 }
 
 public extension CGSize {
-	@inlinable var s0: String { "[\(width.s0) x \(height.s0)]" }
-	@inlinable var s1: String { "[\(width.s1) x \(height.s1)]" }
-	@inlinable var s2: String { "[\(width.s2) x \(height.s2)]" }
+	@inlinable var s0: String { "[\(width.s0) ✕ \(height.s0)]" }
+	@inlinable var s1: String { "[\(width.s1) ✕ \(height.s1)]" }
+	@inlinable var s2: String { "[\(width.s2) ✕ \(height.s2)]" }
 }
 
 extension CGSize: Hashable {
