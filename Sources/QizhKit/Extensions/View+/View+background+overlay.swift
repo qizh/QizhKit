@@ -466,16 +466,6 @@ public extension View {
 		frame(width: size, height: size, alignment: alignment)
 	}
 	
-	@inlinable
-	func fixedWidth() -> some View {
-		fixedSize(horizontal: true, vertical: false)
-	}
-	
-	@inlinable
-	func fixedHeight() -> some View {
-		fixedSize(horizontal: false, vertical: true)
-	}
-
 	// MARK: > Deprecated
 	
 	/// Square frame
@@ -496,5 +486,21 @@ public extension View {
 	@inlinable
 	func frame(size: CGSize, alignment: Alignment = .center) -> some View {
 		frame(width: size.width, height: size.height, alignment: alignment)
+	}
+}
+
+// MARK: Fixed width/height
+
+extension View {
+	/// Horizontal `fixedSize`
+	@inlinable
+	public func fixedWidth(_ horizontal: Bool = true) -> some View {
+		fixedSize(horizontal: horizontal, vertical: false)
+	}
+	
+	/// Vertical `fixedSize`
+	@inlinable
+	public func fixedHeight(_ vertical: Bool = true) -> some View {
+		fixedSize(horizontal: false, vertical: vertical)
 	}
 }
