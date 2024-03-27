@@ -35,8 +35,17 @@ extension View {
 			safeFrameInsets.bottom = value
 		}
 	}
-	
-	#if DEBUG
+}
+
+// MARK: Simulate
+
+#if DEBUG
+import DeviceKit
+
+extension View {
+	/// Transforms `safeFrameInsets` environment with provided `top` and `bottom` values
+	///
+	/// - SeeAlso: ``simulateSafeFrameInsets(top:bottom:)`` is doing the same for phone only
 	public func simulateSafeFrameInsets(
 		top: CGFloat = NavigationBarDimension.safeFrameTop,
 		bottom: CGFloat = NavigationBarDimension.safeFrameBottom
@@ -46,8 +55,23 @@ extension View {
 			insets.bottom = bottom
 		}
 	}
-	#endif
+	
+	/// Applies ``simulateSafeFrameInsets(top:bottom:)`` modifier on phone only
+	///
+	/// Checks for `Device.current.isPhone` from ``DeviceKit`` to detect phones
+	@ViewBuilder
+	public func simulatePhoneSafeFrameInsets(
+		top: CGFloat = NavigationBarDimension.safeFrameTop,
+		bottom: CGFloat = NavigationBarDimension.safeFrameBottom
+	) -> some View {
+		if Device.current.isPhone {
+			self.simulateSafeFrameInsets(top: top, bottom: bottom)
+		} else {
+			self
+		}
+	}
 }
+#endif
 
 // MARK: Provide
 
