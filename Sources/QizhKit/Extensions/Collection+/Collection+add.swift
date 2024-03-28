@@ -98,6 +98,26 @@ extension RangeReplaceableCollection {
 	}
 }
 
+// MARK: Removing First / Last
+
+extension RangeReplaceableCollection {
+	/// Calling `removeFirst(_:)` on `self` copy and returns it
+	public func removingFirst(_ k: Int) -> Self {
+		var copy = self
+		copy.removeFirst(k)
+		return copy
+	}
+}
+
+extension RangeReplaceableCollection where Self: BidirectionalCollection {
+	/// Calling `removeLast(_:)` on `self` copy and returns it
+	public func removingLast(_ k: Int) -> Self {
+		var copy = self
+		copy.removeLast(k)
+		return copy
+	}
+}
+
 // MARK: cut
 
 public extension RangeReplaceableCollection where Self: EmptyTestable {
