@@ -23,6 +23,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	private let style: Style
 	private let alignment: Alignment
 	private let spacing: CGFloat
+	private let isContentInteractive: Bool
 	@Binding private var selected: ID
 	private let content: (Data.Element) -> Content
 	private let indicator: IndicatorBuilder
@@ -37,6 +38,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	public init(
 		_ data: Data,
 		style: Style = .full,
+		isContentInteractive: Bool = false,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
 		selected: Binding<ID>,
@@ -45,6 +47,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	) {
 		self.data = data
 		self.style = style
+		self.isContentInteractive = isContentInteractive
 		self.alignment = alignment
 		self.spacing = spacing
 		self._selected = selected
@@ -55,6 +58,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	public init(
 		_ data: Data,
 		style: Style = .full,
+		isContentInteractive: Bool = false,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
 		selected: Binding<ID>,
@@ -71,9 +75,12 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		)
 	}
 	
+	// MARK: Init Enumerating
+	
 	public init <Source> (
 		enumerating data: Source,
 		style: Style = .full,
+		isContentInteractive: Bool = false,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
 		selected: Binding<ID>,
@@ -86,6 +93,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		self.init(
 			data.enumeratedElements(),
 			style: style,
+			isContentInteractive: isContentInteractive,
 			alignment: alignment,
 			spacing: spacing,
 			selected: selected,
@@ -97,6 +105,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	public init <Source> (
 		enumerating data: Source,
 		style: Style = .full,
+		isContentInteractive: Bool = false,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
 		selected: Binding<ID>,
@@ -109,6 +118,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		self.init(
 			enumerating: data,
 			style: style,
+			isContentInteractive: isContentInteractive,
 			alignment: alignment,
 			spacing: spacing,
 			selected: selected,
@@ -117,9 +127,12 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		)
 	}
 	
+	// MARK: Init Hashing
+	
 	public init <Source> (
 		hashing data: Source,
 		style: Style = .full,
+		isContentInteractive: Bool = false,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
 		selected: Binding<ID>,
@@ -133,6 +146,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		self.init(
 			data.enumeratedHashableElements(),
 			style: style,
+			isContentInteractive: isContentInteractive,
 			alignment: alignment,
 			spacing: spacing,
 			selected: selected,
@@ -144,6 +158,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	public init <Source> (
 		hashing data: Source,
 		style: Style = .full,
+		isContentInteractive: Bool = false,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
 		selected: Binding<ID>,
@@ -157,6 +172,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		self.init(
 			data.enumeratedHashableElements(),
 			style: style,
+			isContentInteractive: isContentInteractive,
 			alignment: alignment,
 			spacing: spacing,
 			selected: selected,
@@ -165,9 +181,12 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		)
 	}
 	
+	// MARK: Init Identifying
+	
 	public init <Source> (
 		identifying data: Source,
 		style: Style = .full,
+		isContentInteractive: Bool = false,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
 		selected: Binding<ID>,
@@ -182,6 +201,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		self.init(
 			data.enumeratedIdentifiableElements(),
 			style: style,
+			isContentInteractive: isContentInteractive,
 			alignment: alignment,
 			spacing: spacing,
 			selected: selected,
@@ -193,6 +213,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	public init <Source> (
 		identifying data: Source,
 		style: Style = .full,
+		isContentInteractive: Bool = false,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
 		selected: Binding<ID>,
@@ -207,6 +228,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		self.init(
 			data.enumeratedIdentifiableElements(),
 			style: style,
+			isContentInteractive: isContentInteractive,
 			alignment: alignment,
 			spacing: spacing,
 			selected: selected,
@@ -268,7 +290,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 						}
 					}
 					.offset(x: xOffset)
-					.allowsHitTesting(false)
+					.allowsHitTesting(isContentInteractive)
 					.zIndex(10)
 					
 					indicator(
@@ -293,9 +315,10 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 								: 0
 						)
 						.size(fullGeometry.size)
-						.gesture(dragGesture(card: geometry, full: fullGeometry))
+						.allowsHitTesting(false)
 						.zIndex(11)
 				}
+				.highPriorityGesture(dragGesture(card: geometry, full: fullGeometry))
 				.animation(.spring(), value: dragOffset.isZero)
 			}
 			.width(style.carouselWidth, alignment)
@@ -303,6 +326,8 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		}
 		.clipped()
     }
+	
+	// MARK: Gesture
 	
 	private func dragGesture(
 		card cardGeometry: GeometryProxy,
@@ -368,6 +393,8 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 			}
 	}
 	
+	// MARK: Debug
+	
 	private func debugCalculations(in size: CGSize) -> some View {
 		VStack.LabeledViews {
 			pagesCount(in: size).labeledView(label: "swipe pages count")
@@ -380,6 +407,8 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 			animationValue.labeledView(label: "animation")
 		}
 	}
+	
+	// MARK: Shortcuts
 	
 	private func pageOffset(in size: CGSize) -> Int {
 		-(dragOffset / (size.width + spacing))
@@ -432,6 +461,8 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		page(at: selectedIndex(with: offset))
 	}
 }
+
+// MARK: Floating Sign + offset
 
 fileprivate extension FloatingPointSign {
 	var offset: Int {
@@ -591,13 +622,21 @@ fileprivate struct Demo1: View {
 		VStack {
 			HSwiper(
 				data,
+				isContentInteractive: isSelectable,
 				spacing: 10,
 				selected: $page,
 				indicator: HSwiperIndicatorCircle.init
 			) { source in
 				VStack.LabeledViews {
-					(self.data.firstIndex(id: source.id) ?? 0).labeledView(label: "index")
+					(self.data.firstIndex(id: source.id) ?? 0)
+						.labeledView(label: "index")
+					
 					source.id.labeledView(label: "id")
+					
+					Text(String("Button"))
+						.button()
+						.buttonStyle(.borderedProminent)
+						.padding(.top, 4)
 				}
 				.expand()
 				.backgroundColor(
@@ -613,16 +652,17 @@ fileprivate struct Demo1: View {
 					])[cycle: data.firstIndex(id: source.id) ?? 0]
 				)
 			}
-			.size(200, 180)
+			.height(180)
 			.border.c1()
 			
 			Stepper(
-				// value: $page.animation(.spring()),
 				value: Binding(get: {
-					data.firstIndex(id: page) ?? 0
-				}, set: { index in
-					page = (data[safe: index] ?? data[0]).id
-				}),
+						data.firstIndex(id: page) ?? 0
+					}, set: { index in
+						withAnimation(.spring()) {
+							page = (data[safe: index] ?? data[0]).id
+						}
+					}),
 				in: 0 ... data.count - 1
 			) {
 				VStack.LabeledViews {
@@ -630,8 +670,8 @@ fileprivate struct Demo1: View {
 					page.labeledView()
 				}
 			}
-			.fixedSize()
 		}
+		.width(200)
 	}
 }
 
