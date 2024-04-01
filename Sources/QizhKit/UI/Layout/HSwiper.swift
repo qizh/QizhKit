@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// MARK: Swiper
+
 @available(iOS 14.0, *)
 public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	where
@@ -33,7 +35,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	@State private var animationValue: UInt = .zero
 	@State private var predictedOffset: CGFloat = .zero
 	
-	// MARK: Init
+	// MARK: ┣ Init
 	
 	public init(
 		_ data: Data,
@@ -75,7 +77,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		)
 	}
 	
-	// MARK: Init Enumerating
+	// MARK: ┣ Init Enumerating
 	
 	public init <Source> (
 		enumerating data: Source,
@@ -127,7 +129,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		)
 	}
 	
-	// MARK: Init Hashing
+	// MARK: ┣ Init Hashing
 	
 	public init <Source> (
 		hashing data: Source,
@@ -181,7 +183,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		)
 	}
 	
-	// MARK: Init Identifying
+	// MARK: ┣ Init Identifying
 	
 	public init <Source> (
 		identifying data: Source,
@@ -237,7 +239,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		)
 	}
 	
-	// MARK: Style
+	// MARK: ┣ Style
 	
 	public enum Style {
 		case full
@@ -265,7 +267,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		}
 	}
 	
-	// MARK: Body
+	// MARK: ┣ Body
 	
 	public var body: some View {
 		GeometryReader { fullGeometry in
@@ -315,10 +317,23 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 								: 0
 						)
 						.size(fullGeometry.size)
-						.allowsHitTesting(false)
+						.apply { view in
+							if isContentInteractive {
+								view
+									.allowsHitTesting(false)
+							} else {
+								view.gesture(
+									dragGesture(card: geometry, full: fullGeometry)
+								)
+							}
+						}
 						.zIndex(11)
 				}
-				.highPriorityGesture(dragGesture(card: geometry, full: fullGeometry))
+				.apply(when: isContentInteractive) { stack in
+					stack.highPriorityGesture(
+						dragGesture(card: geometry, full: fullGeometry)
+					)
+				}
 				.animation(.spring(), value: dragOffset.isZero)
 			}
 			.width(style.carouselWidth, alignment)
@@ -327,7 +342,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		.clipped()
     }
 	
-	// MARK: Gesture
+	// MARK: ┣ Gesture
 	
 	private func dragGesture(
 		card cardGeometry: GeometryProxy,
@@ -393,7 +408,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 			}
 	}
 	
-	// MARK: Debug
+	// MARK: ┣ Debug
 	
 	private func debugCalculations(in size: CGSize) -> some View {
 		VStack.LabeledViews {
@@ -408,7 +423,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		}
 	}
 	
-	// MARK: Shortcuts
+	// MARK: ┗ Shortcuts
 	
 	private func pageOffset(in size: CGSize) -> Int {
 		-(dragOffset / (size.width + spacing))
@@ -462,7 +477,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	}
 }
 
-// MARK: Floating Sign + offset
+// MARK: - Floating Sign + offset
 
 fileprivate extension FloatingPointSign {
 	var offset: Int {
@@ -473,7 +488,7 @@ fileprivate extension FloatingPointSign {
 	}
 }
 
-// MARK: Environment
+// MARK: - Environment
 
 public struct DistanceFromCenterEnvironmentKey: EnvironmentKey {
 	public static var defaultValue: CGFloat = .zero
@@ -486,7 +501,7 @@ public extension EnvironmentValues {
 	}
 }
 
-// MARK: Indicator
+// MARK: - Indicator inputs
 
 public protocol HSwiperIndicatorShape {
 	static var indicatorMaxWidth: CGFloat { get }
@@ -500,17 +515,49 @@ public enum HSwiperIndicatorShapeCircle: HSwiperIndicatorShape {
 public typealias HSwiperIndicatorRectangle = HSwiperIndicator<HSwiperIndicatorShapeRectangle>
 public typealias HSwiperIndicatorCircle = HSwiperIndicator<HSwiperIndicatorShapeCircle>
 
+public enum HSwiperIndicatorStyle: Hashable {
+	case over
+	case under
+}
+
+extension HSwiperIndicatorStyle {
+	fileprivate var foregroundColor: Color {
+		switch self {
+		case .over: .white
+		case .under: .label
+		}
+	}
+	
+	fileprivate func inactiveOpacity(for colorScheme: ColorScheme) -> Double {
+		switch self {
+		case .over: 0.5
+		case .under:
+			if colorScheme.isDark {
+				0.5
+			} else {
+				0.2
+			}
+		}
+	}
+}
+
+// MARK: - Indicator
+
 public struct HSwiperIndicator <IndicatorShape: HSwiperIndicatorShape>: View {
 	private let active: Int
 	private let offset: Int
 	private let total: Int
+	private let style: HSwiperIndicatorStyle
 	
 	private let spacing: CGFloat = 4
+	
+	@Environment(\.colorScheme) private var colorScheme
 	
 	public init(
 		active: Int,
 		offset: Int,
-		total: Int
+		total: Int,
+		style: HSwiperIndicatorStyle
 	) {
 		self.active = active
 		if offset >= 0 {
@@ -519,36 +566,56 @@ public struct HSwiperIndicator <IndicatorShape: HSwiperIndicatorShape>: View {
 			self.offset = offset.clipped(from: -active, to: 0)
 		}
 		self.total = total
+		self.style = style
 	}
+	
+	@inlinable public init(
+		active: Int,
+		offset: Int,
+		total: Int
+	) {
+		self.init(
+			active: active,
+			offset: offset,
+			total: total,
+			style: .over
+		)
+	}
+	
+	// MARK: ┣ Body
 	
 	public var body: some View {
 		HStack(spacing: spacing) {
 			ForEach(0 ..< total, id: \.self) { index in
 				RoundedCornersRectangle(2)
-					.foregroundColor(.white(0.5))
+					.foregroundColor(style.foregroundColor.opacity(style.inactiveOpacity(for: colorScheme)))
 					.height(4)
 					.frame(minWidth: 4, maxWidth: IndicatorShape.indicatorMaxWidth)
-					.overlay(
-						RoundedCornersRectangle(2)
-							.stroke(
-								Color.black(
-									index < activeLeading || index > activeTrailing
+					.overlay {
+						if style == .over {
+							RoundedCornersRectangle(2)
+								.stroke(
+									Color.black(
+										index < activeLeading || index > activeTrailing
 										? 0.1
 										: 0
-								),
-								lineWidth: 0.5
-							)
-					)
+									),
+									lineWidth: 0.5
+								)
+						}
+					}
 					.apply(when: index == .zero) { content in
 						content
 							.overlay(
 								GeometryReader { geometry in
 									RoundedCornersRectangle(2)
-										.foregroundColor(.white)
+										.foregroundColor(style.foregroundColor)
 										.offset(x: activeLeading.cg * (geometry.size.width + spacing))
 										.width(geometry.size.width + offset.magnitude.cg * (geometry.size.width + spacing))
 								}
-								.shadow(color: .black(0.3), radius: 1.5)
+								.apply(when: style == .over) { view in
+									view.shadow(color: .black(0.3), radius: 1.5)
+								}
 							)
 					}
 					.zIndex((total - index).double)
@@ -562,6 +629,8 @@ public struct HSwiperIndicator <IndicatorShape: HSwiperIndicatorShape>: View {
 		.padding()
 	}
 	
+	// MARK: ┣ Shortcuts
+	
 	private var activeLeading: Int {
 		max(0, min(active, active + offset))
 	}
@@ -569,6 +638,8 @@ public struct HSwiperIndicator <IndicatorShape: HSwiperIndicatorShape>: View {
 	private var activeTrailing: Int {
 		min(total - 1, max(active, active + offset))
 	}
+	
+	// MARK: ┗ Debug
 	
 	private func debugValues() -> some View {
 		VStack.LabeledViews {
@@ -624,9 +695,16 @@ fileprivate struct Demo1: View {
 				data,
 				isContentInteractive: isSelectable,
 				spacing: 10,
-				selected: $page,
-				indicator: HSwiperIndicatorCircle.init
-			) { source in
+				selected: $page
+			) { active, offset, total in
+				HSwiperIndicatorCircle(
+					active: active,
+					offset: offset,
+					total: total,
+					style: .over
+					// style: .under
+				)
+			} content: { source in
 				VStack.LabeledViews {
 					(self.data.firstIndex(id: source.id) ?? 0)
 						.labeledView(label: "index")
