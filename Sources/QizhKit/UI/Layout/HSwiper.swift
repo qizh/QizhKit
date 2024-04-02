@@ -23,7 +23,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	
 	private let data: Data
 	private let isLazy: Bool
-	private let style: Style
+	private let style: HSwiperStyle
 	private let alignment: Alignment
 	private let spacing: CGFloat
 	private let isContentInteractive: Bool
@@ -42,7 +42,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	public init(
 		_ data: Data,
 		isLazy: Bool = true,
-		style: Style = .full,
+		style: HSwiperStyle = .full,
 		isContentInteractive: Bool = false,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
@@ -64,7 +64,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	public init(
 		_ data: Data,
 		isLazy: Bool = true,
-		style: Style = .full,
+		style: HSwiperStyle = .full,
 		isContentInteractive: Bool = false,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
@@ -88,7 +88,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	public init <Source> (
 		enumerating data: Source,
 		isLazy: Bool = true,
-		style: Style = .full,
+		style: HSwiperStyle = .full,
 		isContentInteractive: Bool = false,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
@@ -115,7 +115,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	public init <Source> (
 		enumerating data: Source,
 		isLazy: Bool = true,
-		style: Style = .full,
+		style: HSwiperStyle = .full,
 		isContentInteractive: Bool = false,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
@@ -144,7 +144,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	public init <Source> (
 		hashing data: Source,
 		isLazy: Bool = true,
-		style: Style = .full,
+		style: HSwiperStyle = .full,
 		isContentInteractive: Bool = false,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
@@ -172,7 +172,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	public init <Source> (
 		hashing data: Source,
 		isLazy: Bool = true,
-		style: Style = .full,
+		style: HSwiperStyle = .full,
 		isContentInteractive: Bool = false,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
@@ -202,7 +202,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	public init <Source> (
 		identifying data: Source,
 		isLazy: Bool = true,
-		style: Style = .full,
+		style: HSwiperStyle = .full,
 		isContentInteractive: Bool = false,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
@@ -231,7 +231,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	public init <Source> (
 		identifying data: Source,
 		isLazy: Bool = true,
-		style: Style = .full,
+		style: HSwiperStyle = .full,
 		isContentInteractive: Bool = false,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
@@ -257,34 +257,6 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		)
 	}
 	
-	// MARK: ┣ Style
-	
-	public enum Style {
-		case full
-		case carousel(_ width: CGFloat)
-		
-		public var isFull: Bool {
-			switch self {
-			case .full: return true
-			default: return false
-			}
-		}
-		
-		public var isCarousel: Bool {
-			switch self {
-			case .carousel(_): return true
-			default: return false
-			}
-		}
-		
-		public var carouselWidth: CGFloat? {
-			switch self {
-			case .full: return .none
-			case .carousel(let width): return width
-			}
-		}
-	}
-	
 	// MARK: ┣ Body
 	
 	public var body: some View {
@@ -302,7 +274,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 										content(item)
 									}
 									.size(geometry.size, alignment)
-									.clipped()
+									// .clipped()
 								case .carousel(_):
 									ForEach(identifying: data) { offset, item in
 										content(item)
@@ -320,7 +292,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 										content(item)
 									}
 									.size(geometry.size, alignment)
-									.clipped()
+									// .clipped()
 								case .carousel(_):
 									ForEach(identifying: data) { offset, item in
 										content(item)
@@ -426,12 +398,14 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		}
 		
 		/// Calculate offset between full frame and card frame
-		let geometryDX = if style.isCarousel {
-			  fullGeometry.frame(in: .global).minX
-			- cardGeometry.frame(in: .global).minX
-		} else {
-			CGFloat.zero
-		}
+		let geometryDX =
+			switch style {
+			case .full:
+				CGFloat.zero
+			case .carousel:
+				  fullGeometry.frame(in: .global).minX
+				- cardGeometry.frame(in: .global).minX
+			}
 		
 		let tapFrame = fullGeometry.frame(in: .local)
 			/// Offset to cover full frame
@@ -590,6 +564,34 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	
 	private func selected(with offset: Int) -> ID? {
 		page(at: selectedIndex(with: offset))
+	}
+}
+
+// MARK: - Style
+
+public enum HSwiperStyle {
+	case full
+	case carousel(_ width: CGFloat)
+	
+	fileprivate var isFull: Bool {
+		switch self {
+		case .full: return true
+		default: return false
+		}
+	}
+	
+	fileprivate var isCarousel: Bool {
+		switch self {
+		case .carousel(_): return true
+		default: return false
+		}
+	}
+	
+	fileprivate var carouselWidth: CGFloat? {
+		switch self {
+		case .full: return .none
+		case .carousel(let width): return width
+		}
 	}
 }
 
@@ -769,50 +771,45 @@ public struct HSwiperIndicator <IndicatorShape: HSwiperIndicatorShape>: View {
 // MARK: - Previews
 
 #if DEBUG
-fileprivate struct Demo1: View {
-	struct Source: Identifiable, ExpressibleByStringLiteral {
-		public let value: String
-		public var id: String { value }
-		
-		init(value: String) {
-			self.value = value
-		}
-		
-		init(stringLiteral value: String) {
-			self.init(value: value)
-		}
-	}
-	
-	private let isSelectable: Bool
+
+fileprivate var previewWords: [TestSwiper.Item] {
+	[
+		"Hello",
+		"World",
+		"How",
+		"is",
+		"it",
+		"going?",
+	]
+}
+
+// MARK: ┣ Test view
+
+fileprivate struct TestSwiper: View {
+	private let style: HSwiperStyle
+	private let isContentInteractive: Bool
 	private let isLazy: Bool
-	@State var page: Source.ID = .empty
+	@State var page: Item.ID = .empty
 	// @State var selected: Int = 0
 	
-	let data: [Source] =
-		[
-			"Hello",
-			"World",
-			"How",
-			"is",
-			"it",
-			"going?",
-		]
-	
 	public init(
-		isSelectable: Bool,
+		style: HSwiperStyle = .full,
+		isContentInteractive: Bool,
 		isLazy: Bool = true,
-		page: Source.ID? = .empty
+		page: Item.ID? = .empty
 	) {
-		self.isSelectable = isSelectable
+		self.style = style
+		self.isContentInteractive = isContentInteractive
 		self.isLazy = isLazy
-		self._page =? page
+		self._page =? page ?? previewWords.first?.id
 	}
 	
 	public var body: some View {
 		VStack {
 			HSwiper(
-				data,
-				isContentInteractive: isSelectable,
+				previewWords,
+				style: style,
+				isContentInteractive: isContentInteractive,
 				spacing: 10,
 				selected: $page
 			) { active, offset, total in
@@ -824,69 +821,139 @@ fileprivate struct Demo1: View {
 					// style: .under
 				)
 			} content: { source in
-				VStack.LabeledViews {
-					(self.data.firstIndex(id: source.id) ?? 0)
-						.labeledView(label: "index")
-					
-					source.id.labeledView(label: "id")
-					
-					Text(String("Button"))
-						.button {
-							print("button tap")
-						}
-						.buttonStyle(.borderedProminent)
-						.padding(.top, 4)
-				}
-				.expand()
-				.backgroundColor(
-					[Color]([
-						Color.white,
-						Color.blue,
-						Color.green,
-						Color.orange,
-						Color.pink,
-						Color.purple,
-						Color.red,
-						Color.yellow,
-					])[cycle: data.firstIndex(id: source.id) ?? 0]
-				)
+				Card(item: source, isScalable: style.isCarousel)
 			}
-			.height(180)
+			.height(Card.size.height)
 			.border.c1()
 			
 			Stepper(
-				value: Binding(get: {
-						data.firstIndex(id: page) ?? 0
-					}, set: { index in
-						withAnimation(.spring()) {
-							page = (data[safe: index] ?? data[0]).id
-						}
-					}),
-				in: 0 ... data.count - 1
+				value: .init {
+					previewWords.firstIndex(id: page) ?? 0
+				} set: { index in
+					withAnimation {
+						page = (previewWords[safe: index] ?? previewWords[0]).id
+					}
+				},
+				in: 0 ... previewWords.count - 1
 			) {
 				VStack.LabeledViews {
-					(data.firstIndex(id: page) ?? 0).labeledView()
+					(previewWords.firstIndex(id: page) ?? 0).labeledView()
 					page.labeledView()
 				}
 			}
+			.padding(.horizontal, style.isFull ? .zero : .none)
 		}
-		.width(200)
+		.width(style.isFull ? Card.size.width : .none)
 	}
 }
 
-@available(iOS 17, *)
-#Preview("Default", traits: .sizeThatFitsLayout) {
-	Demo1(
-		isSelectable: false
+// MARK: ┣ Card
+
+extension TestSwiper {
+	struct Card: View {
+		static let size: CGSize = [200, 180]
+		
+		var item: Item
+		var isScalable: Bool
+		
+		@Environment(\.centerDistance) private var distance
+		
+		var body: some View {
+			VStack.LabeledViews {
+				(previewWords.firstIndex(id: item.id) ?? 0)
+					.labeledView(label: "index")
+				
+				item.id.labeledView(label: "id")
+				
+				Text(String("Button"))
+					.button {
+						print("button tap")
+					}
+					.buttonStyle(.borderedProminent)
+					.padding(.top, 4)
+			}
+			.expand()
+			.backgroundColor(
+				[Color]([
+					Color.white,
+					Color.blue,
+					Color.green,
+					Color.orange,
+					Color.pink,
+					Color.purple,
+					Color.red,
+					Color.yellow,
+				])[cycle: previewWords.firstIndex(id: item.id) ?? 0]
+			)
+			
+			.apply(when: isScalable) { card in
+				card
+					.offset(
+						x: (
+							max(distance.absolute - Self.size.width, 0).half
+							- max(distance.absolute - Self.size.width, 0)
+								.map(from: [0, Self.size.width], to: [0, 16])
+						) * (
+							distance.isPositive
+							? .minusOne
+							: .one
+						)
+					)
+					.scaleEffect(
+						1 - min(distance.absolute, Self.size.width)
+							.map(from: [0, Self.size.width], to: [0, 0.3]),
+						anchor: distance.isPositive
+						? .leading
+						: .trailing
+					)
+			}
+		}
+	}
+}
+
+// MARK: ┣ Data Item
+
+extension TestSwiper {
+	struct Item: Identifiable, ExpressibleByStringLiteral {
+		let value: String
+		var id: String { value }
+		
+		init(value: String) {
+			self.value = value
+		}
+		
+		init(stringLiteral value: String) {
+			self.init(value: value)
+		}
+	}
+}
+
+// MARK: ┣ S
+
+#Preview("Default") {
+	TestSwiper(
+		isContentInteractive: false
 	)
 	.padding()
 	.background(.systemBackground)
 }
 
-@available(iOS 17, *)
-#Preview("Selectable", traits: .sizeThatFitsLayout) {
-	Demo1(
-		isSelectable: true,
+#Preview("Carousel") {
+	TestSwiper(
+		style: .carousel(200),
+		isContentInteractive: false,
+		isLazy: false
+	)
+	/*
+	.padding()
+	.border.c4()
+	.background(.systemBackground)
+	*/
+}
+
+#Preview("Interactive") {
+	TestSwiper(
+		isContentInteractive: true,
 		isLazy: false,
 		page: "How"
 	)
@@ -894,11 +961,10 @@ fileprivate struct Demo1: View {
 	.background(.systemBackground)
 }
 
-@available(iOS 17, *)
-#Preview("Selectable | in scroll", traits: .sizeThatFitsLayout) {
+#Preview("Interactive | in scroll") {
 	ScrollView(.vertical) {
-		Demo1(
-			isSelectable: true,
+		TestSwiper(
+			isContentInteractive: true,
 			isLazy: true,
 			page: "How"
 		)
