@@ -22,6 +22,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	public typealias IndicatorBuilder = (Int, Int, Int) -> IndicatorContent
 	
 	private let data: Data
+	private let isLazy: Bool
 	private let style: Style
 	private let alignment: Alignment
 	private let spacing: CGFloat
@@ -39,6 +40,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	
 	public init(
 		_ data: Data,
+		isLazy: Bool = true,
 		style: Style = .full,
 		isContentInteractive: Bool = false,
 		alignment: Alignment = .center,
@@ -48,6 +50,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		@ViewBuilder content: @escaping (Data.Element) -> Content
 	) {
 		self.data = data
+		self.isLazy = isLazy
 		self.style = style
 		self.isContentInteractive = isContentInteractive
 		self.alignment = alignment
@@ -56,9 +59,10 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		self.content = content
 		self.indicator = indicator
 	}
-
+	
 	public init(
 		_ data: Data,
+		isLazy: Bool = true,
 		style: Style = .full,
 		isContentInteractive: Bool = false,
 		alignment: Alignment = .center,
@@ -68,6 +72,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	) where IndicatorContent == EmptyView {
 		self.init(
 			data,
+			isLazy: isLazy,
 			style: style,
 			alignment: alignment,
 			spacing: spacing,
@@ -81,6 +86,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	
 	public init <Source> (
 		enumerating data: Source,
+		isLazy: Bool = true,
 		style: Style = .full,
 		isContentInteractive: Bool = false,
 		alignment: Alignment = .center,
@@ -94,6 +100,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	{
 		self.init(
 			data.enumeratedElements(),
+			isLazy: isLazy,
 			style: style,
 			isContentInteractive: isContentInteractive,
 			alignment: alignment,
@@ -106,6 +113,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	
 	public init <Source> (
 		enumerating data: Source,
+		isLazy: Bool = true,
 		style: Style = .full,
 		isContentInteractive: Bool = false,
 		alignment: Alignment = .center,
@@ -119,6 +127,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	{
 		self.init(
 			enumerating: data,
+			isLazy: isLazy,
 			style: style,
 			isContentInteractive: isContentInteractive,
 			alignment: alignment,
@@ -133,6 +142,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	
 	public init <Source> (
 		hashing data: Source,
+		isLazy: Bool = true,
 		style: Style = .full,
 		isContentInteractive: Bool = false,
 		alignment: Alignment = .center,
@@ -147,6 +157,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	{
 		self.init(
 			data.enumeratedHashableElements(),
+			isLazy: isLazy,
 			style: style,
 			isContentInteractive: isContentInteractive,
 			alignment: alignment,
@@ -159,6 +170,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	
 	public init <Source> (
 		hashing data: Source,
+		isLazy: Bool = true,
 		style: Style = .full,
 		isContentInteractive: Bool = false,
 		alignment: Alignment = .center,
@@ -173,6 +185,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	{
 		self.init(
 			data.enumeratedHashableElements(),
+			isLazy: isLazy,
 			style: style,
 			isContentInteractive: isContentInteractive,
 			alignment: alignment,
@@ -187,6 +200,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	
 	public init <Source> (
 		identifying data: Source,
+		isLazy: Bool = true,
 		style: Style = .full,
 		isContentInteractive: Bool = false,
 		alignment: Alignment = .center,
@@ -202,6 +216,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	{
 		self.init(
 			data.enumeratedIdentifiableElements(),
+			isLazy: isLazy,
 			style: style,
 			isContentInteractive: isContentInteractive,
 			alignment: alignment,
@@ -214,6 +229,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	
 	public init <Source> (
 		identifying data: Source,
+		isLazy: Bool = true,
 		style: Style = .full,
 		isContentInteractive: Bool = false,
 		alignment: Alignment = .center,
@@ -229,6 +245,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	{
 		self.init(
 			data.enumeratedIdentifiableElements(),
+			isLazy: isLazy,
 			style: style,
 			isContentInteractive: isContentInteractive,
 			alignment: alignment,
@@ -274,21 +291,44 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 			GeometryReader { geometry in
 				ZStack(alignment: .topLeading) {
 					let xOffset = currentOffset(in: geometry.size)
-					LazyHStack(alignment: alignment.vertical, spacing: spacing) {
-						switch style {
-						case .full:
-							ForEach(data) { item in
-								content(item)
+					
+					Group {
+						if isLazy {
+							LazyHStack(alignment: alignment.vertical, spacing: spacing) {
+								switch style {
+								case .full:
+									ForEach(data) { item in
+										content(item)
+									}
+									.size(geometry.size, alignment)
+									.clipped()
+								case .carousel(_):
+									ForEach(identifying: data) { offset, item in
+										content(item)
+											.environment(\.centerDistance,
+														  (geometry.size.width + spacing) * offset.cg + xOffset)
+									}
+									.size(geometry.size, alignment)
+								}
 							}
-							.size(geometry.size, alignment)
-							.clipped()
-						case .carousel(_):
-							ForEach(identifying: data) { offset, item in
-								content(item)
-									.environment(\.centerDistance,
-												  (geometry.size.width + spacing) * offset.cg + xOffset)
+						} else {
+							HStack(alignment: alignment.vertical, spacing: spacing) {
+								switch style {
+								case .full:
+									ForEach(data) { item in
+										content(item)
+									}
+									.size(geometry.size, alignment)
+									.clipped()
+								case .carousel(_):
+									ForEach(identifying: data) { offset, item in
+										content(item)
+											.environment(\.centerDistance,
+														  (geometry.size.width + spacing) * offset.cg + xOffset)
+									}
+									.size(geometry.size, alignment)
+								}
 							}
-							.size(geometry.size, alignment)
 						}
 					}
 					.offset(x: xOffset)
@@ -668,6 +708,7 @@ fileprivate struct Demo1: View {
 	}
 	
 	private let isSelectable: Bool
+	private let isLazy: Bool
 	@State var page: Source.ID = .empty
 	// @State var selected: Int = 0
 	
@@ -683,9 +724,11 @@ fileprivate struct Demo1: View {
 	
 	public init(
 		isSelectable: Bool,
+		isLazy: Bool = true,
 		page: Source.ID? = .empty
 	) {
 		self.isSelectable = isSelectable
+		self.isLazy = isLazy
 		self._page =? page
 	}
 	
@@ -712,7 +755,9 @@ fileprivate struct Demo1: View {
 					source.id.labeledView(label: "id")
 					
 					Text(String("Button"))
-						.button()
+						.button {
+							print("button tap")
+						}
 						.buttonStyle(.borderedProminent)
 						.padding(.top, 4)
 				}
@@ -754,7 +799,7 @@ fileprivate struct Demo1: View {
 }
 
 @available(iOS 17, *)
-#Preview("Demo", traits: .sizeThatFitsLayout) {
+#Preview("Default", traits: .sizeThatFitsLayout) {
 	Demo1(
 		isSelectable: false
 	)
@@ -763,12 +808,27 @@ fileprivate struct Demo1: View {
 }
 
 @available(iOS 17, *)
-#Preview("Demo Selectable", traits: .sizeThatFitsLayout) {
+#Preview("Selectable", traits: .sizeThatFitsLayout) {
 	Demo1(
 		isSelectable: true,
+		isLazy: false,
 		page: "How"
 	)
 	.padding()
 	.background(.systemBackground)
 }
+
+@available(iOS 17, *)
+#Preview("Selectable | in scroll", traits: .sizeThatFitsLayout) {
+	ScrollView(.vertical) {
+		Demo1(
+			isSelectable: true,
+			isLazy: true,
+			page: "How"
+		)
+		.padding()
+	}
+	.background(.systemBackground)
+}
+
 #endif
