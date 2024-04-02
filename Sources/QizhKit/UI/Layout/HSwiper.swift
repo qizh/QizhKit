@@ -388,21 +388,23 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		card cardGeometry: GeometryProxy,
 		full fullGeometry: GeometryProxy
 	) -> some Gesture {
-		DragGesture(minimumDistance: 10)
-			.onChanged { value in
-				onDragGestureChange(
-					with: value,
-					card: cardGeometry,
-					full: fullGeometry,
-					pageSize: cardGeometry.size.width + spacing
-				)
-			}
-			.onEnded { value in
-				onDragGestureEnded(
-					with: value,
-					pageSize: cardGeometry.size.width + spacing
-				)
-			}
+		DragGesture(
+			minimumDistance: 16
+		)
+		.onChanged { value in
+			onDragGestureChange(
+				with: value,
+				card: cardGeometry,
+				full: fullGeometry,
+				pageSize: cardGeometry.size.width + spacing
+			)
+		}
+		.onEnded { value in
+			onDragGestureEnded(
+				with: value,
+				pageSize: cardGeometry.size.width + spacing
+			)
+		}
 	}
 	
 	// MARK: ┃┣ Change
@@ -415,28 +417,49 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	) {
 		/// Worakroud to exit when edge swipe back gesture starts
 		/// It moves frame to the edge of the screen: x = width
-		guard fullGeometry.frame(in: .global).minX < fullGeometry.frame(in: .global).width
-		else { return }
+		guard fullGeometry.frame(in: .global).minX 
+			< fullGeometry.frame(in: .global).width
+		else {
+			// print("exit on swipe back")
+			return
+		}
+		
 		/// Calculate offset between full frame and card frame
-		let geometryDX = style.isCarousel
-			? fullGeometry.frame(in: .global).minX
+		let geometryDX = if style.isCarousel {
+			  fullGeometry.frame(in: .global).minX
 			- cardGeometry.frame(in: .global).minX
-			: 0
+		} else {
+			CGFloat.zero
+		}
+		
 		let tapFrame = fullGeometry.frame(in: .local)
 			/// Offset to cover full frame
 			.offset(x: geometryDX)
 			/// Offset from the side of the screen
 			/// to avoid glitches when using back swipe gesture
 			.inset(leading: fullGeometry.frame(in: .global).minX == 0 ? 32 : 0)
-		guard tapFrame.contains(value.startLocation) else { return }
 		
+		guard tapFrame.contains(value.startLocation) else {
+			// print("exit tap frame")
+			return
+		}
+		
+		// print("drag {w: \(value.translation.width, f: 0), h: \(value.translation.height, f: 0)}")
 		let dragOffsetSign = dragOffset.sign
 		let offset = value.translation.width + draggedPages * pageSize
+		
+		/// Is dragging further than the edge
 		let isEdgeSwiping =
 			   selected == data.first?.id && offset.isPositive
 			|| selected == data.last?.id  && offset.isNegative
 		
-		dragOffset = isEdgeSwiping ? offset.third : offset
+		dragOffset = if isEdgeSwiping {
+			/// Drag resiting effect
+			offset.third
+		} else {
+			offset
+		}
+		
 		if dragOffset.magnitude > pageSize.half {
 			let newDraggedPages = draggedPages + pagesCount(in: cardGeometry.size)
 			let newSelected = currentSelected(in: cardGeometry.size)
@@ -855,6 +878,9 @@ fileprivate struct Demo1: View {
 			page: "How"
 		)
 		.padding()
+		.maxWidth(.center)
+		.padding(.top, 300)
+		.padding(.bottom, 600)
 	}
 	.background(.systemBackground)
 }
