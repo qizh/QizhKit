@@ -35,6 +35,7 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	@State private var draggedPages: Int = .zero
 	@State private var animationValue: UInt = .zero
 	@State private var predictedOffset: CGFloat = .zero
+	@State private var dragTimer: Timer? = .none
 	
 	// MARK: ┣ Init
 	
@@ -472,6 +473,8 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 				animationValue += 1
 			}
 		}
+		
+		timerContinue(lastDragValue: value, pageSize: pageSize)
 	}
 	
 	// MARK: ┃┗ End
@@ -497,6 +500,28 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		}
 		predictedOffset = .zero
 		draggedPages = .zero
+		
+		timerEnd()
+	}
+	
+	// MARK: Drag Timer
+	
+	private func timerEnd() {
+		dragTimer?.invalidate()
+		dragTimer = .none
+	}
+	
+	private func timerContinue(
+		lastDragValue value: DragGesture.Value,
+		pageSize: CGFloat
+	) {
+		dragTimer?.invalidate()
+		dragTimer = .scheduledTimer(
+			withTimeInterval: 2, /// Two seconds
+			repeats: false
+		) { timer in
+			onDragGestureEnded(with: value, pageSize: pageSize)
+		}
 	}
 	
 	// MARK: ┣ Debug
