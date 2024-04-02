@@ -388,64 +388,92 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		card cardGeometry: GeometryProxy,
 		full fullGeometry: GeometryProxy
 	) -> some Gesture {
-		let pageSize = cardGeometry.size.width + spacing
-		return DragGesture(minimumDistance: 10)
+		DragGesture(minimumDistance: 10)
 			.onChanged { value in
-				/// Worakroud to exit when edge swipe back gesture starts
-				/// It moves frame to the edge of the screen: x = width
-				guard fullGeometry.frame(in: .global).minX < fullGeometry.frame(in: .global).width
-				else { return }
-				/// Calculate offset between full frame and card frame
-				let geometryDX = style.isCarousel
-					? fullGeometry.frame(in: .global).minX
-					- cardGeometry.frame(in: .global).minX
-					: 0
-				let tapFrame = fullGeometry.frame(in: .local)
-					/// Offset to cover full frame
-					.offset(x: geometryDX)
-					/// Offset from the side of the screen
-					/// to avoid glitches when using back swipe gesture
-					.inset(leading: fullGeometry.frame(in: .global).minX == 0 ? 32 : 0)
-				guard tapFrame.contains(value.startLocation) else { return }
-				
-				let dragOffsetSign = dragOffset.sign
-				let offset = value.translation.width + draggedPages * pageSize
-				let isEdgeSwiping =
-					   selected == data.first?.id && offset.isPositive
-					|| selected == data.last?.id  && offset.isNegative
-				
-				dragOffset = isEdgeSwiping ? offset.third : offset
-				if dragOffset.magnitude > pageSize.half {
-					let newDraggedPages = draggedPages + pagesCount(in: cardGeometry.size)
-					let newSelected = currentSelected(in: cardGeometry.size)
-					dragOffset = (newDraggedPages - draggedPages) * pageSize + dragOffset
-					selected = newSelected
-					draggedPages = newDraggedPages
-				} else {
-					predictedOffset = value.predictedEndTranslation.width
-					if dragOffsetSign != dragOffset.sign {
-						animationValue += 1
-					}
-				}
+				onDragGestureChange(
+					with: value,
+					card: cardGeometry,
+					full: fullGeometry,
+					pageSize: cardGeometry.size.width + spacing
+				)
 			}
 			.onEnded { value in
-				if draggedPages.isZero,
-				   predictedOffset.magnitude > pageSize.half,
-				   let newSelected = selected(with: -predictedOffset.sign.offset)
-				{
-					let newDraggedPages = draggedPages - predictedOffset.sign.offset
-					dragOffset = (newDraggedPages - draggedPages) * pageSize + dragOffset
-					selected = newSelected
-					draggedPages = newDraggedPages
-					execute(in: 10) {
-						dragOffset = .zero
-					}
-				} else {
-					dragOffset = .zero
-				}
-				predictedOffset = .zero
-				draggedPages = .zero
+				onDragGestureEnded(
+					with: value,
+					pageSize: cardGeometry.size.width + spacing
+				)
 			}
+	}
+	
+	// MARK: ┃┣ Change
+	
+	fileprivate func onDragGestureChange(
+		with value: DragGesture.Value,
+		card cardGeometry: GeometryProxy,
+		full fullGeometry: GeometryProxy,
+		pageSize: CGFloat
+	) {
+		/// Worakroud to exit when edge swipe back gesture starts
+		/// It moves frame to the edge of the screen: x = width
+		guard fullGeometry.frame(in: .global).minX < fullGeometry.frame(in: .global).width
+		else { return }
+		/// Calculate offset between full frame and card frame
+		let geometryDX = style.isCarousel
+			? fullGeometry.frame(in: .global).minX
+			- cardGeometry.frame(in: .global).minX
+			: 0
+		let tapFrame = fullGeometry.frame(in: .local)
+			/// Offset to cover full frame
+			.offset(x: geometryDX)
+			/// Offset from the side of the screen
+			/// to avoid glitches when using back swipe gesture
+			.inset(leading: fullGeometry.frame(in: .global).minX == 0 ? 32 : 0)
+		guard tapFrame.contains(value.startLocation) else { return }
+		
+		let dragOffsetSign = dragOffset.sign
+		let offset = value.translation.width + draggedPages * pageSize
+		let isEdgeSwiping =
+			   selected == data.first?.id && offset.isPositive
+			|| selected == data.last?.id  && offset.isNegative
+		
+		dragOffset = isEdgeSwiping ? offset.third : offset
+		if dragOffset.magnitude > pageSize.half {
+			let newDraggedPages = draggedPages + pagesCount(in: cardGeometry.size)
+			let newSelected = currentSelected(in: cardGeometry.size)
+			dragOffset = (newDraggedPages - draggedPages) * pageSize + dragOffset
+			selected = newSelected
+			draggedPages = newDraggedPages
+		} else {
+			predictedOffset = value.predictedEndTranslation.width
+			if dragOffsetSign != dragOffset.sign {
+				animationValue += 1
+			}
+		}
+	}
+	
+	// MARK: ┃┗ End
+	
+	fileprivate func onDragGestureEnded(
+		with value: DragGesture.Value,
+		pageSize: CGFloat
+	) {
+		// print("on ended")
+		if draggedPages.isZero,
+		   predictedOffset.magnitude > pageSize.half,
+		   let newSelected = selected(with: -predictedOffset.sign.offset)
+		{
+			let newDraggedPages = draggedPages - predictedOffset.sign.offset
+			dragOffset = (newDraggedPages - draggedPages) * pageSize + dragOffset
+			selected = newSelected
+			draggedPages = newDraggedPages
+			execute(in: 10) {
+				dragOffset = .zero
+			}
+		} else {
+			dragOffset = .zero
+		}
+		predictedOffset = .zero
+		draggedPages = .zero
 	}
 	
 	// MARK: ┣ Debug
