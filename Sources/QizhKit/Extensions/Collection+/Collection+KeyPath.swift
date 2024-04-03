@@ -259,6 +259,17 @@ public extension Collection where Element: EasyComparable {
 	{ !test($0) }
 }
 
+// MARK: Filter Bool?
+
+extension Sequence {
+	/// Same as regular `filter`, but works with `Optional<Bool>`
+	@inlinable public func filter(
+		_ isIncluded: (Self.Element) throws -> Bool?
+	) rethrows -> [Self.Element] {
+		try self.filter({ try isIncluded($0) == true })
+	}
+}
+
 // MARK: Filter
 
 public extension Collection {
