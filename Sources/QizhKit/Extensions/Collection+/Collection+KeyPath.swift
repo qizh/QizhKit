@@ -263,6 +263,7 @@ public extension Collection where Element: EasyComparable {
 
 extension Sequence {
 	/// Same as regular `filter`, but works with `Optional<Bool>`
+	@_disfavoredOverload
 	@inlinable public func filter(
 		_ isIncluded: (Self.Element) throws -> Bool?
 	) rethrows -> [Self.Element] {
