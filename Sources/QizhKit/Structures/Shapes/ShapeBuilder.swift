@@ -24,7 +24,13 @@ public struct EmptyShape: Shape {
 
 extension ShapeBuilder {
 	public static func buildOptional<C0: Shape>(_ c0: C0?) -> OptionalShape<C0> {
-		return OptionalShape(c0)
+		OptionalShape(c0)
+	}
+}
+
+extension ShapeBuilder {
+	public static func buildLimitedAvailability(_ component: some Shape) -> AnyShape {
+		AnyShape(component)
 	}
 }
 
@@ -36,17 +42,17 @@ public struct OptionalShape<Content: Shape>: Shape {
 	}
 
 	public func path(in rect: CGRect) -> Path {
-		return content?.path(in: rect) ?? Path()
+		content?.path(in: rect) ?? Path()
 	}
 }
 
 extension ShapeBuilder {
 	public static func buildEither<First: Shape, Second: Shape>(first: First) -> EitherShape<First, Second> {
-		return .first(first)
+		.first(first)
 	}
 
 	public static func buildEither<First: Shape, Second: Shape>(second: Second) -> EitherShape<First, Second> {
-		return .second(second)
+		.second(second)
 	}
 }
 
@@ -56,15 +62,15 @@ public enum EitherShape<First: Shape, Second: Shape>: Shape {
 
 	public func path(in rect: CGRect) -> Path {
 		switch self {
-		case .first(let first): return first.path(in: rect)
-		case .second(let second): return second.path(in: rect)
+		case .first(let first): first.path(in: rect)
+		case .second(let second): second.path(in: rect)
 		}
 	}
 }
 
 extension ShapeBuilder {
 	public static func buildBlock<C0: Shape, C1: Shape>(_ c0: C0, _ c1: C1) -> Tuple2Shape<C0, C1> {
-		return Tuple2Shape(c0, c1)
+		Tuple2Shape(c0, c1)
 	}
 }
 
@@ -84,7 +90,7 @@ public struct Tuple2Shape<C0: Shape, C1: Shape>: Shape {
 
 extension ShapeBuilder {
 	public static func buildBlock<C0: Shape, C1: Shape, C2: Shape>(_ c0: C0, _ c1: C1, _ c2: C2) -> Tuple3Shape<C0, C1, C2> {
-		return Tuple3Shape(c0, c1, c2)
+		Tuple3Shape(c0, c1, c2)
 	}
 }
 
