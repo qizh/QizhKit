@@ -516,8 +516,12 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	// MARK: ┗ Shortcuts
 	
 	private func pageOffset(in size: CGSize) -> Int {
-		-(dragOffset / (size.width + spacing))
-			.rounded(.awayFromZero).int
+		if size.width + spacing == .zero {
+			.zero
+		} else {
+			-(dragOffset / (size.width + spacing))
+				.rounded(.awayFromZero).int
+		}
 	}
 	
 	private func pagesCount(in size: CGSize) -> Int {
