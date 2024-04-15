@@ -6,6 +6,7 @@
 //  Copyright © 2020 Serhii Shevchenko. All rights reserved.
 //
 
+/*
 import UIKit
 
 open class InvisibleUIView: UIView {
@@ -40,3 +41,4 @@ open class InvisibleUIView: UIView {
 		isUserInteractionEnabled = false
 	}
 }
+*/
