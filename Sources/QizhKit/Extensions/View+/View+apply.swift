@@ -10,6 +10,14 @@ import SwiftUI
 
 // MARK: View + apply
 
+extension View {
+	@inlinable public func apply <V: View> (
+		@ViewBuilder _ transform: (Self) -> V
+	) -> V {
+		transform(self)
+	}
+}
+
 #if swift(>=5.9)
 extension View {
 	@inlinable public func apply <V: View, each P> (
@@ -19,17 +27,11 @@ extension View {
 		transform(self, repeat each parameters)
 	}
 }
-
 #else
+
 // MARK: > Outdated
 
 extension View {
-	@inlinable public func apply(
-		@ViewBuilder _ transform: (Self) -> some View
-	) -> some View {
-		transform(self)
-	}
-	
 	@inlinable public func apply <T> (
 		@ViewBuilder _ transform: (Self, T) -> some View,
 		_ argument: T
@@ -177,16 +179,25 @@ extension View {
 
 // MARK: Text + apply
 
+extension Text {
+	@inlinable public func apply(
+		_ transform: (Text) -> Text
+	) -> Text {
+		transform(self)
+	}
+}
+
 #if swift(>=5.9)
 extension Text {
-	public func apply <each Parameter> (
-		_ transform: (Text, repeat each Parameter) -> Text,
-		_ parameters: repeat each Parameter
+	public func apply <each P> (
+		_ transform: (Text, repeat each P) -> Text,
+		_ parameters: repeat each P
 	) -> Text {
 		transform(self, repeat each parameters)
 	}
 }
 #else
+
 // MARK: > Outdated
 
 extension Text {
@@ -205,7 +216,6 @@ extension Text {
 
 // MARK: > Test
 
-/*
 fileprivate func t0(text: Text) -> Text { text }
 fileprivate func t1(text: Text, int: Int) -> Text { text }
 fileprivate func t2(text: Text, x: Int, y: String) -> Text { text }
@@ -230,4 +240,3 @@ fileprivate func testApplyView() -> some View {
 	.apply(v1, 12)
 	.apply(v2, 13, "")
 }
-*/
