@@ -37,7 +37,7 @@ public struct DiagonalLine: Shape {
 		return path
 	}
 	
-	public enum Direction {
+	public enum Direction: Sendable {
 		case slash
 		case backslash
 	}

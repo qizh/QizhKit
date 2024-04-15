@@ -465,7 +465,8 @@ extension CGRect: Comparable {
 public struct Factor:
 	ExpressibleByFloatLiteral,
 	ExpressibleByIntegerLiteral,
-	ExpressibleByNilLiteral
+	ExpressibleByNilLiteral,
+	Sendable
 {
 	public typealias Value = CGFloat.FloatLiteralType
 	
@@ -491,7 +492,8 @@ public struct Factor:
 public struct AxisFactor:
 	ExpressibleByFloatLiteral,
 	ExpressibleByIntegerLiteral,
-	ExpressibleByNilLiteral
+	ExpressibleByNilLiteral,
+	Sendable
 {
 	public let horizontal: Factor
 	public let   vertical: Factor

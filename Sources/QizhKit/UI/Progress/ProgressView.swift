@@ -434,7 +434,11 @@ public struct ProgressView: View {
 	
 	// MARK: Size
 	
-	public enum Size: CaseIterable, EasyCaseComparable, Identifiable, Hashable {
+	public enum Size: CaseIterable,
+					  EasyCaseComparable,
+					  Identifiable,
+					  Hashable,
+					  Sendable {
 		case small
 		case visual
 		case large
