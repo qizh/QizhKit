@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import Combine
 
 @available(iOS 14.0, *)
 public extension StateObject {
@@ -40,7 +41,7 @@ public extension State {
 public extension Published {
 	/// Creates a new `Published` initialized with a `initialValue` set
 	/// if the right side value is defined
-	@discardableResult @inlinable
+	@discardableResult
 	static func =? (lhs: inout Published<Value>, rhs: Value?) -> Published<Value> {
 		switch rhs {
 		case .none: return lhs
