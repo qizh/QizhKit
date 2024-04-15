@@ -9,7 +9,7 @@
 import Foundation
 import Combine
 
-@available(iOS, deprecated: 14.0, message: "Use `AppStorage` instead")
+@available(iOS, deprecated: 14.0, obsoleted: 15.0, message: "Use `AppStorage` instead")
 @propertyWrapper public struct UserDefault <Value> {
 	private let key: String
 	private let defaultValue: Value
@@ -160,6 +160,7 @@ internal func extractRawValue(from subject: Any) -> Any? {
 	}
 }
 
+@available(iOS, deprecated: 14.0, obsoleted: 15.0, message: "Use `AppStorage` instead")
 public extension CodableUserDefault where T: EmptyProvidable {
 	init(_ key: String) {
 		self.key = key
@@ -167,6 +168,7 @@ public extension CodableUserDefault where T: EmptyProvidable {
 	}
 }
 
+@available(iOS, deprecated: 14.0, obsoleted: 15.0, message: "Use `AppStorage` instead")
 public extension CodableUserDefault where T: WithDefault {
 	init(_ key: String) {
 		self.key = key
@@ -174,6 +176,7 @@ public extension CodableUserDefault where T: WithDefault {
 	}
 }
 
+@available(iOS, deprecated: 14.0, obsoleted: 15.0, message: "Use `AppStorage` instead")
 public extension CodableUserDefault where T: WithUnknown {
 	init(_ key: String) {
 		self.key = key
@@ -181,7 +184,7 @@ public extension CodableUserDefault where T: WithUnknown {
 	}
 }
 
-@available(iOS, deprecated: 14.0, message: "Use `AppStorage` instead")
+@available(iOS, deprecated: 14.0, obsoleted: 15.0, message: "Use `AppStorage` instead")
 @propertyWrapper public struct ResettableUserDefault <Value> {
 	private let key: String
 	private let defaultValue: Value?
@@ -252,7 +255,7 @@ public extension CodableUserDefault where T: WithUnknown {
 	}
 }
 
-@available(iOS, deprecated: 14.0, message: "Use `AppStorage` instead")
+@available(iOS, deprecated: 14.0, obsoleted: 15.0, message: "Use `AppStorage` instead")
 @propertyWrapper public struct UserDefaultJson <T: Codable> {
 	private let key: String
 	private let defaultValue: T
