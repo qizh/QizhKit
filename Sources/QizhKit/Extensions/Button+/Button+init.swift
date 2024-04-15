@@ -10,18 +10,26 @@ import SwiftUI
 
 // MARK: Selfmade
 
+/*
 extension View {
 	/// Just a function returning `self`.
 	/// Useful when you need to provide
 	/// a function returning `some View`
 	/// where this view should be `self`
 	@inlinable public func selfmade() -> Self { self }
-	@inlinable public func button() -> Button<Self> { Button(action: {}, label: selfmade) }
 }
+ */
 
 // MARK: Button > Selfmade | fallback
 
 extension View {
+	@inlinable public func button() -> Button<Self> {
+		Button(
+			action: { },
+			label: { self }
+		)
+	}
+	
 	/// For valid URLs converts a view to a `SafariButton` or `Link`
 	/// - Parameters:
 	///   - url: Won't make any change for undefined URLs
@@ -41,19 +49,19 @@ extension View {
 					SafariButton(
 						opening: url,
 						isActive: isActive,
-						content: selfmade
+						content: { self }
 					)
 				case .safari:
 					Link(
 						destination: url,
-						label: selfmade
+						label: { self }
 					)
 				}
 			} else {
 				SafariButton(
 					opening: url,
 					isActive: isActive,
-					content: selfmade
+					content: { self }
 				)
 			}
 		} else {
@@ -88,7 +96,7 @@ extension View {
 					flow.proceed(with: callback)
 				}
 			},
-			label: selfmade
+			label: { self }
 		)
 	}
 	
@@ -109,7 +117,7 @@ extension View {
 					flow.proceed(with: callback)
 				}
 			},
-			label: selfmade
+			label: { self }
 		)
 	}
 	
@@ -125,34 +133,34 @@ extension View {
 					flow.proceed(with: binding.toggle)
 				}
 			},
-			label: selfmade
+			label: { self }
 		)
 	}
 }
 
-// MARK: - Variadic Generics
+// MARK: View + Button
 
 #if swift(>=5.9)
 
-// MARK: View + Button
+// MARK: > Variadic Generics
 
 extension View {
-	@inlinable public func button <each Parameter> (
-		action: @escaping (repeat each Parameter) -> Void,
-		_ parameters: repeat each Parameter
+	@inlinable public func button <each P> (
+		action: @escaping (repeat each P) -> Void,
+		_ parameters: repeat each P
 	) -> Button<Self> {
 		Button(
 			action: {
 				action(repeat each parameters)
 			},
-			label: selfmade
+			label: { self }
 		)
 	}
 	
-	@inlinable public func asyncButton <each Parameter> (
+	@inlinable public func asyncButton <each P> (
 		priority: TaskPriority? = .none,
-		action: @escaping @Sendable (repeat each Parameter) async -> Void,
-		_ parameters: repeat each Parameter
+		action: @escaping @Sendable (repeat each P) async -> Void,
+		_ parameters: repeat each P
 	) -> Button<Self> {
 		Button(
 			action: {
@@ -160,45 +168,28 @@ extension View {
 					await action(repeat each parameters)
 				}
 			},
-			label: selfmade
+			label: { self }
 		)
 	}
 	
-	@inlinable public func button <each Parameter> (
+	@inlinable public func button <each P> (
 		role: ButtonRole,
-		action: @escaping (repeat each Parameter) -> Void,
-		_ parameters: repeat each Parameter
+		action: @escaping (repeat each P) -> Void,
+		_ parameters: repeat each P
 	) -> Button<Self> {
 		Button(
 			role: role,
 			action: {
 				action(repeat each parameters)
 			},
-			label: selfmade
+			label: { self }
 		)
 	}
-
 }
-#endif
+#else
 
-// MARK: - Tests
+// MARK: > Outdated
 
-fileprivate func a2(a: Int, b: String) { }
-fileprivate func a0() { }
-
-fileprivate let a = Text(String(""))
-	.button()
-	.button(action: a0)
-	.button(action: a2, 1, "")
-
-
-// MARK: - Outdated & Deprecated -
-
-
-
-// MARK: View + button + async
-
-#if swift(<5.9)
 extension View {
 	@inlinable public func asyncButton(
 		priority: TaskPriority? = .none,
@@ -239,14 +230,16 @@ extension View {
 	@inlinable public func button(
 		action: @escaping () -> Void
 	) -> Button<Self> {
-		Button(action: action, label: selfmade)
+		button(action: action)
 	}
 	
 	@inlinable public func button <A> (
 		action: @escaping (A) -> Void,
 		_ argument: A
 	) -> Button<Self> {
-		Button(action: { action(argument) }, label: selfmade)
+		button {
+			action(argument)
+		}
 	}
 	
 	@inlinable public func button <A1, A2> (
@@ -254,10 +247,27 @@ extension View {
 		_ argument1: A1,
 		_ argument2: A2
 	) -> Button<Self> {
-		Button(action: { action(argument1, argument2) }, label: selfmade)
+		button {
+			action(argument1, argument2)
+		}
 	}
 }
 #endif
+
+// MARK: - Tests
+
+/*
+fileprivate func a2(a: Int, b: String) { }
+fileprivate func a0() { }
+fileprivate let a = Text(String(""))
+	.button()
+	.button(action: a0)
+	.button(action: a2, 1, "")
+*/
+
+// MARK: - Outdated & Deprecated -
+
+
 
 // MARK: View + button + animation
 
@@ -267,7 +277,7 @@ extension View {
 		action: @escaping () -> Void,
 		animation: Animation
 	) -> Button<Self> {
-		Button(action: animating(action, with: animation), label: selfmade)
+		Button(action: animating(action, with: animation), label: { self })
 	}
 
 	@available(*, deprecated, message: "Just use the `withAnimation { ... }` action")
@@ -275,7 +285,7 @@ extension View {
 		animation: Animation,
 		action: @escaping () -> Void
 	) -> Button<Self> {
-		Button(action: animating(action, with: animation), label: selfmade)
+		Button(action: animating(action, with: animation), label: { self })
 	}
 }
 
@@ -288,7 +298,7 @@ extension View {
 		role: ButtonRole,
 		action: @escaping () -> Void
 	) -> Button<Self> {
-		Button(role: role, action: action, label: selfmade)
+		Button(role: role, action: action, label: { self })
 	}
 	
 	@inlinable public func button <A> (
@@ -296,7 +306,7 @@ extension View {
 		action: @escaping (A) -> Void,
 		_ argument: A
 	) -> Button<Self> {
-		Button(role: role, action: { action(argument) }, label: selfmade)
+		Button(role: role, action: { action(argument) }, label: { self })
 	}
 	
 	@inlinable public func button <A1, A2> (
@@ -305,7 +315,7 @@ extension View {
 		_ argument1: A1,
 		_ argument2: A2
 	) -> Button<Self> {
-		Button(role: role, action: { action(argument1, argument2) }, label: selfmade)
+		Button(role: role, action: { action(argument1, argument2) }, label: { self })
 	}
 }
 #endif
@@ -319,7 +329,7 @@ extension View {
 				animation: Animation? = .none,
 				   _ flow: ExecutionFlow = .current
 	) -> Button<Self> {
-		.init(
+		Button(
 			action: {
 				flow.proceed {
 					if let animation = animation {
@@ -331,7 +341,7 @@ extension View {
 					}
 				}
 			},
-			label: selfmade
+			label: { self }
 		)
 	}
 	
@@ -343,7 +353,7 @@ extension View {
 			  animation: Animation? = .none,
 				 _ flow: ExecutionFlow = .current
 	) -> Button<Self> {
-		.init(
+		Button(
 			action: {
 				flow.proceed {
 					if let animation {
@@ -355,7 +365,7 @@ extension View {
 					}
 				}
 			},
-			label: selfmade
+			label: { self }
 		)
 	}
 	
@@ -366,7 +376,7 @@ extension View {
 			   animation: Animation? = .none,
 				  _ flow: ExecutionFlow = .current
 	) -> Button<Self> {
-		.init(
+		Button(
 			action: {
 				flow.proceed {
 					if let animation {
@@ -378,7 +388,7 @@ extension View {
 					}
 				}
 			},
-			label: selfmade
+			label: { self }
 		)
 	}
 }
@@ -392,7 +402,7 @@ extension View {
 	) -> some View {
 		NavigationLink(
 			destination: screen,
-			label: selfmade
+			label: { self }
 		)
 	}
 	
@@ -404,7 +414,7 @@ extension View {
 		NavigationLink(
 			destination: screen,
 			isActive: isActive,
-			label: selfmade
+			label: { self }
 		)
 	}
 }
