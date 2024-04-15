@@ -119,11 +119,7 @@ public struct SafariButton<Content>: View where Content: View {
 				onDismiss: onDismiss
 			) {
 				BetterSafariView.SafariView(url: url)
-					#if os(iOS)
-					.preferredControlTintColor(tint)
-					#elseif os(visionOS)
 					.preferredControlAccentColor(tint.map(Color.init(uiColor:)))
-					#endif
 				/*
 				if let tint = tint, #available(iOS 14.0, *) {
 					return BetterSafariView.SafariView(url: url)
