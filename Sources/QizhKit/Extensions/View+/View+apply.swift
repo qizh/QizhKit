@@ -13,7 +13,7 @@ import SwiftUI
 extension View {
 	@inlinable public func apply <V: View> (
 		@ViewBuilder _ transform: (Self) -> V
-	) -> V {
+	) -> some View {
 		transform(self)
 	}
 }
@@ -23,7 +23,7 @@ extension View {
 	@inlinable public func apply <V: View, each P> (
 		@ViewBuilder _ transform: (Self, repeat each P) -> V,
 		_ parameters: repeat each P
-	) -> V {
+	) -> some View {
 		transform(self, repeat each parameters)
 	}
 }
