@@ -672,12 +672,12 @@ struct Flock_Previews: PreviewProvider {
 				
 				HStack {
 					Group {
-						Button("width + 10", assign: width + 10, to: \.width, on: self)
-						Button("width - 10", assign: width - 10, to: \.width, on: self)
-						Button("+ Start", assign: offset + 1, to: \.offset, on: self)
-						Button("- Start", assign: (offset - 1).clippedAboveZero(), to: \.offset, on: self)
-						Button("+ Tag", assign: amount + 1, to: \.amount, on: self)
-						Button("- Tag", assign: (amount - 1).clippedAboveZero(), to: \.amount, on: self)
+						Text("width + 10").button(assigning: width + 10, to: $width)
+						Text("width - 10").button(assigning: width - 10, to: $width)
+						Text("+ Start").button(assigning: offset + 1, to: $offset)
+						Text("- Start").button(assigning: (offset - 1).clippedAboveZero(), to: $offset)
+						Text("+ Tag").button(assigning: amount + 1, to: $amount)
+						Text("- Tag").button(assigning: (amount - 1).clippedAboveZero(), to: $amount)
 					}
 					.padding(4)
 					.round(6, border: .green, weight: 1)

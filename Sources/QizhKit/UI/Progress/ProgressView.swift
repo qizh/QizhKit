@@ -355,7 +355,7 @@ public struct ProgressView: View {
 			.aspectRatio([100, 91], contentMode: .fill)
 //			.square(size.value * 1.1, .top)
 //			.offset(x: 0, y: size.value / 60)
-			.button(assigning: true, to: \.isPresentingError, on: self)
+			.button(assigning: true, to: $isPresentingError)
 			.alert(isPresented: $isPresentingError) {
 				Alert(
 					title: Text(name.map { $0 + .space }.orEmpty + "Error"),
