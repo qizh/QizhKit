@@ -12,32 +12,33 @@ import SwiftUI
 
 #if swift(>=5.9)
 extension View {
-	@inlinable public func apply <Transformed: View, each Parameter> (
-		@ViewBuilder _ transform: (Self, repeat each Parameter) -> Transformed,
+	@inlinable public func apply <each Parameter> (
+		@ViewBuilder _ transform: (Self, repeat each Parameter) -> some View,
 		_ parameters: repeat each Parameter
 	) -> some View {
 		transform(self, repeat each parameters)
 	}
 }
+
 #else
-public extension View {
-	@inlinable public func apply <Transformed: View> (
-		@ViewBuilder _ transform: (Self) -> Transformed
+// MARK: > Outdated
+
+extension View {
+	@inlinable public func apply(
+		@ViewBuilder _ transform: (Self) -> some View
 	) -> some View {
 		transform(self)
 	}
 	
-	@inlinable
-	func apply <Transformed: View, T> (
-		@ViewBuilder _ transform: (Self, T) -> Transformed,
+	@inlinable public func apply <T> (
+		@ViewBuilder _ transform: (Self, T) -> some View,
 		_ argument: T
 	) -> some View {
 		transform(self, argument)
 	}
 	
-	@inlinable
-	func apply <Transformed: View, T1, T2> (
-		@ViewBuilder _ transform: (Self, T1, T2) -> Transformed,
+	@inlinable public func apply <T1, T2> (
+		@ViewBuilder _ transform: (Self, T1, T2) -> some View,
 		_ argument1: T1,
 		_ argument2: T2
 	) -> some View {
@@ -75,10 +76,10 @@ extension View {
 	}
 	
 	@ViewBuilder
-	public func apply <Transformed: View, T1, T2> (
+	public func apply <T1, T2> (
 		when optional1: T1?,
 		 and optional2: T2?,
-		@ViewBuilder _ transform: (Self, T1, T2) -> Transformed
+		@ViewBuilder _ transform: (Self, T1, T2) -> some View
 	) -> some View {
 		if let value1 = optional1,
 		   let value2 = optional2
@@ -104,9 +105,9 @@ extension View {
 	}
 	
 	@ViewBuilder
-	public func apply <Transformed: View> (
+	public func apply(
 		when condition: Bool,
-		@ViewBuilder _ transform: (Self) -> Transformed
+		@ViewBuilder _ transform: (Self) -> some View
 	) -> some View {
 		if condition {
 			transform(self)
@@ -116,10 +117,10 @@ extension View {
 	}
 	
 	@ViewBuilder
-	public func apply <Transformed: View, Fallback: View> (
+	public func apply(
 		when condition: Bool,
-		   _ transform: (Self) -> Transformed,
-		else  fallback: (Self) -> Fallback
+		   _ transform: (Self) -> some View,
+		else  fallback: (Self) -> some View
 	) -> some View {
 		if condition {
 			transform(self)
@@ -129,9 +130,9 @@ extension View {
 	}
 	
 	@ViewBuilder
-	public func map <T, Modified: View> (
+	public func map <T> (
 		_ value: T?,
-		_ transform: (Self, T) -> Modified
+		_ transform: (Self, T) -> some View
 	) -> some View {
 		if let value {
 			transform(self, value)
@@ -146,9 +147,9 @@ extension View {
 extension View {
 	@available(*, deprecated, renamed: "apply(when:_:)", message: "Renamed `mapping` parameter to `when`")
 	@ViewBuilder
-	public func apply <Transformed: View, T> (
+	public func apply <T> (
 		mapping optional: T?,
-		@ViewBuilder _ transform: (Self, T) -> Transformed
+		@ViewBuilder _ transform: (Self, T) -> some View
 	) -> some View {
 		if let value = optional {
 			transform(self, value)
@@ -159,10 +160,10 @@ extension View {
 	
 	@available(*, deprecated, renamed: "apply(when:and:_:)", message: "Renamed `mapping` parameter to `when`")
 	@ViewBuilder
-	public func apply <Transformed: View, T1, T2> (
+	public func apply <T1, T2> (
 		mapping optional1: T1?,
 			and optional2: T2?,
-		@ViewBuilder _ transform: (Self, T1, T2) -> Transformed
+		@ViewBuilder _ transform: (Self, T1, T2) -> some View
 	) -> some View {
 		if let value1 = optional1,
 		   let value2 = optional2
@@ -178,7 +179,7 @@ extension View {
 
 #if swift(>=5.9)
 extension Text {
-	@inlinable public func apply <each Parameter> (
+	public func apply <each Parameter> (
 		_ transform: (Text, repeat each Parameter) -> Text,
 		_ parameters: repeat each Parameter
 	) -> Text {
@@ -186,6 +187,8 @@ extension Text {
 	}
 }
 #else
+// MARK: > Outdated
+
 extension Text {
 	@inlinable public func apply(_ transform: (Text) -> Text) -> Text {
 		transform(self)
@@ -203,11 +206,28 @@ extension Text {
 // MARK: > Test
 
 /*
-fileprivate func f0(text: Text) -> Text { text }
-fileprivate func f1(text: Text, int: Int) -> Text { text }
-fileprivate func f2(text: Text, x: Int, y: String) -> Text { text }
-fileprivate let a = Text(String(""))
-	.apply(f0)
-	.apply(f1, 12)
-	.apply(f2, 13, "")
+fileprivate func t0(text: Text) -> Text { text }
+fileprivate func t1(text: Text, int: Int) -> Text { text }
+fileprivate func t2(text: Text, x: Int, y: String) -> Text { text }
+fileprivate let t = Text(String(""))
+	.apply(t0)
+	.apply(t1, 12)
+	.apply(t2, 13, "")
+
+fileprivate func v0(view: some View) -> some View { view }
+fileprivate func v1(view: some View, x: Int) -> some View { view }
+fileprivate func v2(view: some View, x: Int, y: String) -> some View { view }
+fileprivate func testApplyView() -> some View {
+	HStack {
+		Color.pink
+	}
+	.apply { view in
+		VStack {
+			view
+		}
+	}
+	.apply(v0)
+	.apply(v1, 12)
+	.apply(v2, 13, "")
+}
 */

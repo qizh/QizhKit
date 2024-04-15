@@ -10,7 +10,6 @@ import SwiftUI
 
 // MARK: Selfmade
 
-/*
 extension View {
 	/// Just a function returning `self`.
 	/// Useful when you need to provide
@@ -18,17 +17,21 @@ extension View {
 	/// where this view should be `self`
 	@inlinable public func selfmade() -> Self { self }
 }
- */
 
-// MARK: Button > Selfmade | fallback
+// MARK: Just button
 
 extension View {
 	@inlinable public func button() -> Button<Self> {
-		Button(
+		.init(
 			action: { },
-			label: { self }
+			label: selfmade
 		)
 	}
+}
+
+// MARK: Opening URL
+
+extension View {
 	
 	/// For valid URLs converts a view to a `SafariButton` or `Link`
 	/// - Parameters:
@@ -145,22 +148,22 @@ extension View {
 // MARK: > Variadic Generics
 
 extension View {
-	@inlinable public func button <each P> (
-		action: @escaping (repeat each P) -> Void,
-		_ parameters: repeat each P
+	@inlinable public func button <each Parameter> (
+		action: @escaping (repeat each Parameter) -> Void,
+		_ parameters: repeat each Parameter
 	) -> Button<Self> {
 		Button(
 			action: {
 				action(repeat each parameters)
 			},
-			label: { self }
+			label: selfmade
 		)
 	}
 	
-	@inlinable public func asyncButton <each P> (
+	@inlinable public func asyncButton <each Parameter> (
 		priority: TaskPriority? = .none,
-		action: @escaping @Sendable (repeat each P) async -> Void,
-		_ parameters: repeat each P
+		action: @escaping @Sendable (repeat each Parameter) async -> Void,
+		_ parameters: repeat each Parameter
 	) -> Button<Self> {
 		Button(
 			action: {
@@ -168,27 +171,85 @@ extension View {
 					await action(repeat each parameters)
 				}
 			},
-			label: { self }
+			label: selfmade
 		)
 	}
 	
-	@inlinable public func button <each P> (
+	@inlinable public func button <each Parameter> (
 		role: ButtonRole,
-		action: @escaping (repeat each P) -> Void,
-		_ parameters: repeat each P
+		action: @escaping (repeat each Parameter) -> Void,
+		_ parameters: repeat each Parameter
 	) -> Button<Self> {
 		Button(
 			role: role,
 			action: {
 				action(repeat each parameters)
 			},
-			label: { self }
+			label: selfmade
 		)
 	}
 }
+
 #else
 
 // MARK: > Outdated
+
+extension View {
+	@inlinable public func button(
+		action: @escaping () -> Void
+	) -> Button<Self> {
+		Button(action: action, label: selfmade)
+	}
+	
+	@inlinable public func button <A> (
+		action: @escaping (A) -> Void,
+		_ argument: A
+	) -> Button<Self> {
+		button {
+			action(argument)
+		}
+	}
+	
+	@inlinable public func button <A1, A2> (
+		action: @escaping (A1, A2) -> Void,
+		_ argument1: A1,
+		_ argument2: A2
+	) -> Button<Self> {
+		button {
+			action(argument1, argument2)
+		}
+	}
+}
+
+extension View {
+	@inlinable public func button(
+		role: ButtonRole,
+		action: @escaping () -> Void
+	) -> Button<Self> {
+		Button(role: role, action: action, label: selfmade)
+	}
+	
+	@inlinable public func button <A> (
+		role: ButtonRole,
+		action: @escaping (A) -> Void,
+		_ argument: A
+	) -> Button<Self> {
+		button(role: role) {
+			action(argument)
+		}
+	}
+	
+	@inlinable public func button <A1, A2> (
+		role: ButtonRole,
+		action: @escaping (A1, A2) -> Void,
+		_ argument1: A1,
+		_ argument2: A2
+	) -> Button<Self> {
+		button(role: role) {
+			action(argument1, argument2)
+		}
+	}
+}
 
 extension View {
 	@inlinable public func asyncButton(
@@ -224,31 +285,6 @@ extension View {
 			Task(priority: priority) {
 				await action(argument1, argument2)
 			}
-		}
-	}
-	
-	@inlinable public func button(
-		action: @escaping () -> Void
-	) -> Button<Self> {
-		button(action: action)
-	}
-	
-	@inlinable public func button <A> (
-		action: @escaping (A) -> Void,
-		_ argument: A
-	) -> Button<Self> {
-		button {
-			action(argument)
-		}
-	}
-	
-	@inlinable public func button <A1, A2> (
-		action: @escaping (A1, A2) -> Void,
-		_ argument1: A1,
-		_ argument2: A2
-	) -> Button<Self> {
-		button {
-			action(argument1, argument2)
 		}
 	}
 }
@@ -288,37 +324,6 @@ extension View {
 		Button(action: animating(action, with: animation), label: { self })
 	}
 }
-
-// MARK: View + button + role
-
-#if swift(>=5.5) && swift(<5.9)
-@available(iOS 15.0, *)
-extension View {
-	@inlinable public func button(
-		role: ButtonRole,
-		action: @escaping () -> Void
-	) -> Button<Self> {
-		Button(role: role, action: action, label: { self })
-	}
-	
-	@inlinable public func button <A> (
-		role: ButtonRole,
-		action: @escaping (A) -> Void,
-		_ argument: A
-	) -> Button<Self> {
-		Button(role: role, action: { action(argument) }, label: { self })
-	}
-	
-	@inlinable public func button <A1, A2> (
-		role: ButtonRole,
-		action: @escaping (A1, A2) -> Void,
-		_ argument1: A1,
-		_ argument2: A2
-	) -> Button<Self> {
-		Button(role: role, action: { action(argument1, argument2) }, label: { self })
-	}
-}
-#endif
 
 // MARK: View + button
 
