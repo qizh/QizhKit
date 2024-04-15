@@ -8,20 +8,41 @@
 
 import SwiftUI
 
-public extension View {
-	@inlinable
-	func modifier <M: ViewModifier> (_ modifier: M?) -> some View {
-		   modifier.map(view: self.modifier)
-		?? self
-	}
-	
-	@inlinable
-	func apply <Transformed: View> (
+// MARK: View + apply + Variadic Generics
+
+extension View {
+	@inlinable public func apply <Transformed: View> (
 		@ViewBuilder _ transform: (Self) -> Transformed
 	) -> some View {
 		transform(self)
 	}
 	
+	@inlinable public func apply <Transformed: View, each Parameter> (
+		@ViewBuilder _ transform: (Self, repeat each Parameter) -> Transformed,
+		_ parameters: repeat each Parameter
+	) -> some View {
+		transform(self, repeat each parameters)
+	}
+}
+
+// MARK: Optional View Modifier
+
+extension View {
+	@ViewBuilder
+	@_disfavoredOverload
+	public func modifier <M: ViewModifier> (_ modifier: M?) -> some View {
+		if let modifier {
+			self.modifier(modifier)
+		} else {
+			self
+		}
+	}
+}
+
+// MARK: # old apply
+
+#if swift(<5.9)
+public extension View {
 	@inlinable
 	func apply <Transformed: View, T> (
 		@ViewBuilder _ transform: (Self, T) -> Transformed,
@@ -38,9 +59,12 @@ public extension View {
 	) -> some View {
 		transform(self, argument1, argument2)
 	}
-	
+}
+#endif
+
+extension View {
 	@ViewBuilder
-	func apply <Transformed: View, T> (
+	public func apply <Transformed: View, T> (
 		mapping optional: T?,
 		@ViewBuilder _ transform: (Self, T) -> Transformed
 	) -> some View {
@@ -52,7 +76,7 @@ public extension View {
 	}
 	
 	@ViewBuilder
-	func apply <Transformed: View, T1, T2> (
+	public func apply <Transformed: View, T1, T2> (
 		mapping optional1: T1?,
 		    and optional2: T2?,
 		@ViewBuilder _ transform: (Self, T1, T2) -> Transformed
@@ -67,7 +91,7 @@ public extension View {
 	}
 	
 	@ViewBuilder
-	func apply <Transformed: View> (
+	public func apply <Transformed: View> (
 		when condition: Bool,
 		@ViewBuilder _ transform: (Self) -> Transformed
 	) -> some View {
@@ -79,7 +103,7 @@ public extension View {
 	}
 	
 	@ViewBuilder
-	func apply <Transformed: View, Fallback: View> (
+	public func apply <Transformed: View, Fallback: View> (
 		when condition: Bool,
 		   _ transform: (Self) -> Transformed,
 		else  fallback: (Self) -> Fallback
@@ -91,23 +115,27 @@ public extension View {
 		}
 	}
 	
-	func map <T, Modified: View> (
+	@ViewBuilder
+	public func map <T, Modified: View> (
 		_ value: T?,
 		_ transform: (Self, T) -> Modified
 	) -> some View {
-		   optionals(self, value).map(view: transform)
-		?? self
+		if let value {
+			transform(self, value)
+		} else {
+			self
+		}
 	}
 	
 	// MARK: On Appear
 	
 	@inlinable
-	func onAppearModifier<Modifier: ViewModifier>(_ modifier: Modifier) -> ModifiedContent<Self, ModifyOnAppear<Modifier>> {
+	public func onAppearModifier<Modifier: ViewModifier>(_ modifier: Modifier) -> ModifiedContent<Self, ModifyOnAppear<Modifier>> {
 		self.modifier(ModifyOnAppear(modifier))
 	}
 	
 	@inlinable
-	func applyOnAppear<Transformed: View>(
+	public func applyOnAppear<Transformed: View>(
 		_ transform: (Self) -> Transformed
 	) -> ModifiedContent<Self, OnAppearChange<Transformed>> {
 		modifier(OnAppearChange(to: transform(self)))
@@ -153,12 +181,21 @@ public struct ModifyOnAppear<Modifier: ViewModifier>: ViewModifier {
 // MARK: Views generation
 
 public struct Views {
-	@inlinable
-	public static func produce <T, Output: View> (
+	@inlinable public static func produce <T> (
 		using value: T,
-		@ViewBuilder in producer: (T) -> Output
-	) -> Output {
+		@ViewBuilder _ producer: (T) -> some View
+	) -> some View {
 		producer(value)
+	}
+	
+	@ViewBuilder
+	@inlinable public static func produce <T> (
+		when value: T?,
+		@ViewBuilder _ producer: (T) -> some View
+	) -> some View {
+		if let value {
+			producer(value)
+		}
 	}
 }
 
