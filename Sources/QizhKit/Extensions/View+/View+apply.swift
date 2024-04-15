@@ -1,8 +1,213 @@
 //
-//  File.swift
-//  
+//  View+onAppear.swift
+//  QizhKit
 //
-//  Created by Serhii Shevchenko on 15.04.2024.
+//  Created by Serhii Shevchenko on 03.05.2020.
+//  Copyright © 2020 Serhii Shevchenko. All rights reserved.
 //
 
-import Foundation
+import SwiftUI
+
+// MARK: View + apply
+
+#if swift(>=5.9)
+extension View {
+	@inlinable public func apply <Transformed: View, each Parameter> (
+		@ViewBuilder _ transform: (Self, repeat each Parameter) -> Transformed,
+		_ parameters: repeat each Parameter
+	) -> some View {
+		transform(self, repeat each parameters)
+	}
+}
+#else
+public extension View {
+	@inlinable public func apply <Transformed: View> (
+		@ViewBuilder _ transform: (Self) -> Transformed
+	) -> some View {
+		transform(self)
+	}
+	
+	@inlinable
+	func apply <Transformed: View, T> (
+		@ViewBuilder _ transform: (Self, T) -> Transformed,
+		_ argument: T
+	) -> some View {
+		transform(self, argument)
+	}
+	
+	@inlinable
+	func apply <Transformed: View, T1, T2> (
+		@ViewBuilder _ transform: (Self, T1, T2) -> Transformed,
+		_ argument1: T1,
+		_ argument2: T2
+	) -> some View {
+		transform(self, argument1, argument2)
+	}
+}
+#endif
+
+// MARK: View + apply + other
+
+extension View {
+	@ViewBuilder
+	public func apply <T> (
+		when optional: T?,
+		@ViewBuilder _ transform: (Self, T) -> some View
+	) -> some View {
+		if let optional {
+			transform(self, optional)
+		} else {
+			self
+		}
+	}
+
+	@ViewBuilder
+	public func apply <T> (
+		when optional: T?,
+		_ transform: (Self, T) -> some View,
+		else fallback: (Self) -> some View
+	) -> some View {
+		if let optional {
+			transform(self, optional)
+		} else {
+			fallback(self)
+		}
+	}
+	
+	@ViewBuilder
+	public func apply <Transformed: View, T1, T2> (
+		when optional1: T1?,
+		 and optional2: T2?,
+		@ViewBuilder _ transform: (Self, T1, T2) -> Transformed
+	) -> some View {
+		if let value1 = optional1,
+		   let value2 = optional2
+		{
+			transform(self, value1, value2)
+		} else {
+			self
+		}
+	}
+	
+	@ViewBuilder
+	public func apply <T1, T2> (
+		when optional1: T1?,
+		 and optional2: T2?,
+		@ViewBuilder _ transform: (Self, T1, T2) -> some View,
+		else fallback: (Self) -> some View
+	) -> some View {
+		if let optional1, let optional2 {
+			transform(self, optional1, optional2)
+		} else {
+			fallback(self)
+		}
+	}
+	
+	@ViewBuilder
+	public func apply <Transformed: View> (
+		when condition: Bool,
+		@ViewBuilder _ transform: (Self) -> Transformed
+	) -> some View {
+		if condition {
+			transform(self)
+		} else {
+			self
+		}
+	}
+	
+	@ViewBuilder
+	public func apply <Transformed: View, Fallback: View> (
+		when condition: Bool,
+		   _ transform: (Self) -> Transformed,
+		else  fallback: (Self) -> Fallback
+	) -> some View {
+		if condition {
+			transform(self)
+		} else {
+			fallback(self)
+		}
+	}
+	
+	@ViewBuilder
+	public func map <T, Modified: View> (
+		_ value: T?,
+		_ transform: (Self, T) -> Modified
+	) -> some View {
+		if let value {
+			transform(self, value)
+		} else {
+			self
+		}
+	}
+}
+
+// MARK: > Deprecated
+
+extension View {
+	@available(*, deprecated, renamed: "apply(when:_:)", message: "Renamed `mapping` parameter to `when`")
+	@ViewBuilder
+	public func apply <Transformed: View, T> (
+		mapping optional: T?,
+		@ViewBuilder _ transform: (Self, T) -> Transformed
+	) -> some View {
+		if let value = optional {
+			transform(self, value)
+		} else {
+			self
+		}
+	}
+	
+	@available(*, deprecated, renamed: "apply(when:and:_:)", message: "Renamed `mapping` parameter to `when`")
+	@ViewBuilder
+	public func apply <Transformed: View, T1, T2> (
+		mapping optional1: T1?,
+			and optional2: T2?,
+		@ViewBuilder _ transform: (Self, T1, T2) -> Transformed
+	) -> some View {
+		if let value1 = optional1,
+		   let value2 = optional2
+		{
+			transform(self, value1, value2)
+		} else {
+			self
+		}
+	}
+}
+
+// MARK: Text + apply
+
+#if swift(>=5.9)
+extension Text {
+	@inlinable public func apply <each Parameter> (
+		_ transform: (Text, repeat each Parameter) -> Text,
+		_ parameters: repeat each Parameter
+	) -> Text {
+		transform(self, repeat each parameters)
+	}
+}
+#else
+extension Text {
+	@inlinable public func apply(_ transform: (Text) -> Text) -> Text {
+		transform(self)
+	}
+	
+	@inlinable public func apply<T>(
+		_ transform: (Text, T) -> Text,
+		_ argument: T
+	) -> Text {
+		transform(self, argument)
+	}
+}
+#endif
+
+// MARK: > Test
+
+/*
+fileprivate func f0(text: Text) -> Text { text }
+fileprivate func f1(text: Text, int: Int) -> Text { text }
+fileprivate func f2(text: Text, x: Int, y: String) -> Text { text }
+fileprivate let a = Text(String(""))
+	.apply(f0)
+	.apply(f1, 12)
+	.apply(f2, 13, "")
+*/
