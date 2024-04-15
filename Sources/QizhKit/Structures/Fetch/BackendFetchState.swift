@@ -246,11 +246,11 @@ extension BackendFetchState: Identifiable {
 		return result
 	}
 	
-	private func id<Value>(of value: Value) -> String {
+	private func id<T>(of value: T) -> String {
 		"\(value)"
 	}
 	
-	private func id<Value>(of value: Value) -> String where Value: Identifiable {
+	private func id<T>(of value: T) -> String where T: Identifiable {
 		"\(value.id)"
 	}
 }
