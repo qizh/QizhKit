@@ -28,7 +28,6 @@ public enum FlockLines: Equatable, EasyCaseComparable {
 }
 
 // TODO: Implement the following
-#warning("TODO: Implement Flock @functionBuilder init option")
 
 @available(iOS 14, *)
 public struct Flock <Input, Content>: View
@@ -672,12 +671,36 @@ struct Flock_Previews: PreviewProvider {
 				
 				HStack {
 					Group {
-						Text("width + 10").button(assigning: width + 10, to: $width)
-						Text("width - 10").button(assigning: width - 10, to: $width)
-						Text("+ Start").button(assigning: offset + 1, to: $offset)
-						Text("- Start").button(assigning: (offset - 1).clippedAboveZero(), to: $offset)
-						Text("+ Tag").button(assigning: amount + 1, to: $amount)
-						Text("- Tag").button(assigning: (amount - 1).clippedAboveZero(), to: $amount)
+						Text("width + 10")
+							.button(
+								assigning: width + 10,
+								to: $width
+							)
+						Text("width - 10")
+							.button(
+								assigning: width - 10, 
+								to: $width
+							)
+						Text("+ Start")
+							.button(
+								assigning: offset + 1, 
+								to: $offset
+							)
+						Text("- Start")
+							.button(
+								assigning: (offset - 1).clippedAboveZero(), 
+								to: $offset
+							)
+						Text("+ Tag")
+							.button(
+								assigning: amount + 1, 
+								to: $amount
+							)
+						Text("- Tag")
+							.button(
+								assigning: (amount - 1).clippedAboveZero(), 
+								to: $amount
+							)
 					}
 					.padding(4)
 					.round(6, border: .green, weight: 1)
