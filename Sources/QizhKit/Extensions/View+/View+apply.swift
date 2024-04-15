@@ -12,10 +12,10 @@ import SwiftUI
 
 #if swift(>=5.9)
 extension View {
-	@inlinable public func apply <each Parameter> (
-		@ViewBuilder _ transform: (Self, repeat each Parameter) -> some View,
-		_ parameters: repeat each Parameter
-	) -> some View {
+	@inlinable public func apply <V: View, each P> (
+		@ViewBuilder _ transform: (Self, repeat each P) -> V,
+		_ parameters: repeat each P
+	) -> V {
 		transform(self, repeat each parameters)
 	}
 }

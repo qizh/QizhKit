@@ -148,45 +148,41 @@ extension View {
 // MARK: > Variadic Generics
 
 extension View {
-	@inlinable public func button <each Parameter> (
-		action: @escaping (repeat each Parameter) -> Void,
-		_ parameters: repeat each Parameter
+	@inlinable public func button <each P> (
+		action: @escaping (repeat each P) -> Void,
+		_ parameters: repeat each P
 	) -> Button<Self> {
-		Button(
-			action: {
-				action(repeat each parameters)
-			},
-			label: selfmade
-		)
+		Button {
+			action(repeat each parameters)
+		} label: {
+			self
+		}
 	}
 	
-	@inlinable public func asyncButton <each Parameter> (
+	@inlinable public func asyncButton <each P: Sendable> (
 		priority: TaskPriority? = .none,
-		action: @escaping @Sendable (repeat each Parameter) async -> Void,
-		_ parameters: repeat each Parameter
+		action: @escaping @Sendable (repeat each P) async -> Void,
+		_ parameters: repeat each P
 	) -> Button<Self> {
-		Button(
-			action: {
-				Task(priority: priority) {
-					await action(repeat each parameters)
-				}
-			},
-			label: selfmade
-		)
+		Button {
+			Task(priority: priority) {
+				await action(repeat each parameters)
+			}
+		} label: {
+			self
+		}
 	}
 	
-	@inlinable public func button <each Parameter> (
+	@inlinable public func button <each P> (
 		role: ButtonRole,
-		action: @escaping (repeat each Parameter) -> Void,
-		_ parameters: repeat each Parameter
+		action: @escaping (repeat each P) -> Void,
+		_ parameters: repeat each P
 	) -> Button<Self> {
-		Button(
-			role: role,
-			action: {
-				action(repeat each parameters)
-			},
-			label: selfmade
-		)
+		Button(role: role) {
+			action(repeat each parameters)
+		} label: {
+			self
+		}
 	}
 }
 
