@@ -102,7 +102,7 @@ public func executeUpdate <T: Equatable> (_ binding: Binding<T>, with value: T) 
 
 // MARK: Flow
 
-public enum ExecutionFlow {
+public enum ExecutionFlow: Equatable {
 	case current
 	case onMainThread
 	case delayed(milliseconds: Int)
