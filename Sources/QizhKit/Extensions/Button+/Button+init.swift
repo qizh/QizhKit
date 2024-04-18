@@ -169,6 +169,7 @@ extension View {
 	}
 }
 
+/*
 #if swift(>=5.9)
 
 // MARK: > Variadic Generics
@@ -218,6 +219,7 @@ extension View {
 #else
 
 // MARK: > Outdated
+*/
 
 extension View {
 	@inlinable public func button <A> (
@@ -236,6 +238,17 @@ extension View {
 	) -> Button<Self> {
 		button {
 			action(argument1, argument2)
+		}
+	}
+	
+	@inlinable public func button <A1, A2, A3> (
+		action: @escaping (A1, A2, A3) -> Void,
+		_ argument1: A1,
+		_ argument2: A2,
+		_ argument3: A3
+	) -> Button<Self> {
+		button {
+			action(argument1, argument2, argument3)
 		}
 	}
 }
@@ -259,6 +272,18 @@ extension View {
 	) -> Button<Self> {
 		button(role: role) {
 			action(argument1, argument2)
+		}
+	}
+	
+	@inlinable public func button <A1, A2, A3> (
+		role: ButtonRole,
+		action: @escaping (A1, A2, A3) -> Void,
+		_ argument1: A1,
+		_ argument2: A2,
+		_ argument3: A3
+	) -> Button<Self> {
+		button(role: role) {
+			action(argument1, argument2, argument3)
 		}
 	}
 }
@@ -288,8 +313,23 @@ extension View {
 			}
 		}
 	}
+	
+	@inlinable public func asyncButton <A1, A2, A3> (
+		priority: TaskPriority? = .none,
+		action: @escaping @Sendable (A1, A2, A3) async -> Void,
+		_ argument1: A1,
+		_ argument2: A2,
+		_ argument3: A3
+	) -> Button<Self> {
+		button {
+			Task(priority: priority) {
+				await action(argument1, argument2, argument3)
+			}
+		}
+	}
 }
-#endif
+
+// #endif
 
 // MARK: - Tests
 
