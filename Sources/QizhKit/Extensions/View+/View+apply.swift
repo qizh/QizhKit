@@ -18,10 +18,13 @@ extension View {
 	}
 }
 
+/*
 #if swift(>=5.9)
+
+// MARK: > Variadic Generics
+
 extension View {
-	// @inlinable
-	public func apply <V: View, each P> (
+	@inlinable public func apply <V: View, each P> (
 		@ViewBuilder _ transform: (Self, repeat each P) -> V,
 		_ parameters: repeat each P
 	) -> some View {
@@ -31,6 +34,7 @@ extension View {
 #else
 
 // MARK: > Outdated
+*/
 
 extension View {
 	@inlinable public func apply <T> (
@@ -47,8 +51,17 @@ extension View {
 	) -> some View {
 		transform(self, argument1, argument2)
 	}
+	
+	@inlinable public func apply <T1, T2, T3> (
+		@ViewBuilder _ transform: (Self, T1, T2, T3) -> some View,
+		_ argument1: T1,
+		_ argument2: T2,
+		_ argument3: T3
+	) -> some View {
+		transform(self, argument1, argument2, argument3)
+	}
 }
-#endif
+// #endif
 
 // MARK: View + apply + other
 
@@ -217,6 +230,7 @@ extension Text {
 
 // MARK: > Test
 
+/*
 fileprivate func t0(text: Text) -> Text { text }
 fileprivate func t1(text: Text, int: Int) -> Text { text }
 fileprivate func t2(text: Text, x: Int, y: String) -> Text { text }
@@ -241,3 +255,4 @@ fileprivate func testApplyView() -> some View {
 	.apply(v1, 12)
 	.apply(v2, 13, "")
 }
+*/
