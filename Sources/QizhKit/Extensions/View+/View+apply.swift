@@ -201,7 +201,11 @@ extension Text {
 	}
 }
 
+/*
 #if swift(>=5.9)
+
+// MARK: > Variadic Generics
+
 extension Text {
 	public func apply <each P> (
 		_ transform: (Text, repeat each P) -> Text,
@@ -213,20 +217,35 @@ extension Text {
 #else
 
 // MARK: > Outdated
+*/
 
 extension Text {
-	@inlinable public func apply(_ transform: (Text) -> Text) -> Text {
-		transform(self)
-	}
-	
 	@inlinable public func apply<T>(
 		_ transform: (Text, T) -> Text,
 		_ argument: T
 	) -> Text {
 		transform(self, argument)
 	}
+	
+	@inlinable public func apply<T1, T2>(
+		_ transform: (Text, T1, T2) -> Text,
+		_ argument1: T1,
+		_ argument2: T2
+	) -> Text {
+		transform(self, argument1, argument2)
+	}
+	
+	@inlinable public func apply<T1, T2, T3>(
+		_ transform: (Text, T1, T2, T3) -> Text,
+		_ argument1: T1,
+		_ argument2: T2,
+		_ argument3: T3
+	) -> Text {
+		transform(self, argument1, argument2, argument3)
+	}
 }
-#endif
+
+// #endif
 
 // MARK: > Test
 
