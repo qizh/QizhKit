@@ -148,7 +148,8 @@ extension View {
 // MARK: > Variadic Generics
 
 extension View {
-	@inlinable public func button <each P> (
+	// @inlinable
+	public func button <each P> (
 		action: @escaping (repeat each P) -> Void,
 		_ parameters: repeat each P
 	) -> Button<Self> {
@@ -159,7 +160,8 @@ extension View {
 		}
 	}
 	
-	@inlinable public func asyncButton <each P: Sendable> (
+	// @inlinable
+	public func asyncButton <each P: Sendable> (
 		priority: TaskPriority? = .none,
 		action: @escaping @Sendable (repeat each P) async -> Void,
 		_ parameters: repeat each P
@@ -173,7 +175,8 @@ extension View {
 		}
 	}
 	
-	@inlinable public func button <each P> (
+	// @inlinable
+	public func button <each P> (
 		role: ButtonRole,
 		action: @escaping (repeat each P) -> Void,
 		_ parameters: repeat each P

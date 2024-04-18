@@ -20,7 +20,8 @@ extension View {
 
 #if swift(>=5.9)
 extension View {
-	@inlinable public func apply <V: View, each P> (
+	// @inlinable
+	public func apply <V: View, each P> (
 		@ViewBuilder _ transform: (Self, repeat each P) -> V,
 		_ parameters: repeat each P
 	) -> some View {
