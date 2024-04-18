@@ -143,6 +143,32 @@ extension View {
 
 // MARK: View + Button
 
+extension View {
+	@inlinable public func button(
+		action: @escaping () -> Void
+	) -> Button<Self> {
+		Button(action: action, label: selfmade)
+	}
+	
+	@inlinable public func button(
+		role: ButtonRole,
+		action: @escaping () -> Void
+	) -> Button<Self> {
+		Button(role: role, action: action, label: selfmade)
+	}
+	
+	@inlinable public func asyncButton(
+		priority: TaskPriority? = .none,
+		action: @escaping @Sendable () async -> Void
+	) -> Button<Self> {
+		button {
+			Task(priority: priority) {
+				await action()
+			}
+		}
+	}
+}
+
 #if swift(>=5.9)
 
 // MARK: > Variadic Generics
@@ -194,12 +220,6 @@ extension View {
 // MARK: > Outdated
 
 extension View {
-	@inlinable public func button(
-		action: @escaping () -> Void
-	) -> Button<Self> {
-		Button(action: action, label: selfmade)
-	}
-	
 	@inlinable public func button <A> (
 		action: @escaping (A) -> Void,
 		_ argument: A
@@ -221,13 +241,6 @@ extension View {
 }
 
 extension View {
-	@inlinable public func button(
-		role: ButtonRole,
-		action: @escaping () -> Void
-	) -> Button<Self> {
-		Button(role: role, action: action, label: selfmade)
-	}
-	
 	@inlinable public func button <A> (
 		role: ButtonRole,
 		action: @escaping (A) -> Void,
@@ -251,17 +264,6 @@ extension View {
 }
 
 extension View {
-	@inlinable public func asyncButton(
-		priority: TaskPriority? = .none,
-		action: @escaping @Sendable () async -> Void
-	) -> Button<Self> {
-		button {
-			Task(priority: priority) {
-				await action()
-			}
-		}
-	}
-	
 	@inlinable public func asyncButton <A> (
 		priority: TaskPriority? = .none,
 		action: @escaping @Sendable (A) async -> Void,
