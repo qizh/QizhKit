@@ -8,19 +8,21 @@
 
 import SwiftUI
 
-public protocol ButtonStyleDisableable 				{ var isEnabled: Bool { get set } }
-public protocol ButtonStyleColorSchemeDependable 	{ var colorScheme: ColorScheme { get set } }
-public protocol ButtonStyleHighlighted 				{ var highlightColor: Color? { get set } }
-public protocol ButtonStyleSelectable 				{ var selected: Bool { get set } }
-public protocol ButtonStyleCurrentFontAware 		{ var font: Font? { get set } }
-public protocol ButtonStyleHoverable 				{ var isHovering: Bool { get set } }
+public protocol ButtonStyleDisableable 				{ var isEnabled: Bool 			{ get set } }
+public protocol ButtonStyleColorSchemeDependable 	{ var colorScheme: ColorScheme 	{ get set } }
+public protocol ButtonStyleHighlighted 				{ var highlightColor: Color? 	{ get set } }
+public protocol ButtonStyleSelectable 				{ var selected: Bool 			{ get set } }
+public protocol ButtonStyleCurrentFontAware 		{ var font: Font? 				{ get set } }
+public protocol ButtonStyleHoverable 				{ var isHovering: Bool 			{ get set } }
+public protocol ButtonStylePlaceholderable 			{ var isPlaceholder: Bool 		{ get set } }
 
 public struct ButtonStyleModifier<Style: ButtonStyle>: ViewModifier {
-	@Environment(\.isEnabled) 		private var isEnabled: Bool
-	@Environment(\.colorScheme) 	private var colorScheme: ColorScheme
-	@Environment(\.highlightColor) 	private var highlightColor: Color?
-	@Environment(\.selected) 		private var selected: Bool
-	@Environment(\.font) 			private var font: Font?
+	@Environment(\.isEnabled) 			private var isEnabled: Bool
+	@Environment(\.colorScheme) 		private var colorScheme: ColorScheme
+	@Environment(\.highlightColor) 		private var highlightColor: Color?
+	@Environment(\.selected) 			private var selected: Bool
+	@Environment(\.font) 				private var font: Font?
+	@Environment(\.redactionReasons) 	private var redactionReasons: RedactionReasons
 	
 	@State private var isHovering: Bool = false
 	
@@ -64,6 +66,10 @@ public struct ButtonStyleModifier<Style: ButtonStyle>: ViewModifier {
 		var hoverable = updated as? ButtonStyleHoverable
 		hoverable?.isHovering = isHovering
 		updated = (hoverable as? Style) ?? updated
+		
+		var placeholderable = updated as? ButtonStylePlaceholderable
+		placeholderable?.isPlaceholder = redactionReasons.contains(.placeholder)
+		updated = (placeholderable as? Style) ?? updated
 		
 		return updated
 	}
