@@ -27,6 +27,8 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 	private let alignment: Alignment
 	private let spacing: CGFloat
 	private let isContentInteractive: Bool
+	private let isPageClipped: Bool
+	private let isStackClipped: Bool
 	@Binding private var selected: ID
 	private let content: (Data.Element) -> Content
 	private let indicator: IndicatorBuilder
@@ -44,6 +46,8 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		isLazy: Bool = true,
 		style: HSwiperStyle = .full,
 		isContentInteractive: Bool = false,
+		isPageClipped: Bool = false,
+		isStackClipped: Bool = true,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
 		selected: Binding<ID>,
@@ -54,6 +58,8 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		self.isLazy = isLazy
 		self.style = style
 		self.isContentInteractive = isContentInteractive
+		self.isPageClipped = isPageClipped
+		self.isStackClipped = isStackClipped
 		self.alignment = alignment
 		self.spacing = spacing
 		self._selected = selected
@@ -66,6 +72,8 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		isLazy: Bool = true,
 		style: HSwiperStyle = .full,
 		isContentInteractive: Bool = false,
+		isPageClipped: Bool = false,
+		isStackClipped: Bool = true,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
 		selected: Binding<ID>,
@@ -75,6 +83,9 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 			data,
 			isLazy: isLazy,
 			style: style,
+			isContentInteractive: isContentInteractive,
+			isPageClipped: isPageClipped,
+			isStackClipped: isStackClipped,
 			alignment: alignment,
 			spacing: spacing,
 			selected: selected,
@@ -90,6 +101,8 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		isLazy: Bool = true,
 		style: HSwiperStyle = .full,
 		isContentInteractive: Bool = false,
+		isPageClipped: Bool = false,
+		isStackClipped: Bool = true,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
 		selected: Binding<ID>,
@@ -104,6 +117,8 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 			isLazy: isLazy,
 			style: style,
 			isContentInteractive: isContentInteractive,
+			isPageClipped: isPageClipped,
+			isStackClipped: isStackClipped,
 			alignment: alignment,
 			spacing: spacing,
 			selected: selected,
@@ -117,6 +132,8 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		isLazy: Bool = true,
 		style: HSwiperStyle = .full,
 		isContentInteractive: Bool = false,
+		isPageClipped: Bool = false,
+		isStackClipped: Bool = true,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
 		selected: Binding<ID>,
@@ -131,6 +148,8 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 			isLazy: isLazy,
 			style: style,
 			isContentInteractive: isContentInteractive,
+			isPageClipped: isPageClipped,
+			isStackClipped: isStackClipped,
 			alignment: alignment,
 			spacing: spacing,
 			selected: selected,
@@ -146,6 +165,8 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		isLazy: Bool = true,
 		style: HSwiperStyle = .full,
 		isContentInteractive: Bool = false,
+		isPageClipped: Bool = false,
+		isStackClipped: Bool = true,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
 		selected: Binding<ID>,
@@ -161,6 +182,8 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 			isLazy: isLazy,
 			style: style,
 			isContentInteractive: isContentInteractive,
+			isPageClipped: isPageClipped,
+			isStackClipped: isStackClipped,
 			alignment: alignment,
 			spacing: spacing,
 			selected: selected,
@@ -174,6 +197,8 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		isLazy: Bool = true,
 		style: HSwiperStyle = .full,
 		isContentInteractive: Bool = false,
+		isPageClipped: Bool = false,
+		isStackClipped: Bool = true,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
 		selected: Binding<ID>,
@@ -189,6 +214,8 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 			isLazy: isLazy,
 			style: style,
 			isContentInteractive: isContentInteractive,
+			isPageClipped: isPageClipped,
+			isStackClipped: isStackClipped,
 			alignment: alignment,
 			spacing: spacing,
 			selected: selected,
@@ -204,6 +231,8 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		isLazy: Bool = true,
 		style: HSwiperStyle = .full,
 		isContentInteractive: Bool = false,
+		isPageClipped: Bool = false,
+		isStackClipped: Bool = true,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
 		selected: Binding<ID>,
@@ -220,6 +249,8 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 			isLazy: isLazy,
 			style: style,
 			isContentInteractive: isContentInteractive,
+			isPageClipped: isPageClipped,
+			isStackClipped: isStackClipped,
 			alignment: alignment,
 			spacing: spacing,
 			selected: selected,
@@ -233,6 +264,8 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 		isLazy: Bool = true,
 		style: HSwiperStyle = .full,
 		isContentInteractive: Bool = false,
+		isPageClipped: Bool = false,
+		isStackClipped: Bool = true,
 		alignment: Alignment = .center,
 		spacing: CGFloat = .zero,
 		selected: Binding<ID>,
@@ -249,6 +282,8 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 			isLazy: isLazy,
 			style: style,
 			isContentInteractive: isContentInteractive,
+			isPageClipped: isPageClipped,
+			isStackClipped: isStackClipped,
 			alignment: alignment,
 			spacing: spacing,
 			selected: selected,
@@ -274,7 +309,9 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 										content(item)
 									}
 									.size(geometry.size, alignment)
-									// .clipped()
+									.apply(when: isPageClipped) { page in
+										page.clipped()
+									}
 								case .carousel(_):
 									ForEach(identifying: data) { offset, item in
 										content(item)
@@ -292,7 +329,9 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 										content(item)
 									}
 									.size(geometry.size, alignment)
-									// .clipped()
+									.apply(when: isPageClipped) { page in
+										page.clipped()
+									}
 								case .carousel(_):
 									ForEach(identifying: data) { offset, item in
 										content(item)
@@ -352,7 +391,9 @@ public struct HSwiper <Data, ID, Content, IndicatorContent>: View
 			.width(style.carouselWidth, alignment)
 			.maxWidth(alignment)
 		}
-		.clipped()
+		.apply(when: isStackClipped) { stack in
+			stack.clipped()
+		}
     }
 	
 	// MARK: ┣ Gesture
