@@ -103,16 +103,20 @@ public struct RoundedCornersRectangle: InsettableShape {
 		self.insetAmount = .zero
 	}
 	
-	public init(
+	@inlinable public init(
 		_ radius: CGFloat,
-		_ corners: UIRectCorner = .allCorners
+		_ corners: UIRectCorner...
 	) {
-		self.topLeft = corners.contains(.topLeft) ? radius : .zero
-		self.topRight = corners.contains(.topRight) ? radius : .zero
-		self.bottomLeft = corners.contains(.bottomLeft) ? radius : .zero
-		self.bottomRight = corners.contains(.bottomRight) ? radius : .zero
+		let combinedCorners = corners.reduce(UIRectCorner.none) { result, corner in
+			result.union(corner)
+		}
 		
-		self.insetAmount = .zero
+		self.init(
+			topLeft: combinedCorners.contains(.topLeft) ? radius : .zero,
+			topRight: combinedCorners.contains(.topRight) ? radius : .zero,
+			bottomLeft: combinedCorners.contains(.bottomLeft) ? radius : .zero,
+			bottomRight: combinedCorners.contains(.bottomRight) ? radius : .zero
+		)
 	}
 	
 	public func path(in rect: CGRect) -> Path {
