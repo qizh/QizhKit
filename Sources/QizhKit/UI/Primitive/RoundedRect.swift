@@ -107,8 +107,12 @@ public struct RoundedCornersRectangle: InsettableShape {
 		_ radius: CGFloat,
 		_ corners: UIRectCorner...
 	) {
-		let combinedCorners = corners.reduce(UIRectCorner.none) { result, corner in
-			result.union(corner)
+		let combinedCorners = if corners.isEmpty {
+			UIRectCorner.allCorners
+		} else {
+			corners.reduce(UIRectCorner.none) { result, corner in
+				result.union(corner)
+			}
 		}
 		
 		self.init(
