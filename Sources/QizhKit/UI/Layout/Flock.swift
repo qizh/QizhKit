@@ -125,7 +125,7 @@ public struct Flock <Input, Content>: View
 								}
 						}
 					)
-					.apply(mapping: layout.frames[safe: index]) { element, frame in
+					.apply(when: layout.frames[safe: index]) { element, frame in
 						element
 							.size(frame.size.nonZero, .topLeading)
 							.position(frame.center)

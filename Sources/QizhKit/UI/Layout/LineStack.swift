@@ -202,16 +202,16 @@ public struct LineStack<Input, Content>: View
 @available(iOS 14, *)
 public extension HStack {
 //	@inlinable
-	static func Clipped<Input, Content>(
+	static func Clipped<Input, FlockContent>(
 		_ data: Input,
 		spacing: CGFloat = 16,
-		@ViewBuilder build: @escaping Flock<Input, Content>.Builder
-	) -> Flock<Input, Content>
+		@ViewBuilder build: @escaping Flock<Input, FlockContent>.Builder
+	) -> Flock<Input, FlockContent>
 		where
 		Input: RandomAccessCollection,
 		Input.Element: Hashable,
 		Input: Hashable,
-		Content: View
+		FlockContent: View
 	{
 		Flock(
 			of: data,
