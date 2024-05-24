@@ -8,22 +8,22 @@
 
 import SwiftUI
 
-public extension EdgeInsets {
-	static let zero = EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
-	@inlinable var isZero: Bool { self == .zero }
-	@inlinable var isNotZero: Bool { self != .zero }
+extension EdgeInsets {
+	public static let zero = EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
+	@inlinable public var isZero: Bool { self == .zero }
+	@inlinable public var isNotZero: Bool { self != .zero }
 }
 
-public extension Optional where Wrapped == EdgeInsets {
-	var top:      CGFloat { self?.top      ?? .zero }
-	var leading:  CGFloat { self?.leading  ?? .zero }
-	var bottom:   CGFloat { self?.bottom   ?? .zero }
-	var trailing: CGFloat { self?.trailing ?? .zero }
+extension Optional where Wrapped == EdgeInsets {
+	public var top:      CGFloat { self?.top      ?? .zero }
+	public var leading:  CGFloat { self?.leading  ?? .zero }
+	public var bottom:   CGFloat { self?.bottom   ?? .zero }
+	public var trailing: CGFloat { self?.trailing ?? .zero }
 }
 
-public extension UIEdgeInsets {
-	func asEdgeInsets() -> EdgeInsets {
-		.init(
+extension UIEdgeInsets {
+	public func asEdgeInsets() -> EdgeInsets {
+		EdgeInsets(
 			top: top,
 			leading: left,
 			bottom: bottom,
@@ -32,8 +32,8 @@ public extension UIEdgeInsets {
 	}
 }
 
-public extension DefaultStringInterpolation {
-	mutating func appendInterpolation(
+extension DefaultStringInterpolation {
+	mutating public func appendInterpolation(
 		_ insets: EdgeInsets,
 		f: Int = .zero
 	) {
@@ -46,9 +46,9 @@ public extension DefaultStringInterpolation {
 	}
 }
 
-public extension EdgeInsets {
-	func rounded(dp: UInt) -> EdgeInsets {
-		.init(
+extension EdgeInsets {
+	public func rounded(dp: UInt) -> EdgeInsets {
+		EdgeInsets(
 			     top: top     .rounded(dp: dp),
 			 leading: leading .rounded(dp: dp),
 			  bottom: bottom  .rounded(dp: dp),
@@ -57,10 +57,9 @@ public extension EdgeInsets {
 	}
 }
 
-public extension EdgeInsets {
+extension EdgeInsets {
 	/// Compares the rounded values
-	@inlinable
-	func equals(_ other: Self, precision dp: UInt) -> Bool {
+	@inlinable public func equals(_ other: Self, precision dp: UInt) -> Bool {
 		self.rounded(dp: dp) == other.rounded(dp: dp)
 	}
 }
