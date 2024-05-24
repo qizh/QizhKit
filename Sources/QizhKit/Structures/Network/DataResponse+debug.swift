@@ -270,3 +270,33 @@ extension Result {
 		}
 	}
 }
+
+// MARK: HTTPURLResponse
+
+extension HTTPURLResponse {
+	public func debugDescription(
+		depth debugDepth: DebugDepth
+	) -> String {
+		let responseBodyDescription: String
+		var description = ""
+		if debugDepth > .minimum || statusCode != 200 {
+			description += """
+				[Status Code]: \(statusCode)
+			"""
+		}
+		if debugDepth > .minimum {
+			if description.isNotEmpty {
+				description += .newLine
+			}
+			description += """
+				[Headers]:
+					\("\(headers.sorted())".tabOffsettingNewLines(by: 2))
+			"""
+		}
+		
+		if description.isNotEmpty {
+			description = "[Response]:" + .newLine + description
+		}
+		return description
+	}
+}
