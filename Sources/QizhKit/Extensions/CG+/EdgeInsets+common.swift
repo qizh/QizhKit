@@ -67,19 +67,19 @@ extension EdgeInsets {
 // MARK: Scaled
 
 extension EdgeInsets {
-	@inlinable func scaled(_ factor: Double) -> EdgeInsets {
+	@inlinable public func scaled(_ factor: Double) -> EdgeInsets {
 		scaled(Factor.init(factor))
 	}
 	
-	@inlinable func scaled(_ factor: Factor) -> EdgeInsets {
+	@inlinable public func scaled(_ factor: Factor) -> EdgeInsets {
 		scaled(AxisFactor.both(factor))
 	}
 	
-	@inlinable func scaled(_ factor: AxisFactor) -> EdgeInsets {
+	@inlinable public func scaled(_ factor: AxisFactor) -> EdgeInsets {
 		scaled(factor.horizontal, factor.vertical)
 	}
 	
-	@inlinable func scaled(_ horizontal: Factor, _ vertical: Factor) -> EdgeInsets {
+	@inlinable public func scaled(_ horizontal: Factor, _ vertical: Factor) -> EdgeInsets {
 		EdgeInsets(
 				 top: top     .scaled(vertical),
 			 leading: leading .scaled(horizontal),
