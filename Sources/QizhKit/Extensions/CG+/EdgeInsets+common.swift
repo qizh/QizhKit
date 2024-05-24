@@ -64,3 +64,28 @@ public extension EdgeInsets {
 		self.rounded(dp: dp) == other.rounded(dp: dp)
 	}
 }
+
+// MARK: Scaled
+
+extension EdgeInsets {
+	@inlinable func scaled(_ factor: Double) -> EdgeInsets {
+		scaled(Factor.init(factor))
+	}
+	
+	@inlinable func scaled(_ factor: Factor) -> EdgeInsets {
+		scaled(AxisFactor.both(factor))
+	}
+	
+	@inlinable func scaled(_ factor: AxisFactor) -> EdgeInsets {
+		scaled(factor.horizontal, factor.vertical)
+	}
+	
+	@inlinable func scaled(_ horizontal: Factor, _ vertical: Factor) -> EdgeInsets {
+		EdgeInsets(
+				 top: top     .scaled(vertical),
+			 leading: leading .scaled(horizontal),
+			  bottom: bottom  .scaled(vertical),
+			trailing: trailing.scaled(horizontal)
+		)
+	}
+}
