@@ -277,7 +277,6 @@ extension HTTPURLResponse {
 	public func debugDescription(
 		depth debugDepth: DebugDepth
 	) -> String {
-		let responseBodyDescription: String
 		var description = ""
 		if debugDepth > .minimum || statusCode != 200 {
 			description += """
