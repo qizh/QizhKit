@@ -41,7 +41,69 @@ public extension Image {
 // MARK: Resize
 
 extension UIImage {
+	/// Resizing the image fitting into the provided size.
+	/// Image size will be smaller or equal to the provided size.
+	/// - Parameters:
+	///   - size: Target size
+	///   - transparent: Keep the image transparency
+	/// - Returns: Resized copy of the image
+	public func resizedCopyFitting(_ size: CGSize, transparent: Bool = true) -> UIImage {
+		self.resizedCopy(to: size, contentMode: .fit, transparent: transparent)
+	}
+	
+	/// Resizing the image filling the provided size.
+	/// Image size will be larger or equal to the provided size.
+	/// - Parameters:
+	///   - size: Target size
+	///   - transparent: Keep the image transparency
+	/// - Returns: Resized copy of the image
+	public func resizedCopyFilling(_ size: CGSize, transparent: Bool = true) -> UIImage {
+		self.resizedCopy(to: size, contentMode: .fill, transparent: transparent)
+	}
+	
+	/// Resizing the image keeping aspect ratio
+	/// - Parameters:
+	///   - size: Target size
+	///   - contentMode: Fitting or filling the target size
+	///   - transparent: Keep the image transparency
+	/// - Returns: Resized copy of the image
+	public func resizedCopy(
+		to size: CGSize,
+		contentMode: ContentMode = .fit,
+		transparent: Bool = true
+	) -> UIImage {
+		let scale: CGFloat = switch contentMode {
+			case .fit:  min(size.width / self.size.width, size.height / self.size.height)
+			case .fill: max(size.width / self.size.width, size.height / self.size.height)
+		}
+		
+		let scaledSize = self.size.scaled(.both(.factor(scale)))
+		
+		let renderFormat = UIGraphicsImageRendererFormat()
+		renderFormat.opaque = not(transparent)
+		
+		return UIGraphicsImageRenderer(
+			size: scaledSize,
+			format: renderFormat
+		)
+		.image { _ in
+			draw(in: CGRect(origin: .zero, size: scaledSize))
+		}
+	}
+	
+	/// Resizing the image without keeping the aspect ratio
+	/// - Parameter size: Target size
+	/// - Returns: Resized copy of the image
+	public func resized(to size: CGSize) -> UIImage {
+		UIGraphicsImageRenderer(size: size).image { _ in
+			draw(in: CGRect(origin: .zero, size: size))
+		}
+	}
+}
+
+extension UIImage {
 	/// Keeping aspect ratio
+	@available(*, deprecated, renamed: "resizedCopy(to:contentMode:transparent:)", message: "This method doesn't really work")
 	public func resized(
 		to size: CGSize,
 		contentMode: ContentMode = .fit,
@@ -64,12 +126,6 @@ extension UIImage {
 		return redrawnImage
 	}
 	
-	/// Can change aspect ratio
-	public func resized(to size: CGSize) -> UIImage {
-		UIGraphicsImageRenderer(size: size).image { _ in
-			draw(in: CGRect(origin: .zero, size: size))
-		}
-	}
 }
 
 // MARK: Symbol Configuration
