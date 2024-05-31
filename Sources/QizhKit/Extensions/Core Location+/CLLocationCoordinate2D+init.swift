@@ -9,8 +9,8 @@
 import Foundation
 import CoreLocation
 
-public extension CLLocationCoordinate2D {
-	init?(latitude: String, longitude: String) {
+extension CLLocationCoordinate2D {
+	public init?(latitude: String, longitude: String) {
 		guard
 			let lat = CLLocationDegrees(latitude),
 			let lon = CLLocationDegrees(longitude)
@@ -22,7 +22,7 @@ public extension CLLocationCoordinate2D {
 		)
 	}
 	
-	init?(latitude: String?, longitude: String?) {
+	public init?(latitude: String?, longitude: String?) {
 		guard
 			let latitude = latitude,
 			let longitude = longitude,
@@ -37,15 +37,32 @@ public extension CLLocationCoordinate2D {
 	}
 }
 
-public extension CLLocation {
-	convenience init(coordinate: CLLocationCoordinate2D) {
+extension CLLocation {
+	convenience public init(coordinate: CLLocationCoordinate2D) {
 		self.init(latitude: coordinate.latitude, longitude: coordinate.longitude)
 	}
 }
 
-public extension CLLocationCoordinate2D {
-	@inlinable static var zero: CLLocationCoordinate2D { .init() }
-	var isZero: Bool { latitude.isZero && longitude.isZero }
-	@inlinable var isNotZero: Bool { !isZero }
-	var nonZero: CLLocationCoordinate2D? { isZero ? nil : self }
+extension CLLocationCoordinate2D {
+	@inlinable public static var zero: CLLocationCoordinate2D {
+		CLLocationCoordinate2D(latitude: .zero, longitude: .zero)
+	}
+	
+	@inlinable public var isNotZero: Bool {
+		not(isZero)
+	}
+	
+	public var isZero: Bool {
+		latitude.isZero && longitude.isZero
+		|| latitude.truncatingRemainder(dividingBy: 90).isZero
+		&& longitude.truncatingRemainder(dividingBy: 180).isZero
+	}
+	
+	public var nonZero: CLLocationCoordinate2D? {
+		if isZero {
+			.none
+		} else {
+			self
+		}
+	}
 }
