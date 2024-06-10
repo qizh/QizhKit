@@ -8,18 +8,32 @@
 
 import Foundation
 
-public extension Optional {
-	@inlinable var orNilString: String {
+extension Optional {
+	@inlinable public var orNilString: String {
 		switch self {
-		case .none: 			return "nil"
-		case .some(let value): 	return "\(value)"
+		case .none: 			"nil"
+		case .some(let value): 	"\(value)"
 		}
 	}
 	
-	@inlinable var orEmptyString: String {
+	@inlinable public var orXmarkString: String {
 		switch self {
-		case .none: 			return ""
-		case .some(let value): 	return "\(value)"
+		case .none: 			"✕"
+		case .some(let value): 	"\(value)"
+		}
+	}
+	
+	@inlinable public var orEmptyString: String {
+		switch self {
+		case .none: 			""
+		case .some(let value): 	"\(value)"
+		}
+	}
+	
+	@inlinable public func orString(_ string: String) -> String {
+		switch self {
+		case .none: 			string
+		case .some(let value): 	"\(value)"
 		}
 	}
 }
