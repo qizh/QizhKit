@@ -30,16 +30,20 @@ public protocol PriceDetailsProvider {
 	func combined(with other: PriceDetailsProvider) -> PriceDetailsProvider
 }
 
+public protocol PriceValueAndDetailsProvider: PriceValueProvider, 
+											  PriceDetailsProvider {
+}
+
 //public typealias PriceValueAndDetailsProvider = PriceValueProvider & PriceDetailsProvider
 
 // MARK: Price
 
 public struct Price:
-	Price.Provider,
+	PriceValueAndDetailsProvider,
 	Equatable,
 	Updatable
 {
-	public typealias Provider = PriceValueProvider & PriceDetailsProvider
+	public typealias Provider = PriceValueAndDetailsProvider
 	public typealias Code = AnyCurrencyCode
 	
 	public private(set) var value: 		Decimal
@@ -254,7 +258,7 @@ public extension Price {
 // MARK: Service Charge
 
 public extension Price {
-	struct Service: PriceValueProvider, PriceDetailsProvider {
+	struct Service: Price.Provider {
 		public let value: Decimal
 		public let currency: Code
 		public let discount: Discount = .zero
