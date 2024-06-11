@@ -53,7 +53,7 @@ public extension CGPoint {
 	@inlinable static func y(_ y: CGFloat) -> CGPoint { .init(0, y) }
 }
 
-extension CGPoint: ExpressibleByArrayLiteral {
+extension CGPoint: @retroactive ExpressibleByArrayLiteral {
 	public init(arrayLiteral elements: CGFloat...) {
 		self.init(elements.first ?? .zero, elements.second ?? .zero)
 	}
@@ -168,7 +168,7 @@ public extension CGPoint {
 	}
 }
 
-extension CGPoint: AdditiveArithmetic {
+extension CGPoint: @retroactive AdditiveArithmetic {
 	public static func + (l: CGPoint, r: CGPoint) -> CGPoint { CGPoint(l.x + r.x, l.y + r.y) }
 	public static func - (l: CGPoint, r: CGPoint) -> CGPoint { CGPoint(l.x - r.x, l.y - r.y) }
 	public static prefix func -(value: CGPoint) -> CGPoint { CGPoint(-value.x, -value.y) }
@@ -197,7 +197,7 @@ public extension CGSize {
 	@inlinable static func both(_ factor: Factor) -> AxisFactor { AxisFactor(factor) }
 }
 
-extension CGSize: ExpressibleByArrayLiteral {
+extension CGSize: @retroactive ExpressibleByArrayLiteral {
 	public init(arrayLiteral elements: CGFloat...) {
 		self.init(elements.first ?? .zero, elements.second ?? .zero)
 	}
@@ -264,7 +264,7 @@ public extension CGSize {
 	@inlinable var s2: String { "[\(width.s2) ✕ \(height.s2)]" }
 }
 
-extension CGSize: Hashable {
+extension CGSize: @retroactive Hashable {
 	public func hash(into hasher: inout Hasher) {
 		hasher.combine(width)
 		hasher.combine(height)
@@ -280,7 +280,7 @@ public func min(_ x: CGSize, _ y: CGSize) -> CGSize {
 }
 */
 
-extension CGSize: Comparable {
+extension CGSize: @retroactive Comparable {
 	@inlinable public static func < (l: CGSize, r: CGSize) -> Bool { l.area < r.area }
 }
 
@@ -324,7 +324,7 @@ public extension CGRect {
 	@inlinable var area       : CGFloat { standardized.size.area }
 }
 
-extension CGRect: ExpressibleByArrayLiteral {
+extension CGRect: @retroactive ExpressibleByArrayLiteral {
 	public init(arrayLiteral elements: CGFloat...) {
 		self.init(
 			elements.first  ?? .zero,
@@ -456,7 +456,7 @@ public extension CGRect {
 	@inlinable var s2: String { "(\(origin.s2), \(size.s2))" }
 }
 
-extension CGRect: Comparable {
+extension CGRect: @retroactive Comparable {
 	@inlinable public static func < (l: CGRect, r: CGRect) -> Bool { l.standardized.size.area < r.standardized.size.area }
 }
 

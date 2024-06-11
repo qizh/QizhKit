@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension Date: RawRepresentable {
+extension Date: @retroactive RawRepresentable {
 	public init?(rawValue: String) {
 		if let value = Double(rawValue) {
 			self.init(timeIntervalSinceReferenceDate: value)

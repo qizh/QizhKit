@@ -8,7 +8,10 @@
 
 import Foundation
 
-extension Array: RawRepresentable where Element: RawRepresentable, Element.RawValue == String {
+extension Array: @retroactive RawRepresentable 
+	where Element: RawRepresentable,
+		  Element.RawValue == String
+{
 	public init?(rawValue: String) {
 		self = rawValue
 			.deleting(prefix: .leftBracket)
