@@ -13,8 +13,9 @@ private var cancellables = Set<AnyCancellable>()
 
 // MARK: Key
 
-public extension Published {
-	init(
+extension Published {
+	@_disfavoredOverload
+	public init(
 		wrappedValue defaultValue: Value,
 		key: String,
 		store: UserDefaults
@@ -28,6 +29,33 @@ public extension Published {
 					store.removeObject(forKey: key)
 				} else {
 					store.set(value, forKey: key)
+				}
+			}
+			.store(in: &cancellables)
+	}
+	
+	
+	/// - Parameters:
+	///   - defaultValue: Optional value
+	///   - key: ``UserDefaults`` key
+	///   - store: ``UserDefaults``
+	public init<Wrapped>(
+		wrappedValue defaultValue: Value = .none,
+		key: String,
+		store: UserDefaults
+	) where Value == Optional<Wrapped> {
+		if let object = store.object(forKey: key),
+		   let typedObject = object as? Wrapped {
+			self.init(initialValue: typedObject)
+		} else {
+			self.init(initialValue: defaultValue)
+		}
+		
+		projectedValue
+			.sink { value in
+				switch value {
+				case .none: 			 store.removeObject(forKey: key)
+				case .some(let wrapped): store.set(wrapped, forKey: key)
 				}
 			}
 			.store(in: &cancellables)
