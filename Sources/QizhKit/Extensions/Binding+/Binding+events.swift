@@ -18,7 +18,7 @@ public extension Binding {
 		-> Binding
 	{
 		Binding(
-			get: getter,
+			get: { self.wrappedValue },
 			set: { value in
 				flow.proceed(with: callback, value)
 				self.wrappedValue = value
@@ -33,7 +33,7 @@ public extension Binding {
 		_ flow: ExecutionFlow = .current
 	) -> Binding {
 		Binding(
-			get: getter,
+			get: { self.wrappedValue },
 			set: { value in
 				flow.proceed(with: callback)
 				self.wrappedValue = value
@@ -48,7 +48,7 @@ public extension Binding {
 		_ flow: ExecutionFlow = .current
 	) -> Binding {
 		Binding(
-			get: getter,
+			get: { self.wrappedValue },
 			set: { value in
 				flow.proceed(with: callback, self.wrappedValue, value)
 				self.wrappedValue = value
@@ -59,7 +59,7 @@ public extension Binding {
 	@available(*, deprecated, renamed: "on(nil:_:)", message: "Only unified .on synthax is going to be supported")
 	@inlinable func onNil<V>(execute callback: @escaping () -> Void) -> Binding<V?> where Value == V? {
 		Binding(
-			get: getter,
+			get: { self.wrappedValue },
 			set: {
 				$0.or(execute: callback)
 				self.wrappedValue = $0
@@ -72,7 +72,7 @@ public extension Binding where Value == Bool {
 	@available(*, deprecated, renamed: "on(false:_:)", message: "Only unified .on synthax is going to be supported")
 	@inlinable func onFalse(execute callback: @escaping () -> Void) -> Binding {
 		Binding(
-			get: getter,
+			get: { self.wrappedValue },
 			set: {
 				$0.otherwise(execute: callback)
 				self.wrappedValue = $0
@@ -83,7 +83,7 @@ public extension Binding where Value == Bool {
 	@available(*, deprecated, renamed: "on(true:_:)", message: "Only unified .on synthax is going to be supported")
 	@inlinable func onTrue(execute callback: @escaping () -> Void) -> Binding {
 		Binding(
-			get: getter,
+			get: { self.wrappedValue },
 			set: {
 				$0.then(execute: callback)
 				self.wrappedValue = $0
@@ -105,7 +105,7 @@ public extension Binding {
 	
 	@inlinable func optional(default value: Value) -> Binding<Value?> {
 		Binding<Value?>(
-			get: getter,
+			get: { self.wrappedValue },
 			set: { self.wrappedValue = $0 ?? value }
 		)
 	}
@@ -137,7 +137,7 @@ public extension Binding {
 		       _ flow: ExecutionFlow = .current
 	) -> Binding {
 		.init(
-			get: getter,
+			get: { self.wrappedValue },
 			set: { value in
 				self.wrappedValue = value
 				flow.proceed(with: action, value)
@@ -151,7 +151,7 @@ public extension Binding {
 		       _ flow: ExecutionFlow = .current
 	) -> Binding {
 		Binding(
-			get: getter,
+			get: { self.wrappedValue },
 			set: { value in
 				self.wrappedValue = value
 				flow.proceed(with: action)
@@ -165,7 +165,7 @@ public extension Binding {
 		       _ flow: ExecutionFlow = .current
 	) -> Binding {
 		Binding(
-			get: getter,
+			get: { self.wrappedValue },
 			set: { value in
 				let previousValue = self.wrappedValue
 				self.wrappedValue = value
@@ -185,7 +185,7 @@ public extension Binding {
 				_ flow: ExecutionFlow = .current
 	) -> Binding where Value == Wrapped? {
 		Binding(
-			get: getter,
+			get: { self.wrappedValue },
 			set: { value in
 				self.wrappedValue = value
 				value.map(action, flow.proceed)
@@ -199,7 +199,7 @@ public extension Binding {
 				_ flow: ExecutionFlow = .current
 	) -> Binding where Value == Wrapped? {
 		Binding(
-			get: getter,
+			get: { self.wrappedValue },
 			set: { value in
 				self.wrappedValue = value
 				if value.isSet { flow.proceed(with: action) }
@@ -213,7 +213,7 @@ public extension Binding {
 			_ flow: ExecutionFlow = .current
 	) -> Binding where Value == Wrapped? {
 		Binding(
-			get: getter,
+			get: { self.wrappedValue },
 			set: { value in
 				self.wrappedValue = value
 				if value.isNotSet { flow.proceed(with: action) }
@@ -231,7 +231,7 @@ public extension Binding where Value: Collection {
 		_ flow: ExecutionFlow = .current
 	) -> Binding {
 		Binding(
-			get: getter,
+			get: { self.wrappedValue },
 			set: { value in
 				self.wrappedValue = value
 				if value.isEmpty { flow.proceed(with: action) }
@@ -245,7 +245,7 @@ public extension Binding where Value: Collection {
 		_ flow: ExecutionFlow = .current
 	) -> Binding {
 		Binding(
-			get: getter,
+			get: { self.wrappedValue },
 			set: { value in
 				self.wrappedValue = value
 				if !value.isEmpty { flow.proceed(with: action) }
@@ -259,7 +259,7 @@ public extension Binding where Value: Collection {
 		_ flow: ExecutionFlow = .current
 	) -> Binding {
 		Binding(
-			get: getter,
+			get: { self.wrappedValue },
 			set: { value in
 				self.wrappedValue = value
 				if !value.isEmpty { flow.proceed(with: action, value) }
@@ -277,7 +277,7 @@ public extension Binding where Value == Bool {
 		      _ flow: ExecutionFlow = .current
 	) -> Binding {
 		Binding(
-			get: getter,
+			get: { self.wrappedValue },
 			set: { value in
 				self.wrappedValue = value
 				if value == false { flow.proceed(with: action) }
@@ -290,7 +290,7 @@ public extension Binding where Value == Bool {
 		     _ flow: ExecutionFlow = .current
 	) -> Binding {
 		Binding(
-			get: getter,
+			get: { self.wrappedValue },
 			set: { value in
 				self.wrappedValue = value
 				if value == true { flow.proceed(with: action) }
