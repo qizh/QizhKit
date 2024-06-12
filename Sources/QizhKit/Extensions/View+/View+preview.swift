@@ -9,7 +9,7 @@
 import SwiftUI
 import DeviceKit
 
-extension Device: @retroactive Identifiable {
+extension Device: /* @retroactive */ Identifiable {
 	@inlinable public var id: String { description }
 	
 	public var previewName: String {

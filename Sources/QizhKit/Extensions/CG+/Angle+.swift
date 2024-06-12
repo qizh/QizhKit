@@ -32,6 +32,6 @@ public extension Angle {
 	@inlinable var circleBack: Angle { self - .radians(Double.pi.doubled) }
 }
 
-extension Angle: @retroactive CustomStringConvertible {
+extension Angle: /* @retroactive */ CustomStringConvertible {
 	@inlinable public var description: String { degrees.s1 + .degrees }
 }
