@@ -137,6 +137,8 @@ public extension ShapeStyle where Self == Color {
 	
 	@inlinable static var link: Color 					{ Color(uiColor: .link) }
 	@inlinable static var placeholderText: Color 		{ Color(uiColor: .placeholderText) }
+	
+	@available(iOS, obsoleted: 17, message: "Implemented as a SeparatorShapeStyle in SwiftUICore")
 	@inlinable static var separator: Color 				{ Color(uiColor: .separator) }
 	@inlinable static var opaqueSeparator: Color 		{ Color(uiColor: .opaqueSeparator) }
 	@inlinable static var lightText: Color 				{ Color(uiColor: .lightText) }
