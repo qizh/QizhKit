@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// MARK: Cases
+
 extension DynamicTypeSize {
 	public static let allRegularCases: [DynamicTypeSize] = allCases(in: .regularRange)
 	
@@ -41,6 +43,8 @@ extension RangeExpression where Bound: CaseIterable {
 	}
 }
 
+// MARK: Range + interpolated
+
 extension ClosedRange where Bound: BinaryFloatingPoint {
 	public func interpolated(at progress: Bound) -> Bound {
 		lowerBound + (upperBound - lowerBound) * progress
@@ -56,6 +60,8 @@ extension ClosedRange where Bound: BinaryFloatingPoint {
 		self.interpolated(at: size.progress(in: sizes))
 	}
 }
+
+// MARK: Type + Interpolate
 
 extension DynamicTypeSize {
 	public func interpolate<R, F>(
@@ -74,15 +80,27 @@ extension DynamicTypeSize {
 		let currentIndex = cases.firstIndex(of: self).forceUnwrapBecauseTested()
 		return F(currentIndex) / F(cases.count)
 	}
-	
-	/*
-	public static func progress<R, F>(
-		for target: DynamicTypeSize,
-		in range: R = .regularRange
-	) -> F where R: RangeExpression, R.Bound == DynamicTypeSize, F: BinaryFloatingPoint {
-		let cases = range.contains(target) ? range.cases : DynamicTypeSize.allCases
-		let currentIndex = cases.firstIndex(of: target).forceUnwrapBecauseTested()
-		return F(currentIndex) / F(cases.count)
+}
+
+// MARK: ID + Case Name
+
+extension DynamicTypeSize: Identifiable {
+	@inlinable public var id: String { caseName }
+	public var caseName: String {
+		switch self {
+		case .xSmall: 			"XS"
+		case .small: 			"S"
+		case .medium: 			"M"
+		case .large: 			"L"
+		case .xLarge: 			"XL"
+		case .xxLarge: 			"XXL"
+		case .xxxLarge: 		"XXXL"
+		case .accessibility1: 	"A1"
+		case .accessibility2: 	"A2"
+		case .accessibility3: 	"A3"
+		case .accessibility4: 	"A4"
+		case .accessibility5: 	"A5"
+		@unknown default: 		"?"
+		}
 	}
-	*/
 }
