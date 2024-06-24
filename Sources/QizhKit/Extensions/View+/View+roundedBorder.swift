@@ -283,12 +283,17 @@ extension View {
 		_ color: Color,
 		radius: CGFloat,
 		weight: CGFloat = 1,
+		position: LinePosition = .center,
 		tap define: Bool = false
 	) -> some View {
 		let shape = RoundedRectangle(radius)
 		return self
 			.clipShape(shape)
-			.overlay(shape.strokeBorder(color, lineWidth: weight))
+			.overlay(
+				shape
+					.inset(by: position.inset(for: weight))
+					.strokeBorder(color, lineWidth: weight)
+			)
 			.apply(when: define) { v in v
 				.contentShape(shape)
 			}
@@ -299,12 +304,17 @@ extension View {
 		_ style: some ShapeStyle,
 		radius: CGFloat,
 		weight: CGFloat = 1,
+		position: LinePosition = .center,
 		tap define: Bool = false
 	) -> some View {
 		let shape = RoundedRectangle(radius)
 		return self
 			.clipShape(shape)
-			.overlay(shape.strokeBorder(style, lineWidth: weight))
+			.overlay(
+				shape
+					.inset(by: position.inset(for: weight))
+					.strokeBorder(style, lineWidth: weight)
+			)
 			.apply(when: define) { v in v
 				.contentShape(shape)
 			}
@@ -316,12 +326,17 @@ extension View {
 		_ radius: CGFloat,
 		_ corners: UIRectCorner = .allCorners,
 		border color: Color,
-		weight: CGFloat = .one
+		weight: CGFloat = .one,
+		position: LinePosition = .center
 	) -> some View {
 		let shape = RoundedCornersRectangle(radius, corners)
 		return self
 			.clipShape(shape)
-			.overlay(shape.stroke(color, lineWidth: weight))
+			.overlay(
+				shape
+					.inset(by: position.inset(for: weight))
+					.stroke(color, lineWidth: weight)
+			)
 			.contentShape(shape)
 	}
 	
@@ -330,12 +345,17 @@ extension View {
 		_ radius: CGFloat,
 		_ corners: UIRectCorner = .allCorners,
 		border style: some ShapeStyle,
-		weight: CGFloat = .one
+		weight: CGFloat = .one,
+		position: LinePosition = .center
 	) -> some View {
 		let shape = RoundedCornersRectangle(radius, corners)
 		return self
 			.clipShape(shape)
-			.overlay(shape.stroke(style, lineWidth: weight))
+			.overlay(
+				shape
+					.inset(by: position.inset(for: weight))
+					.stroke(style, lineWidth: weight)
+			)
 			.contentShape(shape)
 	}
 	
