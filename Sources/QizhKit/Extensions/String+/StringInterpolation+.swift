@@ -167,7 +167,7 @@ public extension DefaultStringInterpolation {
 	
 	// MARK: Debug Encode
 	
-	mutating func appendInterpolation<T: Encodable>(debug value: T) {
+	mutating func appendInterpolation(json value: some Encodable) {
 		let encoder = JSONEncoder()
 		encoder.outputFormatting = .prettyPrinted
 		
@@ -180,7 +180,7 @@ public extension DefaultStringInterpolation {
 		}
 	}
 	
-	mutating func appendInterpolation(debug value: Any?) {
+	mutating func appendInterpolation(json value: Any?) {
 		let encoder = JSONEncoder()
 		encoder.outputFormatting = .prettyPrinted
 		
@@ -191,6 +191,18 @@ public extension DefaultStringInterpolation {
 		} catch {
 			appendLiteral(error.localizedDescription)
 		}
+	}
+	
+	// MARK: ┗ Deprecated
+	
+	@available(*, deprecated, renamed: "appendInterpolation(json:)", message: "Renamed debug to json")
+	@inlinable mutating func appendInterpolation(debug value: some Encodable) {
+		appendInterpolation(json: value)
+	}
+	
+	@available(*, deprecated, renamed: "appendInterpolation(json:)", message: "Renamed debug to json")
+	@inlinable mutating func appendInterpolation(debug value: Any?) {
+		appendInterpolation(json: value)
 	}
 }
 
