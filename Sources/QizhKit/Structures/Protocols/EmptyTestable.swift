@@ -66,7 +66,7 @@ extension Edge.Set: EmptyProvidable {
 }
 
 extension LocalizedStringKey: EmptyComparable {
-	public static let empty: LocalizedStringKey = ""
+	public static var empty: LocalizedStringKey { "" }
 }
 
 extension Text: EmptyComparable {
