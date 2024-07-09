@@ -63,8 +63,8 @@ public extension NumberOfItems {
 		}
 	}
 	
-	static var onePerson: NumberOfItems = .init(.one, .person)
-	static var oneItem:   NumberOfItems = .init(.one, .item)
+	static let onePerson: NumberOfItems = .init(.one, .person)
+	static let oneItem:   NumberOfItems = .init(.one, .item)
 }
 
 extension NumberOfItems: Identifiable {
