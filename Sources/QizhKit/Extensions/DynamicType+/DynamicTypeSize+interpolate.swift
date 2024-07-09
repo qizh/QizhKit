@@ -84,7 +84,7 @@ extension DynamicTypeSize {
 
 // MARK: ID + Case Name
 
-extension DynamicTypeSize: Identifiable {
+extension DynamicTypeSize: @retroactive Identifiable {
 	@inlinable public var id: String { caseName }
 	public var caseName: String {
 		switch self {

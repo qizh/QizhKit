@@ -170,9 +170,9 @@ public protocol AirtableModel: BackendModel, EmptyProvidable {
 }
 
 #if DEBUG
-extension Array: /* @retroactive */ ExpressibleByStringLiteral,
-				 /* @retroactive */ ExpressibleByUnicodeScalarLiteral,
-				 /* @retroactive */ ExpressibleByExtendedGraphemeClusterLiteral,
+extension Array: @retroactive ExpressibleByStringLiteral,
+				 @retroactive ExpressibleByUnicodeScalarLiteral,
+				 @retroactive ExpressibleByExtendedGraphemeClusterLiteral,
 				 InitializableWithJsonString where Element: Decodable {
 	
 	public init(stringLiteral value: String) {

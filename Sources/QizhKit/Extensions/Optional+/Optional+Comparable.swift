@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension Optional: /* @retroactive */ Comparable where Wrapped: Comparable {
+extension Optional: @retroactive Comparable where Wrapped: Comparable {
 	/// Makes `some` bigger than `none`
 	public static func < (lhs: Wrapped?, rhs: Wrapped?) -> Bool {
 		switch rhs {

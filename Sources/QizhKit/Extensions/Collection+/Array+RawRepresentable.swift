@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension Array: /* @retroactive */ RawRepresentable 
+extension Array: @retroactive RawRepresentable 
 	where Element: RawRepresentable,
 		  Element.RawValue == String
 {

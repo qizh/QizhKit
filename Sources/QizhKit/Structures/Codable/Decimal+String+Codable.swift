@@ -71,9 +71,9 @@ extension KeyedDecodingContainer {
 	}
 }
 
-extension Decimal: /* @retroactive */ ExpressibleByExtendedGraphemeClusterLiteral {}
-extension Decimal: /* @retroactive */ ExpressibleByUnicodeScalarLiteral {}
-extension Decimal: /* @retroactive */ ExpressibleByStringLiteral {
+extension Decimal: @retroactive ExpressibleByExtendedGraphemeClusterLiteral {}
+extension Decimal: @retroactive ExpressibleByUnicodeScalarLiteral {}
+extension Decimal: @retroactive ExpressibleByStringLiteral {
 	public init(stringLiteral value: String) {
 		self = Decimal(string: value) ?? Decimal.zero
 	}

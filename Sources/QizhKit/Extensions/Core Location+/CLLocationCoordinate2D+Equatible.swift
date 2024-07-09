@@ -9,7 +9,7 @@
 import Foundation
 import CoreLocation
 
-extension CLLocationCoordinate2D: /* @retroactive */ Equatable {
+extension CLLocationCoordinate2D: @retroactive Equatable {
 	public static func == (
 		lhs: CLLocationCoordinate2D,
 		rhs: CLLocationCoordinate2D
@@ -19,7 +19,7 @@ extension CLLocationCoordinate2D: /* @retroactive */ Equatable {
 	}
 }
 
-extension CLLocationCoordinate2D: /* @retroactive */ Hashable {
+extension CLLocationCoordinate2D: @retroactive Hashable {
 	public func hash(into hasher: inout Hasher) {
 		hasher.combine(latitude)
 		hasher.combine(longitude)

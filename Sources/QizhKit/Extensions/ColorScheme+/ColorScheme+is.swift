@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-extension ColorScheme: /* @retroactive */ Identifiable, EasySelfComparable {
+extension ColorScheme: @retroactive Identifiable, EasySelfComparable {
 	@inlinable
 	public var id: String {
 		switch self {

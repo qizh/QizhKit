@@ -91,8 +91,8 @@ public extension KeyedDecodingContainer {
 	}
 }
 
-extension Optional: /* @retroactive */ CustomStringConvertible where Wrapped: LosslessStringConvertible { }
-extension Optional: /* @retroactive */ LosslessStringConvertible where Wrapped: LosslessStringConvertible {
+extension Optional: @retroactive CustomStringConvertible where Wrapped: LosslessStringConvertible { }
+extension Optional: @retroactive LosslessStringConvertible where Wrapped: LosslessStringConvertible {
 	public init?(_ description: String) {
 		self = Wrapped.init(description)
 	}
@@ -119,7 +119,7 @@ extension AutoTypeCodable: Hashable where T: Hashable {
 
 // MARK: Adopt
 
-extension Date: /* @retroactive */ LosslessStringConvertible {
+extension Date: @retroactive LosslessStringConvertible {
 	public init?(_ description: String) {
 		#if swift(>=5.5)
 		if #available(iOS 15.0, *) {
@@ -148,7 +148,7 @@ extension Date: /* @retroactive */ LosslessStringConvertible {
 	}
 }
 
-extension Decimal: /* @retroactive */ LosslessStringConvertible {
+extension Decimal: @retroactive LosslessStringConvertible {
 	public init?(_ description: String) {
 		self.init(string: description)
 	}
