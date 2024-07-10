@@ -42,6 +42,28 @@ public extension Sequence {
 	) -> [Element] {
 		sorted(by: transform, using: <)
 	}
+	
+	// MARK: ┗ Same with KeyPath
+	
+	@_disfavoredOverload
+	@inlinable func sorted <Value> (
+		by keyPath: KeyPath<Element, Value>,
+		using valuesAreInIncreasingOrder: (Value, Value) throws -> Bool
+	) rethrows -> [Element] {
+		try sorted {
+			try valuesAreInIncreasingOrder(
+				$0[keyPath: keyPath],
+				$1[keyPath: keyPath]
+			)
+		}
+	}
+	
+	@_disfavoredOverload
+	@inlinable func sorted(
+		by keyPath: KeyPath<Element, some Comparable>
+	) -> [Element] {
+		sorted(by: keyPath, using: <)
+	}
 }
 
 // MARK: First
