@@ -110,10 +110,28 @@ public extension FloatingPoint {
 
 // MARK: Decode as Data
 
+/*
 public extension Numeric {
 	var data: Data {
 		var bytes = self
 		return .init(bytes: &bytes, count: MemoryLayout<Self>.size)
+	}
+}
+*/
+
+extension FixedWidthInteger {
+	public var data: Data {
+		var bytes = self
+		return Data(bytes: &bytes, count: MemoryLayout<Self>.size)
+	}
+}
+
+extension BinaryFloatingPoint {
+	public var data: Data {
+		var value = self
+		return withUnsafePointer(to: &value) {
+			Data(buffer: UnsafeBufferPointer(start: $0, count: 1))
+		}
 	}
 }
 
