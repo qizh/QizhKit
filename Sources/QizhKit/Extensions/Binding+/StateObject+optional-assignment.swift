@@ -9,6 +9,8 @@
 import SwiftUI
 import Combine
 
+// MARK: Optional init
+
 @available(iOS 14.0, *)
 public extension StateObject {
 	/// Creates a new `StateObject` initialized with a `wrappedValue` set
@@ -49,6 +51,29 @@ public extension Published {
 			lhs = .init(initialValue: value)
 			return lhs
 		}
+	}
+}
+
+// MARK: Fast init
+
+extension State {
+	/// Calls `.init(initialValue:)` with the provided value
+	@inlinable public static func => (lhs: inout State<Value>, rhs: Value) {
+		lhs = .init(initialValue: rhs)
+	}
+}
+
+extension StateObject {
+	/// Calls `.init(initialValue:)` with the provided value
+	@inlinable public static func => (lhs: inout StateObject<ObjectType>, rhs: ObjectType) {
+		lhs = .init(wrappedValue: rhs)
+	}
+}
+
+extension Published {
+	/// Calls `.init(initialValue:)` with the provided value
+	@inlinable public static func => (lhs: inout Published<Value>, rhs: Value) {
+		lhs = .init(initialValue: rhs)
 	}
 }
 
