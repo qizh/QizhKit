@@ -10,6 +10,7 @@ import Foundation
 
 infix operator ??= : AssignmentPrecedence
 infix operator =? : AssignmentPrecedence
+infix operator => : AssignmentPrecedence
 
 public extension Optional {
 	/// Assigns the optional value on the right to the variable on the left only in case the variable is not defined
