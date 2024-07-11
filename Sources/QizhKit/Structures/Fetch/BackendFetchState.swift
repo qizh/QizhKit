@@ -48,7 +48,7 @@ public struct FetchProgress:
 		.init(current: Double(current), total: Double(total))
 	}
 	
-	public enum State: Hashable, CaseComparable {
+	public enum State: Hashable, Sendable, CaseComparable {
 		case none
 		case undetermined
 		case progress(_ value: Percents = .zero)
