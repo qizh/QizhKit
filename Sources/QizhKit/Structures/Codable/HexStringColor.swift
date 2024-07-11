@@ -10,6 +10,7 @@ import SwiftUI
 
 public struct HexStringColor: Codable,
 							  Hashable,
+							  Sendable,
 							  WithDefault,
 							  CustomStringConvertible,
 							  ExpressibleByStringLiteral {

@@ -11,6 +11,7 @@ import SwiftUI
 public enum PriceUnit:
 	String,
 	Codable,
+	Sendable,
 	CaseIterable,
 //	CaseInsensitiveStringRepresentable,
 	EasyCaseComparable,

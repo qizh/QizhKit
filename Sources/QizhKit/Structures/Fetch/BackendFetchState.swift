@@ -13,6 +13,7 @@ import Combine
 
 public struct FetchProgress:
 	Hashable,
+	Sendable,
 	WithDefault,
 	EasyComparable,
 	CustomStringConvertible,

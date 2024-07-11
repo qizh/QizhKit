@@ -9,7 +9,7 @@
 import Foundation
 
 @propertyWrapper
-public struct DefaultTrue: Codable, Hashable {
+public struct DefaultTrue: Codable, Hashable, Sendable {
 	public var wrappedValue: Bool
 	private let isDefault: Bool
 	

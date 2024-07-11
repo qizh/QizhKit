@@ -52,7 +52,7 @@ extension String {
 
 // MARK: Offset
 
-public enum StringOffset {
+public enum StringOffset: Sendable {
 	case spaces(_ amount: UInt, prefix: String = .empty, suffix: String = .empty)
 	case tabs(_ amount: UInt, prefix: String = .empty, suffix: String = .empty)
 	

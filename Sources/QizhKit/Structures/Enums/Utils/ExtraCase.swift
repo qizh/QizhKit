@@ -95,6 +95,10 @@ public enum ExtraCase<Known>: Codable
 	}
 }
 
+// MARK: Sendable
+
+extension ExtraCase: Sendable where Known: Sendable, Known.RawValue: Sendable { }
+
 // MARK: Raw Representable
 
 extension ExtraCase: RawRepresentable where Known.RawValue: Equatable {

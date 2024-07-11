@@ -54,6 +54,7 @@ public struct DefaultZero <Wrapped: Numeric & Codable>: Codable {
 
 extension DefaultZero: Equatable { }
 extension DefaultZero: Hashable where Wrapped: Hashable { }
+extension DefaultZero: Sendable where Wrapped: Sendable { }
 
 extension DefaultZero: ExpressibleByIntegerLiteral {
 	@inlinable public init(integerLiteral value: Wrapped.IntegerLiteralType) {
@@ -113,6 +114,7 @@ public struct DefaultValueOne <Wrapped: Numeric & Codable>: Codable, WithDefault
 
 extension DefaultValueOne: Equatable { }
 extension DefaultValueOne: Hashable where Wrapped: Hashable { }
+extension DefaultValueOne: Sendable where Wrapped: Sendable { }
 
 extension DefaultValueOne: ExpressibleByIntegerLiteral {
 	@inlinable public init(integerLiteral value: Wrapped.IntegerLiteralType) {

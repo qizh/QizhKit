@@ -47,6 +47,7 @@ extension DefaultMax: ExpressibleByIntegerLiteral {
 
 extension DefaultMax: Equatable { }
 extension DefaultMax: Hashable { }
+extension DefaultMax: Sendable where Wrapped: Sendable { }
 
 public extension KeyedDecodingContainer {
 	func decode<Wrapped>(_: DefaultMax<Wrapped>.Type, forKey key: Key) -> DefaultMax<Wrapped> {
@@ -58,7 +59,7 @@ public extension KeyedDecodingContainer {
 // MARK: Default One Day
 
 @propertyWrapper
-public struct DefaultOneDay: Codable, Hashable {
+public struct DefaultOneDay: Codable, Hashable, Sendable {
 	public var wrappedValue: TimeInterval
 	
 	@inlinable public static var defaultValue: TimeInterval { 1.daysInterval }

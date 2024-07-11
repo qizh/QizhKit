@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum SomeID: Hashable {
+public enum SomeID: Hashable, Sendable {
 	case int(_ value: Int)
 	case uint(_ value: UInt)
 	case string(_ value: String)

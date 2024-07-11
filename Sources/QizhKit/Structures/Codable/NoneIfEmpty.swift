@@ -43,6 +43,7 @@ extension NoneIfEmpty: Codable where Wrapped: Codable {
 
 extension NoneIfEmpty: Equatable where Wrapped: Equatable { }
 extension NoneIfEmpty: Hashable where Wrapped: Hashable { }
+extension NoneIfEmpty: Sendable where Wrapped: Sendable { }
 
 extension NoneIfEmpty: WithAnyDefault where Wrapped: WithDefault { }
 extension NoneIfEmpty: WithDefault where Wrapped: WithDefault {

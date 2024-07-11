@@ -117,6 +117,8 @@ extension AutoTypeCodable: Hashable where T: Hashable {
 	}
 }
 
+extension AutoTypeCodable: Sendable where T: Sendable { }
+
 // MARK: Adopt
 
 extension Date: /* @retroactive */ LosslessStringConvertible {
@@ -267,3 +269,5 @@ extension LossyAutoTypeCodable: Hashable where T: Hashable {
 		hasher.combine(wrappedValue)
 	}
 }
+
+extension LossyAutoTypeCodable: Sendable where T: Sendable { }

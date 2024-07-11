@@ -110,7 +110,7 @@ public extension Price.Service {
 // MARK: > Output
 
 public extension Price {
-	struct Output {
+	struct Output: Sendable {
 		public typealias Details = PriceDetailsProvider
 		
 		private let value: Decimal

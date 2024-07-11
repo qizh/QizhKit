@@ -36,7 +36,7 @@ extension Date.ISO8601FormatStyle: CanFormatDate {
 // MARK: Property Wrappers
 
 @propertyWrapper
-public struct CustomDate<FormatterProvider: DateFormatterProvidable>: Codable, Hashable {
+public struct CustomDate<FormatterProvider: DateFormatterProvidable>: Codable, Hashable, Sendable {
     public var wrappedValue: Date?
     
 	public init(wrappedValue: Date?) {
@@ -60,7 +60,7 @@ public struct CustomDate<FormatterProvider: DateFormatterProvidable>: Codable, H
 }
 
 @propertyWrapper
-public struct MandatoryCustomDate<FormatterProvider: DateFormatterProvidable>: Codable, Hashable {
+public struct MandatoryCustomDate<FormatterProvider: DateFormatterProvidable>: Codable, Hashable, Sendable {
 	public var wrappedValue: Date
 	
 	public init(wrappedValue: Date) {
