@@ -10,7 +10,7 @@ import Foundation
 
 // MARK: Number of Items
 
-public struct NumberOfItems {
+public struct NumberOfItems: Sendable {
 	public typealias Unit = PriceUnit.AnyValue
 	public var value: UInt
 	private(set) public var unit: Unit

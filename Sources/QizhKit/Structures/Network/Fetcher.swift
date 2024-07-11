@@ -56,7 +56,7 @@ public extension Fetcher {
 
 // MARK: Debug Control
 
-public enum DebugDepth: Comparable, EasyCaseComparable {
+public enum DebugDepth: Comparable, Sendable, EasyCaseComparable {
 	case none
 	case minimum
 	case `default`

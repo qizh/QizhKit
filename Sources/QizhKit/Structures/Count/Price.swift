@@ -23,7 +23,7 @@ public extension PriceValueProvider {
 	@inlinable var nonZero: Self? { isZero ? nil : self }
 }
 
-public protocol PriceDetailsProvider {
+public protocol PriceDetailsProvider: Sendable {
 	var currency: Price.Code { get }
 	var discount: Price.Discount { get }
 	var taxes: [Price.Tax] { get }
@@ -165,7 +165,7 @@ extension Price {
 // MARK: Discount
 
 public extension Price {
-	enum Discount: Equatable {
+	enum Discount: Equatable, Sendable {
 		case flat(_ value: Decimal)
 		case percent(_ value: Decimal)
 		
@@ -208,7 +208,7 @@ public extension Price {
 // MARK: Tax
 
 public extension Price {
-	enum Tax: Equatable {
+	enum Tax: Equatable, Sendable {
 		case flat(_ value: Decimal, name: String = .empty)
 		case percent(_ value: Decimal, name: String = .empty)
 		

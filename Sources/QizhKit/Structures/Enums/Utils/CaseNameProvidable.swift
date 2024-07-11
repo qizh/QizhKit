@@ -108,7 +108,7 @@ extension Result: CaseNameProvidable {
 	format.apply(on: String(reflecting: option))
 }
 
-public struct CaseNameFormat: OptionSet, ExpressibleByIntegerLiteral {
+public struct CaseNameFormat: OptionSet, Sendable, ExpressibleByIntegerLiteral {
 	public let rawValue: Int
 	public init(rawValue: RawValue) {
 		self.rawValue = rawValue

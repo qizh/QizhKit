@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct LocalCopy<Model: Codable> {
+public struct LocalCopy<Model: Codable>: Sendable {
 	public let url: URL
 	
 	/// - Parameters:

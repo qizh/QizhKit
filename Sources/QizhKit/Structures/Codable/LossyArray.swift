@@ -85,6 +85,7 @@ extension LossyArray: WithDefault {
 
 extension LossyArray: Equatable where Item: Equatable { }
 extension LossyArray: Hashable where Item: Hashable { }
+extension LossyArray: Sendable where Item: Sendable { }
 
 public extension KeyedDecodingContainer {
 	func decode <Wrapped: Codable> (

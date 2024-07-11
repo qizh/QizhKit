@@ -13,6 +13,7 @@ import Foundation
 public enum CurrencyCode:
 	String,
 	Codable,
+	Sendable,
 	Hashable,
 	CaseComparable,
 	DefaultCaseFirst,

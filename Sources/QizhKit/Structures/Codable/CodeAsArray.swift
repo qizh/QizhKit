@@ -107,6 +107,7 @@ public extension KeyedDecodingContainer {
 
 extension CodeAsArray: Equatable where Item: Equatable {}
 extension CodeAsArray: Hashable where Item: Hashable {}
+extension CodeAsArray: Sendable where Item: Sendable {}
 
 // MARK: Optional
 
@@ -135,6 +136,7 @@ public struct CodeOptionalAsArray <Item: Codable>: Codable {
 
 extension CodeOptionalAsArray: Equatable where Item: Equatable {}
 extension CodeOptionalAsArray: Hashable where Item: Hashable {}
+extension CodeOptionalAsArray: Sendable where Item: Sendable {}
 
 extension CodeOptionalAsArray: CustomStringConvertible {
 	@inlinable public var description: String { "\(wrappedValue.orNilString)" }

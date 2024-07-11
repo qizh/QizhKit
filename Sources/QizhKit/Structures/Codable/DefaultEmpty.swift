@@ -55,6 +55,7 @@ extension DefaultEmpty: Codable where Wrapped: Codable {
 
 extension DefaultEmpty: Equatable where Wrapped: Equatable { }
 extension DefaultEmpty: Hashable where Wrapped: Hashable { }
+extension DefaultEmpty: Sendable where Wrapped: Sendable { }
 
 extension DefaultEmpty: WithDefault {
 	@inlinable public static var `default`: DefaultEmpty<Wrapped> { .init() }
