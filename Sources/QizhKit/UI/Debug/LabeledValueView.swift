@@ -712,9 +712,8 @@ extension Set {
 	}
 }
 
-// MARK: Ordered Collections
+// MARK: - Ordered Collections
 
-#if canImport(OrderedCollections)
 import OrderedCollections
 
 // MARK: OrderedDictionary
@@ -733,9 +732,8 @@ extension OrderedDictionary {
 		}
 	}
 }
-#endif
 
-// MARK: Optional Collection
+// MARK: - Optional Collection
 
 extension Optional where Wrapped: Collection { //, Wrapped: Hashable, Wrapped.Element: Hashable {
 	@ViewBuilder public func labeledViews(label: String? = .none) -> some View {
