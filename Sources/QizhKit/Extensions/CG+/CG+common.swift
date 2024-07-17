@@ -1,6 +1,6 @@
 //
 //  CG+common.swift
-//  Cooktour Concierge
+//  QizhKit
 //
 //  Created by Serhii Shevchenko on 14.04.2020.
 //  Copyright © 2020 Serhii Shevchenko. All rights reserved.

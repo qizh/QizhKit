@@ -33,7 +33,7 @@ public struct Rotated <Wrapped: View>: View {
 	}
 	
 	private var rotatedFrame: CGRect {
-		CGRect.init(.zero, size)
+		CGRect(.zero, size)
 			.offsetBy(
 				dx: -size.width.half,
 				dy: -size.height.half
