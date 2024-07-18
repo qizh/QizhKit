@@ -209,7 +209,7 @@ public struct ProgressView: View {
 	
 	// MARK: Colors
 	
-	private var red: Color {
+	public static let red: Color =
 		.init(
 			.displayP3,
 			red: 0.949,
@@ -217,9 +217,8 @@ public struct ProgressView: View {
 			blue: 0.325,
 			opacity: 1
 		)
-	}
 	
-	private var yellow: Color {
+	public static let yellow: Color =
 		.init(
 			.displayP3,
 			red: 0.859,
@@ -227,9 +226,8 @@ public struct ProgressView: View {
 			blue: 0.039,
 			opacity: 1
 		)
-	}
 	
-	private var blue: Color {
+	public static let blue: Color =
 		.init(
 			.displayP3,
 			red: 0.0,
@@ -237,9 +235,8 @@ public struct ProgressView: View {
 			blue: 0.875,
 			opacity: 1
 		)
-	}
 	
-	private var green: Color {
+	public static let green: Color =
 		.init(
 			.displayP3,
 			red: 0.298,
@@ -247,9 +244,8 @@ public struct ProgressView: View {
 			blue: 0.298,
 			opacity: 1
 		)
-	}
 	
-	private var multiGradient: Gradient {
+	public static let multiGradient: Gradient =
 		Gradient(colors: [
 			red,
 			yellow,
@@ -257,25 +253,23 @@ public struct ProgressView: View {
 			blue,
 			red,
 		])
-	}
 	
-	private var monoGradient: Gradient {
+	public static var monoGradient: Gradient =
 		Gradient(colors: [
 			.accentColor,
 			.accentColor(0.2),
 			.accentColor,
 		])
-	}
 	
-	private var undeterminedGradient: Gradient {
+	public var undeterminedGradient: Gradient {
 		color.is(.multi)
-			? multiGradient
-			: monoGradient
+			? Self.multiGradient
+			: Self.monoGradient
 	}
 	
 	private var determinedGradient: Gradient {
 		color.is(.multi)
-			? multiGradient
+			? Self.multiGradient
 			: Gradient(colors: [.accentColor])
 	}
 	
@@ -341,7 +335,7 @@ public struct ProgressView: View {
 		Exclamationmark(size)
 			.fill(
 				AngularGradient(
-					gradient: Gradient(colors: [red, yellow, red]),
+					gradient: Gradient(colors: [Self.red, Self.yellow, Self.red]),
 					center: .center,
 					startAngle: rotation * -2,
 					endAngle: .degrees(360) - rotation * 2
@@ -398,7 +392,7 @@ public struct ProgressView: View {
 		Checkmark(size)
 			.fill(
 				AngularGradient(
-					gradient: Gradient(colors: [blue, green, blue]),
+					gradient: Gradient(colors: [Self.blue, Self.green, Self.blue]),
 					center: .center,
 					startAngle: rotation * -2,
 					endAngle: .degrees(360) - rotation * 2
