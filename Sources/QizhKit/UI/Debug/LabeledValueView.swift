@@ -187,6 +187,31 @@ public struct LabeledValueView: View {
 	}
 	
 	public init(
+		_ value: CGVector?,
+		label: String? = nil,
+		fractionDigits: UInt = 0
+	) {
+		switch value {
+		case .none:
+			self.init(valueView: Self.bool(value: false).asAnyView(), label: label)
+		case .some(let wrapped):
+			self.init(
+				valueView: AnyView(
+					(
+						Text(String(format: "%.\(fractionDigits)f", wrapped.dx)) +
+						Text(", ").foregroundColor(Color(uiColor: .secondaryLabel)) +
+						Text(String(format: "%.\(fractionDigits)f", wrapped.dy))
+					)
+					.font(.system(size: 8, weight: .semibold))
+					.padding(EdgeInsets(top: 3, leading: 5, bottom: 2, trailing: 5))
+					.foregroundColor(Color(uiColor: .label))
+				),
+				label: label
+			)
+		}
+	}
+	
+	public init(
 		_ value: CGSize?,
 		label: String? = nil,
 		fractionDigits: UInt = 0
@@ -494,6 +519,21 @@ public extension Optional where Wrapped == CGPoint {
 		LabeledValueView(self, label: label, fractionDigits: fractionDigits)
 	}
 }
+
+// MARK: ┣ CGVector
+
+public extension CGVector {
+	@inlinable func labeledView(label: String? = nil, f digits: UInt) -> LabeledValueView {
+		LabeledValueView(self, label: label, fractionDigits: digits)
+	}
+}
+public extension Optional<CGVector> {
+	@inlinable func labeledView(label: String? = nil, f digits: UInt) -> LabeledValueView {
+		LabeledValueView(self, label: label, fractionDigits: digits)
+	}
+}
+
+// MARK: ┣ CGRect
 
 public extension CGRect {
 	@inlinable func labeledView(label: String? = nil, f digits: UInt) -> LabeledValueView {
