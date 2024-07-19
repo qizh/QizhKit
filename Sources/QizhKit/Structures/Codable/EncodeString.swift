@@ -50,3 +50,7 @@ public struct EncodeString <Value: Encodable>: Encodable {
 		}
 	}
 }
+
+extension EncodeString: Equatable where Value: Equatable { }
+extension EncodeString: Hashable where Value: Hashable { }
+extension EncodeString: Sendable where Value: Sendable { }

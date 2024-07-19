@@ -11,10 +11,10 @@ import CoreGraphics
 
 @frozen
 @propertyWrapper
-public struct AnyEncodable: Encodable {
-	public var wrappedValue: Any
+public struct AnyEncodable: Encodable, Sendable {
+	public var wrappedValue: any Sendable
 	
-	public init(wrappedValue: Any) {
+	public init(wrappedValue: any Sendable) {
 		self.wrappedValue = wrappedValue
 	}
 	
@@ -32,7 +32,7 @@ public struct AnyEncodable: Encodable {
 
 @usableFromInline
 internal protocol AnyEncodableProtocol {
-	var wrappedValue: Any { get }
+	var wrappedValue: any Sendable { get }
 	init<T>(_ value: T?)
 }
 
