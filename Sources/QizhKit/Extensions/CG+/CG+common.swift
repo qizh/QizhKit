@@ -180,6 +180,13 @@ public extension CGPoint {
 	@inlinable var s2: String { "{\(x.s2), \(y.s2)}" }
 }
 
+extension CGPoint: Hashable {
+	public func hash(into hasher: inout Hasher) {
+		hasher.combine(x)
+		hasher.combine(y)
+	}
+}
+
 // MARK: - Size
 
 public extension CGSize {
@@ -282,6 +289,15 @@ public func min(_ x: CGSize, _ y: CGSize) -> CGSize {
 
 extension CGSize: /* @retroactive */ Comparable {
 	@inlinable public static func < (l: CGSize, r: CGSize) -> Bool { l.area < r.area }
+}
+
+// MARK: - Vector
+
+extension CGVector: Hashable {
+	public func hash(into hasher: inout Hasher) {
+		hasher.combine(dx)
+		hasher.combine(dy)
+	}
 }
 
 // MARK: - Rect

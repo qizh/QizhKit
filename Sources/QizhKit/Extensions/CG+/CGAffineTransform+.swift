@@ -6,7 +6,9 @@
 //  Copyright © 2024 Serhii Shevchenko. All rights reserved.
 //
 
-import Foundation
+import SwiftUI
+
+// MARK: Scaled with anchor
 
 extension CGAffineTransform {
 	public func scaled(
@@ -17,5 +19,18 @@ extension CGAffineTransform {
 			.translatedBy(x: anchor.x, y: anchor.y)
 			.scaledBy(x: scale, y: scale)
 			.translatedBy(x: -anchor.x, y: -anchor.y)
+	}
+}
+
+// MARK: +Hashable
+
+extension CGAffineTransform: Hashable {
+	public func hash(into hasher: inout Hasher) {
+		hasher.combine(a)
+		hasher.combine(b)
+		hasher.combine(c)
+		hasher.combine(d)
+		hasher.combine(tx)
+		hasher.combine(ty)
 	}
 }
