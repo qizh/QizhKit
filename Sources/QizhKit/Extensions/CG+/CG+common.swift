@@ -180,7 +180,7 @@ public extension CGPoint {
 	@inlinable var s2: String { "{\(x.s2), \(y.s2)}" }
 }
 
-extension CGPoint: Hashable {
+extension CGPoint: @retroactive Hashable {
 	public func hash(into hasher: inout Hasher) {
 		hasher.combine(x)
 		hasher.combine(y)
@@ -293,7 +293,7 @@ extension CGSize: @retroactive Comparable {
 
 // MARK: - Vector
 
-extension CGVector: Hashable {
+extension CGVector: @retroactive Hashable {
 	public func hash(into hasher: inout Hasher) {
 		hasher.combine(dx)
 		hasher.combine(dy)

@@ -24,7 +24,7 @@ extension CGAffineTransform {
 
 // MARK: +Hashable
 
-extension CGAffineTransform: Hashable {
+extension CGAffineTransform: @retroactive Hashable {
 	public func hash(into hasher: inout Hasher) {
 		hasher.combine(a)
 		hasher.combine(b)
