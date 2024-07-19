@@ -27,6 +27,7 @@ let package = Package(
 		// .package(url: "https://github.com/stleamist/BetterSafariView", from: "2.4.2"),
 		// .package(url: "https://github.com/shantanubala/BetterSafariView", branch: "main"),
 		.package(url: "https://github.com/qizh/BetterSafariView", from: "2.4.3"),
+		.package(url: "https://github.com/apple/swift-collections", from: "1.1.2"),
 	],
     targets: [
         .target(
@@ -36,6 +37,7 @@ let package = Package(
 				"Alamofire",
 				"DeviceKit",
 				"BetterSafariView",
+				.product(name: "OrderedCollections", package: "swift-collections"),
 			]
 		),
     ]
