@@ -15,7 +15,7 @@ import Alamofire
 // MARK: Fetcher
 
 public protocol Fetcher: ObservableObject {
-	associatedtype Value: Codable, Equatable
+	associatedtype Value: Codable, Equatable, Sendable
 	var state: BackendFetchState<Value> { get set }
 	var debug: Bool { get set }
 	init()
@@ -101,7 +101,9 @@ public protocol CollectionFetcher: Fetcher, ExpressibleByArrayLiteral
 	Value: InitializableCollection,
 	Value: InitializableWithSequenceCollection,
 	Value: EmptyTestable,
-	Value.Element: Codable
+	Value: Sendable,
+	Value.Element: Codable,
+	Value.Element: Sendable
 {
 	static var demoData: [Value.Element] { get }
 }
@@ -194,7 +196,7 @@ public extension SingleItemFetcher {
 // MARK: Collection Extension
 
 public extension CollectionFetcher {
-	typealias Item = Value.Element
+	typealias Item = Value.Element where Value.Element: Sendable
 	typealias LossyValue = LossyArray<Item>
 	typealias AirtableItemRecords = AirtableRecords<Value.Element>
 	typealias RailsLossyItemData = RailsLossyResponses<Value.Element>

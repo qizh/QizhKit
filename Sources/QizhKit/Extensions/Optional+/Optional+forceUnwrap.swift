@@ -43,14 +43,20 @@ public extension Optional {
 	@inlinable func forceUnwrapManagedObjectField() -> Wrapped { forceUnwrap(because: .managedObjectFetchedProperty) }
 }
 
-public struct OptionalForcedUnwrapAssumption: ExpressibleByStringLiteral, CustomStringConvertible {
+public struct OptionalForcedUnwrapAssumption: ExpressibleByStringLiteral,
+											  CustomStringConvertible,
+											  Sendable {
 	public let value: String
 	public init(_ value: String) { self.value = value }
 	public init(stringLiteral value: String) { self.value = value }
 	@inlinable public var description: String { value }
 	
-	public static let tested  = Self("Was tested with `if` statement")
-	public static let created = Self("Is initialized right here with value")
-	public static let set     = Self("Value was just set")
-	public static let managedObjectFetchedProperty = Self("NSManagedObject should have this field fetched")
+	public static let tested  =
+		OptionalForcedUnwrapAssumption("Was tested with `if` statement")
+	public static let `created` =
+		OptionalForcedUnwrapAssumption("Is initialized right here with value")
+	public static let set =
+		OptionalForcedUnwrapAssumption("Value was just set")
+	public static let managedObjectFetchedProperty =
+		OptionalForcedUnwrapAssumption("NSManagedObject should have this field fetched")
 }

@@ -117,20 +117,26 @@ extension RailsModel {
 	public var id: UInt8 { 0 }
 }
 
-public struct RailsResponse <Item: Codable>: Codable {
+public struct RailsResponse <Item>: Codable, Sendable
+	where Item: Codable, Item: Sendable
+{
 	public let status: Int
 	public let message: String
 	public let data: Item
 }
 
-public struct RailsLossyResponses <Item: Codable>: Codable {
+public struct RailsLossyResponses <Item>: Codable, Sendable
+	where Item: Codable, Item: Sendable
+{
 	public let status: Int
 	public let message: String
 	@LossyArray public var data: [Item]
 }
 
 /// Used in ``Fetcher``
-public struct RailsStrictResponses <Item: Codable>: Codable {
+public struct RailsStrictResponses <Item>: Codable, Sendable
+	where Item: Codable, Item: Sendable
+{
 	public let status: Int
 	public let message: String
 	public var data: [Item]
@@ -139,7 +145,9 @@ public struct RailsStrictResponses <Item: Codable>: Codable {
 // MARK: Airtable
 
 /// Used in ``Fetcher``
-public struct AirtableRecords<Item: Codable>: Codable {
+public struct AirtableRecords<Item>: Codable, Sendable
+	where Item: Codable, Item: Sendable
+{
 	public let records: [Item]
 	
 	public init(_ records: Item ...) {

@@ -8,7 +8,10 @@
 
 import SwiftUI
 
-public enum RelativeDimension: ExpressibleByFloatLiteral, ExpressibleByIntegerLiteral {
+public enum RelativeDimension: ExpressibleByFloatLiteral,
+							   ExpressibleByIntegerLiteral,
+							   Sendable
+{
 	case maximum
 	case exactly(_ value: CGFloat)
 	case minimum(_ extraPadding: CGFloat)

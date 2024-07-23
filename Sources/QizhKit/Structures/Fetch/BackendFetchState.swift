@@ -164,7 +164,7 @@ public extension BasicBackendFetchState {
 	}
 }
 
-public protocol GeneralBackendFetchState: ImportanceProvider {
+public protocol GeneralBackendFetchState: ImportanceProvider, Sendable {
 	var name: String { get }
 	var fetcherName: String? { get }
 	
@@ -278,7 +278,7 @@ public extension BackendFetchState {
 
 // MARK: - State
 
-public enum BackendFetchState<Value> {
+public enum BackendFetchState<Value: Sendable>: Sendable {
 	case idle
 	case inProgress(_ value: FetchProgress = .default)
 	case fetched(_ result: Result<Value, FetchError>)
@@ -455,9 +455,9 @@ public extension BackendFetchState where Value: Collection, Value: EmptyTestable
 	}
 }
 
-public extension BackendFetchState where Value: Collection {
-	@inlinable static var emptyFailure: Self { .fetched(.failure(.emptyContentError)) }
-	@inlinable var emptyContentError: FetchError? { error?.isEmptyContentError == true ? error : nil }
+extension BackendFetchState where Value: Collection {
+	public static var emptyFailure: Self { .fetched(.failure(.emptyContentError)) }
+	public var emptyContentError: FetchError? { error?.isEmptyContentError == true ? error : nil }
 }
 
 public extension BackendFetchState where Value: InitializableCollection {

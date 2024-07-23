@@ -9,7 +9,7 @@
 import Foundation
 
 @propertyWrapper
-public struct RawJson {
+public struct RawJson: Sendable {
 	public var wrappedValue: Data
 	
 	public init(wrappedValue: Data = .init()) {

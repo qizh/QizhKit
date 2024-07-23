@@ -10,7 +10,8 @@ import SwiftUI
 
 public struct StringValidationExpression:
 	ExpressibleByStringLiteral,
-	CustomStringConvertible
+	CustomStringConvertible,
+	Sendable
 {
 	public let description: String
 	public init(_ value: String) { self.description = value }
