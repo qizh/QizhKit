@@ -20,7 +20,7 @@ let package = Package(
 		),
     ],
 	dependencies: [
-		.package(url: "https://github.com/siteline/swiftui-introspect", from: "1.0.0"),
+		.package(url: "https://github.com/siteline/swiftui-introspect", from: "1.3.0"),
 		.package(url: "https://github.com/Alamofire/Alamofire", from: "5.8.1"),
 		// .package(url: "https://github.com/devicekit/DeviceKit", from: "5.1.0"),
 		.package(url: "https://github.com/qizh/DeviceKit", from: "5.2.3"),
