@@ -9,7 +9,7 @@
 import Foundation
 
 @propertyWrapper
-public struct DefaultNow: Codable, Hashable {
+public struct DefaultNow: Codable, Hashable, Sendable {
 	public var wrappedValue: Date
 	private let isDefault: Bool
 	

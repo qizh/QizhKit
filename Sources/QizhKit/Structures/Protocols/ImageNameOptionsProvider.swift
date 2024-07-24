@@ -10,10 +10,10 @@ import SwiftUI
 
 public protocol ImageNameOptionsProvider: ExpressibleByStringLiteral {
 	var name: String { get }
-	init(stringLiteral value: String)
+	@MainActor init(stringLiteral value: String)
 }
 
 public extension ImageNameOptionsProvider {
-	static func named(_ name: String) -> Self { .init(stringLiteral: name) }
+	@MainActor static func named(_ name: String) -> Self { .init(stringLiteral: name) }
 	var image: Image { Image(name) }
 }

@@ -9,7 +9,7 @@
 import Foundation
 import Security
 
-public struct KeychainGroup: RawRepresentable, ExpressibleByStringLiteral {
+public struct KeychainGroup: RawRepresentable, ExpressibleByStringLiteral, Sendable {
 	public let rawValue: String
 	
 	public init(rawValue: String) {
