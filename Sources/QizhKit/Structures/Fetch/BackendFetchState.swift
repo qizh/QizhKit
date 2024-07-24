@@ -231,6 +231,7 @@ extension Result: CaseComparable { }
 
 extension BackendFetchState: Equatable where Value: Equatable { }
 extension BackendFetchState: Hashable where Value: Hashable { }
+extension BackendFetchState: Sendable where Value: Sendable { }
 
 extension BackendFetchState: Identifiable {
 	public var id: String {
@@ -278,7 +279,7 @@ public extension BackendFetchState {
 
 // MARK: - State
 
-public enum BackendFetchState<Value: Sendable>: Sendable {
+public enum BackendFetchState<Value> {
 	case idle
 	case inProgress(_ value: FetchProgress = .default)
 	case fetched(_ result: Result<Value, FetchError>)

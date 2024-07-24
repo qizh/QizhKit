@@ -55,7 +55,7 @@ public extension UIRectCorner {
 	@inlinable static var none: UIRectCorner   { [] }
 }
 
-public struct RoundedCornersRectangle: InsettableShape {
+public struct RoundedCornersRectangle: InsettableShape, Sendable {
 	public var topLeft: CGFloat
 	public var topRight: CGFloat
 	public var bottomLeft: CGFloat
@@ -103,7 +103,7 @@ public struct RoundedCornersRectangle: InsettableShape {
 		self.insetAmount = .zero
 	}
 	
-	@inlinable public init(
+	public init(
 		_ radius: CGFloat,
 		_ corners: UIRectCorner...
 	) {
@@ -177,7 +177,7 @@ public struct RoundedCornersRectangle: InsettableShape {
 		return path
 	}
 	
-	public func inset(by amount: CGFloat) -> some InsettableShape {
+	nonisolated public func inset(by amount: CGFloat) -> some InsettableShape {
 		var copy = self
 		copy.insetAmount = amount
 		return copy
