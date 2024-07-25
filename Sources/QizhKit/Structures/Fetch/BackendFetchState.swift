@@ -589,7 +589,7 @@ extension FetchError: CaseNameProvidable, Equatable, Hashable {
 
 // MARK: - Fetch Error
 
-public protocol FetchResponse: Sendable {
+public protocol FetchResponse {
 	var request: URLRequest? { get }
 	var response: HTTPURLResponse? { get }
 	var data: Data? { get }
@@ -603,7 +603,7 @@ public enum FetchError: Error, EasyCaseComparable, Sendable {
 	case error(String)
 	case providerError(String, Error)
 	case multipleProvidersError([String])
-	case afError(String, _ response: FetchResponse)
+	case afError(String, _ response: FetchResponse & Sendable)
 	case deleteError(String)
 	case contentError(String)
 	case verboseError(_ title: String, _ description: String? = .none)

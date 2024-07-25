@@ -10,7 +10,7 @@ import Foundation
 
 #if canImport(Alamofire)
 
-import Alamofire
+@preconcurrency import Alamofire
 
 extension DataResponse where Failure == AFError {
 	public var fetchError: FetchError {
