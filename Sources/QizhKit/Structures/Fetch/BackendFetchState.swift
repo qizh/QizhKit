@@ -138,6 +138,7 @@ public extension String.StringInterpolation {
 // MARK: - Basic State
 
 public enum BasicBackendFetchState: Hashable,
+									Sendable,
 									EasyCaseComparable,
 									CaseNameProvidable
 {
@@ -588,7 +589,7 @@ extension FetchError: CaseNameProvidable, Equatable, Hashable {
 
 // MARK: - Fetch Error
 
-public protocol FetchResponse {
+public protocol FetchResponse: Sendable {
 	var request: URLRequest? { get }
 	var response: HTTPURLResponse? { get }
 	var data: Data? { get }
@@ -598,7 +599,7 @@ public protocol FetchResponse {
 	var underlying: Error? { get }
 }
 
-public enum FetchError: Error, EasyCaseComparable {
+public enum FetchError: Error, EasyCaseComparable, Sendable {
 	case error(String)
 	case providerError(String, Error)
 	case multipleProvidersError([String])
@@ -629,11 +630,12 @@ public enum FetchError: Error, EasyCaseComparable {
 	case notImplemented
 	case unknown
 	
-	public enum PreconditionValidationReason: Equatable {
+	public enum PreconditionValidationReason: Equatable, Sendable {
 		case illegalCharacters(_ value: String)
 	}
 	
-	public enum SignFailureReason: Equatable, EasyCaseComparable, CaseNameProvidable {
+	public enum SignFailureReason: Equatable, Sendable,
+								   EasyCaseComparable, CaseNameProvidable {
 		case userExists(_ loginMethod: ExistingUserLogin)
 		case userNotFound(_ loginMethod: ExistingUserLogin)
 		case inactiveUserExists
@@ -647,7 +649,8 @@ public enum FetchError: Error, EasyCaseComparable {
 		case createUserFirst
 		case wrongCode
 		
-		public enum ExistingUserLogin: Equatable, EasyCaseComparable, CaseNameProvidable {
+		public enum ExistingUserLogin: Equatable, Sendable,
+									   EasyCaseComparable, CaseNameProvidable {
 			case unknown
 			case google
 			case apple
