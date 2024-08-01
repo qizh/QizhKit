@@ -22,7 +22,11 @@ fileprivate let logger = Logger(
 /// Based on https://github.com/marksands/BetterCodable/blob/master/Sources/BetterCodable/LossyDictionary.swift
 
 @propertyWrapper
-public struct LossyDictionary <Key: Hashable, Value> {
+public struct LossyDictionary <Key, Value>: Sendable
+	where Key: Hashable,
+		  Key: Sendable,
+		  Value: Sendable
+{
 	public var wrappedValue: [Key: Value]
 	
 	public init(wrappedValue: [Key: Value]) {
