@@ -10,7 +10,7 @@ let settings: [SwiftSetting] = [
 let package = Package(
     name: "QizhKit",
 	platforms: [
-		.iOS(.v15),
+		.iOS(.v16),
 		.visionOS(.v1),
 	],
     products: [

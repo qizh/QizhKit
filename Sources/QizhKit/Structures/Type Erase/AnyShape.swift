@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+/*
 @available(iOS, introduced: 14.0, obsoleted: 16.0, message: "There's SwiftUI native AnyShape")
 public struct AnyShape: Shape {
 	private let makePath: (CGRect) -> Path
@@ -20,6 +21,7 @@ public struct AnyShape: Shape {
 		makePath(rect)
 	}
 }
+*/
 
 public struct AnyInsettableShape: InsettableShape {
 	private let makePath: (CGRect) -> Path
@@ -39,7 +41,7 @@ public struct AnyInsettableShape: InsettableShape {
 	}
 }
 
-@available(iOS, introduced: 14.0, obsoleted: 16.0, message: "There's SwiftUI native AnyShape")
+// @available(iOS, introduced: 14.0, obsoleted: 16.0, message: "There's SwiftUI native AnyShape")
 extension Shape {
 	@inlinable public func asAnyShape() -> AnyShape {
 		AnyShape(self)
