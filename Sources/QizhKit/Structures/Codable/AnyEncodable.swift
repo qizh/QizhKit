@@ -119,7 +119,7 @@ extension AnyEncodableProtocol {
 		case let encodable as Encodable:
 			// print("::encoding as Encodable: \(encodable)")
 			try encodable.encode(to: encoder)
-		case let optional as Optional<Any>:
+		case let optional as Optional<any Sendable>:
 			switch optional {
 			case .none:
 				if encoder.userInfo[AnyEncodable.skipNilValues] as? Bool != true {
