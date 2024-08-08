@@ -43,6 +43,7 @@ extension View {
 	public func button(
 		opening url: URL?,
 		target: ButtonURLOpenTarget = .app,
+		tint: Color? = .none,
 		isActive: Binding<Bool>? = .none
 	) -> some View {
 		if let url {
@@ -51,6 +52,7 @@ extension View {
 				case .app:
 					SafariButton(
 						opening: url,
+						tintColor: tint,
 						isActive: isActive,
 						content: { self }
 					)
@@ -63,6 +65,7 @@ extension View {
 			} else {
 				SafariButton(
 					opening: url,
+					tintColor: tint,
 					isActive: isActive,
 					content: { self }
 				)

@@ -69,7 +69,7 @@ public final class CooktourSafariViewController: UIViewController {
 
 public struct SafariButton<Content>: View where Content: View {
 	private let url: URL
-	private let tint: UIColor?
+	private let tint: Color?
 	private let content: Content
 	private let isActive: Binding<Bool>?
 	private let onOpen: (() -> Void)?
@@ -77,11 +77,11 @@ public struct SafariButton<Content>: View where Content: View {
 	
 	@State private var isPresented = false
 	
-	@Environment(\.colorScheme) private var colorScheme: ColorScheme
+	@Environment(\.colorScheme) private var colorScheme
 	
 	public init(
 		opening url: URL,
-		tint: UIColor? = .none,
+		tintColor tint: Color?,
 		isActive: Binding<Bool>? = .none,
 		onOpen: (() -> Void)? = .none,
 		onDismiss: (() -> Void)? = .none,
@@ -95,20 +95,42 @@ public struct SafariButton<Content>: View where Content: View {
 		self.content = content()
 	}
 	
-	public init <S> (
-		_ title: S,
+	@inlinable public init(
+		opening url: URL,
+		tint: UIColor? = .none,
+		isActive: Binding<Bool>? = .none,
+		onOpen: (() -> Void)? = .none,
+		onDismiss: (() -> Void)? = .none,
+		@ViewBuilder content: () -> Content
+	) {
+		self.init(
+			opening: url,
+			tintColor: tint.map(Color.init(uiColor:)),
+			isActive: isActive,
+			onOpen: onOpen,
+			onDismiss: onDismiss,
+			content: content
+		)
+	}
+	
+	@inlinable public init(
+		title: Text,
 		opening url: URL,
 		tint: UIColor? = .none,
 		isActive: Binding<Bool>? = .none,
 		onOpen: (() -> Void)? = .none,
 		onDismiss: (() -> Void)? = .none
-	) where S: StringProtocol, Content == Text {
-		self.url = url
-		self.tint = tint
-		self.isActive = isActive
-		self.onOpen = onOpen
-		self.onDismiss = onDismiss
-		self.content = Text(title)
+	) where Content == Text {
+		self.init(
+			opening: url,
+			tintColor: tint.map(Color.init(uiColor:)),
+			isActive: isActive,
+			onOpen: onOpen,
+			onDismiss: onDismiss,
+			content: {
+				title
+			}
+		)
 	}
 	
 	public var body: some View {
@@ -119,7 +141,7 @@ public struct SafariButton<Content>: View where Content: View {
 				onDismiss: onDismiss
 			) {
 				BetterSafariView.SafariView(url: url)
-					.preferredControlAccentColor(tint.map(Color.init(uiColor:)))
+					.preferredControlAccentColor(tint)
 				/*
 				if let tint = tint, #available(iOS 14.0, *) {
 					return BetterSafariView.SafariView(url: url)
