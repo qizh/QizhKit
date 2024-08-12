@@ -71,6 +71,7 @@ public struct SafariButton<Content>: View where Content: View {
 	private let url: URL
 	private let tint: Color?
 	private let content: Content
+	private let openStyle: SafariButtonOpenStyle
 	private let isActive: Binding<Bool>?
 	private let onOpen: (() -> Void)?
 	private let onDismiss: (() -> Void)?
@@ -82,6 +83,7 @@ public struct SafariButton<Content>: View where Content: View {
 	public init(
 		opening url: URL,
 		tintColor tint: Color?,
+		openStyle: SafariButtonOpenStyle = .push,
 		isActive: Binding<Bool>? = .none,
 		onOpen: (() -> Void)? = .none,
 		onDismiss: (() -> Void)? = .none,
@@ -89,6 +91,7 @@ public struct SafariButton<Content>: View where Content: View {
 	) {
 		self.url = url
 		self.tint = tint
+		self.openStyle = openStyle
 		self.isActive = isActive
 		self.onOpen = onOpen
 		self.onDismiss = onDismiss
@@ -98,6 +101,7 @@ public struct SafariButton<Content>: View where Content: View {
 	@inlinable public init(
 		opening url: URL,
 		tint: UIColor? = .none,
+		openStyle: SafariButtonOpenStyle = .push,
 		isActive: Binding<Bool>? = .none,
 		onOpen: (() -> Void)? = .none,
 		onDismiss: (() -> Void)? = .none,
@@ -106,6 +110,7 @@ public struct SafariButton<Content>: View where Content: View {
 		self.init(
 			opening: url,
 			tintColor: tint.map(Color.init(uiColor:)),
+			openStyle: openStyle,
 			isActive: isActive,
 			onOpen: onOpen,
 			onDismiss: onDismiss,
@@ -117,6 +122,7 @@ public struct SafariButton<Content>: View where Content: View {
 		title: Text,
 		opening url: URL,
 		tint: UIColor? = .none,
+		openStyle: SafariButtonOpenStyle = .push,
 		isActive: Binding<Bool>? = .none,
 		onOpen: (() -> Void)? = .none,
 		onDismiss: (() -> Void)? = .none
@@ -124,6 +130,7 @@ public struct SafariButton<Content>: View where Content: View {
 		self.init(
 			opening: url,
 			tintColor: tint.map(Color.init(uiColor:)),
+			openStyle: openStyle,
 			isActive: isActive,
 			onOpen: onOpen,
 			onDismiss: onDismiss,
@@ -136,51 +143,39 @@ public struct SafariButton<Content>: View where Content: View {
 	public var body: some View {
 		content
 			.button(action: openURL)
-			.safariView(
-				isPresented: isActive ?? $isPresented,
-				onDismiss: onDismiss
-			) {
-				BetterSafariView.SafariView(url: url)
-					.preferredControlAccentColor(tint)
-				/*
-				if let tint = tint, #available(iOS 14.0, *) {
-					return BetterSafariView.SafariView(url: url)
-						.preferredControlTintColor(tint)
-				} else {
-					return BetterSafariView.SafariView(url: url)
+			.apply { button in
+				switch openStyle {
+				case .push:
+					button
+						.safariView(
+							isPresented: isActive ?? $isPresented,
+							onDismiss: onDismiss
+						) {
+							BetterSafariView.SafariView(url: url)
+								.preferredControlAccentColor(tint)
+						}
+				case .sheet:
+					button
+						.sheet(
+							isPresented: isActive ?? $isPresented,
+							onDismiss: onDismiss
+						) {
+							BetterSafariView.SafariView(url: url)
+								.preferredControlAccentColor(tint)
+						}
+				case .fullscreenCover:
+					button
+						.fullScreenCover(
+							isPresented: isActive ?? $isPresented,
+							onDismiss: onDismiss
+						) {
+							BetterSafariView.SafariView(url: url)
+								.preferredControlAccentColor(tint)
+						}
 				}
-				*/
 			}
 	}
 	
-	/*
-	public var body: some View {
-		if fullScreen, #available(iOS 14.0, *) {
-			content
-				.button(action: openURL)
-				.fullScreenCover(isPresented: isActive ?? $isPresented, content: safariView)
-		} else {
-			content
-				.button(action: openURL)
-				.sheet(isPresented: isActive ?? $isPresented, content: safariView)
-		}
-	}
-	
-	@ViewBuilder
-	private func safariView() -> some View {
-		if #available(iOS 14.0, *) {
-			SafariView(showing: url, title: title)
-				// .ignoresSafeArea(.container, edges: .top)
-				.environment(\.colorScheme, self.colorScheme)
-		} else {
-			SafariView(showing: url, title: title)
-				.edgesIgnoringSafeArea(.top)
-				.environment(\.colorScheme, self.colorScheme)
-		}
-	}
-	*/
-	
-	// @available(iOSApplicationExtension, unavailable)
 	private func openURL() {
 		UIApplication.shared
 			.open(
@@ -196,6 +191,12 @@ public struct SafariButton<Content>: View where Content: View {
 				}
 			}
 	}
+}
+
+public enum SafariButtonOpenStyle: Equatable {
+	case push
+	case sheet
+	case fullscreenCover
 }
 
 // MARK: View
@@ -258,6 +259,7 @@ public extension View {
 	func asSafariButton(
 		opening url: URL?,
 		       tint: UIColor? = .none,
+		  openStyle: SafariButtonOpenStyle = .push,
 		   isActive: Binding<Bool>? = .none,
 		     onOpen: (() -> Void)? = .none,
 		  onDismiss: (() -> Void)? = .none
@@ -266,6 +268,7 @@ public extension View {
 			SafariButton(
 				  opening: url,
 				     tint: tint,
+				openStyle: openStyle,
 				 isActive: isActive,
 				   onOpen: onOpen,
 				onDismiss: onDismiss
@@ -277,33 +280,6 @@ public extension View {
 		}
 	}
 	
-	/*
-	@ViewBuilder
-	func asSafariButton(
-		opening url: URL?,
-			  title: String? = .none,
-		   isActive: Binding<Bool>? = .none,
-		  onDismiss: (() -> Void)? = .none
-	) -> some View {
-		if let url = url?.withSupportedSafariScheme {
-			self.safariView(
-				isPresented: <#T##Binding<Bool>#>,
-				onDismiss: <#T##(() -> Void)?##(() -> Void)?##() -> Void#>,
-				content: <#T##() -> SafariView#>
-			)
-			SafariButton(
-				 opening: url,
-				   title: title,
-				isActive: isActive
-			) {
-				self
-			}
-		} else {
-			self
-		}
-	}
-	*/
-
 	@available(iOS 14.0, *)
 	@ViewBuilder
 	func asLink(opening url: URL?) -> some View {
