@@ -72,6 +72,7 @@ public struct SafariButton<Content>: View where Content: View {
 	private let tint: Color?
 	private let content: Content
 	private let openStyle: SafariButtonOpenStyle
+	private let dismissButton: SFSafariViewController.DismissButtonStyle
 	private let isActive: Binding<Bool>?
 	private let onOpen: (() -> Void)?
 	private let onDismiss: (() -> Void)?
@@ -84,6 +85,7 @@ public struct SafariButton<Content>: View where Content: View {
 		opening url: URL,
 		tintColor tint: Color?,
 		openStyle: SafariButtonOpenStyle = .push,
+		dismissButton: SFSafariViewController.DismissButtonStyle = .done,
 		isActive: Binding<Bool>? = .none,
 		onOpen: (() -> Void)? = .none,
 		onDismiss: (() -> Void)? = .none,
@@ -92,6 +94,7 @@ public struct SafariButton<Content>: View where Content: View {
 		self.url = url
 		self.tint = tint
 		self.openStyle = openStyle
+		self.dismissButton = dismissButton
 		self.isActive = isActive
 		self.onOpen = onOpen
 		self.onDismiss = onDismiss
@@ -102,6 +105,7 @@ public struct SafariButton<Content>: View where Content: View {
 		opening url: URL,
 		tint: UIColor? = .none,
 		openStyle: SafariButtonOpenStyle = .push,
+		dismissButton: SFSafariViewController.DismissButtonStyle = .done,
 		isActive: Binding<Bool>? = .none,
 		onOpen: (() -> Void)? = .none,
 		onDismiss: (() -> Void)? = .none,
@@ -111,6 +115,7 @@ public struct SafariButton<Content>: View where Content: View {
 			opening: url,
 			tintColor: tint.map(Color.init(uiColor:)),
 			openStyle: openStyle,
+			dismissButton: dismissButton,
 			isActive: isActive,
 			onOpen: onOpen,
 			onDismiss: onDismiss,
@@ -123,6 +128,7 @@ public struct SafariButton<Content>: View where Content: View {
 		opening url: URL,
 		tint: UIColor? = .none,
 		openStyle: SafariButtonOpenStyle = .push,
+		dismissButton: SFSafariViewController.DismissButtonStyle = .done,
 		isActive: Binding<Bool>? = .none,
 		onOpen: (() -> Void)? = .none,
 		onDismiss: (() -> Void)? = .none
@@ -131,6 +137,7 @@ public struct SafariButton<Content>: View where Content: View {
 			opening: url,
 			tintColor: tint.map(Color.init(uiColor:)),
 			openStyle: openStyle,
+			dismissButton: dismissButton,
 			isActive: isActive,
 			onOpen: onOpen,
 			onDismiss: onDismiss,
@@ -153,6 +160,7 @@ public struct SafariButton<Content>: View where Content: View {
 						) {
 							BetterSafariView.SafariView(url: url)
 								.preferredControlAccentColor(tint)
+								.dismissButtonStyle(.close)
 						}
 				case .sheet:
 					button
@@ -258,19 +266,21 @@ public extension View {
 	@ViewBuilder
 	func asSafariButton(
 		opening url: URL?,
-		       tint: UIColor? = .none,
-		  openStyle: SafariButtonOpenStyle = .push,
-		   isActive: Binding<Bool>? = .none,
-		     onOpen: (() -> Void)? = .none,
-		  onDismiss: (() -> Void)? = .none
+		tint: UIColor? = .none,
+		openStyle: SafariButtonOpenStyle = .push,
+		dismissButton: BetterSafariView.SafariView.DismissButtonStyle = .done,
+		isActive: Binding<Bool>? = .none,
+		onOpen: (() -> Void)? = .none,
+		onDismiss: (() -> Void)? = .none
 	) -> some View {
 		if let url = url?.withSupportedSafariScheme {
 			SafariButton(
-				  opening: url,
-				     tint: tint,
+				opening: url,
+				tint: tint,
 				openStyle: openStyle,
-				 isActive: isActive,
-				   onOpen: onOpen,
+				dismissButton: dismissButton,
+				isActive: isActive,
+				onOpen: onOpen,
 				onDismiss: onDismiss
 			) {
 				self
