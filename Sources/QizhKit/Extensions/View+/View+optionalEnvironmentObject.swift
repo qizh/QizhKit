@@ -8,26 +8,15 @@
 
 import SwiftUI
 
-public extension View {
-	func environmentObject<B>(optional observable: B?) -> some View where B: ObservableObject {
-		observable.map(view: environmentObject) ?? self
-	}
-	
-	/*
-	func environmentObject<B>(_ bindable: B?) -> some View where B: ObservableObject {
-		bindable.mapView { bin in
-			self.environmentObject(bin)
-		} ?? self
-	}
-	*/
-	
-	/*
-	@ViewBuilder func environmentObject<B>(_ bindable: B?) -> some View where B: ObservableObject {
-		if bindable.isSet {
-			self.environmentObject(bindable)
+extension View {
+	@ViewBuilder
+	public func environmentObject<B>(optional observable: B?) -> some View
+		where B: ObservableObject
+	{
+		if let observable {
+			self.environmentObject(observable)
 		} else {
 			self
 		}
 	}
-	*/
 }
