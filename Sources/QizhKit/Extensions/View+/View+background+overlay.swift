@@ -444,7 +444,7 @@ public extension View {
 		frame(width: value, alignment: alignment)
 	}
 	
-//	@inlinable
+	@inlinable
 	func height(_ value: CGFloat? = nil, _ alignment: Alignment = .center) -> some View {
 		frame(height: value, alignment: alignment)
 	}
