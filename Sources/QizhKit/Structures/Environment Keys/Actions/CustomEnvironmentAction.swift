@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// MARK: Empty
+
 public struct CustomEnvironmentAction {
 	private let action: () -> Void
 	
@@ -41,5 +43,25 @@ extension CustomEnvironmentAction {
 		.init {
 			binding.wrappedValue = value
 		}
+	}
+}
+
+// MARK: Bool
+
+public struct CustomEnvironmentBoolAction {
+	public let action: (Bool) -> Void
+	
+	public init(action: @escaping (Bool) -> Void) {
+		self.action = action
+	}
+	
+	public func callAsFunction(_ value: Bool) {
+		action(value)
+	}
+}
+
+extension CustomEnvironmentBoolAction {
+	public static var doNothing: CustomEnvironmentBoolAction {
+		.init { _ in }
 	}
 }
