@@ -149,7 +149,13 @@ public struct AnyEnumeratedElement<Base: Collection>: EnumeratedElement {
 		offset = enumerated.offset
 		element = enumerated.element
 	}
-	
+}
+
+extension AnyEnumeratedElement where Element: Identifiable {
+	@inlinable public var id: Element.ID { element.id }
+}
+
+extension AnyEnumeratedElement {
 	public var id: Int { offset }
 }
 
