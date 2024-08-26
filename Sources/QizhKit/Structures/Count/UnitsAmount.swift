@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-public struct UnitsAmount: Hashable, WithDefaultValue {
+public struct UnitsAmount: Hashable, WithDefaultValue, Sendable {
 	public let unit: AnyCountableUnit
 	public let amount: UInt
 	
