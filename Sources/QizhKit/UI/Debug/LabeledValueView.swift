@@ -667,27 +667,33 @@ public extension EasySelfComparable {
 		LabeledValueView(self, label: label)
 	}
 	
+	/*
 	@inlinable func labeledView(label: String? = nil) -> LabeledValueView {
 		LabeledValueView(self, label: label)
 	}
+	*/
 }
 public extension Optional where Wrapped: EasySelfComparable {
 	@inlinable func caseView(label: String? = nil) -> LabeledValueView {
 		LabeledValueView(self, label: label)
 	}
 	
+	/*
 	@inlinable func labeledView(label: String? = nil) -> LabeledValueView {
 		LabeledValueView(self, label: label)
 	}
+	*/
 }
 public extension Binding where Value: EasySelfComparable {
 	@inlinable func caseView(label: String? = nil) -> LabeledValueView {
 		LabeledValueView(self.wrappedValue, label: label)
 	}
 	
+	/*
 	@inlinable func labeledView(label: String? = nil) -> LabeledValueView {
 		LabeledValueView(self.wrappedValue, label: label)
 	}
+	*/
 }
 
 // MARK: Collection
