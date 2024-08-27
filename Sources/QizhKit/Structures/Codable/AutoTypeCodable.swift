@@ -91,7 +91,7 @@ public extension KeyedDecodingContainer {
 	}
 }
 
-extension Optional: @retroactive CustomStringConvertible where Wrapped: LosslessStringConvertible { }
+// extension Optional: @retroactive CustomStringConvertible where Wrapped: LosslessStringConvertible { }
 extension Optional: @retroactive LosslessStringConvertible where Wrapped: LosslessStringConvertible {
 	public init?(_ description: String) {
 		self = Wrapped.init(description)
