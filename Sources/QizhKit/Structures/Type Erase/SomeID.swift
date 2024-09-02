@@ -68,11 +68,18 @@ public enum SomeID: Hashable, Sendable {
 		.init(value)
 	}
 	
+	@inlinable public static func some(_ url: URL?) -> SomeID {
+		.init(url?.absoluteString)
+	}
+	
 	/// Returns `.zero` value in `.int` case. Same as `SomeID.zero`
 	/// - Returns: `.int(.zero)`
 	public static let none: SomeID = .int(.zero)
 	/// Returns `.zero` value in `.int` case. Same as `SomeID.none`
 	public static let zero: SomeID = .int(.zero)
+	
+	@inlinable public var isNotZero: Bool { !isZero }
+	@inlinable public var isZero: Bool { self == .zero }
 	
 	public var int: Int {
 		switch self {
@@ -170,6 +177,14 @@ extension SomeID: ExpressibleByIntegerLiteral {
 		self.init(value)
 	}
 }
+
+extension SomeID: CustomStringConvertible {
+	public var description: String {
+		string
+	}
+}
+
+// MARK: Codable
 
 extension SomeID: Codable {
 	public init(from decoder: Decoder) throws {
