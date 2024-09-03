@@ -30,7 +30,7 @@ public struct BecomeFirstResponder: ViewModifier {
 	public func body(content: Content) -> some View {
 		ZStack(alignment: .topLeading) {
 			content
-				.introspect(.textField, on: .iOS(.v15, .v16, .v17)) { textField in
+				.introspect(.textField, on: .iOS(.v16, .v17, .v18)) { textField in
 					self.textField ??= textField
 				}
 				/*
@@ -77,7 +77,7 @@ public struct ReturnKeyType: ViewModifier {
 	public func body(content: Content) -> some View {
 		ZStack(alignment: .topLeading) {
 			content
-				.introspect(.textField, on: .iOS(.v15, .v16, .v17)) { textField in
+				.introspect(.textField, on: .iOS(.v16, .v17, .v18)) { textField in
 					self.textField ??= textField
 				}
 				/*

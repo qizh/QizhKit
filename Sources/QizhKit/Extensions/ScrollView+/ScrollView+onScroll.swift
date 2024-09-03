@@ -68,7 +68,7 @@ public struct ScrollViewEndDraggingDelegateModifier: ViewModifier {
 	
 	public func body(content: Content) -> some View {
 		content
-			.introspect(.scrollView, on: .iOS(.v15, .v16, .v17)) { scrollView in
+			.introspect(.scrollView, on: .iOS(.v16, .v17, .v18)) { scrollView in
 				if let delegateAssigned = scrollView.delegate as? IntrospectedScrollViewDelegate {
 					self.delegate = delegateAssigned
 				} else {
