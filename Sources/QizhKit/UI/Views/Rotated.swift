@@ -1,5 +1,5 @@
 //
-//  SwiftUIView.swift
+//  Rotated.swift
 //  QizhKit
 //
 //  Created by Serhii Shevchenko on 31.03.2021.
@@ -7,6 +7,8 @@
 //
 
 import SwiftUI
+
+// MARK: Old
 
 public struct Rotated <Wrapped: View>: View {
 	private let wrapped: Wrapped
@@ -53,3 +55,5 @@ public extension View {
 		Rotated(self, angle: angle)
 	}
 }
+
+// MARK: Rotated View Modifier
