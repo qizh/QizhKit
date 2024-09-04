@@ -20,3 +20,10 @@ public func isRunningInPreview(_ function: String = #function) -> Bool {
 public var isInPreviewEnvironment: Bool {
 	ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
 }
+
+/// Same as `print`, but only works when ``isInPreviewEnvironment``
+public func printInPreview(_ items: Any..., separator: String = " ", terminator: String = "\n") {
+	if isInPreviewEnvironment {
+		print(items.justOne ?? items, separator: separator, terminator: terminator)
+	}
+}
