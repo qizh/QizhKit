@@ -24,82 +24,65 @@ public struct NilReplacement:
 	public static let  emptySet     : Self = "∅"
 }
 
+extension String {
+	fileprivate func replacingPatterns(
+		_ patterns: [String] = DefaultStringInterpolation.patternsMatch,
+		with replacement: String
+	) -> String {
+		if let pattern = patterns.first(where: self.contains(_:)) {
+			self.replacingOccurrences(of: pattern, with: replacement)
+		} else {
+			self
+		}
+	}
+}
+
 public extension DefaultStringInterpolation {
 	// MARK: Optional
 	
-	private static let patternMatch: String = "$0"
-	
-	/*
-	mutating func appendInterpolation<Wrapped>(
-		map value: Wrapped?,
-		or fallback: NilReplacement? = nil
-	) where Wrapped: CustomStringConvertible {
-		appendInterpolation(map: value, String?.none, or: fallback)
-	}
+	fileprivate static let patternsMatch = [
+		"$0",
+		"$@",
+		"%@",
+		"##",
+	]
 	
 	mutating func appendInterpolation(
 		map value: String?,
-		or fallback: NilReplacement? = nil
-	) {
-		appendInterpolation(map: value, String?.none, or: fallback)
-	}
-	*/
-	
-	mutating func appendInterpolation(
-		  map value: String?,
-		  _ pattern: String? = nil,
+		_ pattern: String? = nil,
 		or fallback: NilReplacement? = nil
 	) {
 		value.map { value in
 			pattern.map { pattern in
-				let result = pattern
-					.replacingOccurrences(
-						of: Self.patternMatch,
-						with: value
-					)
-				appendInterpolation(result)
+				appendInterpolation(pattern.replacingPatterns(with: value))
 			} ?? appendInterpolation(value)
 		} ?? fallback.map { fallback in
 			appendInterpolation(fallback)
 		}
 	}
 	
-	mutating func appendInterpolation<Wrapped>(
-		   map value: Wrapped?,
-		   _ pattern: String? = nil,
-		 or fallback: NilReplacement? = nil
-	)
-		where Wrapped: TextOutputStreamable
-	{
+	mutating func appendInterpolation <Wrapped: TextOutputStreamable> (
+		map value: Wrapped?,
+		_ pattern: String? = nil,
+		or fallback: NilReplacement? = nil
+	) {
 		value.map { value in
 			pattern.map { pattern in
-				let result = pattern
-					.replacingOccurrences(
-						of: Self.patternMatch,
-						with: "\(value)"
-				)
-				appendInterpolation(result)
+				appendInterpolation(pattern.replacingPatterns(with: "\(value)"))
 			} ?? appendInterpolation(value)
 		} ?? fallback.map { fallback in
 			appendInterpolation(fallback)
 		}
 	}
 
-	mutating func appendInterpolation<Wrapped>(
-		   map value: Wrapped?,
-		   _ pattern: String? = nil,
-		 or fallback: NilReplacement? = nil
-	)
-		where Wrapped: CustomStringConvertible
-	{
+	mutating func appendInterpolation <Wrapped: CustomStringConvertible> (
+		map value: Wrapped?,
+		_ pattern: String? = nil,
+		or fallback: NilReplacement? = nil
+	) {
 		value.map { value in
 			pattern.map { pattern in
-				let result = pattern
-					.replacingOccurrences(
-						of: Self.patternMatch,
-						with: "\(value)"
-					)
-				appendInterpolation(result)
+				appendInterpolation(pattern.replacingPatterns(with: value.description))
 			} ?? appendInterpolation(value)
 		} ?? fallback.map { fallback in
 			appendInterpolation(fallback)
@@ -108,32 +91,26 @@ public extension DefaultStringInterpolation {
 	
 	// MARK: Condition
 	
-	mutating func appendInterpolation<S>(
+	mutating func appendInterpolation <S: CustomStringConvertible> (
 		 _ value: S,
 		if condition: @autoclosure () -> Bool
-	)
-		where S: CustomStringConvertible
-	{
-		guard condition() else { return }
-		appendInterpolation(value)
+	) {
+		if condition() {
+			appendInterpolation(value)
+		}
 	}
 	
 	// MARK: Float Fraction Digits
 	
 	mutating func appendInterpolation<F: BinaryFloatingPoint>(_ value: F, f fractionDigits: Int) {
-		let formatter = NumberFormatter()
-		formatter.maximumFractionDigits = fractionDigits
-		
-		if let result = formatter.string(from: Double(value) as NSNumber) {
-			appendLiteral(result)
-		}
+		appendLiteral(Double(value).formatted(.number.precision(.fractionLength(fractionDigits))))
 	}
 	
 	// MARK: Spell a Number
 	
 	mutating func appendInterpolation<N: NSNumber>(
 		spell value: N,
-		locale: Locale
+		locale: Locale = .autoupdatingCurrent
 	) {
 		let formatter = NumberFormatter()
 		formatter.numberStyle = .spellOut
@@ -162,6 +139,14 @@ public extension DefaultStringInterpolation {
 	}
 	
 	@inlinable mutating func appendInterpolation(spell value: Int, locale identifier: String) {
+		appendInterpolation(spell: NSNumber(value: value), locale: identifier)
+	}
+	
+	@inlinable mutating func appendInterpolation(spell value: UInt, locale: Locale = .autoupdatingCurrent) {
+		appendInterpolation(spell: NSNumber(value: value), locale: locale)
+	}
+	
+	@inlinable mutating func appendInterpolation(spell value: UInt, locale identifier: String) {
 		appendInterpolation(spell: NSNumber(value: value), locale: identifier)
 	}
 	
