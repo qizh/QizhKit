@@ -172,13 +172,11 @@ extension View {
 	}
 }
 
-/*
 #if swift(>=5.9)
 
 // MARK: > Variadic Generics
 
 extension View {
-	// @inlinable
 	public func button <each P> (
 		action: @escaping (repeat each P) -> Void,
 		_ parameters: repeat each P
@@ -190,7 +188,6 @@ extension View {
 		}
 	}
 	
-	// @inlinable
 	public func asyncButton <each P: Sendable> (
 		priority: TaskPriority? = .none,
 		action: @escaping @Sendable (repeat each P) async -> Void,
@@ -205,7 +202,21 @@ extension View {
 		}
 	}
 	
-	// @inlinable
+	public func asyncButton <each P: Sendable> (
+		role: ButtonRole,
+		priority: TaskPriority? = .none,
+		action: @escaping @Sendable (repeat each P) async -> Void,
+		_ parameters: repeat each P
+	) -> Button<Self> {
+		Button(role: role) {
+			Task(priority: priority) {
+				await action(repeat each parameters)
+			}
+		} label: {
+			self
+		}
+	}
+	
 	public func button <each P> (
 		role: ButtonRole,
 		action: @escaping (repeat each P) -> Void,
@@ -222,7 +233,6 @@ extension View {
 #else
 
 // MARK: > Outdated
-*/
 
 extension View {
 	@inlinable public func button <A> (
@@ -332,7 +342,51 @@ extension View {
 	}
 }
 
-// #endif
+extension View {
+	@inlinable public func asyncButton <A> (
+		role: ButtonRole,
+		priority: TaskPriority? = .none,
+		action: @escaping @Sendable (A) async -> Void,
+		_ argument: A
+	) -> Button<Self> {
+		button(role: role) {
+			Task(priority: priority) {
+				await action(argument)
+			}
+		}
+	}
+	
+	@inlinable public func asyncButton <A1, A2> (
+		role: ButtonRole,
+		priority: TaskPriority? = .none,
+		action: @escaping @Sendable (A1, A2) async -> Void,
+		_ argument1: A1,
+		_ argument2: A2
+	) -> Button<Self> {
+		button(role: role) {
+			Task(priority: priority) {
+				await action(argument1, argument2)
+			}
+		}
+	}
+	
+	@inlinable public func asyncButton <A1, A2, A3> (
+		role: ButtonRole,
+		priority: TaskPriority? = .none,
+		action: @escaping @Sendable (A1, A2, A3) async -> Void,
+		_ argument1: A1,
+		_ argument2: A2,
+		_ argument3: A3
+	) -> Button<Self> {
+		button(role: role) {
+			Task(priority: priority) {
+				await action(argument1, argument2, argument3)
+			}
+		}
+	}
+}
+
+#endif
 
 // MARK: - Tests
 
