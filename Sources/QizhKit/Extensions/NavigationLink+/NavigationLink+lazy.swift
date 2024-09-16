@@ -26,6 +26,7 @@ public extension NavigationLink {
 		)
 	}
 	
+	/*
 	static func lazy<Heavy>(
 		@ViewBuilder destination: @escaping () -> Heavy,
 		isActive: Binding<Bool>,
@@ -37,7 +38,9 @@ public extension NavigationLink {
 			label: label
 		)
 	}
+	*/
 	
+	/*
 	static func lazy<Heavy, Tag>(
 		destination: @autoclosure @escaping () -> Heavy,
 		tag: Tag,
@@ -52,6 +55,7 @@ public extension NavigationLink {
 			label: label
 		)
 	}
+	*/
 }
 
 public extension NavigationLink where Label == Text {
@@ -65,6 +69,7 @@ public extension NavigationLink where Label == Text {
 		NavigationLink(title, destination: LazyView(escaped: destination))
 	}
 	
+	/*
 	static func lazy<Heavy>(_ titleKey: LocalizedStringKey, destination: @autoclosure @escaping () -> Heavy, isActive: Binding<Bool>) -> NavigationLink where Destination == LazyView<Heavy> {
 		NavigationLink(titleKey, destination: LazyView(escaped: destination), isActive: isActive)
 	}
@@ -82,6 +87,7 @@ public extension NavigationLink where Label == Text {
 	static func lazy<Heavy, S, V>(_ title: S, destination: @autoclosure @escaping () -> Heavy, tag: V, selection: Binding<V?>) -> NavigationLink where S: StringProtocol, V: Hashable, Destination == LazyView<Heavy> {
 		NavigationLink(title, destination: LazyView(escaped: destination), tag: tag, selection: selection)
 	}
+	*/
 }
 
 public extension NavigationLink where Label == Pixel {
@@ -103,6 +109,7 @@ public extension NavigationLink where Label == Pixel {
 		}
 	}
 	
+	/*
 	static func lazy <Heavy> (
 		destination: @autoclosure @escaping () -> Heavy,
 		isActive: Binding<Bool>
@@ -111,6 +118,7 @@ public extension NavigationLink where Label == Pixel {
 			Pixel()
 		}
 	}
+	*/
 }
 
 /*

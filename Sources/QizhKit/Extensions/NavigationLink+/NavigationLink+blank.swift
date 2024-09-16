@@ -23,12 +23,14 @@ extension NavigationLink where Label == Pixel {
 		}
 	}
 	
+	/*
 	@inlinable
 	public init(destination: Destination, isActive: Binding<Bool>) {
 		self.init(destination: destination, isActive: isActive) {
 			Pixel()
 		}
 	}
+	*/
 }
 
 extension NavigationLink where Label == EmptyView, Destination == EmptyView {
