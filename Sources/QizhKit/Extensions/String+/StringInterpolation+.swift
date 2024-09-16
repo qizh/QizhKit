@@ -74,7 +74,9 @@ public extension DefaultStringInterpolation {
 			appendInterpolation(fallback)
 		}
 	}
-
+	
+	/// - Requires: One of the following in the `pattern` attribute:
+	/// `$0`, `$@`, `%@`, `##`
 	mutating func appendInterpolation <Wrapped: CustomStringConvertible> (
 		map value: Wrapped?,
 		_ pattern: String? = nil,
