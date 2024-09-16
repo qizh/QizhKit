@@ -53,7 +53,7 @@ public extension Decimal {
 			self.formatted(
 				.currency(code: code)
 				.locale(locale)
-				.precision(alwaysShowFraction ? .fractionLength(2...) : .fractionLength(0...))
+				.precision(alwaysShowFraction ? .fractionLength(2) : .fractionLength(...2))
 			)
 			
 			/*
@@ -68,9 +68,8 @@ public extension Decimal {
 				.or(format(as: .string, position: context, for: locale) + .space + code.uppercased())
 			*/
 		case .percent:
-			self.formatted(
+			(self / 100).formatted(
 				.percent
-				.scale(1/100)
 				.locale(locale)
 			)
 			
