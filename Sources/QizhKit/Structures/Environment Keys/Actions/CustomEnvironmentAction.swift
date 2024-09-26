@@ -48,10 +48,10 @@ extension CustomEnvironmentAction {
 
 // MARK: Bool
 
-public struct CustomEnvironmentBoolAction {
-	public let action: (Bool) -> Void
+public struct CustomEnvironmentBoolAction: Sendable {
+	public let action: @Sendable (Bool) -> Void
 	
-	public init(action: @escaping (Bool) -> Void) {
+	public init(action: @escaping @Sendable (Bool) -> Void) {
 		self.action = action
 	}
 	
