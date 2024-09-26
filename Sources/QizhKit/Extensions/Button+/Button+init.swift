@@ -510,8 +510,9 @@ extension View {
 		)
 	}
 	
+	/*
 	/// - Warning: Deprecated. This method is using `NavigationLink`, which is outdated
-	// @available(*, deprecated, message: "This method is using `NavigationLink`, which is outdated")
+	@available(*, deprecated, message: "This method is using `NavigationLink`, which is outdated")
 	@inlinable public func button <Screen: View> (
 		showing screen: Screen,
 		isActive: Binding<Bool>
@@ -522,6 +523,7 @@ extension View {
 			label: { self }
 		)
 	}
+	*/
 }
 
 /*

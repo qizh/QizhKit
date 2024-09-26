@@ -56,7 +56,7 @@ public enum CurrencyCode:
 		by code: String
 	) -> String? {
 		let locale = Locale(identifier: id)
-		return code == locale.currencyCode
+		return code == locale.currency?.identifier
 			? locale.currencySymbol
 			: nil
 	}
@@ -65,6 +65,7 @@ public enum CurrencyCode:
 		CurrencyCode.symbol(for: rawValue)
 	}
 	
+	/*
 	@inlinable public func formatter(
 		position context: Formatter.Context,
 		for locale: Locale,
@@ -77,8 +78,11 @@ public enum CurrencyCode:
 			alwaysShowFraction: alwaysShowFraction
 		)
 	}
+	*/
 	
 	fileprivate static var formatters = [String: NumberFormatter]()
+	
+	/*
 	public static func formatter(
 		currency code: String,
 		position context: Formatter.Context,
@@ -100,6 +104,7 @@ public enum CurrencyCode:
 			return formatter
 		}
 	}
+	*/
 	
 	fileprivate static var roundingScales: [String: Int] = .empty
 	public static var isoFormatter: NumberFormatter = {
@@ -122,6 +127,8 @@ public extension AnyCurrencyCode {
 	static let thb = Self(.thb)
 	
 	@inlinable var code: String { rawValue.uppercased() }
+	
+	/*
 	func formatter(
 		position context: Formatter.Context,
 		for locale: Locale,
@@ -134,7 +141,9 @@ public extension AnyCurrencyCode {
 			alwaysShowFraction: alwaysShowFraction
 		)
 	}
+	*/
 	
+	/*
 	@inlinable func string(
 		for price: NSNumber,
 		position context: Formatter.Context,
@@ -149,6 +158,7 @@ public extension AnyCurrencyCode {
 		.string(from: price)
 		.or("\(price) \(code)")
 	}
+	*/
 	
 	@inlinable func string(
 		for price: Decimal,
@@ -156,14 +166,28 @@ public extension AnyCurrencyCode {
 		in locale: Locale,
 		alwaysShowFraction: Bool
 	) -> String {
+		price
+			.formatted(
+				.currency(code: code)
+				.locale(locale)
+				.precision(
+					alwaysShowFraction
+					? .fractionLength(roundingScale)
+					: .fractionLength(0...roundingScale)
+				)
+			)
+		
+		/*
 		string(
 			for: price.number,
 			position: context,
 			in: locale,
 			alwaysShowFraction: alwaysShowFraction
 		)
+		*/
 	}
 	
+	/*
 	@inlinable func string(
 		for price: Double,
 		position context: Formatter.Context,
@@ -177,6 +201,7 @@ public extension AnyCurrencyCode {
 			alwaysShowFraction: alwaysShowFraction
 		)
 	}
+	*/
 	
 	@inlinable var symbol: String? {
 		CurrencyCode.symbol(for: rawValue)
