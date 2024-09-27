@@ -21,13 +21,16 @@ let package = Package(
     ],
 	dependencies: [
 		.package(url: "https://github.com/siteline/swiftui-introspect", from: "1.3.0"),
-		.package(url: "https://github.com/Alamofire/Alamofire", from: "5.8.1"),
-		// .package(url: "https://github.com/devicekit/DeviceKit", from: "5.1.0"),
-		.package(url: "https://github.com/qizh/DeviceKit", from: "5.2.3"),
+		.package(url: "https://github.com/Alamofire/Alamofire", from: "5.9.1"),
+		.package(url: "https://github.com/devicekit/DeviceKit", from: "5.5.0"),
+		// .package(url: "https://github.com/qizh/DeviceKit", from: "5.2.3"),
 		// .package(url: "https://github.com/stleamist/BetterSafariView", from: "2.4.2"),
 		// .package(url: "https://github.com/shantanubala/BetterSafariView", branch: "main"),
 		.package(url: "https://github.com/qizh/BetterSafariView", from: "2.4.3"),
-		.package(url: "https://github.com/apple/swift-collections", from: "1.1.2"),
+		.package(url: "https://github.com/apple/swift-collections", from: "1.1.4"),
+		
+		/// Temporary, while I can't add New Package Dependency using Xcode
+		.package(url: "https://github.com/qizh/CollectionConcurrencyKit", from: "0.2.1"),
 	],
     targets: [
         .target(
@@ -38,6 +41,7 @@ let package = Package(
 				"DeviceKit",
 				"BetterSafariView",
 				.product(name: "OrderedCollections", package: "swift-collections"),
+				"CollectionConcurrencyKit",
 			]
 		),
     ]
