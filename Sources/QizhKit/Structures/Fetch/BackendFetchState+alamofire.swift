@@ -70,14 +70,14 @@ extension DataResponse: FetchResponse {
 }
 
 public protocol DebugDetailsProvidingError {
-	var debugDetails: [String: Any] { get }
+	var debugDetails: [String: any Sendable] { get }
 }
 
-public struct FetchErrorDebugDetails: Codable {
+public struct FetchErrorDebugDetails: Codable, Sendable {
 	public private(set) var type: String? = .none
 	public private(set) var description: String = "No description"
-	@CodableAnyDictionary public private(set) var details: [String: Any] = .empty
-	@CodableAnyDictionary public private(set) var underlying: [String: Any] = .empty
+	@CodableAnyDictionary public private(set) var details: [String: any Sendable] = .empty
+	@CodableAnyDictionary public private(set) var underlying: [String: any Sendable] = .empty
 	public private(set) var af: AFResponseDebugDetails? = .none
 	
 	public init(of error: Error) {
@@ -117,7 +117,7 @@ public struct FetchErrorDebugDetails: Codable {
 		case .verboseError(let title, let description):
 			self.details = [
 				"title": title,
-				"description": description as Any
+				"description": description
 			]
 		case .api(let code, let message):
 			self.details = [
@@ -128,9 +128,9 @@ public struct FetchErrorDebugDetails: Codable {
 			self.details = [
 				"statement": statement,
 				"reason": reason,
-				"function": function as Any,
-				"file": file as Any,
-				"line": line as Any
+				"function": function,
+				"file": file,
+				"line": line
 			]
 		case .preconditionValidation(.illegalCharacters(let value)):
 			self.details = [
@@ -161,7 +161,7 @@ public struct FetchErrorDebugDetails: Codable {
 		}
 	}
 	
-	public struct AFResponseDebugDetails: Codable {
+	public struct AFResponseDebugDetails: Codable, Sendable {
 		public let request: String
 		public let requestBody: String
 		public let responseCode: Int?
@@ -171,7 +171,7 @@ public struct FetchErrorDebugDetails: Codable {
 //		public let networkDuration: String
 //		public let serializationDuration: String
 		public let result: String?
-		@CodableAnyDictionary public var underlying: [String: Any]
+		@CodableAnyDictionary public var underlying: [String: any Sendable]
 		public let error: String?
 
 		init(of response: FetchResponse) {

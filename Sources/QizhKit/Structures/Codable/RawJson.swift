@@ -16,7 +16,7 @@ public struct RawJson: Sendable {
 		self.wrappedValue = wrappedValue
 	}
 	
-	public init(encoding dictionary: [String: Any]) throws {
+	public init(encoding dictionary: [String: any Sendable]) throws {
 		let wrappedDictionary = CodableAnyDictionary(wrappedValue: dictionary)
 		try self.init(encoding: wrappedDictionary)
 	}
