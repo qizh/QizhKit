@@ -20,17 +20,17 @@ public enum SomeID: Hashable, Sendable {
 	
 	@inlinable
 	public init(_ value: Int?) {
-		self = value.map(Self.int) ?? .none
+		self = value.map(Self.int) ?? .unknown
 	}
 	
 	@inlinable
 	public init(_ value: UInt?) {
-		self = value.map(Self.uint) ?? .none
+		self = value.map(Self.uint) ?? .unknown
 	}
 	
 	@inlinable
 	public init(_ value: String?) {
-		self = value.map(Self.string) ?? .none
+		self = value.map(Self.string) ?? .unknown
 	}
 	
 	@inlinable
@@ -40,7 +40,7 @@ public enum SomeID: Hashable, Sendable {
 	
 	@inlinable
 	public init(_ value: UUID?) {
-		self = value.map(Self.uuid) ?? .none
+		self = value.map(Self.uuid) ?? .unknown
 	}
 	
 	@inlinable
@@ -74,12 +74,13 @@ public enum SomeID: Hashable, Sendable {
 	
 	/// Returns `.zero` value in `.int` case. Same as `SomeID.zero`
 	/// - Returns: `.int(.zero)`
-	public static let none: SomeID = .int(.zero)
+	// public static let none: SomeID = .int(.zero)
+	
 	/// Returns `.zero` value in `.int` case. Same as `SomeID.none`
 	public static let zero: SomeID = .int(.zero)
-	
-	@inlinable public var isNotZero: Bool { !isZero }
 	@inlinable public var isZero: Bool { self == .zero }
+	@inlinable public var isNotZero: Bool { !isZero }
+	public var nonZero: SomeID? { isZero ? nil : self }
 	
 	public var int: Int {
 		switch self {
@@ -163,6 +164,12 @@ public enum SomeID: Hashable, Sendable {
 	public static func == (lhs: SomeID, rhs: SomeID) -> Bool {
 		lhs.string == rhs.string
 	}
+}
+
+// MARK: ┣ Adopt
+
+extension SomeID: WithUnknown {
+	public static let unknown: SomeID = .zero
 }
 
 extension SomeID: ExpressibleByStringLiteral,
