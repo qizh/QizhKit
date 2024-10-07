@@ -31,6 +31,8 @@ let package = Package(
 		
 		/// Temporary, while I can't add New Package Dependency using Xcode
 		.package(url: "https://github.com/qizh/CollectionConcurrencyKit", from: "0.2.1"),
+		/// Macros
+	    .package(url: "https://github.com/qizh/QizhMacroKit", from: "1.0.2"),
 	],
     targets: [
         .target(
@@ -42,6 +44,9 @@ let package = Package(
 				"BetterSafariView",
 				.product(name: "OrderedCollections", package: "swift-collections"),
 				"CollectionConcurrencyKit",
+				
+				/// Macros
+				"QizhMacroKit",
 			]
 		),
     ]
