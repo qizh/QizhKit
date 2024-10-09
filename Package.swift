@@ -30,7 +30,7 @@ let package = Package(
 		.package(url: "https://github.com/apple/swift-collections", from: "1.1.4"),
 		
 		/// Macros
-	    .package(url: "https://github.com/qizh/QizhMacroKit", from: "1.0.2"),
+	    .package(url: "https://github.com/qizh/QizhMacroKit", from: "1.0.3"),
 	],
     targets: [
         .target(
