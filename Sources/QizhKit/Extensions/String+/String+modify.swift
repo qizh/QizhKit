@@ -61,9 +61,17 @@ public enum StringOffset: Sendable {
 	public static let tabArrow: Self = .tabs(1, suffix: "> ")
 	public static let empty: Self = .spaces(0)
 	
-	public static let tree: Self = .tree(tabs: 1)
+	public static let tree: Self = .tree(spaces: 2)
+	public static func tree(spaces: UInt) -> Self {
+		.tabs(spaces, prefix: "┣ ")
+	}
 	public static func tree(tabs: UInt) -> Self {
-		.tabs(tabs, suffix: "┣ ")
+		.tabs(tabs, prefix: "┣ ")
+	}
+	
+	public static let subTree: Self = .tree(spaces: 2)
+	public static func subTree(spaces: UInt) -> Self {
+		.tabs(spaces, prefix: "┃ ┣ ")
 	}
 	
 	public var value: String {
