@@ -180,6 +180,12 @@ fileprivate struct OriginPreferenceKey: PreferenceKey {
 	}
 }
 
+fileprivate struct ScrollOriginPreferenceKey: PreferenceKey {
+	static var defaultValue: CGPoint = .zero
+	static func reduce(value: inout CGPoint, nextValue: () -> CGPoint) {
+		value += nextValue()
+	}
+}
 
 // MARK: Native Offset Reader
 
@@ -198,9 +204,12 @@ public extension ScrollView {
 		showsIndicators: Bool = true,
 		@ViewBuilder content: () -> Content
 	) -> some View {
-		OffsetReadingScrollView(axes, showIndicators: showsIndicators, offset: offset) {
-			content()
-		}
+		OffsetReadingScrollView(
+			axes,
+			showIndicators: showsIndicators,
+			offset: offset,
+			content: content
+		)
 	}
 }
 
@@ -209,6 +218,8 @@ public struct OffsetReadingScrollView <Content>: View where Content: View {
 	private let showIndicators: Bool
 	@Binding private var offset: CGPoint
 	private let content: Content
+	
+	@Namespace var scrollNS
 	
 	public init(
 		_ axes: Axis.Set = .vertical,
@@ -223,6 +234,24 @@ public struct OffsetReadingScrollView <Content>: View where Content: View {
 	}
 	
 	public var body: some View {
+		ScrollView(axes, showsIndicators: showIndicators) {
+			content
+				.background {
+					GeometryReader { insideGeometry in
+						Color.clear
+							.preference(
+								key: ScrollOriginPreferenceKey.self,
+								value: insideGeometry.frame(in: .named(scrollNS)).topLeading
+							)
+					}
+				}
+		}
+		.coordinateSpace(name: scrollNS)
+		.onPreferenceChange(ScrollOriginPreferenceKey.self) { value in
+			offset = value
+		}
+		
+		/*
 		GeometryReader { outside in
 			ScrollView(axes, showsIndicators: showIndicators) {
 				content
@@ -254,9 +283,12 @@ public struct OffsetReadingScrollView <Content>: View where Content: View {
 				offset = value
 			}
 		}
+		*/
 	}
 	
+	/*
 	private func offset(of inside: GeometryProxy, in outside: GeometryProxy) -> CGPoint {
 		inside.frame(in: .global).topLeading - outside.frame(in: .global).topLeading
 	}
+	*/
 }
