@@ -7,12 +7,16 @@
 
 import Foundation
 
-extension CaseIterable {
+extension CaseIterable where Self: Equatable {
 	public func next() -> Self? {
 		if let currentIndex = Self.allCases.firstIndex(of: self) {
 			Self.allCases[safe: Self.allCases.index(after: currentIndex)]
 		} else {
 			Self.allCases.first
 		}
+	}
+	
+	@inlinable public var nextCase: Self? {
+		next()
 	}
 }
