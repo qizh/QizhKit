@@ -123,14 +123,14 @@ extension DataResponse {
 							)
 							let dataString = formattedJsonData.asString(encoding: .utf8).orEmpty
 							responseBodyDescription = """
-							[Body]: (formatted)
+							[Body] [Formatted]:
 								\(dataString.tabOffsettingNewLines())
 							"""
 						} catch {
 							let dataString = String(decoding: data, as: UTF8.self)
 								.withLinesNSpacesTrimmed
 							responseBodyDescription = """
-							[Body]: (json formatting failed)
+							[Body] [JSON formatting failed]:
 								\(dataString.tabOffsettingNewLines())
 							"""
 						}
