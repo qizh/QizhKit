@@ -6,7 +6,7 @@
 //  Copyright © 2024 Serhii Shevchenko. All rights reserved.
 //
 
-import Foundation
+public import Foundation
 
 // MARK: TimeInterval + as
 
