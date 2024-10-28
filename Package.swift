@@ -41,7 +41,7 @@ let package = Package(
 		.package(url: "https://github.com/apple/swift-collections", from: "1.1.4"),
 		
 		/// Macros
-	    // .package(url: "https://github.com/qizh/QizhMacroKit", from: "1.0.7"),
+		.package(url: "https://github.com/qizh/QizhMacroKit", exact: "1.0.10"),
 	],
     targets: [
         .target(
@@ -63,8 +63,8 @@ let package = Package(
 				.product(name: "OrderedCollections", package: "swift-collections"),
 				
 				/// Macros
-				// .product(name: "QizhMacroKit", package: "QizhMacroKit"),
-				// .product(name: "QizhMacroKitClient", package: "QizhMacroKit"),
+				.product(name: "QizhMacroKit", package: "QizhMacroKit"),
+				.product(name: "QizhMacroKitClient", package: "QizhMacroKit"),
 			],
 			resources: [
 				.process("PrivacyInfo.xcprivacy")
