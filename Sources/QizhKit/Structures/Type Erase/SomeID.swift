@@ -240,19 +240,14 @@ extension SomeID: ExpressibleByIntegerLiteral {
 extension SomeID: CustomStringConvertible {
 	public var description: String {
 		switch self {
+		case .url(let url) where url.host == "images.unsplash.com"
+			&& url.pathComponents.first.orEmpty.hasPrefix("photo-"):
+						"unsplash_\(url.pathComponents[0])"
 		case .int,
 			 .uint,
 			 .string,
-			 .uuid:
-			string
-		case .url(let url):
-			if url.host == "images.unsplash.com",
-			   let imageName = url.pathComponents.first,
-			   imageName.hasPrefix("photo-") {
-				"unsplash_\(imageName)"
-			} else {
-				string
-			}
+			 .uuid,
+			 .url: 		string.nonEmpty.orXmarkString
 		}
 	}
 }
