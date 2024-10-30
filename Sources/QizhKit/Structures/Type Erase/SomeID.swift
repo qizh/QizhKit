@@ -239,7 +239,21 @@ extension SomeID: ExpressibleByIntegerLiteral {
 
 extension SomeID: CustomStringConvertible {
 	public var description: String {
-		string
+		switch self {
+		case .int,
+			 .uint,
+			 .string,
+			 .uuid:
+			string
+		case .url(let url):
+			if url.host == "images.unsplash.com",
+			   let imageName = url.pathComponents.first,
+			   imageName.hasPrefix("photo-") {
+				"unsplash_\(imageName)"
+			} else {
+				string
+			}
+		}
 	}
 }
 
