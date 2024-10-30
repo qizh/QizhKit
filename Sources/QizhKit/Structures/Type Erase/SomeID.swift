@@ -13,64 +13,85 @@ public enum SomeID: Hashable, Sendable {
 	case uint(_ value: UInt)
 	case string(_ value: String)
 	case uuid(_ value: UUID)
+	case url(_ url: URL)
 	
-	public static var uuid: SomeID {
+	@inlinable public static var uuid: SomeID {
 		.uuid(.init())
 	}
 	
-	@inlinable
-	public init(_ value: Int?) {
-		self = value.map(Self.int) ?? .unknown
+	// MARK: ┣ init
+	
+	@inlinable public init(_ value: Int?) {
+		if let value {
+			self = .int(value)
+		} else {
+			self = .unknown
+		}
 	}
 	
-	@inlinable
-	public init(_ value: UInt?) {
-		self = value.map(Self.uint) ?? .unknown
+	@inlinable public init(_ value: UInt?) {
+		if let value {
+			self = .uint(value)
+		} else {
+			self = .unknown
+		}
 	}
 	
-	@inlinable
-	public init(_ value: String?) {
-		self = value.map(Self.string) ?? .unknown
-	}
-	
-	@inlinable
-	public init(_ value: Substring?) {
+	@inlinable public init(_ value: Substring?) {
 		self.init(value?.asString())
 	}
 	
-	@inlinable
-	public init(_ value: UUID?) {
-		self = value.map(Self.uuid) ?? .unknown
+	@inlinable public init(_ value: String?) {
+		if let value {
+			self = .string(value)
+		} else {
+			self = .unknown
+		}
 	}
 	
-	@inlinable
-	public static func some(_ value: Int?) -> SomeID {
+	@inlinable public init(_ value: UUID?) {
+		if let value {
+			self = .uuid(value)
+		} else {
+			self = .unknown
+		}
+	}
+	
+	@inlinable public init(_ value: URL?) {
+		if let value {
+			self = .url(value)
+		} else {
+			self = .unknown
+		}
+	}
+	
+	// MARK: ┣ some
+	
+	@inlinable public static func some(_ value: Int?) -> SomeID {
 		.init(value)
 	}
 	
-	@inlinable
-	public static func some(_ value: UInt?) -> SomeID {
+	@inlinable public static func some(_ value: UInt?) -> SomeID {
 		.init(value)
 	}
 	
-	@inlinable
-	public static func some(_ value: String?) -> SomeID {
+	@inlinable public static func some(_ value: String?) -> SomeID {
 		.init(value)
 	}
 	
-	@inlinable
-	public static func some(_ value: Substring?) -> SomeID {
+	@inlinable public static func some(_ value: Substring?) -> SomeID {
 		.init(value)
 	}
 	
-	@inlinable
-	public static func some(_ value: UUID?) -> SomeID {
+	@inlinable public static func some(_ value: UUID?) -> SomeID {
 		.init(value)
 	}
 	
 	@inlinable public static func some(_ url: URL?) -> SomeID {
-		.init(url?.absoluteString)
+		.init(url)
 	}
+	
+	// MARK: ┣ zero
 	
 	/// Returns `.zero` value in `.int` case. Same as `SomeID.zero`
 	/// - Returns: `.int(.zero)`
@@ -82,95 +103,124 @@ public enum SomeID: Hashable, Sendable {
 	@inlinable public var isNotZero: Bool { !isZero }
 	public var nonZero: SomeID? { isZero ? nil : self }
 	
+	// MARK: ┣ Values
+	
 	public var int: Int {
 		switch self {
-		case .int(let value): return value
-		case .uint(let value): return Int(value)
-		case .string(let value): return Int(value) ?? .zero
-		case .uuid(_): return .zero
+		case .int(let value): 		value
+		case .uint(let value): 		Int(value)
+		case .string(let value): 	Int(value) ?? .zero
+		case .url(let value): 		Int(value.absoluteString) ?? .zero
+		case .uuid: 				.zero
 		}
 	}
 	
 	public var uint: UInt {
 		switch self {
-		case .int(let value): return UInt(value)
-		case .uint(let value): return value
-		case .string(let value): return UInt(value) ?? .zero
-		case .uuid(_): return .zero
+		case .int(let value): 		UInt(value)
+		case .uint(let value): 		value
+		case .string(let value): 	UInt(value) ?? .zero
+		case .url(let value): 		UInt(value.absoluteString) ?? .zero
+		case .uuid: 				.zero
 		}
 	}
 	
 	public var string: String {
 		switch self {
-		case .int(let value): return value.isZero ? .empty : String(value)
-		case .uint(let value): return value.isZero ? .empty : String(value)
-		case .string(let value): return value
-		case .uuid(let value): return value.uuidString
+		case .int(let value): 		value.isZero ? .empty : String(value)
+		case .uint(let value): 		value.isZero ? .empty : String(value)
+		case .string(let value): 	value
+		case .url(let value): 		value.absoluteString
+		case .uuid(let value): 		value.uuidString
+		}
+	}
+	
+	public var url: URL? {
+		switch self {
+		case .int: 					.none
+		case .uint: 				.none
+		case .string(let value): 	URL(string: value)
+		case .url(let value): 		value
+		case .uuid: 				.none
 		}
 	}
 	
 	public var uuid: UUID {
 		switch self {
-		case .int(_): return UUID()
-		case .uint(_): return UUID()
-		case .string(_): return UUID()
-		case .uuid(let value): return value
+		case .int: 					UUID()
+		case .uint: 				UUID()
+		case .string: 				UUID()
+		case .url: 					UUID()
+		case .uuid(let value): 		value
 		}
 	}
 	
 	public var isSet: Bool {
 		switch self {
-		case .int(let value): return value.isNotZero
-		case .uint(let value): return value.isNotZero
-		case .string(let value): return value.isNotEmpty
-		case .uuid(_): return true
+		case .int(let value): 		value.isNotZero
+		case .uint(let value): 		value.isNotZero
+		case .string(let value): 	value.isNotEmpty
+		case .url(let value): 		value.absoluteString.isNotEmpty
+		case .uuid: 				true
 		}
 	}
 	
 	public var isNotSet: Bool {
 		switch self {
-		case .int(let value): return value.isZero
-		case .uint(let value): return value.isZero
-		case .string(let value): return value.isEmpty
-		case .uuid(_): return false
+		case .int(let value): 		value.isZero
+		case .uint(let value): 		value.isZero
+		case .string(let value): 	value.isEmpty
+		case .url(let value): 		value.absoluteString.isEmpty
+		case .uuid: 				false
 		}
 	}
+	
+	// MARK: ┣ defined
 	
 	public var defined: SomeID? {
 		isSet ? self : nil
 	}
-	
-	@inlinable
-	public static func == (lhs: SomeID, rhs: Int) -> Bool {
+}
+
+// MARK: Adopt
+
+
+
+// MARK: ┣ Equatable
+
+extension SomeID: Equatable {
+	@inlinable public static func == (lhs: SomeID, rhs: Int) -> Bool {
 		lhs.int == rhs
 	}
 	
-	@inlinable
-	public static func == (lhs: SomeID, rhs: UInt) -> Bool {
+	@inlinable public static func == (lhs: SomeID, rhs: UInt) -> Bool {
 		lhs.int == rhs
 	}
 	
-	@inlinable
-	public static func == (lhs: SomeID, rhs: String) -> Bool {
+	@inlinable public static func == (lhs: SomeID, rhs: String) -> Bool {
 		lhs.string == rhs
 	}
 	
-	@inlinable
-	public static func == (lhs: SomeID, rhs: UUID) -> Bool {
+	@inlinable public static func == (lhs: SomeID, rhs: UUID) -> Bool {
 		lhs.uuid == rhs
 	}
 	
-	@inlinable
-	public static func == (lhs: SomeID, rhs: SomeID) -> Bool {
+	@inlinable public static func == (lhs: SomeID, rhs: URL) -> Bool {
+		lhs.url == rhs
+	}
+	
+	@inlinable public static func == (lhs: SomeID, rhs: SomeID) -> Bool {
 		lhs.string == rhs.string
 	}
 }
 
-// MARK: ┣ Adopt
+// MARK: ┣ Unknown
 
 extension SomeID: WithUnknown {
 	public static let unknown: SomeID = .zero
 }
+
+// MARK: ┣ Expressible by
 
 extension SomeID: ExpressibleByStringLiteral,
 				  ExpressibleByStringInterpolation {
@@ -185,13 +235,15 @@ extension SomeID: ExpressibleByIntegerLiteral {
 	}
 }
 
+// MARK: ┣ description
+
 extension SomeID: CustomStringConvertible {
 	public var description: String {
 		string
 	}
 }
 
-// MARK: Codable
+// MARK: ┗ Codable
 
 extension SomeID: Codable {
 	public init(from decoder: Decoder) throws {
@@ -204,7 +256,11 @@ extension SomeID: Codable {
 		}
 		
 		if let value = try? container.decode(String.self) {
-			self = .string(value)
+			if let url = URL(string: value) {
+				self = .url(url)
+			} else {
+				self = .string(value)
+			}
 		} else if let value = try? container.decode(UInt.self) {
 			self = .uint(value)
 		} else if let value = try? container.decode(Int.self) {
@@ -220,6 +276,7 @@ extension SomeID: Codable {
 		case .uint(let value): 		try value.encode(to: encoder)
 		case .string(let value): 	try value.encode(to: encoder)
 		case .uuid(let value): 		try value.encode(to: encoder)
+		case .url(let value): 		try value.encode(to: encoder)
 		}
 	}
 }
