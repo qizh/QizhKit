@@ -18,8 +18,7 @@ extension View {
 	}
 }
 
-/*
-#if swift(>=5.9)
+#if swift(>=5.10)
 
 // MARK: > Variadic Generics
 
@@ -31,10 +30,10 @@ extension View {
 		transform(self, repeat each parameters)
 	}
 }
+
 #else
 
 // MARK: > Outdated
-*/
 
 extension View {
 	@inlinable public func apply <T> (
@@ -61,7 +60,8 @@ extension View {
 		transform(self, argument1, argument2, argument3)
 	}
 }
-// #endif
+
+#endif
 
 // MARK: View + apply + other
 
@@ -201,8 +201,7 @@ extension Text {
 	}
 }
 
-/*
-#if swift(>=5.9)
+#if swift(>=5.10)
 
 // MARK: > Variadic Generics
 
@@ -214,10 +213,10 @@ extension Text {
 		transform(self, repeat each parameters)
 	}
 }
+
 #else
 
 // MARK: > Outdated
-*/
 
 extension Text {
 	@inlinable public func apply<T>(
@@ -245,7 +244,7 @@ extension Text {
 	}
 }
 
-// #endif
+#endif
 
 // MARK: > Test
 
