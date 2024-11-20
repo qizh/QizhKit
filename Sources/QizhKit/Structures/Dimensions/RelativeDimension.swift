@@ -23,15 +23,15 @@ public enum RelativeDimension: ExpressibleByFloatLiteral,
 	
 	public var value: CGFloat? {
 		switch self {
-		case .exactly(let v): return v
-		default: 			  return nil
+		case .exactly(let value): 	value
+		default: 			  		nil
 		}
 	}
 	
 	public var maxValue: CGFloat? {
 		switch self {
-		case .maximum: return .infinity
-		default: 	   return nil
+		case .maximum: .infinity
+		default: 	    nil
 		}
 	}
 	
@@ -46,10 +46,10 @@ public enum RelativeDimension: ExpressibleByFloatLiteral,
 extension RelativeDimension: EasyComparable {
 	public func `is`(_ other: RelativeDimension) -> Bool {
 		switch (self, other) {
-		case (.maximum, .maximum): return true
-		case (.exactly, .exactly): return true
-		case (.minimum, .minimum): return true
-		default: return false
+		case (.maximum, .maximum): 	true
+		case (.exactly, .exactly): 	true
+		case (.minimum, .minimum): 	true
+		default: 					false
 		}
 	}
 	
