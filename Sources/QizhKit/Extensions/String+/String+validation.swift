@@ -48,6 +48,11 @@ public extension String {
 		rangeOfCharacter(from: set).isSet
 	}
 	
+	@inlinable func containsNo(_ set: CharacterSet) -> Bool {
+		rangeOfCharacter(from: set).isNotSet
+	}
+	
+	@available(*, deprecated, renamed: "containsNo(_:)", message: "Renamed to containsNo(_:) to avoid naming collisions with contains(_:)")
 	@inlinable func contains(no set: CharacterSet) -> Bool {
 		rangeOfCharacter(from: set).isNotSet
 	}
