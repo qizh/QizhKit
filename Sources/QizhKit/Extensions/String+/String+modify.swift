@@ -163,9 +163,9 @@ extension String {
 			.enumerated()
 			.map { index, line in
 				switch index {
-				case lastIndex where lastIndex != 0: 	offset.lastValue + line
-				case 0 where not(first): 				line
-				default: 								offset.value + line
+				case lastIndex where lastIndex != 0 || first: 	offset.lastValue + line
+				case 0 where not(first): 						line
+				default: 										offset.value + line
 				}
 			}
 			.joined(separator: .newLine)
