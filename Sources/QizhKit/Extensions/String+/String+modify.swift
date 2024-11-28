@@ -66,17 +66,17 @@ public enum StringOffset: Sendable {
 	public static let subtreeElement = "┃ ┣ "
 	private static let lastSubtreeElement = "┃ ┗ "
 	
-	public static let tree: Self = .tree(spaces: 2)
+	public static let tree: Self = .tree(spaces: 0)
 	public static func tree(spaces: UInt) -> Self {
 		.spaces(spaces, prefix: treeElement)
 	}
 	public static func tree(tabs: UInt) -> Self {
-		.tabs(tabs, prefix: treeElement)
+		.tabs(tabs, suffix: treeElement)
 	}
 	
-	public static let subTree: Self = .tree(spaces: 2)
+	public static let subTree: Self = .tree(spaces: 0)
 	public static func subTree(spaces: UInt) -> Self {
-		.spaces(spaces, prefix: subtreeElement)
+		.spaces(spaces, suffix: subtreeElement)
 	}
 	
 	@inlinable public var amount: UInt {
