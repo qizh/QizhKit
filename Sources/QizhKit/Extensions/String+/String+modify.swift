@@ -61,12 +61,17 @@ public enum StringOffset: Sendable {
 	public static let tabArrow: Self = .tabs(1, suffix: "> ")
 	public static let empty: Self = .spaces(0)
 	
+	fileprivate static let treeElement = "┣ "
+	fileprivate static let lastTreeElement = "┗ "
+	fileprivate static let subtreeElement = "┃ ┣ "
+	fileprivate static let lastSubtreeElement = "┃ ┗ "
+	
 	public static let tree: Self = .tree(spaces: 2)
 	public static func tree(spaces: UInt) -> Self {
-		.tabs(spaces, prefix: "┣ ")
+		.tabs(spaces, prefix: treeElement)
 	}
 	public static func tree(tabs: UInt) -> Self {
-		.tabs(tabs, prefix: "┣ ")
+		.tabs(tabs, prefix: treeElement)
 	}
 	
 	public static let subTree: Self = .tree(spaces: 2)
@@ -74,19 +79,88 @@ public enum StringOffset: Sendable {
 		.tabs(spaces, prefix: "┃ ┣ ")
 	}
 	
-	public var value: String {
+	@inlinable public var amount: UInt {
 		switch self {
-		case let .spaces(amount, prefix, suffix): return prefix + .space * amount + suffix
-		case let .tabs(amount, prefix, suffix): return prefix + .tab * amount + suffix
+		case let .spaces(amount, _, _): amount
+		case let   .tabs(amount, _, _): amount
 		}
+	}
+	
+	@inlinable public var suffix: String {
+		switch self {
+		case let .spaces(_, _, suffix): suffix
+		case let   .tabs(_, _, suffix): suffix
+		}
+	}
+	
+	@inlinable public var prefix: String {
+		switch self {
+		case let .spaces(_, prefix, _): prefix
+		case let   .tabs(_, prefix, _): prefix
+		}
+	}
+	
+	fileprivate var isTreeSuffix: Bool {
+		suffix == Self.treeElement
+	}
+	
+	fileprivate var isTreePrefix: Bool {
+		prefix == Self.treeElement
+	}
+	
+	fileprivate var isSubtreeSuffix: Bool {
+		suffix == Self.subtreeElement
+	}
+	
+	fileprivate var isSubtreePrefix: Bool {
+		prefix == Self.subtreeElement
+	}
+	
+	fileprivate var offsetString: String {
+		switch self {
+		case .spaces: .space
+		case   .tabs: .tab
+		}
+	}
+	
+	public var value: String {
+		prefix + offsetString * amount + suffix
+	}
+	
+	public var lastValue: String {
+		let prefix =
+			switch prefix {
+			case Self.treeElement: Self.lastTreeElement
+			case Self.subtreeElement: Self.lastSubtreeElement
+			default: prefix
+			}
+		
+		let suffix =
+			switch suffix {
+			case Self.treeElement: Self.lastTreeElement
+			case Self.subtreeElement: Self.lastSubtreeElement
+			default: suffix
+			}
+		
+		return prefix + offsetString * amount + suffix
 	}
 }
 
 extension String {
-	@inlinable
 	public func offsetting(by offset: StringOffset, first: Bool) -> String {
-			(first ? offset.value : .empty)
-		+ 	self.replacing(.newLine, with: .newLine + offset.value)
+		let lines = components(separatedBy: .newlines)
+		let lastIndex = lines.count.prev
+		
+		return lines
+			.enumerated()
+			.map { index, line in
+				switch index {
+				case lastIndex where lastIndex != 0: 	offset.lastValue + line
+				case 0 where not(first): 				line
+				default: 								offset.value + line
+				}
+			}
+			.joined(separator: .newLine)
 	}
 }
 
@@ -94,25 +168,21 @@ extension String {
 	
 	/// Spaces
 	
-	@inlinable
-	public func offsettingLines(by spaceCount: UInt = 4) -> String {
+	@inlinable public func offsettingLines(by spaceCount: UInt = 4) -> String {
 		.space * spaceCount + replacing(.newLine, with: .newLine + .space * spaceCount)
 	}
 	
-	@inlinable
-	public func offsettingNewLines(by spaceCount: UInt = 4) -> String {
+	@inlinable public func offsettingNewLines(by spaceCount: UInt = 4) -> String {
 		replacing(.newLine, with: .newLine + .space * spaceCount)
 	}
 	
 	/// Tabs
 	
-	@inlinable
-	public func tabOffsettingLines(by tabCount: UInt = 1) -> String {
+	@inlinable public func tabOffsettingLines(by tabCount: UInt = 1) -> String {
 		.tab * tabCount + replacing(.newLine, with: .newLine + .tab * tabCount)
 	}
 	
-	@inlinable
-	public func tabOffsettingNewLines(by tabsCount: UInt = 1) -> String {
+	@inlinable public func tabOffsettingNewLines(by tabsCount: UInt = 1) -> String {
 		replacing(.newLine, with: .newLine + .tab * tabsCount)
 	}
 }
@@ -128,8 +198,8 @@ public extension String {
 
 // MARK: URL
 
-public extension String {
-	var withHTTPSchemeIfIsURLWithNoScheme: String {
+extension String {
+	public var withHTTPSchemeIfIsURLWithNoScheme: String {
 		guard let originalURL = URL(string: self) else { return self }
 		if let scheme = originalURL.scheme,
 		   scheme.isNotEmpty {
