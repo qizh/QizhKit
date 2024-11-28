@@ -62,9 +62,9 @@ public enum StringOffset: Sendable {
 	public static let empty: Self = .spaces(0)
 	
 	public static let treeElement = "┣ "
-	public static let lastTreeElement = "┗ "
+	private static let lastTreeElement = "┗ "
 	public static let subtreeElement = "┃ ┣ "
-	public static let lastSubtreeElement = "┃ ┗ "
+	private static let lastSubtreeElement = "┃ ┗ "
 	
 	public static let tree: Self = .tree(spaces: 2)
 	public static func tree(spaces: UInt) -> Self {
