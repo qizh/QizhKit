@@ -61,10 +61,10 @@ public enum StringOffset: Sendable {
 	public static let tabArrow: Self = .tabs(1, suffix: "> ")
 	public static let empty: Self = .spaces(0)
 	
-	fileprivate static let treeElement = "┣ "
-	fileprivate static let lastTreeElement = "┗ "
-	fileprivate static let subtreeElement = "┃ ┣ "
-	fileprivate static let lastSubtreeElement = "┃ ┗ "
+	public static let treeElement = "┣ "
+	public static let lastTreeElement = "┗ "
+	public static let subtreeElement = "┃ ┣ "
+	public static let lastSubtreeElement = "┃ ┗ "
 	
 	public static let tree: Self = .tree(spaces: 2)
 	public static func tree(spaces: UInt) -> Self {
@@ -100,23 +100,23 @@ public enum StringOffset: Sendable {
 		}
 	}
 	
-	fileprivate var isTreeSuffix: Bool {
+	@inlinable public var isTreeSuffix: Bool {
 		suffix == Self.treeElement
 	}
 	
-	fileprivate var isTreePrefix: Bool {
+	@inlinable public var isTreePrefix: Bool {
 		prefix == Self.treeElement
 	}
 	
-	fileprivate var isSubtreeSuffix: Bool {
+	@inlinable public var isSubtreeSuffix: Bool {
 		suffix == Self.subtreeElement
 	}
 	
-	fileprivate var isSubtreePrefix: Bool {
+	@inlinable public var isSubtreePrefix: Bool {
 		prefix == Self.subtreeElement
 	}
 	
-	fileprivate var offsetString: String {
+	@inlinable public var offsetString: String {
 		switch self {
 		case .spaces: .space
 		case   .tabs: .tab
