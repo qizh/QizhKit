@@ -150,7 +150,7 @@ extension String {
 	public func offsetting(by offset: StringOffset, first: Bool) -> String {
 		if isEmpty {
 			if first {
-				return offset.value + .xMark
+				return offset.lastValue + .xMark
 			} else {
 				return .xMark
 			}
