@@ -148,6 +148,14 @@ public enum StringOffset: Sendable {
 
 extension String {
 	public func offsetting(by offset: StringOffset, first: Bool) -> String {
+		if isEmpty {
+			if first {
+				return offset.value + .xMark
+			} else {
+				return .xMark
+			}
+		}
+		
 		let lines = components(separatedBy: .newlines)
 		let lastIndex = lines.count.prev
 		
@@ -193,6 +201,28 @@ public extension String {
 	}
 	@inlinable func deleting(suffix: String) -> String {
 		hasSuffix(suffix) ? String(dropLast(suffix.count)) : self
+	}
+}
+
+// MARK: Descriptions
+
+extension Collection where Element: CustomStringConvertible {
+	@inlinable public var descriptions: [String] {
+		map(\.description)
+	}
+}
+
+// MARK: As Lines
+
+extension Collection<String> {
+	@inlinable public var asLines: String {
+		joined(separator: .newLine)
+	}
+}
+
+extension Collection<Substring> {
+	@inlinable public var asLines: String {
+		joined(separator: .newLine)
 	}
 }
 
