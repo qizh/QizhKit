@@ -101,6 +101,8 @@ public struct SafariButton<Content>: View where Content: View {
 		self.content = content()
 	}
 	
+	@available(*, deprecated, renamed: "init(opening:tintColor:openStyle:dismissButton:isActive:onOpen:onDismiss:content:)", message: "Use Color version instead of UIColor")
+	@_disfavoredOverload
 	@inlinable public init(
 		opening url: URL,
 		tint: UIColor? = .none,
@@ -123,6 +125,8 @@ public struct SafariButton<Content>: View where Content: View {
 		)
 	}
 	
+	@available(*, deprecated, renamed: "init(opening:tintColor:openStyle:dismissButton:isActive:onOpen:onDismiss:)", message: "Use Color version instead of UIColor")
+	@_disfavoredOverload
 	@inlinable public init(
 		title: Text,
 		opening url: URL,
@@ -136,6 +140,30 @@ public struct SafariButton<Content>: View where Content: View {
 		self.init(
 			opening: url,
 			tintColor: tint.map(Color.init(uiColor:)),
+			openStyle: openStyle,
+			dismissButton: dismissButton,
+			isActive: isActive,
+			onOpen: onOpen,
+			onDismiss: onDismiss,
+			content: {
+				title
+			}
+		)
+	}
+	
+	@inlinable public init(
+		title: Text,
+		opening url: URL,
+		tintColor tint: Color?,
+		openStyle: SafariButtonOpenStyle = .push,
+		dismissButton: SFSafariViewController.DismissButtonStyle = .done,
+		isActive: Binding<Bool>? = .none,
+		onOpen: (() -> Void)? = .none,
+		onDismiss: (() -> Void)? = .none
+	) where Content == Text {
+		self.init(
+			opening: url,
+			tintColor: tint,
 			openStyle: openStyle,
 			dismissButton: dismissButton,
 			isActive: isActive,
@@ -262,9 +290,11 @@ extension URL {
 	}
 }
 
-public extension View {
+extension View {
+	@available(*, deprecated, renamed: "asSafeSafariButton(opening:tintColor:openStyle:dismissButton:isActive:onOpen:onDismiss:)", message: "Use Color version instead of UIColor")
+	@_disfavoredOverload
 	@ViewBuilder
-	func asSafariButton(
+	public func asSafariButton(
 		opening url: URL?,
 		tint: UIColor? = .none,
 		openStyle: SafariButtonOpenStyle = .push,
@@ -290,10 +320,36 @@ public extension View {
 		}
 	}
 	
-	@available(iOS 14.0, *)
 	@ViewBuilder
-	func asLink(opening url: URL?) -> some View {
-		if let url = url {
+	public func asSafariButton(
+		opening url: URL?,
+		tintColor tint: Color? = .none,
+		openStyle: SafariButtonOpenStyle = .push,
+		dismissButton: BetterSafariView.SafariView.DismissButtonStyle = .done,
+		isActive: Binding<Bool>? = .none,
+		onOpen: (() -> Void)? = .none,
+		onDismiss: (() -> Void)? = .none
+	) -> some View {
+		if let url = url?.withSupportedSafariScheme {
+			SafariButton(
+				opening: url,
+				tintColor: tint,
+				openStyle: openStyle,
+				dismissButton: dismissButton,
+				isActive: isActive,
+				onOpen: onOpen,
+				onDismiss: onDismiss
+			) {
+				self
+			}
+		} else {
+			self
+		}
+	}
+	
+	@ViewBuilder
+	public func asLink(opening url: URL?) -> some View {
+		if let url {
 			Link(destination: url) {
 				self
 			}
