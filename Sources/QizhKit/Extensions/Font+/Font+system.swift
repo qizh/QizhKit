@@ -110,4 +110,16 @@ extension Font.Weight: @retroactive CaseIterable {
 			.black,
 		]
 	}
+	
+	public static var allWeightsCases: [Font.Weight] {
+		[
+			.ultraLight,
+			.thin,
+			.light,
+			.regular,
+			.medium,
+			.semibold,
+			.bold,
+		]
+	}
 }
