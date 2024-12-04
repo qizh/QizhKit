@@ -24,13 +24,9 @@ public struct DefaultTrue: Codable, Hashable, Sendable {
 	}
 	
 	public init(from decoder: Decoder) throws {
-		do {
-			let container = try decoder.singleValueContainer()
-			let wrappedValue = try container.decode(Bool.self)
-			self.init(wrappedValue: wrappedValue)
-		} catch {
-			self.init()
-		}
+		let container = try decoder.singleValueContainer()
+		let wrappedValue = try container.decode(Bool.self)
+		self.init(wrappedValue: wrappedValue)
 	}
 	
 	public func encode(to encoder: Encoder) throws {
