@@ -271,9 +271,9 @@ public extension Price {
 			details.taxes.map { tax in
 				switch tax {
 				case let .flat(amount, name):
-					return calculate(amount, name, rounded: true)
+					calculate(amount, name, rounded: true)
 				case let .percent(percent, name):
-					return calculate(value * percent.percents, name, rounded: true)
+					calculate(value * percent.percents, name, rounded: true)
 				}
 			}
 		}
