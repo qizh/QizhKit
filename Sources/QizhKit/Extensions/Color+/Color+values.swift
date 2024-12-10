@@ -10,12 +10,16 @@ import SwiftUI
 
 // MARK: Almost Clear
 
-public extension Color {
-	static let almostClear = Color(uiColor: .systemBackground).opacity(0.001)
+extension Color {
+	public static let almostClear = Color(uiColor: .systemBackground).opacity(0.001)
 }
 
-public extension UIColor {
-	static let almostClear = UIColor.systemBackground.withAlphaComponent(0.001)
+extension UIColor {
+	public static let almostClear = UIColor.systemBackground.withAlphaComponent(0.001)
+}
+
+extension ShapeStyle where Self == Color {
+	@inlinable public static var almostClear: Self { .almostClear }
 }
 
 // MARK: From UIColor
