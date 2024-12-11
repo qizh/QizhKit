@@ -212,6 +212,17 @@ extension AnyEncodable: Equatable {
 	}
 }
 
+extension AnyEncodable: Hashable {
+	public func hash(into hasher: inout Hasher) {
+		switch wrappedValue {
+		case let value as any Hashable:
+			hasher.combine(value)
+		default:
+			hasher.combine(description)
+		}
+	}
+}
+
 extension AnyEncodable: CustomStringConvertible {
 	public var description: String {
 		switch wrappedValue {
