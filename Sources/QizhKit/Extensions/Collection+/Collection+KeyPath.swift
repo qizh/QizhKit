@@ -85,6 +85,27 @@ extension Collection {
 		first(where: { transform($0) == value })
 	}
 	
+	@inlinable public func first <Value: Equatable, Sortable> (
+		by sortTransform: (Element) -> Sortable,
+		using valuesAreInIncreasingOrder: (Sortable, Sortable) throws -> Bool,
+		where compareTransform: (Element) -> Value,
+		equals value: Value
+	) rethrows -> Element? {
+		try self
+			.filter({ compareTransform($0) == value })
+			.min(by: sortTransform, using: valuesAreInIncreasingOrder)
+	}
+	
+	/// Sorting by `<`
+	@inlinable public func first <Value: Equatable> (
+		by sortTransform: (Element) -> some Comparable,
+		where compareTransform: (Element) -> Value,
+		equals value: Value
+	) -> Element? {
+		self.filter({ compareTransform($0) == value })
+			.min(by: sortTransform)
+	}
+	
 	@inlinable
 	public func contains <Value: Equatable> (
 		where transform: (Element) -> Value,
