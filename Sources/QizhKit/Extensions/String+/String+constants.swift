@@ -204,7 +204,7 @@ extension Collection<String> {
 	/// ```
 	public var asTreeBranches: String {
 		if isEmpty { return .empty }
-		if let justOne { return justOne.prefixedAsTreeBranch }
+		if let justOne { return justOne.prefixedAsLastTreeBranch }
 		
 		var output: String = .empty
 		for (index, string) in self.enumerated() {
