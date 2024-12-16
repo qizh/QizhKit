@@ -174,12 +174,12 @@ extension String {
 	
 	/// `┣ ...`
 	@inlinable public var prefixedAsTreeBranch: String {
-		.treeLineBranch + self
+		"┣ \(self)"
 	}
 	
 	/// `┗ ...`
 	@inlinable public var prefixedAsLastTreeBranch: String {
-		.treeLineEnd + self
+		"┗ \(self)"
 	}
 	
 	/// `┣ name: ...`
@@ -211,7 +211,7 @@ extension Collection<String> {
 			if index == count - 1 {
 				output += string.prefixedAsLastTreeBranch
 			} else {
-				output += string.prefixedAsTreeBranch
+				output += string.prefixedAsTreeBranch + .newLine
 			}
 		}
 		return output
