@@ -119,6 +119,16 @@ public struct LabeledValueView: View {
 		}
 	}
 	
+	public init <F: BinaryInteger> (
+		 _ value: F?,
+		   label: String? = .none
+	) {
+		switch value {
+		case .none: self.init(valueView: Self.bool(value: false).asAnyView(), label: label)
+		case .some(let wrapped): self.init("\(wrapped)", label: label)
+		}
+	}
+	
 	public init <F: BinaryFloatingPoint & CVarArg> (
 		 _ value: F?,
 		   label: String? = .none,
@@ -471,6 +481,18 @@ public extension Optional where Wrapped == CGFloat {
 	}
 	@inlinable func labeledView(label: String? = nil, fractionDigits: UInt = 0) -> LabeledValueView {
 		LabeledValueView(self, label: label, fractionDigits: fractionDigits)
+	}
+}
+
+public extension BinaryInteger {
+	@inlinable func labeledView(label: String? = .none) -> LabeledValueView {
+		LabeledValueView(self, label: label)
+	}
+}
+
+public extension Optional where Wrapped: BinaryInteger {
+	@inlinable func labeledView(label: String? = .none) -> LabeledValueView {
+		LabeledValueView(self, label: label)
 	}
 }
 
