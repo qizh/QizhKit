@@ -156,14 +156,18 @@ public extension DefaultStringInterpolation {
 	
 	mutating func appendInterpolation(
 		json value: some Encodable,
-		encoder: JSONEncoder = .init()
+		encoder providedEncoder: JSONEncoder? = .none
 	) {
-		encoder.outputFormatting = .prettyPrinted
+		let encoder: JSONEncoder = providedEncoder ?? .prettyPrinted
 		
 		do {
-			let encoded = try encoder.encode(value)
-			let string = String(decoding: encoded, as: UTF8.self)
-			appendLiteral(string)
+			let jsonData = try encoder.encode(value)
+			if let jsonString = String(data: jsonData, encoding: .utf8) {
+				appendLiteral(jsonString)
+			} else {
+				let jsonString = String(decoding: jsonData, as: UTF8.self)
+				appendLiteral(jsonString)
+			}
 		} catch {
 			appendLiteral(error.localizedDescription)
 		}
@@ -171,14 +175,18 @@ public extension DefaultStringInterpolation {
 	
 	mutating func appendInterpolation(
 		json value: Any?,
-		encoder: JSONEncoder = .init()
+		encoder providedEncoder: JSONEncoder? = .none
 	) {
-		encoder.outputFormatting = .prettyPrinted
-		
+		let encoder: JSONEncoder = providedEncoder ?? .prettyPrinted
+
 		do {
-			let encoded = try encoder.encode(AnyEncodable(value))
-			let string = String(decoding: encoded, as: UTF8.self)
-			appendLiteral(string)
+			let jsonData = try encoder.encode(AnyEncodable(value))
+			if let jsonString = String(data: jsonData, encoding: .utf8) {
+				appendLiteral(jsonString)
+			} else {
+				let jsonString = String(decoding: jsonData, as: UTF8.self)
+				appendLiteral(jsonString)
+			}
 		} catch {
 			appendLiteral(error.localizedDescription)
 		}
