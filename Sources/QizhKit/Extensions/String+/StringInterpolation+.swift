@@ -154,8 +154,10 @@ public extension DefaultStringInterpolation {
 	
 	// MARK: Debug Encode
 	
-	mutating func appendInterpolation(json value: some Encodable) {
-		let encoder = JSONEncoder()
+	mutating func appendInterpolation(
+		json value: some Encodable,
+		encoder: JSONEncoder = .init()
+	) {
 		encoder.outputFormatting = .prettyPrinted
 		
 		do {
@@ -167,8 +169,10 @@ public extension DefaultStringInterpolation {
 		}
 	}
 	
-	mutating func appendInterpolation(json value: Any?) {
-		let encoder = JSONEncoder()
+	mutating func appendInterpolation(
+		json value: Any?,
+		encoder: JSONEncoder = .init()
+	) {
 		encoder.outputFormatting = .prettyPrinted
 		
 		do {

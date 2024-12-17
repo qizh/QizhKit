@@ -8,6 +8,8 @@
 
 import Foundation
 
+// MARK: Date Formatter
+
 public extension DateFormatter {
 	static let airtable: DateFormatter = {
 		let formatter = DateFormatter()
@@ -28,6 +30,8 @@ public extension DateFormatter {
 	}()
 }
 
+// MARK: Encoder
+
 public extension JSONEncoder {
 	static let airtable: JSONEncoder = {
 		let encoder = JSONEncoder()
@@ -43,6 +47,8 @@ public extension JSONEncoder {
 		return encoder
 	}()
 }
+
+// MARK: Decoder
 
 public extension JSONDecoder {
 	static let airtable: JSONDecoder = {
