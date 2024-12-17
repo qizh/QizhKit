@@ -46,6 +46,12 @@ public extension JSONEncoder {
 		encoder.dateEncodingStrategy = .formatted(.airtable)
 		return encoder
 	}()
+	
+	static let prettyPrinted: JSONEncoder = {
+		let encoder = JSONEncoder()
+		encoder.outputFormatting = .prettyPrinted
+		return encoder
+	}()
 }
 
 // MARK: Decoder
