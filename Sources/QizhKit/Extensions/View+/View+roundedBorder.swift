@@ -320,6 +320,27 @@ extension View {
 			}
 	}
 	
+	/// Using system `RoundedRectangle` shape
+	@ViewBuilder
+	public func roundedBorder(
+		_ style: some ShapeStyle,
+		radius: CGFloat,
+		weight: CGFloat = 1,
+		position: LinePosition = .center,
+		contentShapeKind: ContentShapeKinds
+	) -> some View {
+		let shape = RoundedRectangle(radius)
+		
+		self
+			.clipShape(shape)
+			.overlay(
+				shape
+					.inset(by: position.inset(for: weight))
+					.strokeBorder(style, lineWidth: weight)
+			)
+			.contentShape(contentShapeKind, shape)
+	}
+	
 	/// Using custom made ``RoundedCornersRectangle`` shape
 	@_disfavoredOverload
 	@inlinable public func roundButton(
