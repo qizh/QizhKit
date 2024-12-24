@@ -65,7 +65,7 @@ extension Collection<String> {
 	/// ┗ value3
 	/// ```
 	/// or `name: <empty>` in case of empty collection
-	public func asTreeBranchess(named name: String) -> String {
+	public func asTreeBranches(named name: String) -> String {
 		if isEmpty {
 			"\(name): <empty>"
 		} else {
@@ -129,8 +129,8 @@ extension Collection where Element: CustomStringConvertible {
 	/// ┗ value3
 	/// ```
 	/// or `name: <empty>` in case of empty collection
-	public func asTreeBranchess(named name: String) -> String {
-		descriptions.asTreeBranchess(named: name)
+	public func asTreeBranches(named name: String) -> String {
+		descriptions.asTreeBranches(named: name)
 	}
 	
 	/// Will output tree like the following:
