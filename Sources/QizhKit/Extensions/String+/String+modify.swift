@@ -204,14 +204,6 @@ public extension String {
 	}
 }
 
-// MARK: Descriptions
-
-extension Collection where Element: CustomStringConvertible {
-	@inlinable public var descriptions: [String] {
-		map(\.description)
-	}
-}
-
 // MARK: As Lines
 
 extension Collection<String> {
