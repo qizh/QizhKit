@@ -154,164 +154,21 @@ public extension String {
 extension String {
 	/// `«...»`
 	@inlinable public var inDoubleQuotes: String {
-		.openingDoubleQuote + self + .closingDoubleQuote
+		"«\(self)»"
 	}
 	
 	/// `(...)`
 	@inlinable public var inParenthesis: String {
-		.leftParenthesis + self + .rightParenthesis
+		"(\(self))"
 	}
 	
 	/// `[...]`
 	@inlinable public var inBrackets: String {
-		.leftBracket + self + .rightBracket
+		"[\(self)]"
 	}
 	
 	/// `<...>`
 	@inlinable public var inChevrons: String {
-		.leftChevron + self + .rightChevron
-	}
-	
-	/// `┣ ...`
-	@inlinable public var prefixedAsTreeBranch: String {
-		"┣ \(self)"
-	}
-	
-	/// `┗ ...`
-	@inlinable public var prefixedAsLastTreeBranch: String {
-		"┗ \(self)"
-	}
-	
-	/// `┣ name: ...`
-	@inlinable public func asTreeBranch(named name: String) -> String {
-		"┣ \(name): \(self)"
-	}
-	
-	/// `┗ name: ...`
-	@inlinable public func asTreeLastBranch(named name: String) -> String {
-		"┗ \(name): \(self)"
-	}
-}
-
-// MARK: Collection as Tree string
-
-extension Collection<String> {
-	/// Will output tree like the following:
-	/// ```
-	/// ┣ value1
-	/// ┣ value2
-	/// ┗ value3
-	/// ```
-	public var asTreeBranches: String {
-		if isEmpty { return .empty }
-		if let justOne { return justOne.prefixedAsLastTreeBranch }
-		
-		var output: String = .empty
-		for (index, string) in self.enumerated() {
-			if index == count - 1 {
-				output += string.prefixedAsLastTreeBranch
-			} else {
-				output += string.prefixedAsTreeBranch + .newLine
-			}
-		}
-		return output
-	}
-	
-	/// Will output tree like the following:
-	/// ```
-	/// name
-	/// ┣ value1
-	/// ┣ value2
-	/// ┗ value3
-	/// ```
-	/// or `name: <empty>` in case of empty collection
-	public func asTreeBranches(named name: String) -> String {
-		if isEmpty {
-			name + .colonspace + "empty".inChevrons
-		} else {
-			name + .newLine + asTreeBranches
-		}
-	}
-	
-	/// `value 1 → value 2 → value 3`
-	public var asArrowedPath: String {
-		if isEmpty {
-			.empty
-		} else if let justOne {
-			justOne
-		} else {
-			joined(separator: .spaceArrowSpace)
-		}
-	}
-}
-
-// MARK: Dictionary as Tree string
-
-extension Dictionary<String, String> {
-	/// Will output tree like the following:
-	/// ```
-	/// ┣ key1: value1
-	/// ┣ key2: value2
-	/// ┗ key3: value3
-	/// ```
-	public var asTreeBranches: String {
-		if isEmpty { return .empty }
-		if let justOne { return justOne.value.asTreeLastBranch(named: justOne.key) }
-		
-		var outputs: [String] = .empty
-		for (index, (key, value)) in self.enumerated() {
-			if index == count - 1 {
-				outputs.append(value.asTreeLastBranch(named: key))
-			} else {
-				outputs.append(value.asTreeBranch(named: key))
-			}
-		}
-		return outputs.joined(separator: .newLine)
-	}
-	
-	/// Will output tree like the following:
-	/// ```
-	/// name
-	/// ┣ key1: value1
-	/// ┣ key2: value2
-	/// ┗ key3: value3
-	/// ```
-	/// or `name: <empty>` in case of empty Dictionary
-	public func asTreeBranches(named name: String) -> String {
-		if isEmpty {
-			name + .colonspace + "empty".inChevrons
-		} else {
-			name + .newLine + asTreeBranches
-		}
-	}
-}
-
-extension Dictionary<String, CustomStringConvertible> {
-	/// Will output tree like the following:
-	/// ```
-	/// ┣ key1: value1
-	/// ┣ key2: value2
-	/// ┗ key3: value3
-	/// ```
-	public var asTreeBranches: String {
-		Dictionary<String, String>(
-			uniqueKeysWithValues: map({($0.key, $0.value.description)})
-		)
-		.asTreeBranches
-	}
-	
-	/// Will output tree like the following:
-	/// ```
-	/// name
-	/// ┣ key1: value1
-	/// ┣ key2: value2
-	/// ┗ key3: value3
-	/// ```
-	/// or `name: <empty>` in case of empty Dictionary
-	public func asTreeBranches(named name: String) -> String {
-		Dictionary<String, String>(
-			uniqueKeysWithValues: map({($0.key, $0.value.description)})
-		)
-		.asTreeBranches(named: name)
+		"<\(self)>"
 	}
 }
