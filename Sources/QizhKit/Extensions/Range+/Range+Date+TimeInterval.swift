@@ -39,6 +39,11 @@ extension Range where Bound == TimeInterval {
 		..< date.addingTimeInterval(upperBound)
 	}
 	
+	/// Will call ``asDateRange(from:)`` using ``Date/dayStart`` of your input
+	@inlinable public func asDateRange(fromStartOf date: Date) -> Range<Date> {
+		asDateRange(from: date.dayStart)
+	}
+	
 	/// With automatic reference date – start of today is used
 	public func asDateRange() -> Range<Date> {
 		asDateRange(from: .now.dayStart)
