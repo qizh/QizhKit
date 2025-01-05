@@ -9,11 +9,6 @@
 import Foundation
 import os.log
 
-fileprivate let logger = Logger(
-	subsystem: "Coding",
-	category: "Lossy Dictionary"
-)
-
 /// Decodes Dictionaries filtering invalid key-value pairs if applicable.
 /// `@LossyDictionary` decodes Dictionaries and filters invalid key-value pairs
 /// if the Decoder is unable to decode the value.
@@ -29,19 +24,8 @@ public struct LossyDictionary <Key, Value>: Sendable
 {
 	public var wrappedValue: [Key: Value]
 	
-	fileprivate let logger = Logger(
-		subsystem: "Coding",
-		category: "Lossy Dictionary"
-	)
-	
 	public init(wrappedValue: [Key: Value]) {
 		self.wrappedValue = wrappedValue
-	}
-	
-	public static func setLogLevel(_ level: DebugDepth) {
-		Task {
-			await LossyDictionaryLogger.shared.setLogLevel(level)
-		}
 	}
 }
 
@@ -49,8 +33,21 @@ fileprivate final actor LossyDictionaryLogger {
 	fileprivate static let shared = LossyDictionaryLogger()
 	
 	fileprivate var level: DebugDepth = .minimum
+	fileprivate let logger = Logger(
+		subsystem: "Coding",
+		category: "Lossy Dictionary"
+	)
+	
 	fileprivate func setLogLevel(_ level: DebugDepth) {
 		self.level = level
+	}
+	
+	fileprivate func logger(when debug: DebugDepth) -> Logger? {
+		if debug >= self.level {
+			logger
+		} else {
+			.none
+		}
 	}
 }
 
@@ -67,7 +64,6 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
 	
 	public init(from decoder: Decoder) throws {
 		var elements: [Key: Value] = .empty
-		let logger = logger
 		do {
 			if Key.self == String.self {
 				let container = try decoder.container(keyedBy: JSONCodingKeys.self)
@@ -79,19 +75,17 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
 						elements[stringKey as! Key] = value
 					} catch let error as DecodingError {
 						Task {
-							if await LossyDictionaryLogger.shared.level > .minimum {
-								logger.warning("""
+							await LossyDictionaryLogger.shared.logger(when: .default)?
+								.warning("""
 									Skipping \(Value.self) element while decoding
 									┗ \(error.humanReadableDescription)
 									""")
-							}
 						}
 						_ = try? container.decode(AnyDecodableValue.self, forKey: key)
 					} catch {
 						Task {
-							if await LossyDictionaryLogger.shared.level > .minimum {
-								logger.warning("Skipping \(Value.self) element while decoding. \(error)")
-							}
+							await LossyDictionaryLogger.shared.logger(when: .default)?
+								.warning("Skipping \(Value.self) element while decoding. \(error)")
 						}
 						_ = try? container.decode(AnyDecodableValue.self, forKey: key)
 					}
@@ -117,19 +111,17 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
 						elements[key.intValue! as! Key] = value
 					} catch let error as DecodingError {
 						Task {
-							if await LossyDictionaryLogger.shared.level > .minimum {
-								logger.warning("""
+							await LossyDictionaryLogger.shared.logger(when: .default)?
+								.warning("""
 									Skipping \(Value.self) element while decoding
 									┗ \(error.humanReadableDescription)
 									""")
-							}
 						}
 						_ = try? container.decode(AnyDecodableValue.self, forKey: key)
 					} catch {
 						Task {
-							if await LossyDictionaryLogger.shared.level > .minimum {
-								logger.warning("Skipping \(Value.self) element while decoding. \(error)")
-							}
+							await LossyDictionaryLogger.shared.logger(when: .default)?
+								.warning("Skipping \(Value.self) element while decoding. \(error)")
 						}
 						_ = try? container.decode(AnyDecodableValue.self, forKey: key)
 					}
@@ -144,18 +136,16 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
 			}
 		} catch let error as DecodingError {
 			Task {
-				if await LossyDictionaryLogger.shared.level > .minimum {
-					logger.warning("""
+				await LossyDictionaryLogger.shared.logger(when: .default)?
+					.warning("""
 						Skipping the whole non-dictionary
 						┗ \(error.humanReadableDescription)
 						""")
-				}
 			}
 		} catch {
 			Task {
-				if await LossyDictionaryLogger.shared.level > .minimum {
-					logger.error("Non-dictionary skipped. \(error)")
-				}
+				await LossyDictionaryLogger.shared.logger(when: .default)?
+					.error("Non-dictionary skipped. \(error)")
 			}
 		}
 		
@@ -184,14 +174,6 @@ extension LossyDictionary: Encodable where Key: Encodable, Value: Encodable {
 	}
 }
 
-extension LossyDictionary: Equatable where Value: Equatable {
-	public static func == (lhs: Self, rhs: Self) -> Bool {
-		lhs.wrappedValue == rhs.wrappedValue
-	}
-}
+extension LossyDictionary: Equatable where Value: Equatable { }
 
-extension LossyDictionary: Hashable where Value: Hashable {
-	public func hash(into hasher: inout Hasher) {
-		wrappedValue.hash(into: &hasher)
-	}
-}
+extension LossyDictionary: Hashable where Value: Hashable { }
