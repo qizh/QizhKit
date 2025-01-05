@@ -9,7 +9,16 @@
 import Foundation
 import os.log
 
-fileprivate let logger = Logger(
+fileprivate final actor LossyArrayLogger {
+	fileprivate static let shared = LossyArrayLogger()
+	
+	fileprivate var level: DebugDepth = .minimum
+	fileprivate func setLogLevel(_ level: DebugDepth) {
+		self.level = level
+	}
+}
+
+fileprivate let lossyArrayLogger = Logger(
 	subsystem: "Coding",
 	category: "Lossy Array"
 )
@@ -18,6 +27,8 @@ fileprivate let logger = Logger(
 @propertyWrapper
 public struct LossyArray <Item: Codable>: Codable, EmptyProvidable, ExpressibleByArrayLiteral {
 	public var wrappedValue: [Item]
+	
+	fileprivate let logger = lossyArrayLogger
 	
 	public init(wrappedValue: [Item] = .empty) {
 		self.wrappedValue = wrappedValue
@@ -29,6 +40,7 @@ public struct LossyArray <Item: Codable>: Codable, EmptyProvidable, ExpressibleB
 	
 	public init(from decoder: Decoder) throws {
 		var elements: [Item] = .empty
+		let logger = logger
 		
 		do {
 			var container = try decoder.unkeyedContainer()
@@ -38,23 +50,39 @@ public struct LossyArray <Item: Codable>: Codable, EmptyProvidable, ExpressibleB
 					elements.append(value)
 					// logger.debug("[LossyArray] decoded \(Item.self) element")
 				} catch let error as DecodingError {
-					logger.warning("""
-						Skipping \(Item.self) element while decoding
-						┗ \(error.humanReadableDescription)
-						""")
+					Task {
+						if await LossyArrayLogger.shared.level > .minimum {
+							logger.warning("""
+								Skipping \(Item.self) element while decoding
+								┗ \(error.humanReadableDescription)
+								""")
+						}
+					}
 					_ = try? container.decode(Blancodable.self)
 				} catch {
-					logger.warning("Skipping \(Item.self) element while decoding. \(error)")
+					Task {
+						if await LossyArrayLogger.shared.level > .minimum {
+							logger.warning("Skipping \(Item.self) element while decoding. \(error)")
+						}
+					}
 					_ = try? container.decode(Blancodable.self)
 				}
 			}
 		} catch let error as DecodingError {
-			logger.warning("""
-				Skipping the whole non-array
-				┗ \(error.humanReadableDescription)
-				""")
+			Task {
+				if await LossyArrayLogger.shared.level > .minimum {
+					logger.warning("""
+						Skipping the whole non-array
+						┗ \(error.humanReadableDescription)
+						""")
+				}
+			}
 		} catch {
-			logger.warning("Non-array skipped: \(error)")
+			Task {
+				if await LossyArrayLogger.shared.level > .minimum {
+					logger.warning("Non-array skipped: \(error)")
+				}
+			}
 		}
 		
 		self.wrappedValue = elements
@@ -83,8 +111,18 @@ extension LossyArray: WithDefault {
 	@inlinable public static var `default`: Self { .init() }
 }
 
-extension LossyArray: Equatable where Item: Equatable { }
-extension LossyArray: Hashable where Item: Hashable { }
+extension LossyArray: Equatable where Item: Equatable {
+	public static func == (lhs: Self, rhs: Self) -> Bool {
+		lhs.wrappedValue == rhs.wrappedValue
+	}
+}
+
+extension LossyArray: Hashable where Item: Hashable {
+	public func hash(into hasher: inout Hasher) {
+		wrappedValue.hash(into: &hasher)
+	}
+}
+
 extension LossyArray: Sendable where Item: Sendable { }
 
 public extension KeyedDecodingContainer {
@@ -97,7 +135,11 @@ public extension KeyedDecodingContainer {
 			// print("[LossyArray] try to decode \(Wrapped.self) optionally")
 			result = try decodeIfPresent(LossyArray<Wrapped>.self, forKey: key)
 		} catch {
-			logger.warning("No value for \"\(key)\" key")
+			Task {
+				if await LossyArrayLogger.shared.level > .minimum {
+					lossyArrayLogger.warning("No value for \"\(key)\" key")
+				}
+			}
 			result = nil
 		}
 		/*

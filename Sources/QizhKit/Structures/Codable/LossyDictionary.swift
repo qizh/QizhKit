@@ -29,8 +29,28 @@ public struct LossyDictionary <Key, Value>: Sendable
 {
 	public var wrappedValue: [Key: Value]
 	
+	fileprivate let logger = Logger(
+		subsystem: "Coding",
+		category: "Lossy Dictionary"
+	)
+	
 	public init(wrappedValue: [Key: Value]) {
 		self.wrappedValue = wrappedValue
+	}
+	
+	public static func setLogLevel(_ level: DebugDepth) {
+		Task {
+			await LossyDictionaryLogger.shared.setLogLevel(level)
+		}
+	}
+}
+
+fileprivate final actor LossyDictionaryLogger {
+	fileprivate static let shared = LossyDictionaryLogger()
+	
+	fileprivate var level: DebugDepth = .minimum
+	fileprivate func setLogLevel(_ level: DebugDepth) {
+		self.level = level
 	}
 }
 
@@ -47,23 +67,32 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
 	
 	public init(from decoder: Decoder) throws {
 		var elements: [Key: Value] = .empty
+		let logger = logger
 		do {
 			if Key.self == String.self {
 				let container = try decoder.container(keyedBy: JSONCodingKeys.self)
 				let keys = try Self.extractKeys(from: decoder, container: container)
-				
+
 				for (key, stringKey) in keys {
 					do {
 						let value = try container.decode(LossyDecodableValue<Value>.self, forKey: key).value
 						elements[stringKey as! Key] = value
 					} catch let error as DecodingError {
-						logger.warning("""
-							Skipping \(Value.self) element while decoding
-							┗ \(error.humanReadableDescription)
-							""")
+						Task {
+							if await LossyDictionaryLogger.shared.level > .minimum {
+								logger.warning("""
+									Skipping \(Value.self) element while decoding
+									┗ \(error.humanReadableDescription)
+									""")
+							}
+						}
 						_ = try? container.decode(AnyDecodableValue.self, forKey: key)
 					} catch {
-						logger.warning("Skipping \(Value.self) element while decoding. \(error)")
+						Task {
+							if await LossyDictionaryLogger.shared.level > .minimum {
+								logger.warning("Skipping \(Value.self) element while decoding. \(error)")
+							}
+						}
 						_ = try? container.decode(AnyDecodableValue.self, forKey: key)
 					}
 				}
@@ -87,13 +116,21 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
 						let value = try container.decode(LossyDecodableValue<Value>.self, forKey: key).value
 						elements[key.intValue! as! Key] = value
 					} catch let error as DecodingError {
-						logger.warning("""
-							Skipping \(Value.self) element while decoding
-							┗ \(error.humanReadableDescription)
-							""")
+						Task {
+							if await LossyDictionaryLogger.shared.level > .minimum {
+								logger.warning("""
+									Skipping \(Value.self) element while decoding
+									┗ \(error.humanReadableDescription)
+									""")
+							}
+						}
 						_ = try? container.decode(AnyDecodableValue.self, forKey: key)
 					} catch {
-						logger.warning("Skipping \(Value.self) element while decoding. \(error)")
+						Task {
+							if await LossyDictionaryLogger.shared.level > .minimum {
+								logger.warning("Skipping \(Value.self) element while decoding. \(error)")
+							}
+						}
 						_ = try? container.decode(AnyDecodableValue.self, forKey: key)
 					}
 				}
@@ -106,12 +143,20 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
 				 )
 			}
 		} catch let error as DecodingError {
-			logger.warning("""
-				Skipping the whole non-dictionary
-				┗ \(error.humanReadableDescription)
-				""")
+			Task {
+				if await LossyDictionaryLogger.shared.level > .minimum {
+					logger.warning("""
+						Skipping the whole non-dictionary
+						┗ \(error.humanReadableDescription)
+						""")
+				}
+			}
 		} catch {
-			logger.error("Non-dictionary skipped. \(error)")
+			Task {
+				if await LossyDictionaryLogger.shared.level > .minimum {
+					logger.error("Non-dictionary skipped. \(error)")
+				}
+			}
 		}
 		
 		self.wrappedValue = elements
@@ -139,5 +184,14 @@ extension LossyDictionary: Encodable where Key: Encodable, Value: Encodable {
 	}
 }
 
-extension LossyDictionary: Equatable where Value: Equatable { }
-extension LossyDictionary: Hashable where Value: Hashable { }
+extension LossyDictionary: Equatable where Value: Equatable {
+	public static func == (lhs: Self, rhs: Self) -> Bool {
+		lhs.wrappedValue == rhs.wrappedValue
+	}
+}
+
+extension LossyDictionary: Hashable where Value: Hashable {
+	public func hash(into hasher: inout Hasher) {
+		wrappedValue.hash(into: &hasher)
+	}
+}
