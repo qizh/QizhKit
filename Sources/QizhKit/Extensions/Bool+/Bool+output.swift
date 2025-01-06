@@ -9,6 +9,10 @@
 import SwiftUI
 
 extension Bool {
+	public var emoji: Character {
+		self ? .checkmarkEmojiChar : .xmarkEmojiChar
+	}
+	
 	public var sign: Character {
 		self ? .boltChar : .xMarkChar
 	}
