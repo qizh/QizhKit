@@ -69,6 +69,8 @@ public extension Character {
 	/** > */ static let rightChevronChar: Character 		= ">"
 	
 	/** ⚡️ */ static let boltChar: Character = "⚡️"
+	/** ✅ */ static let checkmarkEmojiChar: Character = "✅"
+	/** ❌ */ static let xmarkEmojiChar: Character = "❌"
 }
 
 // MARK: String
@@ -142,6 +144,8 @@ public extension String {
 	/** > */ static let rightUgolnayaSkobka 	= rightChevron
 	
 	/** ⚡️ */ static let bolt = String(Character.boltChar)
+	/** ✅ */ static let checkmarkEmoji = String(Character.checkmarkEmojiChar)
+	/** ❌ */ static let xmarkEmoji = String(Character.xmarkEmojiChar)
 	
 	/** «`. `» */ static let dotspace    			= .coma + .space
 	/** «`, `» */ static let comaspace    		= .coma + .space
