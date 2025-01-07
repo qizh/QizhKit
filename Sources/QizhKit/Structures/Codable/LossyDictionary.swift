@@ -43,7 +43,7 @@ fileprivate final actor LossyDictionaryLogger {
 	}
 	
 	fileprivate func logger(when debug: DebugDepth) -> Logger? {
-		if debug >= self.level {
+		if self.level >= debug {
 			logger
 		} else {
 			.none

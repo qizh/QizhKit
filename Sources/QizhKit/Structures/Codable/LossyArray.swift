@@ -23,7 +23,7 @@ fileprivate final actor LossyArrayLogger {
 	}
 	
 	fileprivate func logger(when debug: DebugDepth) -> Logger? {
-		if debug >= self.level {
+		if self.level >= debug {
 			logger
 		} else {
 			.none
