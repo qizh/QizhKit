@@ -152,7 +152,7 @@ public extension DefaultStringInterpolation {
 		appendInterpolation(spell: NSNumber(value: value), locale: identifier)
 	}
 	
-	// MARK: Debug Encode
+	// MARK: Encode JSON
 	
 	mutating func appendInterpolation(
 		json value: some Encodable,
