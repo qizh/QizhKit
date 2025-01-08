@@ -172,6 +172,15 @@ extension View {
 	}
 }
 
+// MARK: View + Special Button
+
+extension View {
+	@inlinable public func button(copyingToClipboard text: String) -> Button<Self> {
+		Button(action: { UIPasteboard.general.string = text }, label: selfmade)
+	}
+}
+
+
 #if swift(>=5.9)
 
 // MARK: > Variadic Generics
