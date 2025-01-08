@@ -178,6 +178,13 @@ extension View {
 	@inlinable public func button(copyingToClipboard text: String) -> Button<Self> {
 		Button(action: { UIPasteboard.general.string = text }, label: selfmade)
 	}
+	
+	@inlinable public func button(copyingToClipboard text: AttributedString) -> Button<Self> {
+		Button(
+			action: { UIPasteboard.general.setObjects(.just(NSAttributedString(text))) },
+			label: selfmade
+		)
+	}
 }
 
 
