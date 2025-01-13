@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SwiftUICore
 
 extension AnyTransition {
 	@MainActor public static let unslide: Self =
