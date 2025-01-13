@@ -8,6 +8,7 @@
 
 import SwiftUI
 import Combine
+import QizhMacroKit
 
 // MARK: Progress
 
@@ -137,16 +138,16 @@ public extension String.StringInterpolation {
 
 // MARK: - Basic State
 
+@CaseName
 public enum BasicBackendFetchState: Hashable,
 									Sendable,
-									EasyCaseComparable,
-									CaseNameProvidable
+									EasyCaseComparable
 {
 	case idle, inProgress, success, failure
 }
 
-public extension BasicBackendFetchState {
-	init(_ progress: FetchProgress) {
+extension BasicBackendFetchState {
+	public init(_ progress: FetchProgress) {
 		switch progress.state {
 		case .none: 		self = .inProgress
 		case .undetermined: self = .inProgress
@@ -155,15 +156,23 @@ public extension BasicBackendFetchState {
 		}
 	}
 	
-	var progress: FetchProgress {
+	@inlinable public var progress: FetchProgress {
 		switch self {
-		case .idle: 		return .none
-		case .inProgress: 	return .undetermined
-		case .success: 		return .complete
-		case .failure: 		return .none
+		case .idle: 		.none
+		case .inProgress: 	.undetermined
+		case .success: 		.complete
+		case .failure: 		.none
 		}
 	}
 }
+
+extension BasicBackendFetchState: CustomStringConvertible {
+	@inlinable public var description: String {
+		caseName.asCamelCaseToSnakeCase
+	}
+}
+
+// MARK: - General State
 
 public protocol GeneralBackendFetchState: ImportanceProvider, Sendable {
 	var name: String { get }
