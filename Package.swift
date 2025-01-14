@@ -33,7 +33,7 @@ let package = Package(
 		// .package(url: "https://github.com/qizh/DeviceKit", from: "5.2.3"),
 		
 		/// In-app Safari
-		.package(url: "https://github.com/qizh/BetterSafariView", from: "2.4.3"),
+		.package(url: "https://github.com/qizh/BetterSafariView", from: "2.4.4"),
 		// .package(url: "https://github.com/stleamist/BetterSafariView", from: "2.4.2"),
 		// .package(url: "https://github.com/shantanubala/BetterSafariView", branch: "main"),
 		
