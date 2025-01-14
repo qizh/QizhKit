@@ -22,17 +22,17 @@ public protocol PriceCalculationProvider {
 	var price:    Price.Provider { get }
 }
 
-public extension PriceCalculationProvider {
-	@inlinable static var zero: Price.CalculatedItem { .init(Price.zero, .zero) }
-	@inlinable var isZero: Bool { all.isZero }
-	@inlinable var isNotZero: Bool { not(isZero) }
+extension PriceCalculationProvider {
+	@inlinable public static var zero: Price.CalculatedItem { .init(Price.zero, .zero) }
+	@inlinable public var isZero: Bool { all.isZero }
+	@inlinable public var isNotZero: Bool { not(isZero) }
 }
 
 // MARK: Calculated
 
 extension Price {
 	public typealias Calculated = PriceCalculationProvider
-	public struct CalculatedItem: Calculated {
+	public struct CalculatedItem: Equatable, Calculated {
 		public let price: Price.Provider
 		fileprivate let amount: UInt
 		
