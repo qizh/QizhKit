@@ -9,8 +9,9 @@
 import SwiftUI
 import UIKit
 
-public extension Image {
-	init(
+extension Image {
+	@_disfavoredOverload
+	public init(
 		systemName: String,
 		pointSize: CGFloat = 16,
 		weight: UIImage.SymbolWeight = .unspecified,
