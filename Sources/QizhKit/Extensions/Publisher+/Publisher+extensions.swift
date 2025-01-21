@@ -722,6 +722,10 @@ public extension Publisher where Output == String {
 	@inlinable func asValueChange() -> ValueChangePublisher { asValueChange(first: "") }
 	@inlinable func previousValue() -> PreviousValuePublisher { previousValue(first: "") }
 }
+public extension Publisher where Output: EmptyProvidable {
+	@inlinable func asValueChange() -> ValueChangePublisher { asValueChange(first: .empty) }
+	@inlinable func previousValue() -> PreviousValuePublisher { previousValue(first: .empty) }
+}
 
 public struct PublishedValueChange<Element> {
 	public let previous: Element
@@ -735,6 +739,10 @@ public struct PublishedValueChange<Element> {
 	public init(_ previous: Element, _ current: Element) {
 		self.previous = previous
 		self.current = current
+	}
+	
+	public init() where Element: EmptyProvidable {
+		self.init(previous: .empty, current: .empty)
 	}
 	
 	public init<T>(_ collection: T) where T: Collection, T.Element == Element {
@@ -754,6 +762,8 @@ public struct PublishedValueChange<Element> {
 }
 
 extension PublishedValueChange: Equatable where Element: Equatable { }
+extension PublishedValueChange: Hashable where Element: Hashable { }
+extension PublishedValueChange: Sendable where Element: Sendable { }
 
 public extension PublishedValueChange where Element: Equatable {
 	var haveNoChange: Bool { previous == current }
