@@ -8,6 +8,7 @@
 
 import Foundation
 import Combine
+import os.log
 
 @MainActor private var cancellables = Set<AnyCancellable>()
 
@@ -108,34 +109,58 @@ extension Published
 
 // MARK: Codable
 
+fileprivate let jsonDefaultsPublishedLogger = Logger(subsystem: "Published", category: "Json Defaults")
+
 extension Published
 	where Value: Codable
 {
 	@MainActor public init(
 		wrappedValue defaultValue: Value,
 		codableKey key: String,
-		store: UserDefaults
+		store: UserDefaults,
+		decoder: JSONDecoder = .init(),
+		encoder: JSONEncoder = .init()
 	) {
-		if let data = store.data(forKey: key) {
-			do {
-				let current = try JSONDecoder().decode(Value.self, from: data)
-				self.init(initialValue: current)
-			} catch {
-				self.init(initialValue: defaultValue)
-			}
-		} else {
+		do {
+			let current: Value = try store.model(forKey: key, decoder: decoder)
+			self.init(initialValue: current)
+		} catch {
+			jsonDefaultsPublishedLogger.warning("Can't decode \(Value.self) from UserDefaults for `\(key)` key.\nInitializing with default value.\nError: \(error)")
 			self.init(initialValue: defaultValue)
 		}
 		
 		projectedValue
 			.sink { value in
 				do {
-					let data = try JSONEncoder().encode(value)
-					store.set(data, forKey: key)
+					try store.saveModel(value, forKey: key, encoder: encoder)
 				} catch {
-					print("::publisher: Can't encode \(Value.self) to save in UserDefaults for `\(key)` key")
+					jsonDefaultsPublishedLogger.error("Can't encode \(Value.self) to save in UserDefaults for `\(key)` key.\nError: \(error)")
 				}
 			}
 			.store(in: &cancellables)
+	}
+}
+
+// MARK: UserDefaults + Model
+
+extension UserDefaults {
+	public func model<Model: Decodable>(
+		forKey key: String,
+		decoder: JSONDecoder = .init()
+	) throws -> Model {
+		if let data = data(forKey: key) {
+			try decoder.decode(Model.self, from: data)
+		} else {
+			throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "No data found for key \(key)"))
+		}
+	}
+	
+	public func saveModel<Model: Encodable>(
+		_ model: Model,
+		forKey key: String,
+		encoder: JSONEncoder = .init()
+	) throws {
+		let data = try encoder.encode(model)
+		set(data, forKey: key)
 	}
 }

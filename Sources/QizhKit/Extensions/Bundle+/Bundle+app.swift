@@ -8,14 +8,27 @@
 
 import Foundation
 
-@MainActor fileprivate var cachedAppBundle: Bundle?
+fileprivate final class BundleKeeper {
+	fileprivate static let cachedAppBundle: Bundle? = {
+		var result: Bundle? = .none
+		var components = Bundle.main.bundleURL.path.split(separator: .slashChar)
+		
+		if let index = components.lastIndex(where: { $0.hasSuffix(".app") }) {
+			components.removeLast((components.count - 1) - index)
+			result = Bundle(path: components.joined(separator: .slash))
+		}
+		
+		return result
+	}()
+}
 
 extension Bundle {
 	/// Return the main bundle when in the app or an app extension.
-	@MainActor public static var app: Bundle {
-		cachedAppBundle ?? findAppBundle() ?? .main
+	public static var app: Bundle {
+		BundleKeeper.cachedAppBundle ?? .main
 	}
 	
+	/*
 	@MainActor private static func findAppBundle() -> Bundle? {
 		var components = main.bundleURL.path.split(separator: .slashChar)
 		
@@ -26,15 +39,16 @@ extension Bundle {
 		
 		return cachedAppBundle
 	}
+	*/
 	
 	/// Finds the main app's bundle and returns its bundle identifier.
 	/// - Warning: Unwrapping an optional identifier since the app should always have an identifier.
-	@MainActor public static var appIdentifier: String {
+	public static var appIdentifier: String {
 		app.bundleIdentifier
 			.forceUnwrap(because: "App will always have an identifier")
 	}
 	
-	@MainActor public static var mainIdentifier: String {
+	public static var mainIdentifier: String {
 		main.bundleIdentifier
 			.forceUnwrap(because: "Bundle always have an identifier")
 	}

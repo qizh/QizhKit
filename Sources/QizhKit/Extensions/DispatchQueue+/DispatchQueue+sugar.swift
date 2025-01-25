@@ -11,10 +11,10 @@ import SwiftUI
 public func execute(
 	in ms: Int = .zero,
 	withAnimation animation: Animation? = .none,
-	_ work: @escaping @Sendable () -> Void
+	_ work: @escaping @Sendable @MainActor () -> Void
 ) {
-	var action: @Sendable () -> Void
-	if let animation = animation {
+	var action: @Sendable @MainActor () -> Void
+	if let animation {
 		action = {
 			withAnimation(animation) {
 				work()
@@ -37,7 +37,7 @@ public func execute(
 
 public func execute <T> (
 	in ms: Int = .zero,
-	_ work: @escaping @Sendable (T) -> Void,
+	_ work: @escaping @Sendable @MainActor (T) -> Void,
 	_ argument: T
 ) where T: Sendable {
 	if ms.isZero {
@@ -54,7 +54,7 @@ public func execute <T> (
 
 public func execute <T1, T2> (
 	in ms: Int = .zero,
-	_ work: @escaping @Sendable (T1, T2) -> Void,
+	_ work: @escaping @Sendable @MainActor (T1, T2) -> Void,
 	_ argument1: T1,
 	_ argument2: T2
 ) where T1: Sendable,
@@ -92,7 +92,7 @@ public func executing(
 }
 
 @inlinable public func animating(
-	_ work: @escaping MainQueue.Callback,
+	_ work: @escaping @Sendable () -> Void,
 	with animation: Animation?
 ) -> () -> Void {
 	{ withAnimation(animation, work) }
@@ -203,11 +203,11 @@ public enum ExecutionFlow: Equatable, Sendable {
 }
 
 public struct MainQueue {
-	public typealias Callback = @Sendable () -> Void
-	public typealias CallbackWithValue<T> = @Sendable (T) -> Void where T: Sendable
-	public typealias CallbackWithTwoValues<T1, T2> = @Sendable (T1, T2) -> Void
+	public typealias Callback = @Sendable @MainActor () -> Void
+	public typealias CallbackWithValue<T> = @Sendable @MainActor (T) -> Void where T: Sendable
+	public typealias CallbackWithTwoValues<T1, T2> = @Sendable @MainActor (T1, T2) -> Void
 		where T1: Sendable, T2: Sendable
-	public typealias CallbackWithThreeValues<T1, T2, T3> = @Sendable (T1, T2, T3) -> Void
+	public typealias CallbackWithThreeValues<T1, T2, T3> = @Sendable @MainActor (T1, T2, T3) -> Void
 		where T1: Sendable, T2: Sendable, T3: Sendable
 
 	@inlinable public static func call(in milliseconds: Int, execute work: @escaping Callback) {
