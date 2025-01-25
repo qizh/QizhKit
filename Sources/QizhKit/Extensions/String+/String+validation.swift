@@ -27,12 +27,12 @@ public extension String {
 	@inlinable var isValidEmail: Bool { self.is(valid: .email) }
 	@inlinable var isValidYouTubeCode: Bool { self.is(valid: .youtubeVideoCode) }
 	// @available(iOSApplicationExtension, unavailable)
-	@inlinable var isValidURL: Bool {
-		URL(string: self)
-			.map { url in
-				UIApplication.shared.canOpenURL(url)
-			}
-			?? false
+	@inlinable @MainActor var isValidURL: Bool {
+		if let url = URL(string: self) {
+			UIApplication.shared.canOpenURL(url)
+		} else {
+			false
+		}
 	}
 }
 

@@ -199,11 +199,11 @@ public struct GenericType: CustomStringConvertible, Updatable {
 	
 	// MARK: > Inline Type
 	
-	public struct InlineType:
-		OptionSet,
-		WithDefault,
-		CustomStringConvertible,
-		ExpressibleByIntegerLiteral
+	public struct InlineType: OptionSet,
+							  Sendable,
+							  WithDefault,
+							  CustomStringConvertible,
+							  ExpressibleByIntegerLiteral
 	{
 		public let rawValue: Int
 		public init(rawValue: RawValue) {

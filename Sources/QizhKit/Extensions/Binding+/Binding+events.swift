@@ -12,11 +12,9 @@ public extension Binding {
 	@available(*, deprecated, renamed: "on(change:_:)", message: "Only unified .on synthax is going to be supported")
 	@discardableResult @inlinable
 	func didSet(
-		execute callback: @escaping (Value) -> Void,
+		execute callback: @escaping @Sendable (Value) -> Void,
 		_ flow: ExecutionFlow = .current
-	)
-		-> Binding
-	{
+	) -> Binding where Value: Sendable {
 		Binding(
 			get: { self.wrappedValue },
 			set: { value in
@@ -29,9 +27,9 @@ public extension Binding {
 	@available(*, deprecated, renamed: "on(change:_:)", message: "Only unified .on synthax is going to be supported")
 	@discardableResult @inlinable
 	func didSet(
-		execute callback: @escaping () -> Void,
+		execute callback: @escaping @Sendable () -> Void,
 		_ flow: ExecutionFlow = .current
-	) -> Binding {
+	) -> Binding where Value: Sendable {
 		Binding(
 			get: { self.wrappedValue },
 			set: { value in
@@ -44,9 +42,9 @@ public extension Binding {
 	@available(*, deprecated, renamed: "on(change:_:)", message: "Only unified .on synthax is going to be supported")
 	@discardableResult @inlinable
 	func didChange(
-		execute callback: @escaping (_ from: Value, _ to: Value) -> Void,
+		execute callback: @escaping @Sendable (_ from: Value, _ to: Value) -> Void,
 		_ flow: ExecutionFlow = .current
-	) -> Binding {
+	) -> Binding where Value: Sendable {
 		Binding(
 			get: { self.wrappedValue },
 			set: { value in
@@ -57,7 +55,10 @@ public extension Binding {
 	}
 	
 	@available(*, deprecated, renamed: "on(nil:_:)", message: "Only unified .on synthax is going to be supported")
-	@inlinable func onNil<V>(execute callback: @escaping () -> Void) -> Binding<V?> where Value == V? {
+	@inlinable func onNil<V>(
+		execute callback: @escaping @Sendable () -> Void
+	) -> Binding<V?> where Value == V?,
+						   V: Sendable {
 		Binding(
 			get: { self.wrappedValue },
 			set: {
@@ -70,7 +71,9 @@ public extension Binding {
 
 public extension Binding where Value == Bool {
 	@available(*, deprecated, renamed: "on(false:_:)", message: "Only unified .on synthax is going to be supported")
-	@inlinable func onFalse(execute callback: @escaping () -> Void) -> Binding {
+	@inlinable func onFalse(
+		execute callback: @escaping @Sendable () -> Void
+	) -> Binding {
 		Binding(
 			get: { self.wrappedValue },
 			set: {
@@ -81,7 +84,9 @@ public extension Binding where Value == Bool {
 	}
 	
 	@available(*, deprecated, renamed: "on(true:_:)", message: "Only unified .on synthax is going to be supported")
-	@inlinable func onTrue(execute callback: @escaping () -> Void) -> Binding {
+	@inlinable func onTrue(
+		execute callback: @escaping @Sendable () -> Void
+	) -> Binding {
 		Binding(
 			get: { self.wrappedValue },
 			set: {
@@ -96,14 +101,18 @@ public extension Binding where Value == Bool {
 /// getter, setter, readonly
 
 public extension Binding {
-	@inlinable func readonly<T>(for key: KeyPath<Value, T>) -> Binding<T> {
+	@inlinable func readonly<T>(
+		for key: @escaping @Sendable (Value) -> T
+	) -> Binding<T> where Value: Sendable {
 		Binding<T>(
-			get: { self.wrappedValue[keyPath: key] },
+			get: { key(self.wrappedValue) },
 			set: { _ in }
 		)
 	}
 	
-	@inlinable func optional(default value: Value) -> Binding<Value?> {
+	@inlinable func optional(
+		default value: Value
+	) -> Binding<Value?> where Value: Sendable {
 		Binding<Value?>(
 			get: { self.wrappedValue },
 			set: { self.wrappedValue = $0 ?? value }
@@ -118,11 +127,15 @@ public extension Binding {
 		{ self.wrappedValue = $0 }
 	}
 	
-	@inlinable func getter<T>(for key: KeyPath<Value, T>) -> () -> T {
+	@inlinable func getter<T>(
+		for key: KeyPath<Value, T>
+	) -> () -> T {
 		{ self.wrappedValue[keyPath: key] }
 	}
 	
-	@inlinable func setter<T>(for key: ReferenceWritableKeyPath<Value, T>) -> (T) -> Void {
+	@inlinable func setter<T>(
+		for key: ReferenceWritableKeyPath<Value, T>
+	) -> (T) -> Void {
 		{ self.wrappedValue[keyPath: key] = $0 }
 	}
 }
@@ -133,9 +146,9 @@ public extension Binding {
 public extension Binding {
 	@discardableResult @inlinable
 	func on(
-		change action: @escaping (Value) -> Void,
+		change action: @escaping @Sendable (Value) -> Void,
 		       _ flow: ExecutionFlow = .current
-	) -> Binding {
+	) -> Binding where Value: Sendable {
 		.init(
 			get: { self.wrappedValue },
 			set: { value in
@@ -147,9 +160,9 @@ public extension Binding {
 	
 	@discardableResult @inlinable
 	func on(
-		change action: @escaping () -> Void,
+		change action: @escaping @Sendable () -> Void,
 		       _ flow: ExecutionFlow = .current
-	) -> Binding {
+	) -> Binding where Value: Sendable {
 		Binding(
 			get: { self.wrappedValue },
 			set: { value in
@@ -161,9 +174,9 @@ public extension Binding {
 	
 	@discardableResult @inlinable
 	func on(
-		change action: @escaping (_ from: Value, _ to: Value) -> Void,
+		change action: @escaping @Sendable (_ from: Value, _ to: Value) -> Void,
 		       _ flow: ExecutionFlow = .current
-	) -> Binding {
+	) -> Binding where Value: Sendable {
 		Binding(
 			get: { self.wrappedValue },
 			set: { value in
@@ -181,23 +194,27 @@ public extension Binding {
 public extension Binding {
 	@discardableResult @inlinable
 	func on <Wrapped> (
-		defined action: @escaping (Wrapped) -> Void,
+		defined action: @escaping @Sendable (Wrapped) -> Void,
 				_ flow: ExecutionFlow = .current
-	) -> Binding where Value == Wrapped? {
+	) -> Binding where Value == Wrapped?,
+					   Wrapped: Sendable {
 		Binding(
 			get: { self.wrappedValue },
 			set: { value in
 				self.wrappedValue = value
-				value.map(action, flow.proceed)
+				if let value {
+					flow.proceed(with: action, value)
+				}
 			}
 		)
 	}
 	
 	@discardableResult @inlinable
 	func on <Wrapped> (
-		defined action: @escaping () -> Void,
+		defined action: @escaping @Sendable () -> Void,
 				_ flow: ExecutionFlow = .current
-	) -> Binding where Value == Wrapped? {
+	) -> Binding where Value == Wrapped?,
+					   Wrapped: Sendable {
 		Binding(
 			get: { self.wrappedValue },
 			set: { value in
@@ -209,9 +226,10 @@ public extension Binding {
 	
 	@discardableResult @inlinable
 	func on <Wrapped> (
-		nil action: @escaping () -> Void,
+		nil action: @escaping @Sendable () -> Void,
 			_ flow: ExecutionFlow = .current
-	) -> Binding where Value == Wrapped? {
+	) -> Binding where Value == Wrapped?,
+					   Wrapped: Sendable {
 		Binding(
 			get: { self.wrappedValue },
 			set: { value in
@@ -224,10 +242,10 @@ public extension Binding {
 
 // MARK: .on collection
 
-public extension Binding where Value: Collection {
+public extension Binding where Value: Collection, Value: Sendable {
 	@discardableResult @inlinable
 	func on(
-		empty action: @escaping () -> Void,
+		empty action: @escaping @Sendable () -> Void,
 		_ flow: ExecutionFlow = .current
 	) -> Binding {
 		Binding(
@@ -241,7 +259,7 @@ public extension Binding where Value: Collection {
 	
 	@discardableResult @inlinable
 	func on(
-		nonEmpty action: @escaping () -> Void,
+		nonEmpty action: @escaping @Sendable () -> Void,
 		_ flow: ExecutionFlow = .current
 	) -> Binding {
 		Binding(
@@ -255,7 +273,7 @@ public extension Binding where Value: Collection {
 	
 	@discardableResult @inlinable
 	func on(
-		nonEmpty action: @escaping (Value) -> Void,
+		nonEmpty action: @escaping @Sendable (Value) -> Void,
 		_ flow: ExecutionFlow = .current
 	) -> Binding {
 		Binding(
@@ -273,7 +291,7 @@ public extension Binding where Value: Collection {
 
 public extension Binding where Value == Bool {
 	@inlinable func on(
-		false action: @escaping () -> Void,
+		false action: @escaping @Sendable () -> Void,
 		      _ flow: ExecutionFlow = .current
 	) -> Binding {
 		Binding(
@@ -286,7 +304,7 @@ public extension Binding where Value == Bool {
 	}
 	
 	@inlinable func on(
-		true action: @escaping () -> Void,
+		true action: @escaping @Sendable () -> Void,
 		     _ flow: ExecutionFlow = .current
 	) -> Binding {
 		Binding(

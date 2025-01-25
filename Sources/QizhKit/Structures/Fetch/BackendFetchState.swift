@@ -222,7 +222,7 @@ public extension BackendFetchState {
 }
 
 public protocol BackendFetchStateWithResult {
-	associatedtype Value
+	associatedtype Value: Sendable
 	var isSuccess: Bool { get }
 	var value: Value? { get }
 }
@@ -235,13 +235,13 @@ public protocol BackendFetchStateWithCollectionResult: BackendFetchStateWithResu
 }
 
 typealias GeneralBackendFetchStateWithResult = GeneralBackendFetchState & BackendFetchStateWithResult
-extension BackendFetchState: GeneralBackendFetchStateWithResult { }
+extension BackendFetchState: GeneralBackendFetchStateWithResult where Value: Sendable { }
 
 extension Result: CaseComparable { }
 
 extension BackendFetchState: Equatable where Value: Equatable { }
 extension BackendFetchState: Hashable where Value: Hashable { }
-extension BackendFetchState: Sendable where Value: Sendable { }
+// extension BackendFetchState: Sendable where Value: Sendable { }
 
 extension BackendFetchState: Identifiable {
 	public var id: String {
@@ -267,29 +267,49 @@ extension BackendFetchState: Identifiable {
 	}
 }
 
-fileprivate struct BackendFetcherName {
-	static private var fetcherNames: [String: String] = .init()
-	static fileprivate func set<T>(name: String, for type: T.Type) {
-		fetcherNames[String(describing: type)] = name
+fileprivate class BackendFetcherName: @unchecked Sendable {
+	// Singleton instance
+	static let shared = BackendFetcherName()
+	
+	// Private initializer to enforce singleton usage
+	private init() {}
+	
+	// Private mutable state
+	private var fetcherNames: [String: String] = [:]
+	
+	private let queue = DispatchQueue(label: "com.yourapp.BackendFetcherNameQueue", attributes: .concurrent)
+	
+	func set<T>(name: String, for type: T.Type) {
+		let key = String(describing: type)
+		queue.async(flags: .barrier) {
+			self.fetcherNames[key] = name
+		}
 	}
-	static fileprivate func of<T>(_ type: T.Type) -> String? {
-		fetcherNames[String(describing: type)]
+	
+	func of<T>(_ type: T.Type) -> String? {
+		let key = String(describing: type)
+		return queue.sync {
+			fetcherNames[key]
+		}
 	}
 }
 
 public extension BackendFetchState {
+	// Method to set the fetcher name
 	static func fetcherName(_ name: String) -> String {
-		BackendFetcherName.set(name: name, for: Value.self)
+		BackendFetcherName.shared.set(name: name, for: Value.self)
 		return name
 	}
+	
+	// Computed property to get the fetcher name
 	var fetcherName: String? {
-		BackendFetcherName.of(Value.self)
+		BackendFetcherName.shared.of(Value.self)
 	}
 }
 
 // MARK: - State
 
-public enum BackendFetchState<Value> {
+public enum BackendFetchState<Value: Sendable>: Sendable {
 	case idle
 	case inProgress(_ value: FetchProgress = .default)
 	case fetched(_ result: Result<Value, FetchError>)
@@ -527,7 +547,7 @@ public extension GeneralBackendFetchState {
 	@inlinable func mapIdle<I: View>(@ViewBuilder to view: () -> I) -> I? { isIdle ? view() : nil }
 	@inlinable func mapIdle<I: View>(             to view: I      ) -> I? { isIdle ? view   : nil }
 //	@inlinable func whenIdle<I: View>(@ViewBuilder show view: () -> I) -> I? { isIdle ? view() : nil }
-	@inlinable var idleDefaultView: Pixel? { isIdle ? Pixel() : nil }
+	@inlinable @MainActor var idleDefaultView: Pixel? { isIdle ? Pixel() : nil }
 //	@inlinable var idleDefaultView: Pixel? { isIdle.then(use: Pixel()) }
 
 	// MARK: >> Progress
@@ -540,8 +560,8 @@ public extension GeneralBackendFetchState {
 		isInProgress.then(produce: view)
 			?? (success && isSuccess).then(view: view)
 	}
-	@inlinable var inProgressDefaultView: ProgressView? { inProgressDefaultView() }
-	@inlinable func inProgressDefaultView(
+	@inlinable @MainActor var inProgressDefaultView: ProgressView? { inProgressDefaultView() }
+	@MainActor func inProgressDefaultView(
 		size: ProgressView.Size = .visual,
 		success: Bool = false,
 		color mode: ProgressView.ColorMode = .mono,
@@ -555,24 +575,25 @@ public extension GeneralBackendFetchState {
 
 	// MARK: >> Idle + Progress
 	
-	@inlinable  var defaultIdleAndProgress: _ConditionalContent<Pixel, ProgressView>? {
+	@inlinable @MainActor var defaultIdleAndProgress: _ConditionalContent<Pixel, ProgressView>? {
 		defaultIdleAndProgress()
 	}
 	
-	@inlinable func defaultIdleAndProgress(
+	@MainActor func defaultIdleAndProgress(
 		size: ProgressView.Size = .visual,
 		color: ProgressView.ColorMode = .mono,
 		success: Bool = false,
 		show visibleStates: ProgressView.StatesSet = .all
 	) -> _ConditionalContent<Pixel, ProgressView>? {
 		if isIdle {
-			return ViewBuilder.buildEither(first: Pixel())
+			ViewBuilder.buildEither(first: Pixel())
 		} else if isInProgress || (isSuccess && success) {
-			return ViewBuilder.buildEither(second:
+			ViewBuilder.buildEither(second:
 				ProgressView(state: self, size: size, show: visibleStates, color: color)
 			)
+		} else {
+			nil
 		}
-		return nil
 	}
 }
 

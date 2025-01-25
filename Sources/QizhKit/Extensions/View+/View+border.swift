@@ -12,12 +12,12 @@ public struct BorderCrafterValues {
 	
 	// MARK: Weight
 	
-	public struct Weights {
-		 public typealias Value = CGFloat
-		 public typealias Key = KeyPath<Self, Value>
+	public struct Weights: Sendable {
+		public typealias Value = CGFloat
+		public typealias Key = KeyPath<Self, Value>
 		private init() {}
 		private static let instance: Self = .init()
-		 public static func value(for key: Key) -> Value {
+		public static func value(for key: Key) -> Value {
 			instance[keyPath: key]
 		}
 		
@@ -69,12 +69,12 @@ public struct BorderCrafterValues {
 	
 	// MARK: Opacities
 	
-	public struct Opacities {
-		 public typealias Value = Double
-		 public typealias Key = KeyPath<Self, Value>
+	public struct Opacities: Sendable {
+		public typealias Value = Double
+		public typealias Key = KeyPath<Self, Value>
 		private init() {}
 		private static let instance: Self = .init()
-		 public static func value(for key: Key) -> Value {
+		public static func value(for key: Key) -> Value {
 			instance[keyPath: key]
 		}
 
@@ -146,12 +146,12 @@ public struct BorderCrafterValues {
 	
 	// MARK: Colors
 	
-	public struct Colors {
-		 public typealias Value = Color
-		 public typealias Key = KeyPath<Self, Value>
+	public struct Colors: Sendable {
+		public typealias Value = Color
+		public typealias Key = KeyPath<Self, Value>
 		private init() {}
 		private static let instance: Self = .init()
-		 public static func value(for key: Key) -> Value {
+		public static func value(for key: Key) -> Value {
 			instance[keyPath: key]
 		}
 		
@@ -204,12 +204,12 @@ public struct BorderCrafterValues {
 		public let cSB : Value = Value(.secondarySystemBackground)
 	}
 	
-	public struct UIColors {
-		 public typealias Value = UIColor
-		 public typealias Key = KeyPath<Self, Value>
+	public struct UIColors: Sendable {
+		public typealias Value = UIColor
+		public typealias Key = KeyPath<Self, Value>
 		private init() {}
 		private static let instance: Self = .init()
-		 public static func value(for key: Key) -> Value {
+		public static func value(for key: Key) -> Value {
 			instance[keyPath: key]
 		}
 		
@@ -340,11 +340,11 @@ public struct BorderCrafter <Source : View> : Updatable {
 // MARK: Modifier
 
 public extension View {
-	@inlinable func borderColor(_ color: Color, weight: CGFloat) -> some View {
+	@inlinable @MainActor func borderColor(_ color: Color, weight: CGFloat) -> some View {
 		border(color, width: weight)
 	}
 	
-	@inlinable var border: BorderCrafter<Self> {
+	@inlinable @MainActor var border: BorderCrafter<Self> {
 		.init(self)
 	}
 }

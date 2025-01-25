@@ -11,32 +11,28 @@ import SwiftUI
 // MARK: Background, Overlay
 
 public extension View {
-	@inlinable
-	func background <Background> (
+	@inlinable @MainActor func background <Background> (
 		_ alignment: Alignment,
 		_ view: Background
 	) -> some View where Background: View {
 		background(view, alignment: alignment)
 	}
 	
-	@inlinable
-	func overlay <Overlay> (
+	@inlinable @MainActor func overlay <Overlay> (
 		_ alignment: Alignment,
 		_ view: Overlay
 	) -> some View where Overlay: View {
 		overlay(view, alignment: alignment)
 	}
 	
-	@inlinable
-	func background <Background> (
+	@inlinable @MainActor func background <Background> (
 		_ alignment: Alignment,
 		@ViewBuilder view: () -> Background
 	) -> some View where Background: View {
 		background(view(), alignment: alignment)
 	}
 	
-	@inlinable
-	func overlay <Overlay> (
+	@inlinable @MainActor func overlay <Overlay> (
 		_ alignment: Alignment,
 		@ViewBuilder view: () -> Overlay
 	) -> some View where Overlay: View {
@@ -44,16 +40,14 @@ public extension View {
 	}
 	
 	@available(iOS, obsoleted: 15, message: "Implemented in SwiftUI")
-	@inlinable
-	func background <Background> (
+	@inlinable @MainActor func background <Background> (
 		@ViewBuilder view: () -> Background
 	) -> some View where Background: View {
 		background(view(), alignment: .center)
 	}
 	
 	@available(iOS, obsoleted: 15, message: "Implemented in SwiftUI")
-	@inlinable
-	func overlay <Overlay> (
+	@inlinable @MainActor func overlay <Overlay> (
 		@ViewBuilder view: () -> Overlay
 	) -> some View where Overlay: View {
 		overlay(view(), alignment: .center)
@@ -62,9 +56,8 @@ public extension View {
 
 // MARK: Library Content
 
-@available(iOS 14.0, *)
 public struct BackgroundAndOverlaySugarLibraryContent: LibraryContentProvider {
-	@LibraryContentBuilder
+	@LibraryContentBuilder @MainActor
 	public func modifiers <Base: View> (base: Base) -> [LibraryItem] {
 		[
 			LibraryItem(
@@ -103,20 +96,23 @@ public struct BackgroundAndOverlaySugarLibraryContent: LibraryContentProvider {
 
 public extension View {
 	@available(*, deprecated, renamed: "background(_:_:)")
-	@inlinable
-	func background<Background>(aligned: Alignment, _ view: Background) -> some View where Background: View {
+	@inlinable @MainActor func background<Background>(
+		aligned: Alignment,
+		_ view: Background
+	) -> some View where Background: View {
 		background(view, alignment: aligned)
 	}
 	
 	@available(*, deprecated, renamed: "overlay(_:_:)")
-	@inlinable
-	func overlay<Overlay>(aligned: Alignment, _ view: Overlay) -> some View where Overlay: View {
+	@inlinable @MainActor func overlay<Overlay>(
+		aligned: Alignment,
+		_ view: Overlay
+	) -> some View where Overlay: View {
 		overlay(view, alignment: aligned)
 	}
 	
 	@available(*, deprecated, renamed: "background(_:view:)")
-	@inlinable
-	func background <Background: View> (
+	@inlinable @MainActor func background <Background: View> (
 		aligned alignment: Alignment,
 		@ViewBuilder _ content: () -> Background
 	) -> some View {
@@ -124,8 +120,7 @@ public extension View {
 	}
 	
 	@available(*, deprecated, renamed: "overlay(_:view:)")
-	@inlinable
-	func overlay <Overlay: View> (
+	@inlinable @MainActor func overlay <Overlay: View> (
 		aligned alignment: Alignment,
 		@ViewBuilder _ content: () -> Overlay
 	) -> some View {

@@ -8,12 +8,12 @@
 
 import SwiftUI
 
-public extension View {
+extension View {
 	@inlinable
-	func animate <Value: Equatable> (
+	public func animate <Value: Equatable> (
 		using anim: Animation = .easeInOut(duration: 0.3),
 		updating value: Value,
-		_ action: @escaping () -> Void
+		_ action: @escaping @Sendable () -> Void
 	) -> some View {
 		animation(anim, value: value)
 		.onAppear {
@@ -30,8 +30,9 @@ public extension View {
 		*/
     }
 	
+	#if swift(<6.0)
 	@inlinable
-	func animate <Value: Equatable, Root>(
+	public func animate <Value: Equatable, Root>(
 //		assigning value: @escaping @autoclosure () -> Value,
 		assigning value: Value,
 		to keyPath: ReferenceWritableKeyPath<Root, Value>,
@@ -50,7 +51,7 @@ public extension View {
     }
 	
 	@inlinable
-	func animateForever <Value: Equatable> (
+	public func animateForever <Value: Equatable> (
 		using anim: Animation = Animation.easeInOut(duration: 0.3),
 		autoreverses: Bool = false,
 		updating value: Value,
@@ -78,7 +79,7 @@ public extension View {
     }
 	
 	@inlinable
-	func animateForever <Value: Equatable, Root> (
+	public func animateForever <Value: Equatable, Root> (
 //		assigning value: @escaping @autoclosure () -> Value,
 		assigning value: Value,
 		to keyPath: ReferenceWritableKeyPath<Root, Value>,
@@ -96,9 +97,10 @@ public extension View {
 			}
 		}
 	}
+	#endif
 	
 	@inlinable
-	func animateForever <Value: Equatable> (
+	public func animateForever <Value: Equatable> (
 		assigning value: Value,
 		to binding: Binding<Value>,
 		using anim: Animation = .linear(duration: 1),
@@ -140,18 +142,18 @@ extension View {
 	}
 }
 
-public extension AnyTransition {
-	static func + (l: AnyTransition, r: AnyTransition) -> AnyTransition {
-		l.combined(with: r)
+extension AnyTransition {
+	public static func + (lhs: AnyTransition, rhs: AnyTransition) -> AnyTransition {
+		lhs.combined(with: rhs)
 	}
 }
 
-public extension RangeReplaceableCollection where Element == AnyTransition {
-	func combined() -> AnyTransition? {
+extension RangeReplaceableCollection where Element == AnyTransition {
+	public func combined() -> AnyTransition? {
 		if let base = first {
-			return self.dropFirst().reduce(base, +)
+			self.dropFirst().reduce(base, +)
 		} else {
-			return .none
+			.none
 		}
 	}
 }

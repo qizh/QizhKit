@@ -9,7 +9,7 @@
 import SwiftUI
 
 public struct EnvironmentSkipActionKey: EnvironmentKey {
-	public static var defaultValue: CustomEnvironmentAction = .doNothing
+	public static let defaultValue: CustomEnvironmentAction = .doNothing
 }
 
 extension EnvironmentValues {
@@ -20,7 +20,7 @@ extension EnvironmentValues {
 }
 
 extension View {
-	public func onSkip(_ action: @escaping () -> Void) -> some View {
+	public func onSkip(_ action: @escaping @Sendable () -> Void) -> some View {
 		environment(\.skip, .init(action))
 	}
 	

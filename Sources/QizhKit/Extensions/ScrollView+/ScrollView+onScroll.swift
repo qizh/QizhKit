@@ -38,8 +38,7 @@ public extension View {
 // MARK: ScrollView + reader
 
 public extension ScrollView {
-	@inlinable
-	static func reading <SpaceName: Hashable> (
+	@inlinable @MainActor static func reading <SpaceName: Hashable> (
 		offset: Binding<CGPoint>,
 		delayed: Bool = false,
 		in coordinateSpaceName: SpaceName,
@@ -165,7 +164,9 @@ public struct ScrollOffsetReader <SpaceName: Hashable>: ViewModifier {
 							value = geometry.frame(in: .named(coordinateSpaceName)).origin
 						}
 						.onPreferenceChange(OriginPreferenceKey.self) { value in
-							offset = value
+							Task { @MainActor in
+								offset = value
+							}
 						}
 				}
 				.size0()
@@ -174,14 +175,14 @@ public struct ScrollOffsetReader <SpaceName: Hashable>: ViewModifier {
 }
 
 fileprivate struct OriginPreferenceKey: PreferenceKey {
-	static var defaultValue: CGPoint = .zero
+	static let defaultValue: CGPoint = .zero
 	static func reduce(value: inout CGPoint, nextValue: () -> CGPoint) {
 		value = nextValue()
 	}
 }
 
 fileprivate struct ScrollOriginPreferenceKey: PreferenceKey {
-	static var defaultValue: CGPoint = .zero
+	static let defaultValue: CGPoint = .zero
 	static func reduce(value: inout CGPoint, nextValue: () -> CGPoint) {
 		value += nextValue()
 	}
@@ -190,15 +191,14 @@ fileprivate struct ScrollOriginPreferenceKey: PreferenceKey {
 // MARK: Native Offset Reader
 
 fileprivate struct ScrollOffsetStackPreferenceKey: PreferenceKey {
-	static var defaultValue: [CGPoint] = .just(.zero)
+	static let defaultValue: [CGPoint] = .just(.zero)
 	static func reduce(value: inout [CGPoint], nextValue: () -> [CGPoint]) {
 		value.append(contentsOf: nextValue())
 	}
 }
 
 public extension ScrollView {
-	@inlinable
-	static func nativeReading(
+	@inlinable @MainActor static func nativeReading(
 		offset: Binding<CGPoint>,
 		_ axes: Axis.Set = .vertical,
 		showsIndicators: Bool = true,
@@ -248,7 +248,9 @@ public struct OffsetReadingScrollView <Content>: View where Content: View {
 		}
 		.coordinateSpace(name: scrollNS)
 		.onPreferenceChange(ScrollOriginPreferenceKey.self) { value in
-			offset = value
+			Task { @MainActor in
+				offset = value
+			}
 		}
 		
 		/*

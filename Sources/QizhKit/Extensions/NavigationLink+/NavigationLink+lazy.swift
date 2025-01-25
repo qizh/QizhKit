@@ -14,9 +14,8 @@ extension LazyView {
 	}
 }
 
-public extension NavigationLink {
-	
-	static func lazy<Heavy>(
+extension NavigationLink {
+	@MainActor public static func lazy<Heavy>(
 		destination: @autoclosure @escaping () -> Heavy,
 		@ViewBuilder label: () -> Label
 	) -> NavigationLink where Destination == LazyView<Heavy> {
@@ -58,14 +57,13 @@ public extension NavigationLink {
 	*/
 }
 
-public extension NavigationLink where Label == Text {
-	
-	static func lazy<Heavy>(_ titleKey: LocalizedStringKey, destination: @autoclosure @escaping () -> Heavy) -> NavigationLink where Destination == LazyView<Heavy> {
+extension NavigationLink where Label == Text {
+	@MainActor public static func lazy<Heavy>(_ titleKey: LocalizedStringKey, destination: @autoclosure @escaping () -> Heavy) -> NavigationLink where Destination == LazyView<Heavy> {
 		NavigationLink(titleKey, destination: LazyView(escaped: destination))
 	}
 	
 	@_disfavoredOverload
-	static func lazy<Heavy, S>(_ title: S, destination: @autoclosure @escaping () -> Heavy) -> NavigationLink where S: StringProtocol, Destination == LazyView<Heavy> {
+	@MainActor public static func lazy<Heavy, S>(_ title: S, destination: @autoclosure @escaping () -> Heavy) -> NavigationLink where S: StringProtocol, Destination == LazyView<Heavy> {
 		NavigationLink(title, destination: LazyView(escaped: destination))
 	}
 	
@@ -90,8 +88,8 @@ public extension NavigationLink where Label == Text {
 	*/
 }
 
-public extension NavigationLink where Label == Pixel {
-	static func lazy <Heavy> (
+extension NavigationLink where Label == Pixel {
+	@MainActor public static func lazy <Heavy> (
 		_ destination: @autoclosure @escaping () -> Heavy
 	) -> NavigationLink
 		where Destination == LazyView<Heavy>
@@ -101,7 +99,7 @@ public extension NavigationLink where Label == Pixel {
 		}
 	}
 	
-	static func lazy <Heavy> (
+	@MainActor public static func lazy <Heavy> (
 		destination: @autoclosure @escaping () -> Heavy
 	) -> NavigationLink where Destination == LazyView<Heavy> {
 		NavigationLink(destination: LazyView(escaped: destination)) {

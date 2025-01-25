@@ -10,10 +10,10 @@ import SwiftUI
 
 // MARK: Empty
 
-public struct CustomEnvironmentAction {
-	private let action: () -> Void
+public struct CustomEnvironmentAction: Sendable {
+	private let action: @Sendable () -> Void
 	
-	internal init(_ action: @escaping () -> Void) {
+	internal init(_ action: @escaping @Sendable () -> Void) {
 		self.action = action
 	}
 	
@@ -33,13 +33,13 @@ extension CustomEnvironmentAction {
 		}
 	}
 	
-	public static func reset<T>(_ binding: Binding<T?>) -> Self {
+	public static func reset<T>(_ binding: Binding<T?>) -> Self where T: Sendable {
 		.init {
 			binding.wrappedValue = .none
 		}
 	}
 	
-	public static func assign<T>(_ value: T, to binding: Binding<T>) -> Self {
+	public static func assign<T>(_ value: T, to binding: Binding<T>) -> Self where T: Sendable {
 		.init {
 			binding.wrappedValue = value
 		}

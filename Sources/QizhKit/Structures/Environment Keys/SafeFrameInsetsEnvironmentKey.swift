@@ -84,7 +84,9 @@ public struct SafeFrameEnvironmentProvider: ViewModifier {
 				GeometryReader { geometry -> Color in
 					let current = geometry.safeAreaInsets
 					if insets.equals(current, precision: .two) != true {
-						execute { self.insets = current }
+						Task { @MainActor in
+							self.insets = current
+						}
 					}
 					return Color.clear
 				}

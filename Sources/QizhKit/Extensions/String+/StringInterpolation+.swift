@@ -10,18 +10,17 @@ import Foundation
 
 // MARK: Nil
 
-public struct NilReplacement:
-	ExpressibleByStringLiteral,
-	CustomStringConvertible
-{
+public struct NilReplacement: ExpressibleByStringLiteral,
+							  CustomStringConvertible,
+							  Sendable {
 	public let description: String
 	public init(stringLiteral value: StringLiteralType) { description = value }
 	
-	public static let `nil`         : Self = "nil"
-	public static let  undefined    : Self = "undefined"
-	public static let  questionMark : Self = "?"
-	public static let  x            : Self = "×"
-	public static let  emptySet     : Self = "∅"
+	public static let `nil`         : NilReplacement = "nil"
+	public static let  undefined    : NilReplacement = "undefined"
+	public static let  questionMark : NilReplacement = "?"
+	public static let  x            : NilReplacement = "×"
+	public static let  emptySet     : NilReplacement = "∅"
 }
 
 extension String {
@@ -174,7 +173,7 @@ public extension DefaultStringInterpolation {
 	}
 	
 	mutating func appendInterpolation(
-		json value: Any?,
+		json value: (any Sendable)?,
 		encoder providedEncoder: JSONEncoder? = .none
 	) {
 		let encoder: JSONEncoder = providedEncoder ?? .prettyPrinted
@@ -200,7 +199,7 @@ public extension DefaultStringInterpolation {
 	}
 	
 	@available(*, deprecated, renamed: "appendInterpolation(json:)", message: "Renamed debug to json")
-	@inlinable mutating func appendInterpolation(debug value: Any?) {
+	@inlinable mutating func appendInterpolation(debug value: (any Sendable)?) {
 		appendInterpolation(json: value)
 	}
 }

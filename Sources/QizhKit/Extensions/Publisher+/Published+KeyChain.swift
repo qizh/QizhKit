@@ -8,13 +8,46 @@
 
 import Foundation
 import Combine
+import os.log
 
-private var cancellables = Set<AnyCancellable>()
+/*
+actor CancellableStore {
+	public static let shared = CancellableStore()
+	
+	private var cancellables = Set<AnyCancellable>()
+	
+	init() {}
+	
+	func store(_ cancellable: AnyCancellable) {
+		cancellables.insert(cancellable)
+	}
+	
+	func cancelAll() {
+		cancellables.removeAll()
+	}
+}
+
+extension AnyCancellable {
+	func storeInActor(_ actor: CancellableStore) {
+		Task {
+			await actor.store(self)
+		}
+	}
+	
+	func storeInSharedActor() {
+		Task {
+			await CancellableStore.shared.store(self)
+		}
+	}
+}
+*/
+
+@MainActor private var cancellables = Set<AnyCancellable>()
 
 // MARK: String
 
 extension Published where Value == String {
-	public init(
+	@MainActor public init(
 		wrappedValue defaultValue: Value,
 		keychainKey: String,
 		keychainGroup: KeychainGroup? = .none
@@ -40,7 +73,7 @@ extension Published where Value == String {
 }
 
 extension Published where Value == String? {
-	public init(
+	@MainActor public init(
 		wrappedValue defaultValue: Value,
 		keychainKey: String,
 		keychainGroup: KeychainGroup? = .none
@@ -68,8 +101,10 @@ extension Published where Value == String? {
 
 // MARK: Codable
 
+fileprivate let jsonKeychainPublishedLogger = Logger(subsystem: "Published", category: "Json Keychain")
+
 extension Published {
-	public init <Model> (
+	@MainActor public init <Model> (
 		wrappedValue defaultValue: Value = .none,
 		keychainKey: String,
 		keychainGroup: KeychainGroup? = .none
@@ -94,7 +129,7 @@ extension Published {
 						let data = try JSONEncoder().encode(value)
 						KeyChain.save(data, for: key, at: keychainGroup)
 					} catch {
-						print("::publisher: Can't encode \(Value.self) to save in KeyChain for `\(key)` key. KeyChain value removed.")
+						jsonKeychainPublishedLogger.error("Can't encode \(Value.self) to save in KeyChain for `\(key)` key. KeyChain value removed. Error: \(error)")
 						KeyChain.remove(for: key, at: keychainGroup)
 					}
 				} else {

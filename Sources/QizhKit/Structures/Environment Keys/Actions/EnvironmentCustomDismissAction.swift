@@ -9,7 +9,7 @@
 import SwiftUI
 
 public struct CustomDismissActionKey: EnvironmentKey {
-	public static var defaultValue: CustomEnvironmentAction = .doNothing
+	public static let defaultValue: CustomEnvironmentAction = .doNothing
 }
 
 extension EnvironmentValues {
@@ -20,7 +20,7 @@ extension EnvironmentValues {
 }
 
 extension View {
-	public func dismissable(calling callback: @escaping () -> Void) -> some View {
+	public func dismissable(calling callback: @escaping @Sendable () -> Void) -> some View {
 		environment(\.customDismiss, .init(callback))
 	}
 	
@@ -33,7 +33,9 @@ extension View {
 		)
 	}
 	
-	public func dismissable <Value> (resetting optional: Binding<Value?>) -> some View {
+	public func dismissable <Value> (
+		resetting optional: Binding<Value?>
+	) -> some View where Value: Sendable {
 		environment(
 			\.customDismiss,
 			CustomEnvironmentAction {
@@ -45,7 +47,7 @@ extension View {
 	public func dismissable <Value> (
 		setting value: Value,
 		for property: Binding<Value>
-	) -> some View {
+	) -> some View where Value: Sendable {
 		environment(
 			\.customDismiss,
 			CustomEnvironmentAction {

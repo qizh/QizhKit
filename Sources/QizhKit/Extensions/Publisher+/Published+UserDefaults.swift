@@ -9,13 +9,13 @@
 import Foundation
 import Combine
 
-private var cancellables = Set<AnyCancellable>()
+@MainActor private var cancellables = Set<AnyCancellable>()
 
 // MARK: Key
 
 extension Published {
 	@_disfavoredOverload
-	public init(
+	@MainActor public init(
 		wrappedValue defaultValue: Value,
 		key: String,
 		store: UserDefaults
@@ -39,7 +39,7 @@ extension Published {
 	///   - defaultValue: Optional value
 	///   - key: ``UserDefaults`` key
 	///   - store: ``UserDefaults``
-	public init<Wrapped>(
+	@MainActor public init<Wrapped>(
 		wrappedValue defaultValue: Value = .none,
 		key: String,
 		store: UserDefaults
@@ -64,11 +64,11 @@ extension Published {
 
 // MARK: Raw Representable Key
 
-public extension Published
+extension Published
 	where Value: RawRepresentable,
 		  Value.RawValue == String
 {
-	init(
+	@MainActor public init(
 		wrappedValue defaultValue: Value,
 		representableKey key: String,
 		store: UserDefaults
@@ -86,11 +86,11 @@ public extension Published
 	}
 }
 
-public extension Published
+extension Published
 	where Value: RawRepresentable,
 		  Value.RawValue == Int
 {
-	init(
+	@MainActor public init(
 		wrappedValue defaultValue: Value,
 		representableKey key: String,
 		store: UserDefaults
@@ -108,10 +108,10 @@ public extension Published
 
 // MARK: Codable
 
-public extension Published
+extension Published
 	where Value: Codable
 {
-	init(
+	@MainActor public init(
 		wrappedValue defaultValue: Value,
 		codableKey key: String,
 		store: UserDefaults

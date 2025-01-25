@@ -9,13 +9,13 @@
 import UIKit
 
 public struct WindowUtils {
-	private static var manuallyAssignedWindow: UIWindow?
-	public static func setOriginalWindow(_ window: UIWindow) {
+	@MainActor private static var manuallyAssignedWindow: UIWindow?
+	@MainActor public static func setOriginalWindow(_ window: UIWindow) {
 		manuallyAssignedWindow = window
 	}
 	
 	// @available(iOSApplicationExtension, unavailable)
-	public static var windowScene: UIWindowScene? {
+	@MainActor public static var windowScene: UIWindowScene? {
 		UIApplication.shared
 			.connectedScenes
 			.filter { $0.activationState == .foregroundActive }
@@ -23,7 +23,7 @@ public struct WindowUtils {
 	}
 	
 	// @available(iOSApplicationExtension, unavailable)
-	public static var keyWindow: UIWindow? {
+	@MainActor public static var keyWindow: UIWindow? {
 		UIApplication.shared.connectedScenes
 			.filter { $0.activationState == .foregroundActive }
 			.compactMap { $0 as? UIWindowScene }
@@ -37,20 +37,20 @@ public struct WindowUtils {
 			*/
 	}
 	
-	public static var rootViewController: UIViewController? {
+	@MainActor public static var rootViewController: UIViewController? {
 		currentWindow?.rootViewController
 	}
 	
-	public static var originalWindow: UIWindow? {
+	@MainActor public static var originalWindow: UIWindow? {
 		manuallyAssignedWindow ?? keyWindow
 	}
 	
-	public static var currentWindow: UIWindow? {
+	@MainActor public static var currentWindow: UIWindow? {
 		manuallyAssignedWindow ?? keyWindow
 		// keyWindow ?? originalWindow
 	}
 	
-	public static func topViewController(
+	@MainActor public static func topViewController(
 		_ viewController: UIViewController? = .none
 	) -> UIViewController? {
 		let vc = viewController
@@ -69,16 +69,16 @@ public struct WindowUtils {
 	}
 }
 
-@inlinable public func endEditing() {
+@inlinable @MainActor public func endEditing() {
 	endEditing(force: false)
 }
 
-@inlinable public func endEditing(force: Bool) {
+@inlinable @MainActor public func endEditing(force: Bool) {
 	WindowUtils.currentWindow?.endEditing(force)
 }
 
 public struct SafeFrame {
-	public static var currentInsets: UIEdgeInsets {
+	@MainActor public static var currentInsets: UIEdgeInsets {
 		WindowUtils.currentWindow?.safeAreaInsets ?? .zero
 	}
 }

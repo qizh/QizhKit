@@ -10,7 +10,7 @@ import Foundation
 
 // MARK: Protocols
 
-public protocol PriceCalculationProvider {
+public protocol PriceCalculationProvider: Sendable {
 	var unit: 	  Price.Output   { get }
 	var all: 	  Price.Output   { get }
 	var taxes: 	 [Price.Output]  { get }
@@ -353,7 +353,7 @@ public extension Price {
 // MARK: Sum
 
 public extension Price {
-	struct CalculatedSum: Calculated, ExpressibleByArrayLiteral {
+	struct CalculatedSum: Calculated, Sendable, ExpressibleByArrayLiteral {
 		fileprivate let items: [Calculated]
 		
 		@inlinable public init() { self.init(of: .empty) }

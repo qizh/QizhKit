@@ -121,7 +121,9 @@ public struct Flock <Input, Content>: View
 //								.preference(key: SizePreferenceKey.self, value: geometry.size)
 								.transformPreference(SizePreferenceKey.self) { $0 = geometry.size }
 								.onPreferenceChange(SizePreferenceKey.self) { itemSize in
-									layout.save(size: itemSize, at: index)
+									Task { @MainActor in
+										layout.save(size: itemSize, at: index)
+									}
 								}
 						}
 					)
@@ -142,7 +144,9 @@ public struct Flock <Input, Content>: View
 				Color.almostClear
 					.transformPreference(SizePreferenceKey.self) { $0 = geometry.size }
 					.onPreferenceChange(SizePreferenceKey.self) { space in
-						layout.fit(in: space)
+						Task { @MainActor in
+							layout.fit(in: space)
+						}
 					}
 			}
 			.zIndex(10)

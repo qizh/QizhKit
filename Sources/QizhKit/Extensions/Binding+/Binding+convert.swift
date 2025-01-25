@@ -61,7 +61,7 @@ extension Binding where Value == String {
 	}
 }
 
-extension Binding where Value: AdditiveArithmetic {
+extension Binding where Value: AdditiveArithmetic, Value: Sendable {
 	public func asOptional(default defaultValue: Value = .zero) -> Binding<Value?> {
 		Binding<Value?> {
 			wrappedValue == defaultValue ? .none : wrappedValue
@@ -71,7 +71,7 @@ extension Binding where Value: AdditiveArithmetic {
 	}
 }
 
-extension Binding where Value: Equatable {
+extension Binding where Value: Equatable, Value: Sendable {
 	public func asOptional(default defaultValue: Value) -> Binding<Value?> {
 		Binding<Value?> {
 			wrappedValue == defaultValue ? .none : wrappedValue

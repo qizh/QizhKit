@@ -27,6 +27,34 @@ public enum CurrencyCode:
 	case uah = "UAH"
 	case thb = "THB"
 	
+	public static func symbol(for currencyCode: String, locale: Locale = .current) -> String? {
+		let style = FloatingPointFormatStyle<Double>.Currency(code: currencyCode)
+			.locale(locale)
+		
+		// Format "0.00" (depending on the locale) to reveal symbol patterns
+		let formattedZero = 0.0.formatted(style)
+		
+		// Identify locale separators so we can strip them out
+		let decimalSeparator = locale.decimalSeparator ?? "."
+		let groupingSeparator = locale.groupingSeparator ?? ","
+		
+		// Build a character set that includes digits, decimal/grouping separators, and whitespace
+		var charsToRemove = CharacterSet.decimalDigits
+		charsToRemove.insert(charactersIn: decimalSeparator)
+		charsToRemove.insert(charactersIn: groupingSeparator)
+		charsToRemove.formUnion(.whitespacesAndNewlines)
+		
+		// Filter out everything in that set, leaving the symbol or symbol-like text
+		let symbolScalars = formattedZero.unicodeScalars.filter { scalar in
+			!charsToRemove.contains(scalar)
+		}
+		
+		// Clean up leading or trailing whitespace
+		let symbol = String(symbolScalars).trimmingCharacters(in: .whitespacesAndNewlines)
+		return symbol.isEmpty ? nil : symbol
+	}
+	
+	/*
 	private static var symbols: [String: String] = .empty
 	public static func symbol(for code: String) -> String? {
 		guard code.count == 3 else { return nil }
@@ -64,6 +92,7 @@ public enum CurrencyCode:
 	public var symbol: String? {
 		CurrencyCode.symbol(for: rawValue)
 	}
+	*/
 	
 	/*
 	@inlinable public func formatter(
@@ -80,9 +109,9 @@ public enum CurrencyCode:
 	}
 	*/
 	
+	/*
 	fileprivate static var formatters = [String: NumberFormatter]()
 	
-	/*
 	public static func formatter(
 		currency code: String,
 		position context: Formatter.Context,
@@ -106,8 +135,8 @@ public enum CurrencyCode:
 	}
 	*/
 	
-	fileprivate static var roundingScales: [String: Int] = .empty
-	public static var isoFormatter: NumberFormatter = {
+	// fileprivate static var roundingScales: [String: Int] = .empty
+	public static let isoFormatter: NumberFormatter = {
 		let formatter = NumberFormatter()
 		formatter.numberStyle = .currencyISOCode
 		return formatter
@@ -208,14 +237,8 @@ public extension AnyCurrencyCode {
 	}
 	
 	var roundingScale: Int {
-		let code = self.code.uppercased()
-		if let scale = CurrencyCode.roundingScales[code] {
-			return scale
-		}
 		let formatter = CurrencyCode.isoFormatter
-		formatter.currencyCode = code
-		let scale = formatter.maximumFractionDigits
-		CurrencyCode.roundingScales[code] = scale
-		return scale
+		formatter.currencyCode = code.uppercased()
+		return formatter.maximumFractionDigits
 	}
 }

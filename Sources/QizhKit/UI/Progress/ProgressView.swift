@@ -295,7 +295,7 @@ public struct ProgressView: View {
 				.rotationEffect(rotation)
 				.animateForever(
 					assigning: rotation.circle,
-					to: \.rotation, on: self,
+					to: $rotation,
 					using: .linear(duration: 1)
 				)
 		}
@@ -326,7 +326,7 @@ public struct ProgressView: View {
 			*/
 			.animateForever(
 				assigning: rotation.circle,
-				to: \.rotation, on: self,
+				to: $rotation,
 				using: .linear(duration: 3)
 			)
 	}
@@ -343,7 +343,7 @@ public struct ProgressView: View {
 			)
 			.animateForever(
 				assigning: rotation.circle,
-				to: \.rotation, on: self,
+				to: $rotation,
 				using: .linear(duration: 3)
 			)
 			.aspectRatio([100, 91], contentMode: .fill)
@@ -400,7 +400,7 @@ public struct ProgressView: View {
 			)
 			.animateForever(
 				assigning: rotation.circle,
-				to: \.rotation, on: self,
+				to: $rotation,
 				using: .linear(duration: 3)
 			)
 			.square(size.value * 1.04, .center)
@@ -802,7 +802,7 @@ fileprivate struct DemoProgressView: View {
 		ProgressView(value, size, color)
 			.animateForever(
 				assigning: 0.99,
-				to: \.value, on: self,
+				to: $value,
 				using: .easeInOut(duration: 6),
 				autoreverses: true
 			)

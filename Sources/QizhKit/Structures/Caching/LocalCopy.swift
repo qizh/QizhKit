@@ -8,7 +8,8 @@
 
 import Foundation
 
-public struct LocalCopy<Model: Codable>: Sendable {
+public struct LocalCopy<Model>: Sendable where Model: Codable,
+											   Model: Sendable {
 	public let url: URL
 	
 	/// - Parameters:
@@ -72,11 +73,14 @@ public struct LocalCopy<Model: Codable>: Sendable {
 	
 	// MARK: Actions
 	
-	public func get(using decoder: JSONDecoder? = .none) async throws -> Model {
-		try await Task {
+	public func get(
+		using decoder: JSONDecoder? = .none,
+		priority: TaskPriority? = .none
+	) async throws -> Model {
+		try await Task.detached(priority: priority) {
 			let data = try Data(contentsOf: url)
 			let jsonDecoder = decoder ?? JSONDecoder()
-			if #available(iOS 15.0, *), decoder.isNotSet {
+			if decoder.isNotSet {
 				jsonDecoder.allowsJSON5 = true
 			}
 			let model = try jsonDecoder.decode(Model.self, from: data)

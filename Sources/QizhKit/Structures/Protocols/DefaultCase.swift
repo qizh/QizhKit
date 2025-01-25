@@ -23,7 +23,7 @@ public struct DefaultProvidable <Source: WithDefault>: WithDefault {
 }
 
 public struct AnyDefaultProvidable: WithDefault {
-	public static let `default`: AnyDefaultProvidable = .init(Self.self)
+	public static var `default`: AnyDefaultProvidable { .init(Self.self) }
 	public let value: Any
 	private init <T: WithDefault> (_ value: T) { self.value = type(of: value).default }
 	public  init <T: WithDefault> (_: T.Type)  { self.init(T.default) }

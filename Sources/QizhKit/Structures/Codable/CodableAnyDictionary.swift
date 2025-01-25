@@ -33,7 +33,7 @@ public struct CodableAnyDictionary: ExpressibleByDictionaryLiteral, EmptyProvida
 extension CodableAnyDictionary: Codable {
 	public init(from decoder: Decoder) throws {
 		let container = try decoder.container(keyedBy: JSONCodingKeys.self)
-		self.wrappedValue = try container.decode([String: Any].self)
+		self.wrappedValue = try container.decode([String: any Sendable].self)
 		/*
 		let dictionary = try container.decode([String: Any].self)
 		var finalDictionary: [String: AnyHashable] = .empty

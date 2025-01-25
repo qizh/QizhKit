@@ -71,7 +71,7 @@ public struct ScalableRectangle: Shape {
 }
 
 public extension AnyTransition {
-	static func clip(_ side: ClipRectangleModifier.Side) -> AnyTransition {
+	@MainActor static func clip(_ side: ClipRectangleModifier.Side) -> AnyTransition {
 		AnyTransition.modifier(
 			  active: ClipRectangleModifier(side, factor: 0.0),
 			identity: ClipRectangleModifier(side, factor: 1.0)

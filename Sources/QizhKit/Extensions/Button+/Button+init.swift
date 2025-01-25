@@ -89,10 +89,10 @@ extension View {
 	@inlinable public func button <Value> (
 		resetting binding: Binding<Value?>,
 					 flow: ExecutionFlow = .current
-	) -> Button<Self> {
+	) -> Button<Self> where Value: Sendable {
 		Button(
 			action: {
-				let callback = {
+				let callback: @Sendable () -> Void = {
 					binding.wrappedValue = .none
 				}
 				
@@ -110,10 +110,10 @@ extension View {
 		assigning value: Value,
 			 to binding: Binding<Value>,
 				   flow: ExecutionFlow = .current
-	) -> Button<Self> {
+	) -> Button<Self> where Value: Sendable {
 		Button(
 			action: {
-				let callback = {
+				let callback: @Sendable () -> Void = {
 					binding.wrappedValue = value
 				}
 				
@@ -424,7 +424,7 @@ fileprivate let a = Text(String(""))
 extension View {
 	@available(*, deprecated, message: "Just use the `withAnimation { ... }` action")
 	@inlinable public func button(
-		action: @escaping () -> Void,
+		action: @escaping @Sendable () -> Void,
 		animation: Animation
 	) -> Button<Self> {
 		Button(action: animating(action, with: animation), label: { self })
@@ -433,7 +433,7 @@ extension View {
 	@available(*, deprecated, message: "Just use the `withAnimation { ... }` action")
 	@inlinable public func button(
 		animation: Animation,
-		action: @escaping () -> Void
+		action: @escaping @Sendable () -> Void
 	) -> Button<Self> {
 		Button(action: animating(action, with: animation), label: { self })
 	}
@@ -447,7 +447,7 @@ extension View {
 		resetting binding: Binding<Value?>,
 				animation: Animation? = .none,
 				   _ flow: ExecutionFlow = .current
-	) -> Button<Self> {
+	) -> Button<Self> where Value: Sendable {
 		Button(
 			action: {
 				flow.proceed {
@@ -471,7 +471,7 @@ extension View {
 			 to binding: Binding<Value>,
 			  animation: Animation? = .none,
 				 _ flow: ExecutionFlow = .current
-	) -> Button<Self> {
+	) -> Button<Self> where Value: Sendable {
 		Button(
 			action: {
 				flow.proceed {

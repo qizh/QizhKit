@@ -11,21 +11,21 @@ import SwiftUI
 // MARK: Preference Keys
 
 public struct WidthPreferenceKey: PreferenceKey {
-	public static var defaultValue: CGFloat = .zero
+	public static let defaultValue: CGFloat = .zero
 	public static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
 		value = nextValue()
 	}
 }
 
 public struct HeightPreferenceKey: PreferenceKey {
-	public static var defaultValue: CGFloat = .zero
+	public static let defaultValue: CGFloat = .zero
 	public static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
 		value = nextValue()
 	}
 }
 
 public struct SafeAreaInsetsPreferenceKey: PreferenceKey {
-	public static var defaultValue: EdgeInsets = .zero
+	public static let defaultValue: EdgeInsets = .zero
 	public static func reduce(value: inout EdgeInsets, nextValue: () -> EdgeInsets) {
 		value = nextValue()
 	}
@@ -34,7 +34,7 @@ public struct SafeAreaInsetsPreferenceKey: PreferenceKey {
 // MARK: Width Modifiers
 
 public struct WidthReaderModifier: ViewModifier {
-	public typealias Callback = (_ width: CGFloat) -> Void
+	public typealias Callback = @Sendable (_ width: CGFloat) -> Void
 	private var receive: Callback?
 	@Binding private var width: CGFloat
 	
@@ -55,10 +55,15 @@ public struct WidthReaderModifier: ViewModifier {
 				GeometryReader { geometry in
 					Color.almostClear
 						.transformPreference(WidthPreferenceKey.self) { $0 = geometry.size.width }
-						.onPreferenceChange(
-							WidthPreferenceKey.self,
-							perform: self.receive ?? { self.width = $0 }
-						)
+						.onPreferenceChange(WidthPreferenceKey.self) { value in
+							if let receive {
+								receive(value)
+							} else {
+								Task { @MainActor in
+									self.width = value
+								}
+							}
+						}
 				}
 			)
 	}
@@ -79,9 +84,11 @@ public struct HeightBindingModifier: ViewModifier {
 				GeometryReader { geometry in
 					Color.almostClear
 						.transformPreference(HeightPreferenceKey.self) { $0 = geometry.size.height }
-						.onPreferenceChange(HeightPreferenceKey.self) {
-							if height != $0 {
-								height = $0
+						.onPreferenceChange(HeightPreferenceKey.self) { value in
+							Task { @MainActor in
+								if height != value {
+									height = value
+								}
 							}
 						}
 				}
@@ -90,7 +97,7 @@ public struct HeightBindingModifier: ViewModifier {
 }
 
 public struct HeightCallbackModifier: ViewModifier {
-	public typealias Callback = (_ width: CGFloat) -> Void
+	public typealias Callback = @Sendable (_ width: CGFloat) -> Void
 	public let receive: Callback
 	
 	public init(_ receive: @escaping Callback) {
@@ -125,12 +132,16 @@ public struct SafeAreaInsetsBindingModifier: ViewModifier {
 	private func read(_ geometry: GeometryProxy) -> some View {
 		Color.almostClear
 		.transformPreference(SafeAreaInsetsPreferenceKey.self) { $0 = geometry.safeAreaInsets }
-		 .onPreferenceChange(SafeAreaInsetsPreferenceKey.self) { self.insets = $0 }
+		.onPreferenceChange(SafeAreaInsetsPreferenceKey.self) { value in
+			Task { @MainActor in
+				self.insets = value
+			}
+		}
 	}
 }
 
 public struct SafeAreaInsetsCallbackModifier: ViewModifier {
-	public typealias Callback = (_ insets: EdgeInsets) -> Void
+	public typealias Callback = @Sendable (_ insets: EdgeInsets) -> Void
 	public let receive: Callback
 	
 	public init(_ receive: @escaping Callback) {

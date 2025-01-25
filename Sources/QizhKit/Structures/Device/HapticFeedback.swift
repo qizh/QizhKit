@@ -17,7 +17,7 @@ public extension View {
 	}
 }
 
-public enum HapticAction: CaseIterable, CaseComparable, DefaultCaseFirst {
+public enum HapticAction: CaseIterable, Sendable, CaseComparable, DefaultCaseFirst {
 	case none
 	case random
 	
@@ -33,7 +33,7 @@ public enum HapticAction: CaseIterable, CaseComparable, DefaultCaseFirst {
 	case successNotification
 	case warningNotification
 	
-	public func produceHapticFeedback() {
+	@MainActor public func produceHapticFeedback() {
 		#if os(iOS)
 		switch self {
 		case .none: break
@@ -53,7 +53,7 @@ public enum HapticAction: CaseIterable, CaseComparable, DefaultCaseFirst {
 		#endif
 	}
 	
-	@inlinable public static func produceHapticFeedback(_ action: HapticAction) {
+	@inlinable @MainActor public static func produceHapticFeedback(_ action: HapticAction) {
 		action.produceHapticFeedback()
 	}
 	
