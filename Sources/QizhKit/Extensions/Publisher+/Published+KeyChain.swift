@@ -50,15 +50,16 @@ extension AnyCancellable {
 }
 */
 
-@MainActor private var cancellables = Set<AnyCancellable>()
+// @MainActor private var cancellables = Set<AnyCancellable>()
 
 // MARK: String
 
 extension Published where Value == String {
-	@MainActor public init(
+	public init(
 		wrappedValue defaultValue: Value,
 		keychainKey: String,
-		keychainGroup: KeychainGroup? = .none
+		keychainGroup: KeychainGroup? = .none,
+		cancellables: inout Set<AnyCancellable>
 	) {
 		let key = keychainKey.localizedLowercase.replacing(.whitespaces, with: .underline)
 		if let string = KeyChain.string(for: key, at: keychainGroup) {
@@ -77,10 +78,11 @@ extension Published where Value == String {
 }
 
 extension Published where Value == String? {
-	@MainActor public init(
+	public init(
 		wrappedValue defaultValue: Value,
 		keychainKey: String,
-		keychainGroup: KeychainGroup? = .none
+		keychainGroup: KeychainGroup? = .none,
+		cancellables: inout Set<AnyCancellable>
 	) {
 		let key = keychainKey.localizedLowercase.replacing(.whitespaces, with: .underline)
 		if let string = KeyChain.string(for: key, at: keychainGroup) {
@@ -103,10 +105,11 @@ extension Published where Value == String? {
 fileprivate let jsonKeychainPublishedLogger = Logger(subsystem: "Published", category: "Json Keychain")
 
 extension Published {
-	@MainActor public init <Model> (
+	public init <Model> (
 		wrappedValue defaultValue: Value = .none,
 		keychainKey: String,
 		keychainGroup: KeychainGroup? = .none,
+		cancellables: inout Set<AnyCancellable>,
 		encoder: JSONEncoder = .init(),
 		decoder: JSONDecoder = .init()
 	) where Model: Codable, Value == Model? {

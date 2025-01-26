@@ -10,16 +10,51 @@ import Foundation
 import Combine
 import os.log
 
-@MainActor private var cancellables = Set<AnyCancellable>()
+/*
+// MARK: Cancellable Store
+
+final actor CancellableStore {
+	public static let shared = CancellableStore()
+	
+	private var cancellables = Set<AnyCancellable>()
+	
+	init() {}
+	
+	func store(_ cancellable: AnyCancellable) {
+		cancellables.insert(cancellable)
+	}
+	
+	func cancelAll() {
+		cancellables.removeAll()
+	}
+}
+
+// MARK: Cancellable + store
+
+extension AnyCancellable {
+	func storeInActor(_ actor: CancellableStore) async {
+		await actor.store(self)
+	}
+	
+	func storeInSharedActor() {
+		Task {
+			await CancellableStore.shared.store(self)
+		}
+	}
+}
+*/
+
+// @MainActor private var mainActorCncellables = Set<AnyCancellable>()
 
 // MARK: Key
 
 extension Published {
 	@_disfavoredOverload
-	@MainActor public init(
+	public init(
 		wrappedValue defaultValue: Value,
 		key: String,
-		store: UserDefaults
+		store: UserDefaults,
+		cancellables: inout Set<AnyCancellable>
 	) {
 		self.init(initialValue: store.object(forKey: key) as? Value ?? defaultValue)
 		
@@ -40,10 +75,11 @@ extension Published {
 	///   - defaultValue: Optional value
 	///   - key: ``UserDefaults`` key
 	///   - store: ``UserDefaults``
-	@MainActor public init<Wrapped>(
+	public init<Wrapped>(
 		wrappedValue defaultValue: Value = .none,
 		key: String,
-		store: UserDefaults
+		store: UserDefaults,
+		cancellables: inout Set<AnyCancellable>
 	) where Value == Optional<Wrapped> {
 		if let object = store.object(forKey: key),
 		   let typedObject = object as? Wrapped {
@@ -69,10 +105,11 @@ extension Published
 	where Value: RawRepresentable,
 		  Value.RawValue == String
 {
-	@MainActor public init(
+	public init(
 		wrappedValue defaultValue: Value,
 		representableKey key: String,
-		store: UserDefaults
+		store: UserDefaults,
+		cancellables: inout Set<AnyCancellable>
 	) {
 		let current = store.string(forKey: key) ?? .empty
 		let value = Value(rawValue: current) ?? defaultValue
@@ -91,10 +128,11 @@ extension Published
 	where Value: RawRepresentable,
 		  Value.RawValue == Int
 {
-	@MainActor public init(
+	public init(
 		wrappedValue defaultValue: Value,
 		representableKey key: String,
-		store: UserDefaults
+		store: UserDefaults,
+		cancellables: inout Set<AnyCancellable>
 	) {
 		let current = store.integer(forKey: key)
 		self.init(initialValue: Value(rawValue: current) ?? defaultValue)
@@ -111,13 +149,12 @@ extension Published
 
 fileprivate let jsonDefaultsPublishedLogger = Logger(subsystem: "Published", category: "Json Defaults")
 
-extension Published
-	where Value: Codable
-{
-	@MainActor public init(
+extension Published where Value: Codable {
+	public init(
 		wrappedValue defaultValue: Value,
 		codableKey key: String,
 		store: UserDefaults,
+		cancellables: inout Set<AnyCancellable>,
 		decoder: JSONDecoder = .init(),
 		encoder: JSONEncoder = .init()
 	) {
