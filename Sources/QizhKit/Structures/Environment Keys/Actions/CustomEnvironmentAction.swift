@@ -11,13 +11,13 @@ import SwiftUI
 // MARK: Empty
 
 public struct CustomEnvironmentAction: Sendable {
-	private let action: @Sendable () -> Void
+	private let action: @Sendable @MainActor () -> Void
 	
-	internal init(_ action: @escaping @Sendable () -> Void) {
+	internal init(_ action: @escaping @Sendable @MainActor () -> Void) {
 		self.action = action
 	}
 	
-	public func callAsFunction() {
+	@MainActor public func callAsFunction() {
 		action()
 	}
 }

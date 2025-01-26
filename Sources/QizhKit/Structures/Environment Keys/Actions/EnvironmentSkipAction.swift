@@ -20,7 +20,7 @@ extension EnvironmentValues {
 }
 
 extension View {
-	public func onSkip(_ action: @escaping @Sendable () -> Void) -> some View {
+	public func onSkip(_ action: @escaping @Sendable @MainActor () -> Void) -> some View {
 		environment(\.skip, .init(action))
 	}
 	

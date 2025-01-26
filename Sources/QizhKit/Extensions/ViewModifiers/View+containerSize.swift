@@ -35,7 +35,7 @@ public struct ContainerSizeBindingModifier: ViewModifier {
 }
 
 public struct ContainerSizeCallbackModifier: ViewModifier {
-	public typealias Callback = @Sendable (_ size: CGSize) -> Void
+	public typealias Callback = @Sendable @MainActor (_ size: CGSize) -> Void
 	public var receive: Callback
 	
 	public func body(content: Content) -> some View {
@@ -44,17 +44,26 @@ public struct ContainerSizeCallbackModifier: ViewModifier {
 				GeometryReader { geometry in
 					Color.almostClear
 						.transformPreference(SizePreferenceKey.self) { $0 = geometry.size }
-						.onPreferenceChange(SizePreferenceKey.self, perform: receive)
+						.onPreferenceChange(SizePreferenceKey.self) { value in
+							Task { @MainActor in
+								receive(value)
+							}
+						}
 				}
 			)
 	}
 }
 
-public extension View {
-	func containerSize(_ size: Binding<CGSize>) -> some View {
+extension View {
+	public func containerSize(
+		_ size: Binding<CGSize>
+	) -> some View {
 		modifier(ContainerSizeBindingModifier(size: size))
 	}
-	func containerSize(_ receive: @escaping ContainerSizeCallbackModifier.Callback) -> some View {
+	
+	public func containerSize(
+		_ receive: @escaping ContainerSizeCallbackModifier.Callback
+	) -> some View {
 		modifier(ContainerSizeCallbackModifier(receive: receive))
 	}
 }

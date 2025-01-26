@@ -20,7 +20,7 @@ extension EnvironmentValues {
 }
 
 extension View {
-	public func dismissable(calling callback: @escaping @Sendable () -> Void) -> some View {
+	public func dismissable(calling callback: @escaping @Sendable @MainActor () -> Void) -> some View {
 		environment(\.customDismiss, .init(callback))
 	}
 	

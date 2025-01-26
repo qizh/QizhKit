@@ -188,6 +188,57 @@ public extension Binding {
 	}
 }
 
+// MARK: .on MainActor change
+/// `.on(condition: action)` synthax
+
+public extension Binding {
+	@discardableResult @inlinable
+	func on(
+		mainActorChange action: @escaping @Sendable @MainActor (Value) -> Void
+	) -> Binding where Value: Sendable {
+		.init(
+			get: { self.wrappedValue },
+			set: { value in
+				self.wrappedValue = value
+				Task { @MainActor in
+					action(value)
+				}
+			}
+		)
+	}
+	
+	@discardableResult @inlinable
+	func on(
+		mainActorChange action: @escaping @Sendable @MainActor () -> Void
+	) -> Binding where Value: Sendable {
+		Binding(
+			get: { self.wrappedValue },
+			set: { value in
+				self.wrappedValue = value
+				Task { @MainActor in
+					action()
+				}
+			}
+		)
+	}
+	
+	@discardableResult @inlinable
+	func on(
+		mainActorChange action: @escaping @Sendable @MainActor (_ from: Value, _ to: Value) -> Void
+	) -> Binding where Value: Sendable {
+		Binding(
+			get: { self.wrappedValue },
+			set: { value in
+				let previousValue = self.wrappedValue
+				self.wrappedValue = value
+				Task { @MainActor in
+					action(previousValue, value)
+				}
+			}
+		)
+	}
+}
+
 // MARK: .on [Un] defined
 /// .some() | .none
 
@@ -235,6 +286,65 @@ public extension Binding {
 			set: { value in
 				self.wrappedValue = value
 				if value.isNotSet { flow.proceed(with: action) }
+			}
+		)
+	}
+}
+
+// MARK: .on MainActor [Un] defined
+/// .some() | .none
+
+public extension Binding {
+	@discardableResult @inlinable
+	func on <Wrapped> (
+		mainActorDefined action: @escaping @Sendable @MainActor (Wrapped) -> Void
+	) -> Binding where Value == Wrapped?,
+					   Wrapped: Sendable {
+		Binding(
+			get: { self.wrappedValue },
+			set: { value in
+				self.wrappedValue = value
+				if let value {
+					Task { @MainActor in
+						action(value)
+					}
+				}
+			}
+		)
+	}
+	
+	@discardableResult @inlinable
+	func on <Wrapped> (
+		mainActorDefined action: @escaping @Sendable @MainActor () -> Void
+	) -> Binding where Value == Wrapped?,
+					   Wrapped: Sendable {
+		Binding(
+			get: { self.wrappedValue },
+			set: { value in
+				self.wrappedValue = value
+				if value.isSet {
+					Task { @MainActor in
+						action()
+					}
+				}
+			}
+		)
+	}
+	
+	@discardableResult @inlinable
+	func on <Wrapped> (
+		mainActorNil action: @escaping @Sendable @MainActor () -> Void
+	) -> Binding where Value == Wrapped?,
+					   Wrapped: Sendable {
+		Binding(
+			get: { self.wrappedValue },
+			set: { value in
+				self.wrappedValue = value
+				if value.isNotSet {
+					Task { @MainActor in
+						action()
+					}
+				}
 			}
 		)
 	}

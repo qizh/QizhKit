@@ -364,7 +364,7 @@ extension View {
 	}
 	
 	@inlinable public func whenAppear(
-		perform action: @escaping @Sendable () -> Void,
+		perform action: @escaping @Sendable @MainActor () -> Void,
 		in ms: Int
 	) -> some View {
 		onAppear {
@@ -374,7 +374,7 @@ extension View {
 	
 	@inlinable public func whenAppear(
 		in ms: Int,
-		_ action: @escaping @Sendable () -> Void
+		_ action: @escaping @Sendable @MainActor () -> Void
 	) -> some View {
 		onAppear {
 			execute(in: ms, action)
@@ -383,7 +383,7 @@ extension View {
 	
 	@inlinable public func onDisappear(
 		in ms: Int,
-		_ action: @escaping @Sendable () -> Void
+		_ action: @escaping @Sendable @MainActor () -> Void
 	) -> some View {
 		onDisappear {
 			execute(in: ms, action)
