@@ -10,58 +10,15 @@ import Foundation
 import Combine
 import os.log
 
-/*
-// MARK: Cancellable + Sendable
-
-extension AnyCancellable: @retroactive @unchecked Sendable { }
-
-// MARK: Cancellable Store
-
-final actor CancellableStore {
-	public static let shared = CancellableStore()
-	
-	private var cancellables = Set<AnyCancellable>()
-	
-	init() {}
-	
-	func store(_ cancellable: AnyCancellable) {
-		cancellables.insert(cancellable)
-	}
-	
-	func cancelAll() {
-		cancellables.removeAll()
-	}
-}
-
-// MARK: Cancellable + store
-
-extension AnyCancellable {
-	func storeInActor(_ actor: CancellableStore) {
-		Task {
-			await actor.store(self)
-		}
-	}
-	
-	func storeInSharedActor() {
-		Task {
-			await CancellableStore.shared.store(self)
-		}
-	}
-}
-*/
-
-// @MainActor private var cancellables = Set<AnyCancellable>()
-
 // MARK: String
 
 extension Published where Value == String {
 	public init(
 		wrappedValue defaultValue: Value,
-		keychainKey: String,
+		keychainKey key: String,
 		keychainGroup: KeychainGroup? = .none,
 		cancellables: inout Set<AnyCancellable>
 	) {
-		let key = keychainKey.localizedLowercase.replacing(.whitespaces, with: .underline)
 		if let string = KeyChain.string(for: key, at: keychainGroup) {
 			self.init(initialValue: string)
 		} else {
@@ -70,9 +27,8 @@ extension Published where Value == String {
 		
 		projectedValue
 			.sink { value in
-				KeyChain.saveString(value, for: keychainKey, at: keychainGroup)
+				KeyChain.saveString(value, for: key, at: keychainGroup)
 			}
-			// .storeInSharedActor()
 			.store(in: &cancellables)
 	}
 }
@@ -80,11 +36,10 @@ extension Published where Value == String {
 extension Published where Value == String? {
 	public init(
 		wrappedValue defaultValue: Value,
-		keychainKey: String,
+		keychainKey key: String,
 		keychainGroup: KeychainGroup? = .none,
 		cancellables: inout Set<AnyCancellable>
 	) {
-		let key = keychainKey.localizedLowercase.replacing(.whitespaces, with: .underline)
 		if let string = KeyChain.string(for: key, at: keychainGroup) {
 			self.init(initialValue: string)
 		} else {
@@ -93,9 +48,8 @@ extension Published where Value == String? {
 		
 		projectedValue
 			.sink { value in
-				KeyChain.saveString(value, for: keychainKey, at: keychainGroup)
+				KeyChain.saveString(value, for: key, at: keychainGroup)
 			}
-			// .storeInSharedActor()
 			.store(in: &cancellables)
 	}
 }
@@ -107,14 +61,12 @@ fileprivate let jsonKeychainPublishedLogger = Logger(subsystem: "Published", cat
 extension Published {
 	public init <Model> (
 		wrappedValue defaultValue: Value = .none,
-		keychainKey: String,
+		keychainKey key: String,
 		keychainGroup: KeychainGroup? = .none,
 		cancellables: inout Set<AnyCancellable>,
 		encoder: JSONEncoder = .init(),
 		decoder: JSONDecoder = .init()
 	) where Model: Codable, Value == Model? {
-		let key = keychainKey.localizedLowercase.replacing(.whitespaces, with: .underline)
-		
 		do {
 			let model: Model = try KeyChain.model(for: key, at: keychainGroup, decoder: decoder)
 			self.init(initialValue: model)
@@ -132,7 +84,6 @@ extension Published {
 					KeyChain.remove(for: key, at: keychainGroup)
 				}
 			}
-			// .storeInSharedActor()
 			.store(in: &cancellables)
 	}
 }
@@ -147,11 +98,12 @@ extension KeyChain {
 		for key: String,
 		at group: KeychainGroup?
 	) -> String? {
+		let key = key.localizedLowercase.replacing(.whitespaces, with: .underline)
 		if let data = KeyChain.data(for: key, at: group),
 		   let string = String(data: data, encoding: .utf8) {
-			string
+			return string
 		} else {
-			.none
+			return .none
 		}
 	}
 	
@@ -160,6 +112,7 @@ extension KeyChain {
 		for key: String,
 		at group: KeychainGroup?
 	) {
+		let key = key.localizedLowercase.replacing(.whitespaces, with: .underline)
 		if let data = string?.data(using: .utf8) {
 			KeyChain.save(data, for: key, at: group)
 		} else {
@@ -174,8 +127,9 @@ extension KeyChain {
 		at group: KeychainGroup?,
 		decoder: JSONDecoder
 	) throws -> Model {
+		let key = key.localizedLowercase.replacing(.whitespaces, with: .underline)
 		if let data = KeyChain.data(for: key, at: group) {
-			try decoder.decode(Model.self, from: data)
+			return try decoder.decode(Model.self, from: data)
 		} else {
 			throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "No data found for key \(key)"))
 		}
@@ -186,10 +140,11 @@ extension KeyChain {
 		at group: KeychainGroup?,
 		decoder: JSONDecoder
 	) throws -> Model? {
+		let key = key.localizedLowercase.replacing(.whitespaces, with: .underline)
 		if let data = KeyChain.data(for: key, at: group) {
-			try decoder.decode(Model.self, from: data)
+			return try decoder.decode(Model.self, from: data)
 		} else {
-			.none
+			return .none
 		}
 	}
 	
@@ -199,6 +154,7 @@ extension KeyChain {
 		at group: KeychainGroup?,
 		encoder: JSONEncoder
 	) throws {
+		let key = key.localizedLowercase.replacing(.whitespaces, with: .underline)
 		if let model {
 			let data = try encoder.encode(model)
 			KeyChain.save(data, for: key, at: group)
