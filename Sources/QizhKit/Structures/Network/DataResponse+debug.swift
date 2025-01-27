@@ -30,10 +30,17 @@ extension DataResponse {
 			debugDepth = debug
 		}
 		
-		guard let request = request else {
+		guard let request else {
+			let resultOutput = if case .success(let model) = result,
+					  let imodel = model as? any Identifiable {
+				"\(imodel.id)"
+			} else {
+				result.caseName
+			}
+			
 			return """
 			[Request]: None
-			[Result]: \(result.caseName)
+			[Result]: \(resultOutput)
 			"""
 		}
 		
@@ -198,9 +205,20 @@ extension DataResponse {
 			output += .newLine + "[Serialization Duration]: \(serializationDuration)s"
 		}
 		
+		/*
 		let resultOutput = debugDepth > .default
 			? "\(result)"
 			: result.caseName
+		*/
+		
+		let resultOutput = if debugDepth > .default {
+			"\(result)"
+		} else if case .success(let model) = result,
+				  let imodel = model as? any Identifiable {
+			"\(imodel.id)"
+		} else {
+			result.caseName
+		}
 		
 		output += .newLine + "[Result]: \(resultOutput)"
 		
