@@ -41,7 +41,7 @@ let package = Package(
 		.package(url: "https://github.com/apple/swift-collections", from: "1.1.4"),
 		
 		/// Macros
-		.package(url: "https://github.com/qizh/QizhMacroKit", exact: "1.0.15"),
+		.package(url: "https://github.com/qizh/QizhMacroKit", exact: "1.0.16"),
 	],
     targets: [
         .target(
@@ -71,5 +71,5 @@ let package = Package(
 			]
 		),
     ],
-	swiftLanguageModes: [.v6]
+	swiftLanguageModes: [.v5, .v6]
 )
