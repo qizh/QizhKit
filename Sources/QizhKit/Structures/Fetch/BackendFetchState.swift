@@ -663,6 +663,7 @@ public enum FetchError: Error, EasyCaseComparable, Sendable {
 	public enum PreconditionValidationReason: Equatable, Sendable {
 		case illegalCharacters(_ value: String)
 		case missingInput(_ input: String, details: String? = .none)
+		case missingAuthentication
 	}
 	
 	public enum SignFailureReason: Equatable, Sendable,

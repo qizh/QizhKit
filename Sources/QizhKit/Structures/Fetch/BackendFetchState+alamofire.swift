@@ -143,6 +143,10 @@ public struct FetchErrorDebugDetails: Codable, Sendable {
 				"input": input,
 				"details": details,
 			]
+		case .preconditionValidation(.missingAuthentication):
+			self.details = [
+				"type": "missingAuthentication"
+			]
 		case .sign(let reason):
 			self.details = [
 				"reason": reason.caseWord
