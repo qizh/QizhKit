@@ -195,8 +195,8 @@ public extension SingleItemFetcher {
 
 // MARK: Collection Extension
 
-public extension CollectionFetcher {
-	typealias Item = Value.Element where Value.Element: Sendable
+public extension CollectionFetcher where Value.Element: Sendable {
+	typealias Item = Value.Element
 	typealias LossyValue = LossyArray<Item>
 	typealias AirtableItemRecords = AirtableRecords<Value.Element>
 	typealias RailsLossyItemData = RailsLossyResponses<Value.Element>
@@ -377,7 +377,7 @@ extension CollectionFetcher {
 #endif
 
 #if canImport(Alamofire)
-public extension CollectionFetcher where Value.Element: Identifiable {
+public extension CollectionFetcher where Value.Element: Identifiable, Value.Element: Sendable {
 	func defaultResponse(_ response: AFRailsLossyResponse, _ animate: Bool, debug debugDepth: DebugDepth) {
 		if debug || debugDepth.is(not: .none, .default) { print(response.debugDescription(depth: debugDepth)) }
 		withAnimation(animate ? .spring() : .none) {
