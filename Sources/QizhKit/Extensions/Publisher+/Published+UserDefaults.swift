@@ -101,6 +101,8 @@ extension Published {
 
 // MARK: Raw Representable Key
 
+fileprivate let rawRepresentableLogger = Logger(subsystem: "Published", category: "RawRepresentable in UserDefaults")
+
 extension Published
 	where Value: RawRepresentable,
 		  Value.RawValue == String
@@ -113,6 +115,16 @@ extension Published
 	) {
 		let current = store.string(forKey: key) ?? .empty
 		let value = Value(rawValue: current) ?? defaultValue
+		/*
+		rawRepresentableLogger.debug("""
+			Loging initial value
+			┣ for key: \(key)
+			┣ in store: \(store)
+			┣ or default: \(defaultValue.rawValue)
+			┣ store value: \(store.string(forKey: key))
+			┗━→ value: \(value.rawValue)
+			""")
+		*/
 		
 		self.init(initialValue: value)
 		
@@ -147,7 +159,7 @@ extension Published
 
 // MARK: Codable
 
-fileprivate let jsonDefaultsPublishedLogger = Logger(subsystem: "Published", category: "Json Defaults")
+fileprivate let codableLogger = Logger(subsystem: "Published", category: "Codable in UserDefaults")
 
 extension Published where Value: Codable {
 	public init(
@@ -162,7 +174,7 @@ extension Published where Value: Codable {
 			let current: Value = try store.model(forKey: key, decoder: decoder)
 			self.init(initialValue: current)
 		} catch {
-			jsonDefaultsPublishedLogger.warning("Can't decode \(Value.self) from UserDefaults for `\(key)` key.\nInitializing with default value.\nError: \(error)")
+			codableLogger.warning("Can't decode \(Value.self) from UserDefaults for `\(key)` key.\nInitializing with default value.\nError: \(error)")
 			self.init(initialValue: defaultValue)
 		}
 		
@@ -171,7 +183,7 @@ extension Published where Value: Codable {
 				do {
 					try store.saveModel(value, forKey: key, encoder: encoder)
 				} catch {
-					jsonDefaultsPublishedLogger.error("Can't encode \(Value.self) to save in UserDefaults for `\(key)` key.\nError: \(error)")
+					codableLogger.error("Can't encode \(Value.self) to save in UserDefaults for `\(key)` key.\nError: \(error)")
 				}
 			}
 			.store(in: &cancellables)
