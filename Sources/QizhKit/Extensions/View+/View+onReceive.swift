@@ -12,6 +12,7 @@ import Combine
 // MARK: onChange
 
 extension View {
+	@_disfavoredOverload
 	@inlinable public func onChange <Value: Equatable> (
 		of value: Value,
 		perform action: @escaping () -> Void
