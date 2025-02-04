@@ -54,6 +54,33 @@ extension StringProtocol {
 	}
 }
 
+extension StringProtocol {
+	/// Returns a new string made by removing all trailing characters contained in the given character set.
+	public func trimmingTrailingCharacters(in set: CharacterSet) -> String {
+		var endIndex = self.endIndex
+		while endIndex > self.startIndex {
+			let beforeIndex = self.index(before: endIndex)
+			let character = self[beforeIndex]
+			if character.unicodeScalars.allSatisfy({ set.contains($0) }) {
+				endIndex = beforeIndex
+			} else {
+				break
+			}
+		}
+		return String(self[..<endIndex])
+	}
+	
+	/// A computed property that trims only the trailing spaces.
+	@inlinable public var withTrailingSpacesTrimmed: String {
+		trimmingTrailingCharacters(in: CharacterSet.whitespaces)
+	}
+	
+	/// A computed property that trims trailing spaces and newline characters.
+	@inlinable public var withTrailingSpacesAndLinesTrimmed: String {
+		trimmingTrailingCharacters(in: CharacterSet.whitespacesAndNewlines)
+	}
+}
+
 extension Substring {
 	@inlinable public func asString() -> String { String(self) }
 	@inlinable public var string: String { String(self) }
