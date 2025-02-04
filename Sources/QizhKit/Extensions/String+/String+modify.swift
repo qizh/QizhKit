@@ -24,9 +24,34 @@ extension StringProtocol {
 		replacingOccurrences(of: occurances, with: replacement, options: options)
 	}
 	
-	@inlinable public var withSpacesTrimmed: String { trimmingCharacters(in: .whitespaces) }
-	@inlinable public var withLinesNSpacesTrimmed: String { trimmingCharacters(in: .whitespacesAndNewlines) }
-	@inlinable public var digits: String { replacing(CharacterSet.decimalDigits.inverted) }
+	@inlinable public var withSpacesTrimmed: String {
+		trimmingCharacters(in: .whitespaces)
+	}
+	
+	@inlinable public var withLinesTrimmed: String {
+		trimmingCharacters(in: .newlines)
+	}
+	
+	public var withEmptyLinesTrimmed: String {
+		let currentLines = self.asLines
+		var newLines: [String] = .empty
+		
+		for line in currentLines {
+			if line.withSpacesTrimmed.isNotEmpty {
+				newLines.append(line)
+			}
+		}
+		
+		return newLines.asLines
+	}
+	
+	@inlinable public var withLinesNSpacesTrimmed: String {
+		trimmingCharacters(in: .whitespacesAndNewlines)
+	}
+	
+	@inlinable public var digits: String {
+		replacing(CharacterSet.decimalDigits.inverted)
+	}
 }
 
 extension Substring {
@@ -206,13 +231,7 @@ public extension String {
 
 // MARK: As Lines
 
-extension Collection<String> {
-	@inlinable public var asLines: String {
-		joined(separator: .newLine)
-	}
-}
-
-extension Collection<Substring> {
+extension Collection where Element: StringProtocol {
 	@inlinable public var asLines: String {
 		joined(separator: .newLine)
 	}
