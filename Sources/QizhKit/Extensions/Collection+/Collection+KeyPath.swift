@@ -355,6 +355,7 @@ public extension Collection {
 	///   - other: An array to check if contains a part
 	///   - transformed: A transfrom of an element to receive its part
 	/// - Returns: filtered array
+	@available(*, deprecated, renamed: "removing(where:in:)", message: "Renamed to `removing(where:in:)` for better readability")
 	@inlinable func removing <Medium: Equatable> (
 		all other: [Medium],
 		_ transformed: (Element) -> Medium
@@ -362,6 +363,38 @@ public extension Collection {
 		filter({ element in other.contains(no: transformed(element)) })
 	}
 	
+	/// Returns an array with elements
+	/// whose transformed values are **not** in the given array.
+	///
+	/// This method iterates over the collection and applies the provided
+	/// `transformed` closure to each element to extract a comparable value
+	/// of type `Medium`. If the resulting value is found in the `other` array,
+	/// the element is excluded from the returned array.
+	///
+	/// - Parameters:
+	///   - transformed: A closure that converts each element into a comparable value.
+	///   - other: An array of values;
+	///   		if an element's transformed value is found in this array, it is excluded.
+	/// - Returns: An array containing only the elements that pass the filter.
+	/// - Note: The original collection remains unmodified.
+	/// - Example:
+	/// 	```swift
+	/// 	let words = ["apple", "banana", "cherry"]
+	/// 	// Remove words whose length is present in the forbidden lengths array.
+	/// 	let filteredWords = words.removing(where: \.count, in: [6, 7])
+	/// 	// filteredWords contains ["apple"] because "banana" and "cherry" has 6 letters.
+	/// 	```
+	@inlinable func removing <Medium: Equatable> (
+		where transformed: (Element) -> Medium,
+		in other: [Medium]
+	) -> [Element] {
+		filter { element in
+			other.contains(
+				no: transformed(element)
+			)
+		}
+	}
+
 	@inlinable func removingAll <Medium: Equatable> (
 		where transformed: (Element) -> Medium,
 		equals other: Medium
