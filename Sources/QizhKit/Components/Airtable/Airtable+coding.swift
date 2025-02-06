@@ -60,27 +60,21 @@ public extension JSONDecoder {
 	static let airtable: JSONDecoder = {
 		let decoder = JSONDecoder()
 		decoder.dateDecodingStrategy = .formatted(.airtable)
-		if #available(iOS 15.0, *) {
-			decoder.allowsJSON5 = true
-		}
+		decoder.allowsJSON5 = true
 		return decoder
 	}()
 	
 	static let rails: JSONDecoder = {
 		let decoder = JSONDecoder()
 		decoder.dateDecodingStrategy = .formatted(.airtable)
-		if #available(iOS 15.0, *) {
-			decoder.allowsJSON5 = true
-		}
+		decoder.allowsJSON5 = true
 		return decoder
 	}()
 	
 	static let graphQL: JSONDecoder = {
 		let decoder = JSONDecoder()
 		decoder.dateDecodingStrategy = .formatted(.graphQL)
-		if #available(iOS 15.0, *) {
-			decoder.allowsJSON5 = true
-		}
+		decoder.allowsJSON5 = true
 		return decoder
 	}()
 }
