@@ -8,11 +8,13 @@
 
 import SwiftUI
 
-public extension View {
-	func hapticFeedback(_ action: HapticAction) -> some View {
+extension View {
+	@available(iOS, introduced: 13.0, deprecated: 17.0, renamed: "sensoryFeedback", message: "sensoryFeedback is available on iOS 17")
+	public func hapticFeedback(_ action: HapticAction) -> some View {
 		simultaneousGesture(TapGesture().onEnded { action.produceHapticFeedback() })
 	}
-	func debugWithRandomHapticFeedback() -> some View {
+	
+	internal func debugWithRandomHapticFeedback() -> some View {
 		simultaneousGesture(TapGesture().onEnded { HapticAction.randomAction.produceHapticFeedback() })
 	}
 }
