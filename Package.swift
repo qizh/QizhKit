@@ -41,7 +41,7 @@ let package = Package(
 		.package(url: "https://github.com/apple/swift-collections", from: "1.1.4"),
 		
 		/// Macros
-		.package(url: "https://github.com/qizh/QizhMacroKit", exact: "1.0.17"),
+		.package(url: "https://github.com/qizh/QizhMacroKit", exact: "1.0.19"),
 	],
     targets: [
         .target(
