@@ -1,5 +1,5 @@
 //
-//  Collection+KeyPath.swift
+//  Collection+transform.swift
 //  Cooktour Concierge
 //
 //  Created by Serhii Shevchenko on 21.02.2020.
@@ -45,6 +45,8 @@ public extension Sequence {
 	
 	// MARK: ┗ Same with KeyPath
 	
+	/// Is here just of ignore the error
+	/// introduced by adding the same public function in  `InstantSearchCore` SPM
 	@_disfavoredOverload
 	@inlinable func sorted <Value> (
 		by keyPath: KeyPath<Element, Value>,
@@ -58,6 +60,8 @@ public extension Sequence {
 		}
 	}
 	
+	/// Is here just of ignore the error
+	/// introduced by adding the same public function in  `InstantSearchCore` SPM
 	@_disfavoredOverload
 	@inlinable func sorted(
 		by keyPath: KeyPath<Element, some Comparable>
@@ -318,17 +322,17 @@ extension Sequence {
 
 public extension Collection {
 	@inlinable func filter<Value: Equatable>(
-		_ keyPath: KeyPath<Element, Value>,
+		_ transform: (Element) -> Value,
 		equals value: Value
 	) -> [Element] {
-		filter({ $0[keyPath: keyPath] == value })
+		filter({ transform($0) == value })
 	}
 	
 	@inlinable func filter<Value: Equatable>(
-		_ keyPath: KeyPath<Element, Value>,
+		_ transform: (Element) -> Value,
 		notEquals value: Value
 	) -> [Element] {
-		filter({ $0[keyPath: keyPath] != value })
+		filter({ transform($0) != value })
 	}
 	
 	@inlinable func filter <Medium> (
@@ -425,16 +429,20 @@ public extension Collection {
 	
 	// MARK: > Not
 	
+	/*
+	@_disfavoredOverload
 	@inlinable func filterNot(_ isIncluded: KeyPath<Element, Bool>) -> [Element] {
 		filter(isIncluded, equals: false)
 	}
+	*/
 	
-	@inlinable func filterNot(_ isIncluded: @escaping (Element) -> Bool) -> [Element] {
-		filter(not(isIncluded))
+	@inlinable func filterNot(_ isIncluded: (Element) -> Bool) -> [Element] {
+		self.filter({not(isIncluded($0))})
 	}
 	
 	// MARK: > CC
 	
+	@available(*, deprecated, message: "CaseComparable is outdated, use EasyComparable or @IsCase instead")
 	@inlinable func filter<Value: CaseComparable>(
 		_ keyPath: KeyPath<Element, Value>,
 		is value: Value
@@ -442,6 +450,7 @@ public extension Collection {
 		filter({ $0[keyPath: keyPath].is(value) })
 	}
 	
+	@available(*, deprecated, message: "CaseComparable is outdated, use EasyComparable or @IsCase instead")
 	@inlinable func filter<Value: CaseComparable>(
 		_ keyPath: KeyPath<Element, Value>,
 		isNot value: Value
@@ -452,31 +461,31 @@ public extension Collection {
 	// MARK: > ECC
 	
 	@inlinable func filter<Value: EasyComparable>(
-		_ keyPath: KeyPath<Element, Value>,
+		_ transform: (Element) -> Value,
 		is value: Value.Other
 	) -> [Element] {
-		filter({ $0[keyPath: keyPath].is(value) })
+		filter({ transform($0).is(value) })
 	}
 	
 	@inlinable func filter<Value: EasyComparable>(
-		_ keyPath: KeyPath<Element, Value>,
+		_ transform: (Element) -> Value,
 		in values: [Value.Other]
 	) -> [Element] {
-		filter({ $0[keyPath: keyPath].in(values) })
+		filter({ transform($0).in(values) })
 	}
 	
 	@inlinable func filter<Value: EasyComparable>(
-		_ keyPath: KeyPath<Element, Value>,
+		_ transform: (Element) -> Value,
 		isNot value: Value.Other
 	) -> [Element] {
-		filter({ $0[keyPath: keyPath].is(not: value) })
+		filter({ transform($0).is(not: value) })
 	}
 	
 	@inlinable func filter<Value: EasyComparable>(
-		_ keyPath: KeyPath<Element, Value>,
+		_ transform: (Element) -> Value,
 		isNot values: [Value.Other]
 	) -> [Element] {
-		filter({ $0[keyPath: keyPath].is(not: values) })
+		filter({ transform($0).is(not: values) })
 	}
 }
 
