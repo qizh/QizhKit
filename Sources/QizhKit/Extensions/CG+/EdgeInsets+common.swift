@@ -75,16 +75,43 @@ extension EdgeInsets {
 		scaled(AxisFactor.both(factor))
 	}
 	
-	@inlinable public func scaled(_ factor: AxisFactor) -> EdgeInsets {
+	public func scaled(_ factor: AxisFactor) -> EdgeInsets {
 		scaled(factor.horizontal, factor.vertical)
 	}
 	
-	@inlinable public func scaled(_ horizontal: Factor, _ vertical: Factor) -> EdgeInsets {
+	public func scaled(_ horizontal: Factor, _ vertical: Factor) -> EdgeInsets {
 		EdgeInsets(
 				 top: top     .scaled(vertical),
 			 leading: leading .scaled(horizontal),
 			  bottom: bottom  .scaled(vertical),
 			trailing: trailing.scaled(horizontal)
 		)
+	}
+}
+
+// MARK: Increased
+
+extension EdgeInsets {
+	public func increased(
+		horizontally horizontalAmount: CGFloat = .zero,
+		vertically verticalAmount: CGFloat = .zero
+	) -> EdgeInsets {
+		EdgeInsets(
+			top: top + verticalAmount.half,
+			leading: leading + horizontalAmount.half,
+			bottom: bottom + verticalAmount.half,
+			trailing: trailing + horizontalAmount.half
+		)
+	}
+}
+
+// MARK: Decreased
+
+extension EdgeInsets {
+	@inlinable public func decreased(
+		horizontally horizontalAmount: CGFloat = .zero,
+		vertically verticalAmount: CGFloat = .zero
+	) -> EdgeInsets {
+		increased(horizontally: -horizontalAmount, vertically: -verticalAmount)
 	}
 }
