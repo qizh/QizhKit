@@ -3,12 +3,9 @@
 
 import PackageDescription
 
-let settings: [SwiftSetting] = [
-	.unsafeFlags(["-warn-deprecated-declarations"], .when(configuration: .debug))
-]
-
 let package = Package(
     name: "QizhKit",
+	defaultLocalization: "en",
 	platforms: [
 		.iOS(.v16),
 		.macOS(.v13),
@@ -68,6 +65,10 @@ let package = Package(
 			],
 			resources: [
 				.process("PrivacyInfo.xcprivacy")
+			],
+			swiftSettings: [
+				.enableExperimentalFeature("StrictConcurrency=complete", .when(configuration: .debug)),
+				.unsafeFlags(["-cross-module-optimization"], .when(configuration: .release)),
 			]
 		),
     ],
