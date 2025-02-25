@@ -75,7 +75,10 @@ extension CodeAsArray: CustomStringConvertible {
 }
 
 public extension KeyedEncodingContainer {
-	mutating func encode<Item: OptionalConvertible>(_ value: CodeAsArray<Item>, forKey key: KeyedEncodingContainer<K>.Key) throws {
+	mutating func encode<Item: OptionalConvertible>(
+		_ value: CodeAsArray<Item>,
+		forKey key: KeyedEncodingContainer<K>.Key
+	) throws {
 		if value.wrappedValue.isSet {
 			try encode([value.wrappedValue], forKey: key)
 		}
@@ -153,5 +156,16 @@ extension KeyedDecodingContainer {
 	) throws -> CodeOptionalAsArray<Item> {
 		(try? decodeIfPresent(CodeOptionalAsArray<Item>.self, forKey: key))
 			?? .none
+	}
+}
+
+public extension KeyedEncodingContainer {
+	mutating func encode<Item>(
+		_ value: CodeOptionalAsArray<Item>,
+		forKey key: KeyedEncodingContainer<K>.Key
+	) throws {
+		if value.wrappedValue.isSet {
+			try encode([value.wrappedValue], forKey: key)
+		}
 	}
 }
