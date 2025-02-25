@@ -113,20 +113,58 @@ public enum StringOffset: Sendable {
 	public static let tabArrow: Self = .tabs(1, suffix: "> ")
 	public static let empty: Self = .spaces(0)
 	
+	public static let treeLineElement = "┃ "
 	public static let treeElement = "┣ "
 	private static let lastTreeElement = "┗ "
 	public static let subtreeElement = "┃ ┣ "
 	private static let lastSubtreeElement = "┃ ┗ "
 	
+	/// `┃ every line`
+	public static let treeLine: Self = .treeLine(spaces: 0)
+	
+	/// `┃ {spaces}every line`
+	public static func treeLine(spaces: UInt) -> Self {
+		.spaces(spaces, prefix: treeLineElement)
+	}
+	
+	
+	/// `┣ every line`, `┗ last line`
+	/// ```
+	/// ┣ every line
+	/// ┗ last line
+	/// ```
 	public static let tree: Self = .tree(spaces: 0)
+	
+	/// `┣ {spaces}every line`, `┗ {spaces}last line`
+	/// ```
+	/// ┣ {spaces}every line
+	/// ┗ {spaces}last line
+	/// ```
 	public static func tree(spaces: UInt) -> Self {
 		.spaces(spaces, prefix: treeElement)
 	}
+	
+	/// `┣ {tabs}every line`, `┗ {tabs}last line`
+	/// ```
+	/// ┣ {tabs}every line
+	/// ┗ {tabs}last line
+	/// ```
 	public static func tree(tabs: UInt) -> Self {
 		.tabs(tabs, suffix: treeElement)
 	}
 	
+	/// `┃ ┣ every line`, `┃ ┗ last line`
+	/// ```
+	/// ┃ ┣ every line
+	/// ┃ ┗ last line
+	/// ```
 	public static let subTree: Self = .tree(spaces: 0)
+	
+	/// `┃ ┣ {spaces}every line`, `┃ ┗ {spaces}last line`
+	/// ```
+	/// ┃ ┣ {spaces}every line
+	/// ┃ ┗ {spaces}last line
+	/// ```
 	public static func subTree(spaces: UInt) -> Self {
 		.spaces(spaces, suffix: subtreeElement)
 	}
