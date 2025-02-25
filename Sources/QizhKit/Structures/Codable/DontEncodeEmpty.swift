@@ -50,3 +50,14 @@ extension DontEncodeEmpty: WithUnknown where Wrapped: WithUnknown {
 		.init(wrappedValue: Wrapped.unknown)
 	}
 }
+
+extension KeyedEncodingContainer {
+	public mutating func encode<Wrapped>(
+		_ value: DontEncodeEmpty<Wrapped>,
+		forKey: KeyedEncodingContainer<K>.Key
+	) throws {
+		if value.wrappedValue.isNotEmpty {
+			try encode(value.wrappedValue, forKey: forKey)
+		}
+	}
+}
