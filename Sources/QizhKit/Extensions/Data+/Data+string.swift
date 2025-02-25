@@ -58,7 +58,7 @@ extension Data {
 // MARK: String
 
 extension Data {
-	public func asString(encoding: String.Encoding) -> String? {
+	@inlinable public func asString(encoding: String.Encoding) -> String? {
 		String(data: self, encoding: encoding)
 	}
 }
