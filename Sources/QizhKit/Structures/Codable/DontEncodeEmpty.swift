@@ -9,18 +9,27 @@
 import Foundation
 
 @propertyWrapper
-public struct DontEncodeEmpty<Wrapped> where Wrapped: EmptyTestable, Wrapped: Encodable {
+public struct DontEncodeEmpty<Wrapped>: Encodable where Wrapped: EmptyTestable,
+														Wrapped: Encodable {
 	public var wrappedValue: Wrapped
 	
 	public init(wrappedValue: Wrapped) {
 		self.wrappedValue = wrappedValue
 	}
 	
-	public func encode(to encoder: Encoder) throws {
+	public func encode(to encoder: any Encoder) throws {
 		if wrappedValue.isNotEmpty {
 			var container = encoder.singleValueContainer()
 			try container.encode(wrappedValue)
 		}
+	}
+}
+
+extension DontEncodeEmpty: Decodable where Wrapped: Decodable {
+	public init(from decoder: any Decoder) throws {
+		let container = try decoder.singleValueContainer()
+		let value = try container.decode(Wrapped.self)
+		self.init(wrappedValue: value)
 	}
 }
 
