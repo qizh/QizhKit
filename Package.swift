@@ -68,7 +68,7 @@ let package = Package(
 			],
 			swiftSettings: [
 				.enableExperimentalFeature("StrictConcurrency=complete", .when(configuration: .debug)),
-				.unsafeFlags(["-cross-module-optimization"], .when(configuration: .release)),
+				// .unsafeFlags(["-cross-module-optimization"], .when(configuration: .release)),
 			]
 		),
     ],
