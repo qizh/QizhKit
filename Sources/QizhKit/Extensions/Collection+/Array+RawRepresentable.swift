@@ -8,10 +8,9 @@
 
 import Foundation
 
-extension Array: @retroactive RawRepresentable 
-	where Element: RawRepresentable,
-		  Element.RawValue == String
-{
+extension Array where Element: RawRepresentable,
+					  Element.RawValue == String {
+	
 	public init?(rawValue: String) {
 		self = rawValue
 			.deleting(prefix: .leftBracket)
@@ -25,6 +24,26 @@ extension Array: @retroactive RawRepresentable
 	public var rawValue: String {
 		self.map(\.rawValue)
 			.joined(separator: .coma)
+	}
+}
+
+extension Array: @retroactive RawRepresentable where Element: Codable {
+	public init?(rawValue: String) {
+		guard let data = rawValue.data(using: .utf8) else {
+			return nil
+		}
+		
+		do {
+			let decoder = JSONDecoder()
+			decoder.allowsJSON5 = true
+			self = try decoder.decode(Self.self, from: data)
+		} catch {
+			return nil
+		}
+	}
+	
+	public var rawValue: String {
+		(try? JSON5Encoder().encode(self)) ?? "[]"
 	}
 }
 
