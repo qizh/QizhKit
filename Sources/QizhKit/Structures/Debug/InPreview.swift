@@ -29,3 +29,10 @@ public func printInPreview(_ items: Any..., separator: String = " ", terminator:
 		print(items.justOne ?? items, separator: separator, terminator: terminator)
 	}
 }
+
+/// Same as `print`, but only works when ``isInPreviewEnvironment``
+public func debugPrintInPreview(_ items: Any..., separator: String = " ", terminator: String = "\n") {
+	if isInPreviewEnvironment {
+		debugPrint(items.justOne ?? items, separator: separator, terminator: terminator)
+	}
+}
