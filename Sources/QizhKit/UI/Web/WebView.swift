@@ -8,6 +8,7 @@
 
 import SwiftUI
 import WebKit
+import QizhMacroKit
 
 public struct WebView: UIViewControllerRepresentable {
 	private let source: Source
@@ -17,7 +18,8 @@ public struct WebView: UIViewControllerRepresentable {
 	private let configuration: WKWebViewConfiguration?
 	private let contentOffset: Binding<CGPoint>?
 	
-	public enum Source {
+	@CaseName
+	public enum Source: Hashable, Sendable, CustomStringConvertible {
 		case none
 		case embed(_ code: String)
 		case debug(
@@ -29,7 +31,8 @@ public struct WebView: UIViewControllerRepresentable {
 		case  file(_ url: URL)
 		case   url(_ url: URL)
 		
-		public enum SourceType: WithUnknown, EasyCaseComparable {
+		@CaseName
+		public enum SourceType: Hashable, Sendable, WithUnknown, EasyCaseComparable {
 			case unknown
 			case json
 			case csv
@@ -40,33 +43,33 @@ public struct WebView: UIViewControllerRepresentable {
 		
 		public var isDebug: Bool {
 			switch self {
-			case .debug: return true
-			    default: return false
+			case .debug: 	true
+			default: 		false
 			}
 		}
 		
 		public var type: SourceType {
 			switch self {
-			case .debug(_, let type, _): return type
-			default: return .unknown
+			case .debug(_, let type, _): type
+			default: 					.unknown
 			}
 		}
 		
 		public var debugName: String {
 			switch self {
-			case .debug(_, _, let name): 	return name
-			default: 						return Self.defaultDebugName
+			case .debug(_, _, let name): 	name
+			default: 						Self.defaultDebugName
 			}
 		}
 		
 		public var string: String {
 			switch self {
-			case .none:               		return .empty
-			case .embed(let code):    		return code
-			case .debug(let code, _, _): 	return code
-			case  .html(let code):    		return code
-			case  .file(let url):     		return url.absoluteString
-			case   .url(let url):     		return url.absoluteString
+			case .none:               		""
+			case .embed(let code):    		code
+			case .debug(let code, _, _): 	code
+			case  .html(let code):    		code
+			case  .file(let url):     		url.absoluteString
+			case   .url(let url):     		url.absoluteString
 			}
 		}
 		
@@ -75,10 +78,15 @@ public struct WebView: UIViewControllerRepresentable {
 			case .embed,
 				 .debug,
 				 .html,
-				 .none: 	      	return .none
-			case .file(let url): 	return url
-			case .url(let url): 	return url
+				 .none: 	      	nil
+			case .file(let url): 	url
+			case .url(let url): 	url
 			}
+		}
+		
+		public var description: String {
+			let typeName = type.known?.caseName.prepending(.underscoreChar) ?? .empty
+			return "\(caseName)\(typeName)(\(string))"
 		}
 	}
 	
