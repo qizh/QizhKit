@@ -73,16 +73,14 @@ public extension Sequence {
 // MARK: First
 
 extension Collection {
-	@inlinable
-	public func first <Value: Equatable> (
+	@inlinable public func first <Value: Equatable> (
 		where transform: (Element) -> Value,
 		equals value: Value
 	) -> Element? {
 		first(where: { transform($0) == value })
 	}
 	
-	@inlinable
-	public func first <Value: Equatable> (
+	@inlinable public func first <Value: Equatable> (
 		where transform: (Element) -> Value,
 		equals value: Value?
 	) -> Element? {
@@ -159,7 +157,7 @@ extension Collection {
 		first(where: { $0 is Cast }).flatMap({ $0 as? Cast })
 	}
 	
-	// MARK: > CC
+	// MARK: > Easy Comparable
 	
 	/*
 	@available(*, deprecated, message: "Switch from `CaseComparable` to `EasyComparable`")
@@ -224,6 +222,43 @@ public extension Collection where Element: EasyComparable {
 // MARK: Last
 
 extension BidirectionalCollection {
+	@inlinable public func last <Value: Equatable> (
+		where transform: (Element) -> Value,
+		equals value: Value
+	) -> Element? {
+		last(where: { transform($0) == value })
+	}
+	
+	@inlinable public func last <Value: Equatable> (
+		where transform: (Element) -> Value,
+		equals value: Value?
+	) -> Element? {
+		last(where: { transform($0) == value })
+	}
+	
+	@inlinable public func last <Value: Equatable, Sortable> (
+		by sortTransform: (Element) -> Sortable,
+		using valuesAreInIncreasingOrder: (Sortable, Sortable) throws -> Bool,
+		where compareTransform: (Element) -> Value,
+		equals value: Value
+	) rethrows -> Element? {
+		try self
+			.filter({ compareTransform($0) == value })
+			.min(by: sortTransform, using: valuesAreInIncreasingOrder)
+	}
+	
+	/// Sorting by `<`
+	@inlinable public func last <Value: Equatable> (
+		by sortTransform: (Element) -> some Comparable,
+		where compareTransform: (Element) -> Value,
+		equals value: Value
+	) -> Element? {
+		self.filter({ compareTransform($0) == value })
+			.min(by: sortTransform)
+	}
+	
+	// MARK: > Easy Comparable
+	
 	@inlinable public func last <Value: EasyComparable> (
 		where transform: (Element) -> Value,
 		is value: Value.Other
