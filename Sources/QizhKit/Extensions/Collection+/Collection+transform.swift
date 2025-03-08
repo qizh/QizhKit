@@ -423,14 +423,12 @@ public extension Collection {
 	/// 	let filteredWords = words.removing(where: \.count, in: [6, 7])
 	/// 	// filteredWords contains ["apple"] because "banana" and "cherry" has 6 letters.
 	/// 	```
-	@inlinable func removing <Medium: Equatable> (
+	@inlinable func removing <Medium: Equatable, Mediums: Sequence> (
 		where transformed: (Element) -> Medium,
-		in other: [Medium]
-	) -> [Element] {
+		in other: Mediums
+	) -> [Element] where Mediums.Element == Medium {
 		filter { element in
-			other.contains(
-				no: transformed(element)
-			)
+			not(other.contains(transformed(element)))
 		}
 	}
 
@@ -441,18 +439,18 @@ public extension Collection {
 		filter({ transformed($0) != other })
 	}
 	
-	@inlinable func filter <Medium: Equatable> (
+	@inlinable func filter <Medium: Equatable, Mediums: Sequence> (
 		leave transformed: (Element) -> Medium,
-		from other: [Medium]
-	) -> [Self.Element] {
+		from other: Mediums
+	) -> [Self.Element] where Mediums.Element == Medium {
 		filter({ element in other.contains(transformed(element)) })
 	}
 	
-	@inlinable func filter <Medium: Equatable> (
+	@inlinable func filter <Medium: Equatable, Mediums: Sequence> (
 		remove transformed: (Element) -> Medium,
-		from other: [Medium]
-	) -> [Self.Element] {
-		filter({ element in other.contains(no: transformed(element)) })
+		from other: Mediums
+	) -> [Self.Element] where Mediums.Element == Medium {
+		filter({ element in not(other.contains(transformed(element))) })
 	}
 	
 	@inlinable func filter <Medium: Equatable> (
