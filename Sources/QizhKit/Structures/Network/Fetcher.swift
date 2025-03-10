@@ -64,10 +64,10 @@ public enum DebugDepth: Comparable, Sendable, EasyCaseComparable {
 	
 	public var maxDataCount: Int {
 		switch self {
-		case .none: 	return 0
-		case .minimum: 	return 500
-		case .default: 	return 5_000
-		case .extra: 	return .max
+		case .none: 	0
+		case .minimum: 	500
+		case .default: 	5_000
+		case .extra: 	.max
 		}
 	}
 }
@@ -114,7 +114,9 @@ public protocol CollectionFetcher: Fetcher
 	Value: InitializableCollection,
 	Value: InitializableWithSequenceCollection,
 	Value: EmptyTestable,
-	Value.Element: Codable
+	Value: Sendable,
+	Value.Element: Codable,
+	Value.Element: Sendable
 {
 	
 }
