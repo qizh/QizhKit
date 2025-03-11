@@ -10,6 +10,7 @@ import SwiftUI
 import UIKit
 import SafariServices
 import BetterSafariView
+import QizhMacroKit
 
 // MARK: VC
 
@@ -179,10 +180,19 @@ public struct SafariButton<Content>: View where Content: View {
 	}
 }
 
-public enum SafariButtonOpenStyle: Hashable, Sendable {
+@CaseName
+public enum SafariButtonOpenStyle: Hashable, Sendable, CaseIterable {
 	case push
 	case sheet
 	case fullscreenCover
+}
+
+extension SafariButtonOpenStyle: CustomStringConvertible {
+	@inlinable public var description: String { caseName }
+}
+
+extension SafariButtonOpenStyle: Identifiable {
+	@inlinable public var id: Self { self }
 }
 
 // MARK: View
