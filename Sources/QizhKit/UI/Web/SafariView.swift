@@ -179,7 +179,7 @@ public struct SafariButton<Content>: View where Content: View {
 	}
 }
 
-public enum SafariButtonOpenStyle: Equatable {
+public enum SafariButtonOpenStyle: Hashable, Sendable {
 	case push
 	case sheet
 	case fullscreenCover
