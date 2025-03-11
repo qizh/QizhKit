@@ -37,6 +37,7 @@ public extension Sequence {
 		}
 	}
 	
+	/// Using `<`
 	@inlinable func sorted(
 		by transform: (Element) -> some Comparable
 	) -> [Element] {
