@@ -36,11 +36,14 @@ public extension TimeInterval {
 	/// One week (7 days) interval
 	static let week: TimeInterval = .seven * day
 	
-	/// One month (30 days) interval
-	static let month: TimeInterval = .thirty * day
+	/// One month (30.44 days) interval
+	static let month: TimeInterval = 30.44 * day
+	
+	/// One quarter (91.31 days) interval
+	static let quarter: TimeInterval = 91.31 * day
 
-	/// One year (365 days) interval
-	static let year: TimeInterval = 365 * day
+	/// One year (365.25 days) interval
+	static let year: TimeInterval = 365.25 * day
 	
 	/// Creates an interval by leaving only remainder
 	/// after dividing current interval by day
