@@ -212,7 +212,16 @@ extension DataResponse {
 		*/
 		
 		let resultOutput = if debugDepth > .default {
-			"\(result)"
+			switch result {
+			case .success(let model):
+				if let imodel = model as? any Identifiable {
+					"success(\(model.self)(\(imodel.id)))"
+				} else {
+					"success(\(model.self))"
+				}
+			case .failure(let error):
+				"failure(\(error))"
+			}
 		} else if case .success(let model) = result,
 				  let imodel = model as? any Identifiable {
 			"\(imodel.id)"
