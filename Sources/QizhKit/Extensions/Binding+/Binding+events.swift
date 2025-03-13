@@ -143,9 +143,9 @@ public extension Binding {
 // MARK: - .on change
 /// `.on(condition: action)` synthax
 
-public extension Binding {
-	@discardableResult @inlinable
-	func on(
+extension Binding {
+	@discardableResult
+	public func on(
 		change action: @escaping @Sendable (Value) -> Void,
 		       _ flow: ExecutionFlow = .current
 	) -> Binding where Value: Sendable {
@@ -158,8 +158,8 @@ public extension Binding {
 		)
 	}
 	
-	@discardableResult @inlinable
-	func on(
+	@discardableResult
+	public func on(
 		change action: @escaping @Sendable () -> Void,
 		       _ flow: ExecutionFlow = .current
 	) -> Binding where Value: Sendable {
@@ -172,8 +172,8 @@ public extension Binding {
 		)
 	}
 	
-	@discardableResult @inlinable
-	func on(
+	@discardableResult
+	public func on(
 		change action: @escaping @Sendable (_ from: Value, _ to: Value) -> Void,
 		       _ flow: ExecutionFlow = .current
 	) -> Binding where Value: Sendable {
@@ -183,6 +183,48 @@ public extension Binding {
 				let previousValue = self.wrappedValue
 				self.wrappedValue = value
 				flow.proceed(with: action, previousValue, value)
+			}
+		)
+	}
+}
+
+extension Binding {
+	@discardableResult
+	public func onChange(
+		_ action: @escaping @Sendable (Value) -> Void
+	) -> Binding where Value: Sendable {
+		.init(
+			get: { wrappedValue },
+			set: { value in
+				wrappedValue = value
+				action(value)
+			}
+		)
+	}
+	
+	@discardableResult
+	public func onChange(
+		_ action: @escaping @Sendable () -> Void
+	) -> Binding where Value: Sendable {
+		Binding(
+			get: { wrappedValue },
+			set: { value in
+				wrappedValue = value
+				action()
+			}
+		)
+	}
+	
+	@discardableResult
+	public func onChange(
+		_ action: @escaping @Sendable (_ from: Value, _ to: Value) -> Void
+	) -> Binding where Value: Sendable {
+		Binding(
+			get: { wrappedValue },
+			set: { value in
+				let previousValue = wrappedValue
+				wrappedValue = value
+				action(previousValue, value)
 			}
 		)
 	}
