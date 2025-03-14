@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import os.log
 
 /// Provides default implementations.
 /// ``description``: Entity name (and id when ``Identifiable``),
@@ -16,6 +17,8 @@ public protocol PrettyStringConvertable:
 	CustomStringConvertible,
 	Encodable
 { }
+
+let logger = Logger(subsystem: "Encoding", category: "Pretty String Convertable")
 
 extension PrettyStringConvertable {
 	/// JSON representation
@@ -28,14 +31,12 @@ extension PrettyStringConvertable {
 			let string = String(decoding: encoded, as: UTF8.self)
 			return string
 		} catch {
-			print(
-				"""
+			logger.error("""
 				⚠️ [PrettyStringConvertable]
-					┣ `debugDescription` failed for > \(Self.self)
-					┣ JSON encoding error > \(error.localizedDescription)
-					┣ fallback to > \(description)
-				"""
-			)
+				    ┣ `debugDescription` failed for > \(Self.self)
+				    ┣ JSON encoding error > \(error.localizedDescription)
+				    ┗ fallback to > \(description)
+				""")
 			return description
 		}
 	}
