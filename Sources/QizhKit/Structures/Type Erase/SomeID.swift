@@ -186,6 +186,51 @@ public enum SomeID: Hashable, Sendable {
 
 
 
+// MARK: ┣ +
+
+extension SomeID {
+	@inlinable public static func + <RHS> (lhs: Self, rhs: RHS) -> Self
+		where RHS: Identifiable,
+			  RHS.ID: StringProtocol
+	{
+		.init("\(lhs)-\(rhs.id)")
+	}
+	
+	@inlinable public static func + <RHS> (lhs: Self, rhs: RHS) -> Self
+		where RHS: Identifiable,
+			  RHS.ID: BinaryInteger
+	{
+		.init("\(lhs)-\(rhs.id)")
+	}
+	
+	@inlinable public static func + <RHS> (lhs: Self, rhs: RHS) -> Self
+		where RHS: Identifiable,
+			  RHS.ID: CustomStringConvertible
+	{
+		.init("\(lhs)-\(rhs.id)")
+	}
+	
+	@_disfavoredOverload
+	@inlinable public static func + (lhs: Self, rhs: CustomStringConvertible) -> Self {
+		.init("\(lhs)-\(rhs)")
+	}
+	
+	@_disfavoredOverload
+	@inlinable public static func + (lhs: Self, rhs: any BinaryInteger) -> Self {
+		.init("\(lhs)-\(rhs)")
+	}
+	
+	@_disfavoredOverload
+	@inlinable public static func + (lhs: Self, rhs: any StringProtocol) -> Self {
+		.init("\(lhs)-\(rhs)")
+	}
+	
+	@_disfavoredOverload
+	@inlinable public static func + (lhs: Self, rhs: any RawRepresentable) -> Self {
+		.init("\(lhs)-\(rhs.rawValue)")
+	}
+}
+
 // MARK: ┣ Equatable
 
 extension SomeID: Equatable {
@@ -197,9 +242,11 @@ extension SomeID: Equatable {
 		lhs.int == rhs
 	}
 	
+	/*
 	@inlinable public static func == (lhs: SomeID, rhs: String) -> Bool {
 		lhs.string == rhs
 	}
+	*/
 	
 	@inlinable public static func == (lhs: SomeID, rhs: UUID) -> Bool {
 		lhs.uuid == rhs
@@ -211,6 +258,10 @@ extension SomeID: Equatable {
 	
 	@inlinable public static func == (lhs: SomeID, rhs: SomeID) -> Bool {
 		lhs.string == rhs.string
+	}
+	
+	@inlinable public static func == (lhs: SomeID, rhs: any StringProtocol) -> Bool {
+		lhs.string == rhs
 	}
 }
 
