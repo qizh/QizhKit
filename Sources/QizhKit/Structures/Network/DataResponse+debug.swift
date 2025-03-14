@@ -211,23 +211,29 @@ extension DataResponse {
 			: result.caseName
 		*/
 		
-		let resultOutput = if debugDepth > .default {
+		let resultOutput =
 			switch result {
 			case .success(let model):
-				if let imodel = model as? any Identifiable {
-					"success(\(model.self)(\(imodel.id)))"
-				} else {
-					"success(\(model.self))"
+				switch debugDepth {
+				case .none,
+					 .minimum:
+					result.caseName
+				case .default:
+					if let imodel = model as? (any Identifiable) {
+						"success(\(imodel.id))"
+					} else {
+						result.caseName
+					}
+				case .extra:
+					if let imodel = model as? (any Identifiable) {
+						"success(\(caseName(of: model.self, .name))(\(imodel.id)))"
+					} else {
+						"success(\(caseName(of: model.self, .name)))"
+					}
 				}
 			case .failure(let error):
 				"failure(\(error))"
 			}
-		} else if case .success(let model) = result,
-				  let imodel = model as? any Identifiable {
-			"\(imodel.id)"
-		} else {
-			result.caseName
-		}
 		
 		output += .newLine + "[Result]: \(resultOutput)"
 		
