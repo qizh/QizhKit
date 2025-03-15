@@ -164,17 +164,17 @@ public enum StringOffset: Sendable {
 	/// ```
 	public static let subTree: Self = .tree(spaces: 0)
 	
-	/// `┃   ┣ every line`, `┃   ┗ last line`
-	/// ```
-	/// ┃   ┣ every line
-	/// ┃   ┗ last line
-	/// ```
-	public static let secondSubTree: Self = .spaces(0, suffix: secondSubtreeElement)
-	
 	/// `┃ ┃ ┣ every line`, `┃ ┃ ┗ last line`
 	/// ```
 	/// ┃ ┃ ┣ every line
 	/// ┃ ┃ ┗ last line
+	/// ```
+	public static let secondSubTree: Self = .spaces(0, suffix: secondSubtreeElement)
+	
+	/// `┃   ┣ every line`, `┃   ┗ last line`
+	/// ```
+	/// ┃   ┣ every line
+	/// ┃   ┗ last line
 	/// ```
 	public static let secondEmptySubTree: Self = .spaces(0, suffix: secondEmptySubtreeElement)
 	
