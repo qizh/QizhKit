@@ -118,6 +118,10 @@ public enum StringOffset: Sendable {
 	private static let lastTreeElement = "┗ "
 	public static let subtreeElement = "┃ ┣ "
 	private static let lastSubtreeElement = "┃ ┗ "
+	public static let secondSubtreeElement = "┃ ┃ ┣ "
+	private static let secondLastSubtreeElement = "┃ ┃ ┗ "
+	public static let secondEmptySubtreeElement = "┃   ┣ "
+	private static let secondEmptyLastSubtreeElement = "┃   ┗ "
 	
 	/// `┃ every line`
 	public static let treeLine: Self = .treeLine(spaces: 0)
@@ -159,6 +163,20 @@ public enum StringOffset: Sendable {
 	/// ┃ ┗ last line
 	/// ```
 	public static let subTree: Self = .tree(spaces: 0)
+	
+	/// `┃   ┣ every line`, `┃   ┗ last line`
+	/// ```
+	/// ┃   ┣ every line
+	/// ┃   ┗ last line
+	/// ```
+	public static let secondSubTree: Self = .spaces(0, suffix: secondSubtreeElement)
+	
+	/// `┃ ┃ ┣ every line`, `┃ ┃ ┗ last line`
+	/// ```
+	/// ┃ ┃ ┣ every line
+	/// ┃ ┃ ┗ last line
+	/// ```
+	public static let secondEmptySubTree: Self = .spaces(0, suffix: secondEmptySubtreeElement)
 	
 	/// `┃ ┣ {spaces}every line`, `┃ ┗ {spaces}last line`
 	/// ```
@@ -222,6 +240,8 @@ public enum StringOffset: Sendable {
 			switch prefix {
 			case Self.treeElement: Self.lastTreeElement
 			case Self.subtreeElement: Self.lastSubtreeElement
+			case Self.secondSubtreeElement: Self.secondLastSubtreeElement
+			case Self.secondEmptySubtreeElement: Self.secondEmptyLastSubtreeElement
 			default: prefix
 			}
 		
@@ -229,6 +249,8 @@ public enum StringOffset: Sendable {
 			switch suffix {
 			case Self.treeElement: Self.lastTreeElement
 			case Self.subtreeElement: Self.lastSubtreeElement
+			case Self.secondSubtreeElement: Self.secondLastSubtreeElement
+			case Self.secondEmptySubtreeElement: Self.secondEmptyLastSubtreeElement
 			default: suffix
 			}
 		
