@@ -38,7 +38,7 @@ let package = Package(
 		.package(url: "https://github.com/apple/swift-collections", from: "1.1.4"),
 		
 		/// Macros
-		.package(url: "https://github.com/qizh/QizhMacroKit", exact: "1.0.20"),
+		.package(url: "https://github.com/qizh/QizhMacroKit", exact: "1.0.21"),
 	],
     targets: [
         .target(
@@ -67,10 +67,14 @@ let package = Package(
 				.process("PrivacyInfo.xcprivacy")
 			],
 			swiftSettings: [
-				.enableExperimentalFeature("StrictConcurrency=complete", .when(configuration: .debug)),
+				// .enableExperimentalFeature("StrictConcurrency=complete", .when(configuration: .debug)),
+				// .unsafeFlags(["-Xfrontend", "-strict-concurrency=complete"], .when(configuration: .debug)),
 				// .unsafeFlags(["-cross-module-optimization"], .when(configuration: .release)),
 			]
 		),
     ],
-	swiftLanguageModes: [.v5, .v6]
+	swiftLanguageModes: [
+		// .v5,
+		.v6,
+	]
 )
