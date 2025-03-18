@@ -22,6 +22,17 @@ extension View {
 			perform: { _ in action() }
 		)
 	}
+	
+	@_disfavoredOverload
+	@available(iOS, introduced: 17, message: "Backward compatibility for iOS 17 of iOS 16 implementation")
+	@inlinable public func onChange <Value: Equatable> (
+		of value: Value,
+		perform action: @escaping (Value) -> Void
+	) -> some View {
+		onChange(of: value, initial: false) { oldValue, newValue in
+			action(newValue)
+		}
+	}
 }
 
 // MARK: onReceive
