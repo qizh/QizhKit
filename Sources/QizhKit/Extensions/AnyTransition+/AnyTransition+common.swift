@@ -10,6 +10,8 @@ import Foundation
 import SwiftUICore
 
 extension AnyTransition {
+	// TODO: Create a transition, which clips the contents in ContainerRelativeShape, then scales it down to 0.98, then slides or unslides
+	
 	@MainActor public static let unslide: Self =
 		.asymmetric(
 			insertion: .move(edge: .trailing),
