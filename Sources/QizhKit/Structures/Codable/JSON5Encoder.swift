@@ -73,7 +73,7 @@ extension JSON5Encoder {
 		set { encoder.nonConformingFloatEncodingStrategy = newValue }
 	}
 	
-	public var userInfo: [CodingUserInfoKey : Any] {
+	public var userInfo: [CodingUserInfoKey: any Sendable] {
 		get { encoder.userInfo }
 		set { encoder.userInfo = newValue }
 	}
