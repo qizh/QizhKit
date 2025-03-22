@@ -197,44 +197,89 @@ fileprivate struct ScrollOffsetStackPreferenceKey: PreferenceKey {
 	}
 }
 
-public extension ScrollView {
-	@inlinable @MainActor static func nativeReading(
+extension ScrollView {
+	@MainActor
+	@inlinable public static func nativeReading(
 		offset: Binding<CGPoint>,
 		_ axes: Axis.Set = .vertical,
 		showsIndicators: Bool = true,
-		@ViewBuilder content: () -> Content
+		@ViewBuilder content: @escaping () -> Content
 	) -> some View {
 		OffsetReadingScrollView(
 			axes,
-			showIndicators: showsIndicators,
+			showsIndicators: showsIndicators,
 			offset: offset,
 			content: content
 		)
 	}
 }
 
+// MARK: - March 2025 approach
+
+fileprivate struct PositionObservingView<Content: View>: View {
+	var coordinateSpace: CoordinateSpace
+	@Binding var position: CGPoint
+	@ViewBuilder var content: () -> Content
+	
+	var body: some View {
+		content()
+			.background {
+				GeometryReader { geometry in
+					Color.clear.preference(
+						key: PreferenceKey.self,
+						value: geometry.frame(in: coordinateSpace).origin
+					)
+				}
+			}
+			.onPreferenceChange(PreferenceKey.self) { position in
+				self.position = position
+			}
+	}
+	
+	struct PreferenceKey: SwiftUI.PreferenceKey {
+		static var defaultValue: CGPoint { .zero }
+
+		static func reduce(value: inout CGPoint, nextValue: () -> CGPoint) {
+			/// We don’t actually need to implement any kind of reduce algorithm above,
+			/// since we’ll only have a single view delivering values using that preference
+			/// key within any given hierarchy (since our implementation is entirely
+			/// contained within our PositionObservingView).
+		}
+	}
+}
+
 public struct OffsetReadingScrollView <Content>: View where Content: View {
 	private let axes: Axis.Set
-	private let showIndicators: Bool
+	private let showsIndicators: Bool
 	@Binding private var offset: CGPoint
-	private let content: Content
+	private let contentBuilder: () -> Content
 	
-	@Namespace var scrollNS
+	@Namespace private var scrollNS
 	
 	public init(
 		_ axes: Axis.Set = .vertical,
-		showIndicators: Bool = true,
+		showsIndicators: Bool = true,
 		offset: Binding<CGPoint>,
-		@ViewBuilder content: () -> Content
+		@ViewBuilder content contentBuilder: @escaping () -> Content
 	) {
 		self.axes = axes
-		self.showIndicators = showIndicators
+		self.showsIndicators = showsIndicators
 		self._offset = offset
-		self.content = content()
+		self.contentBuilder = contentBuilder
 	}
 	
 	public var body: some View {
-		ScrollView(axes, showsIndicators: showIndicators) {
+		ScrollView(axes, showsIndicators: showsIndicators) {
+			PositionObservingView(
+				coordinateSpace: .named(scrollNS),
+				position: $offset,
+				content: contentBuilder
+			)
+		}
+		.coordinateSpace(name: scrollNS)
+		
+		/*
+		ScrollView(axes, showsIndicators: showsIndicators) {
 			content
 				.background {
 					GeometryReader { insideGeometry in
@@ -252,6 +297,7 @@ public struct OffsetReadingScrollView <Content>: View where Content: View {
 				offset = value
 			}
 		}
+		*/
 		
 		/*
 		GeometryReader { outside in
