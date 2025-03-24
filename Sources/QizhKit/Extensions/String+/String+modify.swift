@@ -162,7 +162,7 @@ public enum StringOffset: Sendable {
 	/// ┃ ┣ every line
 	/// ┃ ┗ last line
 	/// ```
-	public static let subTree: Self = .tree(spaces: 0)
+	public static let subTree: Self = .subTree(spaces: 0)
 	
 	/// `┃ ┃ ┣ every line`, `┃ ┃ ┗ last line`
 	/// ```
