@@ -17,14 +17,10 @@ public struct WidthPreferenceKey: PreferenceKey {
 	}
 }
 
-fileprivate struct HeightPreferenceKey: PreferenceKey {
-	static var defaultValue: CGFloat { .zero }
-	static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-		/// We don’t actually need to implement any kind of reduce algorithm above,
-		/// since we’ll only have a single view delivering values using that preference
-		/// key within any given hierarchy (since our implementation is entirely
-		/// contained within our PositionObservingView).
-		// value = nextValue()
+public struct HeightPreferenceKey: PreferenceKey {
+	public static let defaultValue: CGFloat = .zero
+	public static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+		value = nextValue()
 	}
 }
 
@@ -85,10 +81,15 @@ public struct HeightBindingModifier: ViewModifier {
 	public func body(content: Content) -> some View {
 		content.background {
 			GeometryReader { geometry in
-				Color.clear.preference(key: HeightPreferenceKey.self, value: geometry.size.height)
+				Color.clear
+					.transformPreference(HeightPreferenceKey.self) { height in
+						height = geometry.size.height
+					}
 					.onPreferenceChange(HeightPreferenceKey.self) { value in
-						if height.int != value.int {
-							height = value
+						Task { @MainActor in
+							if height != value {
+								height = value
+							}
 						}
 					}
 			}
@@ -107,8 +108,10 @@ public struct HeightCallbackModifier: ViewModifier {
 	public func body(content: Content) -> some View {
 		content.background {
 			GeometryReader { geometry in
-				Color.clear.preference(key: HeightPreferenceKey.self, value: geometry.size.height)
-					// .transformPreference(HeightPreferenceKey.self) { $0 = geometry.size.height }
+				Color.clear
+					.transformPreference(HeightPreferenceKey.self) { height in
+						height = geometry.size.height
+					}
 					.onPreferenceChange(HeightPreferenceKey.self, perform: self.receive)
 			}
 		}
