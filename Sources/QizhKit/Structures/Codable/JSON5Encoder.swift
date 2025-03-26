@@ -73,10 +73,20 @@ extension JSON5Encoder {
 		set { encoder.nonConformingFloatEncodingStrategy = newValue }
 	}
 	
+	#if swift(>=6.1)
+	/// Works in Xcode 16.3
 	public var userInfo: [CodingUserInfoKey: any Sendable] {
 		get { encoder.userInfo }
 		set { encoder.userInfo = newValue }
 	}
+	
+	#else
+	/// Works in Xcode 16.2
+	public var userInfo: [CodingUserInfoKey: Any] {
+		get { encoder.userInfo }
+		set { encoder.userInfo = newValue }
+	}
+	#endif
 }
 
 // MARK: ┣ Regexes

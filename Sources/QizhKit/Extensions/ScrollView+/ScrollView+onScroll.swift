@@ -232,7 +232,15 @@ fileprivate struct PositionObservingView<Content: View>: View {
 				}
 			}
 			.onPreferenceChange(PreferenceKey.self) { position in
+				#if swift(>=6.1)
+				/// Works in Xcode 16.3
 				self.position = position
+				#else
+				/// Works in Xcode 16.2 and lags
+				Task { @MainActor in
+					self.position = position
+				}
+				#endif
 			}
 	}
 	
