@@ -183,4 +183,19 @@ extension [AnyHashable: Any] {
 			return error.localizedDescription
 		}
 	}
+	
+	public func asEncodedJson5string(encoder providedEncoder: JSON5Encoder? = .none) -> String {
+		guard let encodableDictionary = self as? (any Encodable) else {
+			return "Cannot convert to Encodable"
+		}
+		
+		let encoder: JSON5Encoder = providedEncoder ?? .prettyPrinted
+		
+		do {
+			let jsonString = try encoder.encode(encodableDictionary)
+			return jsonString
+		} catch {
+			return error.localizedDescription
+		}
+	}
 }
