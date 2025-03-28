@@ -168,7 +168,7 @@ extension BasicBackendFetchState {
 
 extension BasicBackendFetchState: CustomStringConvertible {
 	@inlinable public var description: String {
-		caseName.asCamelCaseToSnakeCase
+		caseName.toSnakeCase
 	}
 }
 
