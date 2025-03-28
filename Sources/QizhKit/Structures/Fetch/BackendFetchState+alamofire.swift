@@ -168,6 +168,30 @@ public struct FetchErrorDebugDetails: Codable, Sendable {
 		case .unknown: ()
 		case .passwordResetTokenExpired: ()
 		case .notImplemented: ()
+		case let .doubleErrors(le as FetchError, re as FetchError):
+			self.underlying = [
+				"1": FetchErrorDebugDetails(of: le).description,
+				"2": FetchErrorDebugDetails(of: re).description,
+			]
+		case let .doubleErrors(le as DebugDetailsProvidingError, re as DebugDetailsProvidingError):
+			self.underlying = [
+				"1": le.debugDetails,
+				"2": re.debugDetails,
+			]
+		case .doubleErrors(_, let e as FetchError),
+			 .doubleErrors(let e as FetchError, _):
+			self.underlying = FetchErrorDebugDetails(of: e).asDictionary()
+		case .doubleErrors(_, let e as DebugDetailsProvidingError),
+			 .doubleErrors(let e as DebugDetailsProvidingError, _):
+			self.underlying = e.debugDetails
+		case .doubleErrors(let le, let re):
+			self.underlying = [
+				"description": [
+					"1": le.localizedDescription,
+					"2": re.localizedDescription,
+				]
+			]
+
 		}
 	}
 	

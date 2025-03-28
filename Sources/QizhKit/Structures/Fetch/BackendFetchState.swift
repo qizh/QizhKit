@@ -630,6 +630,7 @@ public protocol FetchResponse {
 }
 
 public enum FetchError: Error, EasyCaseComparable, Sendable {
+	case doubleErrors(Error, Error)
 	case error(String)
 	case providerError(String, Error)
 	case multipleProvidersError([String])
@@ -851,6 +852,12 @@ public enum FetchError: Error, EasyCaseComparable, Sendable {
 		case .priceMismatch(_): 			return true
 		case .passwordResetTokenExpired: 	return true
 		case .notImplemented: 				return true
+		case let .doubleErrors(e1 as FetchError, e2 as FetchError):
+			return e1.haveSomethingImportantToSay || e2.haveSomethingImportantToSay
+		case .doubleErrors(let e as FetchError, _),
+			 .doubleErrors(_, let e as FetchError):
+			return e.haveSomethingImportantToSay
+		case .doubleErrors(_, _): 			return false
 		}
 	}
 	
