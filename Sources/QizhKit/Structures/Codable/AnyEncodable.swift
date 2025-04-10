@@ -42,10 +42,12 @@ extension AnyEncodableProtocol {
 		var container = encoder.singleValueContainer()
 		
 		switch wrappedValue {
+		/*
 		case is NSNull:
 			if encoder.userInfo[AnyEncodable.skipNilValues] as? Bool != true {
 				try container.encodeNil()
 			}
+		*/
 		case is Void:
 			if encoder.userInfo[AnyEncodable.skipNilValues] as? Bool != true {
 				try container.encodeNil()
