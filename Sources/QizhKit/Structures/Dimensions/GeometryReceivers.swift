@@ -8,208 +8,267 @@
 
 import SwiftUI
 
+/*
 // MARK: Preference Keys
 
-public struct WidthPreferenceKey: PreferenceKey {
-	public static let defaultValue: CGFloat = .zero
-	public static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-		value = nextValue()
+struct WidthPreferenceKey: PreferenceKey {
+	static let defaultValue: CGFloat = .zero
+	static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+		// value = nextValue()
 	}
 }
 
-public struct HeightPreferenceKey: PreferenceKey {
-	public static let defaultValue: CGFloat = .zero
-	public static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-		value = nextValue()
+struct HeightPreferenceKey: PreferenceKey {
+	static let defaultValue: CGFloat = .zero
+	static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+		// value = nextValue()
 	}
 }
 
-public struct SafeAreaInsetsPreferenceKey: PreferenceKey {
-	public static let defaultValue: EdgeInsets = .zero
-	public static func reduce(value: inout EdgeInsets, nextValue: () -> EdgeInsets) {
-		value = nextValue()
+struct SafeAreaInsetsPreferenceKey: PreferenceKey {
+	static let defaultValue: EdgeInsets = .zero
+	static func reduce(value: inout EdgeInsets, nextValue: () -> EdgeInsets) {
+		// value = nextValue()
 	}
 }
+*/
+
+// MARK: Callbacks
+
+public typealias CGFloatSendableCallback = @Sendable (_ value: CGFloat) -> Void
+public typealias EdgeInsetsSendableCallback = @Sendable (_ value: EdgeInsets) -> Void
 
 // MARK: Width Modifiers
 
-public struct WidthReaderModifier: ViewModifier {
-	public typealias Callback = @Sendable (_ width: CGFloat) -> Void
-	private var receive: Callback?
+fileprivate struct WidthReaderModifier: ViewModifier {
+	private var receive: CGFloatSendableCallback?
 	@Binding private var width: CGFloat
 	
-	public init(receive: @escaping Callback) {
+	init(receive: @escaping CGFloatSendableCallback) {
 		self.receive = receive
 		self._width = .constant(.zero)
 	}
 	
-	public init(width: Binding<CGFloat>) {
+	init(width: Binding<CGFloat>) {
 		self.receive = nil
 		self._width = width
 	}
 	
-	public func body(content: Content) -> some View {
-		content
-//			.preference(key: WidthPreferenceKey.self, value: .zero)
-			.background(
-				GeometryReader { geometry in
-					Color.almostClear
-						.transformPreference(WidthPreferenceKey.self) { $0 = geometry.size.width }
-						.onPreferenceChange(WidthPreferenceKey.self) { value in
-							if let receive {
-								receive(value)
-							} else {
-								Task { @MainActor in
-									self.width = value
-								}
-							}
-						}
+	func body(content: Content) -> some View {
+		content.background {
+			GeometryReader { geometry in
+				Color.clear.preference(
+					key: PreferenceKey.self,
+					value: geometry.size.width
+				)
+			}
+		}
+		.onPreferenceChange(PreferenceKey.self) { value in
+			if let receive {
+				receive(value)
+			} else {
+				#if swift(>=6.1)
+				/// Works in Xcode 16.3
+				self.width = value
+				#else
+				/// Works in Xcode 16.2 and lags
+				Task { @MainActor in
+					self.width = value
 				}
-			)
+				#endif
+			}
+		}
+	}
+	
+	struct PreferenceKey: SwiftUI.PreferenceKey {
+		static var defaultValue: CGFloat { .zero }
+		static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+			// value = nextValue()
+		}
 	}
 }
 
 // MARK: Height Modifiers
 
-public struct HeightBindingModifier: ViewModifier {
-	@Binding public var height: CGFloat
+fileprivate struct HeightBindingModifier: ViewModifier {
+	@Binding var height: CGFloat
 	
-	public init(_ height: Binding<CGFloat>) {
+	init(_ height: Binding<CGFloat>) {
 		self._height = height
 	}
 	
-	public func body(content: Content) -> some View {
+	func body(content: Content) -> some View {
 		content.background {
 			GeometryReader { geometry in
-				Color.clear
-					.transformPreference(HeightPreferenceKey.self) { height in
-						height = geometry.size.height
-					}
-					.onPreferenceChange(HeightPreferenceKey.self) { value in
-						Task { @MainActor in
-							if height != value {
-								height = value
-							}
-						}
-					}
+				Color.clear.preference(
+					key: PreferenceKey.self,
+					value: geometry.size.height
+				)
 			}
+		}
+		.onPreferenceChange(PreferenceKey.self) { value in
+			#if swift(>=6.1)
+			/// Works in Xcode 16.3
+			self.height = value
+			#else
+			/// Works in Xcode 16.2 and lags
+			Task { @MainActor in
+				self.height = value
+			}
+			#endif
+		}
+	}
+	
+	struct PreferenceKey: SwiftUI.PreferenceKey {
+		static var defaultValue: CGFloat { .zero }
+		static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+			// value = nextValue()
 		}
 	}
 }
 
-public struct HeightCallbackModifier: ViewModifier {
-	public typealias Callback = @Sendable (_ width: CGFloat) -> Void
-	public let receive: Callback
+fileprivate struct HeightCallbackModifier: ViewModifier {
+	let receive: CGFloatSendableCallback
 	
-	public init(_ receive: @escaping Callback) {
+	init(_ receive: @escaping CGFloatSendableCallback) {
 		self.receive = receive
 	}
 	
-	public func body(content: Content) -> some View {
+	func body(content: Content) -> some View {
 		content.background {
 			GeometryReader { geometry in
-				Color.clear
-					.transformPreference(HeightPreferenceKey.self) { height in
-						height = geometry.size.height
-					}
-					.onPreferenceChange(HeightPreferenceKey.self, perform: self.receive)
+				Color.clear.preference(
+					key: PreferenceKey.self,
+					value: geometry.size.height
+				)
 			}
+		}
+		.onPreferenceChange(PreferenceKey.self, perform: receive)
+	}
+	
+	struct PreferenceKey: SwiftUI.PreferenceKey {
+		static var defaultValue: CGFloat { .zero }
+		static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+			// value = nextValue()
 		}
 	}
 }
 
 // MARK: Safe Area Modifiers
 
-public struct SafeAreaInsetsBindingModifier: ViewModifier {
-	@Binding public var insets: EdgeInsets?
+fileprivate struct SafeAreaInsetsBindingModifier: ViewModifier {
+	@Binding var insets: EdgeInsets?
 	
-	public init(_ insets: Binding<EdgeInsets?>) {
+	init(_ insets: Binding<EdgeInsets?>) {
 		self._insets = insets
 	}
 	
-	public func body(content: Content) -> some View {
-		content.background(GeometryReader(content: read))
-	}
-	
-	private func read(_ geometry: GeometryProxy) -> some View {
-		Color.almostClear
-		.transformPreference(SafeAreaInsetsPreferenceKey.self) { $0 = geometry.safeAreaInsets }
-		.onPreferenceChange(SafeAreaInsetsPreferenceKey.self) { value in
+	func body(content: Content) -> some View {
+		content.background {
+			GeometryReader { geometry in
+				Color.clear.preference(
+					key: PreferenceKey.self,
+					value: geometry.safeAreaInsets
+				)
+			}
+		}
+		.onPreferenceChange(PreferenceKey.self) { value in
+			#if swift(>=6.1)
+			/// Works in Xcode 16.3
+			self.insets = value
+			#else
+			/// Works in Xcode 16.2 and lags
 			Task { @MainActor in
 				self.insets = value
 			}
+			#endif
+		}
+	}
+	
+	struct PreferenceKey: SwiftUI.PreferenceKey {
+		static var defaultValue: EdgeInsets { .zero }
+		static func reduce(value: inout EdgeInsets, nextValue: () -> EdgeInsets) {
+			// value = nextValue()
 		}
 	}
 }
 
-public struct SafeAreaInsetsCallbackModifier: ViewModifier {
-	public typealias Callback = @Sendable (_ insets: EdgeInsets) -> Void
-	public let receive: Callback
+fileprivate struct SafeAreaInsetsCallbackModifier: ViewModifier {
+	let receive: EdgeInsetsSendableCallback
 	
-	public init(_ receive: @escaping Callback) {
+	init(_ receive: @escaping EdgeInsetsSendableCallback) {
 		self.receive = receive
 	}
 	
-	public func body(content: Content) -> some View {
-		content.background(GeometryReader(content: read))
+	func body(content: Content) -> some View {
+		content.background {
+			GeometryReader { geometry in
+				Color.clear.preference(
+					key: PreferenceKey.self,
+					value: geometry.safeAreaInsets
+				)
+			}
+		}
+		.onPreferenceChange(PreferenceKey.self, perform: receive)
 	}
 	
-	private func read(_ geometry: GeometryProxy) -> some View {
-		Color.almostClear
-		.transformPreference(SafeAreaInsetsPreferenceKey.self) { $0 = geometry.safeAreaInsets }
-		 .onPreferenceChange(SafeAreaInsetsPreferenceKey.self, perform: self.receive)
+	struct PreferenceKey: SwiftUI.PreferenceKey {
+		static var defaultValue: EdgeInsets { .zero }
+		static func reduce(value: inout EdgeInsets, nextValue: () -> EdgeInsets) {
+			// value = nextValue()
+		}
 	}
 }
 
 // MARK: View extension
 
-public extension View {
+extension View {
 	
 	// MARK: > Width
 	
-	@inlinable func receiveWidth(
-		_ receive: @escaping WidthReaderModifier.Callback
-	) -> ModifiedContent<Self, WidthReaderModifier> {
+	public func receiveWidth(
+		_ receive: @escaping CGFloatSendableCallback
+	) -> some View {
 		modifier(WidthReaderModifier(receive: receive))
 	}
 	
-	@inlinable func receiveWidth(
+	public func receiveWidth(
 		_ width: Binding<CGFloat>
-	) -> ModifiedContent<Self, WidthReaderModifier> {
+	) -> some View {
 		modifier(WidthReaderModifier(width: width))
 	}
 	
 	// MARK: > Height
 	
-	@inlinable func receiveHeight(
-		_ receive: @escaping HeightCallbackModifier.Callback
-	) -> ModifiedContent<Self, HeightCallbackModifier> {
+	public func receiveHeight(
+		_ receive: @escaping CGFloatSendableCallback
+	) -> some View {
 		modifier(HeightCallbackModifier(receive))
 	}
 	
-	@inlinable func receiveHeight(
+	public func receiveHeight(
 		_ height: Binding<CGFloat>
-	) -> ModifiedContent<Self, HeightBindingModifier> {
+	) -> some View {
 		modifier(HeightBindingModifier(height))
 	}
 	
 	// MARK: > Safe Area Insets
 	
-	@inlinable func receiveSafeAreaInsets(
-		_ receive: @escaping SafeAreaInsetsCallbackModifier.Callback
-	) -> ModifiedContent<Self, SafeAreaInsetsCallbackModifier> {
+	public func receiveSafeAreaInsets(
+		_ receive: @escaping EdgeInsetsSendableCallback
+	) -> some View {
 		modifier(SafeAreaInsetsCallbackModifier(receive))
 	}
 	
-	@inlinable func receiveSafeAreaInsets(
+	public func receiveSafeAreaInsets(
 		_ insets: Binding<EdgeInsets>
-	) -> ModifiedContent<Self, SafeAreaInsetsBindingModifier> {
+	) -> some View {
 		modifier(SafeAreaInsetsBindingModifier(insets.optional(default: .zero)))
 	}
 	
-	@inlinable func receiveSafeAreaInsets(
+	public func receiveSafeAreaInsets(
 		_ insets: Binding<EdgeInsets?>
-	) -> ModifiedContent<Self, SafeAreaInsetsBindingModifier> {
+	) -> some View {
 		modifier(SafeAreaInsetsBindingModifier(insets))
 	}
 }
