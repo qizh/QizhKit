@@ -10,12 +10,12 @@ import Foundation
 
 extension Locale {
 	/// An array of `Locale.preferredLanguages` with country part cut off.
-	/// - Experiment: Will return `en` for `en-US` language.
-	// or `en_US` 
+	/// - Experiment: Will return `en` for `en_US` language.
+	// or `en_US`
 	public static var preferredLanguageISOCodes: [String] {
 		preferredLanguages
 			.map { lang in
-				/// Language could be `en-US`, cutting out the `-US` part.
+				/// Language could be `en-US`, cutting out the `_US` part.
 				lang
 					.deleting(.starting(with: .first, .minus))
 				/// I thought language could be `en_US` and was cutting out the `_US` part.

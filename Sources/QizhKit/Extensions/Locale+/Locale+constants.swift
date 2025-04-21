@@ -14,8 +14,8 @@ extension Locale {
 	@inlinable public static var th_TH: Locale { "th_TH" }
 }
 
-extension Locale: @retroactive ExpressibleByExtendedGraphemeClusterLiteral {}
-extension Locale: @retroactive ExpressibleByUnicodeScalarLiteral {}
+// extension Locale: @retroactive ExpressibleByExtendedGraphemeClusterLiteral {}
+// extension Locale: @retroactive ExpressibleByUnicodeScalarLiteral {}
 extension Locale: @retroactive ExpressibleByStringLiteral {
 	@inlinable public init(stringLiteral value: String) {
 		self.init(identifier: value)
