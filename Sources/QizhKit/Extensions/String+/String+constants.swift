@@ -156,6 +156,11 @@ public extension String {
 // MARK: Surround by
 
 extension String {
+	/// `"..."`
+	@inlinable public var inQuotes: String {
+		"\"\(self)\""
+	}
+	
 	/// `«...»`
 	@inlinable public var inDoubleQuotes: String {
 		"«\(self)»"
