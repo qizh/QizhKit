@@ -34,7 +34,9 @@ public struct NavbarLabelStyle: LabelStyle {
 				configuration.icon
 			}
 		}
-		.foregroundColor(color)
+		.apply(when: color) { view, color in
+			view.foregroundStyle(color)
+		}
 	}
 	
 	public enum Side: EasyCaseComparable {

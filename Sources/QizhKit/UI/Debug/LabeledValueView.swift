@@ -153,19 +153,19 @@ public struct LabeledValueView: View {
 			self.init(
 				valueView: AnyView(
 					(
-						Text("(").foregroundColor(Color(uiColor: .secondaryLabel)) +
+						Text("(").foregroundStyle(.secondaryLabel) +
 						Text(String(format: "%.\(fractionDigits)f", wrapped.origin.x)) +
-						Text(", ").foregroundColor(Color(uiColor: .secondaryLabel)) +
+						Text(", ").foregroundStyle(.secondaryLabel) +
 						Text(String(format: "%.\(fractionDigits)f", wrapped.origin.y)) +
-						Text("), (").foregroundColor(Color(uiColor: .secondaryLabel)) +
+						Text("), (").foregroundStyle(.secondaryLabel) +
 						Text(String(format: "%.\(fractionDigits)f", wrapped.size.width)) +
-						Text(" x ").foregroundColor(Color(uiColor: .secondaryLabel)) +
+						Text(" x ").foregroundStyle(.secondaryLabel) +
 						Text(String(format: "%.\(fractionDigits)f", wrapped.size.height)) +
-						Text(")").foregroundColor(Color(uiColor: .secondaryLabel))
+						Text(")").foregroundStyle(.secondaryLabel)
 					)
 					.font(.system(size: 8, weight: .semibold))
 					.padding(EdgeInsets(top: 3, leading: 5, bottom: 2, trailing: 5))
-					.foregroundColor(Color(uiColor: .label))
+					.foregroundStyle(Color(uiColor: .label))
 				),
 				label: label
 			)
@@ -185,12 +185,12 @@ public struct LabeledValueView: View {
 				valueView: AnyView(
 					(
 						Text(String(format: "%.\(fractionDigits)f", wrapped.x)) +
-						Text(", ").foregroundColor(Color(uiColor: .secondaryLabel)) +
+						Text(", ").foregroundStyle(.secondaryLabel) +
 						Text(String(format: "%.\(fractionDigits)f", wrapped.y))
 					)
 					.font(.system(size: 8, weight: .semibold))
 					.padding(EdgeInsets(top: 3, leading: 5, bottom: 2, trailing: 5))
-					.foregroundColor(Color(uiColor: .label))
+					.foregroundStyle(Color(uiColor: .label))
 				),
 				label: label
 			)
@@ -210,12 +210,12 @@ public struct LabeledValueView: View {
 				valueView: AnyView(
 					(
 						Text(String(format: "%.\(fractionDigits)f", wrapped.dx)) +
-						Text(", ").foregroundColor(Color(uiColor: .secondaryLabel)) +
+						Text(", ").foregroundStyle(.secondaryLabel) +
 						Text(String(format: "%.\(fractionDigits)f", wrapped.dy))
 					)
 					.font(.system(size: 8, weight: .semibold))
 					.padding(EdgeInsets(top: 3, leading: 5, bottom: 2, trailing: 5))
-					.foregroundColor(Color(uiColor: .label))
+					.foregroundStyle(.label)
 				),
 				label: label
 			)
@@ -236,14 +236,14 @@ public struct LabeledValueView: View {
 					HStack(alignment: .firstTextBaseline, spacing: 2) {
 						Text(String(format: "%.\(fractionDigits)f", wrapped.width))
 						Image(systemName: "multiply")
-							.foregroundColor(Color(uiColor: .secondaryLabel))
+							.foregroundStyle(.secondaryLabel)
 							.font(.system(size: 6, weight: .semibold))
 							.padding(.bottom, 1)
 						Text(String(format: "%.\(fractionDigits)f", wrapped.height))
 					}
 					.font(.system(size: 8, weight: .semibold))
 					.padding(EdgeInsets(top: 3, leading: 5, bottom: 2, trailing: 5))
-					.foregroundColor(Color(uiColor: .label))
+					.foregroundStyle(.label)
 				),
 				label: label
 			)
@@ -263,21 +263,21 @@ public struct LabeledValueView: View {
 				valueView: AnyView(
 					HStack(alignment: .firstTextBaseline, spacing: 2) {
 						Text("top:")
-							.foregroundColor(Color(uiColor: .secondaryLabel))
+							.foregroundStyle(.secondaryLabel)
 						Text(String(format: "%.\(fractionDigits)f", wrapped.top))
 						Text("bottom:")
-							.foregroundColor(Color(uiColor: .secondaryLabel))
+							.foregroundStyle(.secondaryLabel)
 						Text(String(format: "%.\(fractionDigits)f", wrapped.bottom))
 						Text("left:")
-							.foregroundColor(Color(uiColor: .secondaryLabel))
+							.foregroundStyle(.secondaryLabel)
 						Text(String(format: "%.\(fractionDigits)f", wrapped.left))
 						Text("right:")
-							.foregroundColor(Color(uiColor: .secondaryLabel))
+							.foregroundStyle(.secondaryLabel)
 						Text(String(format: "%.\(fractionDigits)f", wrapped.right))
 					}
 					.font(.system(size: 8, weight: .semibold))
 					.padding(EdgeInsets(top: 3, leading: 5, bottom: 2, trailing: 5))
-					.foregroundColor(Color(uiColor: .label))
+					.foregroundStyle(Color(uiColor: .label))
 				),
 				label: label
 			)
@@ -297,21 +297,21 @@ public struct LabeledValueView: View {
 				valueView: AnyView(
 					HStack(alignment: .firstTextBaseline, spacing: 2) {
 						Text("top:")
-							.foregroundColor(Color(uiColor: .secondaryLabel))
+							.foregroundStyle(.secondaryLabel)
 						Text(String(format: "%.\(fractionDigits)f", wrapped.top))
 						Text("bot:")
-							.foregroundColor(Color(uiColor: .secondaryLabel))
+							.foregroundStyle(.secondaryLabel)
 						Text(String(format: "%.\(fractionDigits)f", wrapped.bottom))
 						Text("lead:")
-							.foregroundColor(Color(uiColor: .secondaryLabel))
+							.foregroundStyle(.secondaryLabel)
 						Text(String(format: "%.\(fractionDigits)f", wrapped.leading))
 						Text("trail:")
-							.foregroundColor(Color(uiColor: .secondaryLabel))
+							.foregroundStyle(.secondaryLabel)
 						Text(String(format: "%.\(fractionDigits)f", wrapped.trailing))
 					}
 					.font(.system(size: 8, weight: .semibold))
 					.padding(EdgeInsets(top: 3, leading: 5, bottom: 2, trailing: 5))
-					.foregroundColor(Color(uiColor: .label))
+					.foregroundStyle(Color(uiColor: .label))
 				),
 				label: label
 			)
@@ -417,7 +417,7 @@ public struct LabeledValueView: View {
 				label.mapText()
 					.font(Font.system(size: 10, weight: .semibold).smallCaps())
 					.padding(EdgeInsets(top: 1, leading: 5, bottom: 2, trailing: 5))
-					.foregroundColor(Color(uiColor: .secondaryLabel))
+					.foregroundStyle(Color(uiColor: .secondaryLabel))
 				
 				valueView
 					.alignmentGuide(.separator) { $0[.leading] }
@@ -896,7 +896,7 @@ struct ShowSizeBlurryVibrantView: View {
 			Text(size.height.wholeValueString)
 		}
 		.font(.system(size: 8, weight: .semibold))
-		.foregroundColor(.accentColor)
+		.foregroundStyle(.accentColor)
 		.fixedSize()
 		.containerSize($size)
 		.vibrantOnBlurredBackground()

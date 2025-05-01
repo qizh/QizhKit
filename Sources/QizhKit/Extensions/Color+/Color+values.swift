@@ -190,3 +190,34 @@ public extension ShapeStyle where Self == Color {
 	@inlinable static var systemGray5: Color { Color(uiColor: .systemGray5) }
 	@inlinable static var systemGray6: Color { Color(uiColor: .systemGray6) }
 }
+
+// MARK: Shape Style
+
+extension Color {
+	@inlinable public var asAnyShapeStyle: AnyShapeStyle {
+		AnyShapeStyle(self)
+	}
+}
+
+extension Optional where Wrapped == Color {
+	@inlinable public var asAnyShapeStyle: AnyShapeStyle? {
+		switch self {
+		case .none: .none
+		case .some(let wrapped): wrapped.asAnyShapeStyle
+		}
+	}
+}
+
+extension AnyShapeStyle {
+	public static let primary: AnyShapeStyle = .init(HierarchicalShapeStyle.primary)
+	public static let secondary: AnyShapeStyle = .init(HierarchicalShapeStyle.secondary)
+	public static let tertiary: AnyShapeStyle = .init(HierarchicalShapeStyle.tertiary)
+	public static let quaternary: AnyShapeStyle = .init(HierarchicalShapeStyle.quaternary)
+	public static let quinary: AnyShapeStyle = .init(HierarchicalShapeStyle.quinary)
+}
+
+extension ShapeStyle {
+	@inlinable public var asAnyShapeStyle: AnyShapeStyle {
+		AnyShapeStyle(self)
+	}
+}

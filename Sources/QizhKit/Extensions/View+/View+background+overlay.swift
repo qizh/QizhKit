@@ -210,69 +210,62 @@ public extension View {
 	
 	/// Black for default ColorScheme
 	@inlinable func foregroundLabel() -> some View {
-		foregroundColor(Color(uiColor: .label))
+		foregroundStyle(.label)
 	}
 	
 	/// Dark Gray for default ColorScheme
 	@inlinable func foregroundSecondaryLabel() -> some View {
-		foregroundColor(Color(uiColor: .secondaryLabel))
+		foregroundStyle(.secondaryLabel)
 	}
 	
 	// MARK: > Inverted
 	
 	/// White for default ColorScheme
 	@inlinable func foregroundSystemBackground() -> some View {
-		foregroundColor(Color(uiColor: .systemBackground))
+		foregroundStyle(.systemBackground)
 	}
 	
 	/// > Light Gran for default ColorScheme
 	@inlinable func foregroundSecondarySystemBackground() -> some View {
-		foregroundColor(Color(uiColor: .secondarySystemBackground))
+		foregroundStyle(.secondarySystemBackground)
 	}
 	
 	// MARK: > Accent
 	
+	@available(*, deprecated, renamed: "foregroundStyle(_:)", message: "This function is using deprecated `foregroundColor(_:)` function")
 	@inlinable func foregroundAccent() -> some View { foregroundColor(.accentColor) }
 	
 	/// Setting `foregroundStyle(.secondary)` when on iOS 15
 	/// or `foregroundColor(.accentColor)` when on earlier iOS
+	@available(*, deprecated, renamed: "foregroundStyle(_:)", message: "Just use `foregroundStyle(.secondary)` instead.")
 	@ViewBuilder
 	func foregroundAccentOrSecondary() -> some View {
-		if #available(iOS 15.0, *) {
-			self.foregroundStyle(.secondary)
-		} else {
-			self.foregroundAccent()
-		}
+		foregroundStyle(.secondary)
 	}
 	
 	/// Setting `foregroundStyle(.tertiary)` when on iOS 15
 	/// or `foregroundColor(.accentColor)` when on earlier iOS
+	@available(*, deprecated, renamed: "foregroundStyle(_:)", message: "Just use `foregroundStyle(.tertiary)` instead.")
 	@ViewBuilder
 	func foregroundAccentOrTertiary() -> some View {
-		if #available(iOS 15.0, *) {
-			self.foregroundStyle(.tertiary)
-		} else {
-			self.foregroundAccent()
-		}
+		foregroundStyle(.tertiary)
 	}
 	
 	/// Setting `foregroundStyle(.quaternary)` when on iOS 15
 	/// or `foregroundColor(.accentColor)` when on earlier iOS
+	@available(*, deprecated, renamed: "foregroundStyle(_:)", message: "Just use `foregroundStyle(.quaternary)` instead.")
 	@ViewBuilder
 	func foregroundAccentOrQuaternary() -> some View {
-		if #available(iOS 15.0, *) {
-			self.foregroundStyle(.quaternary)
-		} else {
-			self.foregroundAccent()
-		}
+		foregroundStyle(.quaternary)
 	}
 	
 	// MARK: > Common
 	
-	@inlinable func foregroundWhite() -> some View { foregroundColor(.white) }
-	@inlinable func foregroundBlack() -> some View { foregroundColor(.black) }
-	@inlinable func foregroundPlaceholder() -> some View { foregroundColor(Color(uiColor: .placeholderText)) }
+	@inlinable func foregroundWhite() -> some View { foregroundStyle(.white) }
+	@inlinable func foregroundBlack() -> some View { foregroundStyle(.black) }
+	@inlinable func foregroundPlaceholder() -> some View { foregroundStyle(.placeholderText) }
 	
+	/*
 	// MARK: > Deprecated
 	
 	@available(*, deprecated, renamed: "foregroundAccent", message: "Use `foregroundAccent` instead")
@@ -292,9 +285,11 @@ public extension View {
 	func secondaryLabelForeground() -> some View {
 		foregroundColor(Color(uiColor: .secondaryLabel))
 	}
+	*/
 }
 
 public extension Text {
+	@available(*, deprecated, renamed: "foregroundStyle(_:)", message: "There's no need to use KeyPath anymore. Just use the style directly.")
 	@inlinable func foregroundColor(_ key: BorderCrafterValues.UIColors.Key) -> Text {
 		foregroundColor(Color(uiColor: BorderCrafterValues.UIColors.value(for: key)))
 	}
@@ -303,35 +298,35 @@ public extension Text {
 	
 	/// Black for default ColorScheme
 	@inlinable func foregroundLabel() -> Text {
-		foregroundColor(Color(uiColor: .label))
+		foregroundStyle(.label)
 	}
 	
 	/// Dark Gray for default ColorScheme
 	@inlinable func foregroundSecondaryLabel() -> Text {
-		foregroundColor(Color(uiColor: .secondaryLabel))
+		foregroundStyle(.secondaryLabel)
 	}
 	
 	// MARK: > Inverted
 	
 	/// White for default ColorScheme
 	@inlinable func foregroundSystemBackground() -> Text {
-		foregroundColor(Color(uiColor: .systemBackground))
+		foregroundStyle(.systemBackground)
 	}
 	
 	/// > Light Gran for default ColorScheme
 	@inlinable func foregroundSecondarySystemBackground() -> Text {
-		foregroundColor(Color(uiColor: .secondarySystemBackground))
+		foregroundStyle(.secondarySystemBackground)
 	}
 	
 	// MARK: > Accent
 	
-	@inlinable func foregroundAccent() -> Text { foregroundColor(.accentColor) }
+	@inlinable func foregroundAccent() -> Text { foregroundStyle(.tint) }
 	
 	// MARK: > Common
 	
-	@inlinable func foregroundWhite() -> Text { foregroundColor(.white) }
-	@inlinable func foregroundBlack() -> Text { foregroundColor(.black) }
-	@inlinable func foregroundPlaceholder() -> Text { foregroundColor(Color(uiColor: .placeholderText)) }
+	@inlinable func foregroundWhite() -> Text { foregroundStyle(.white) }
+	@inlinable func foregroundBlack() -> Text { foregroundStyle(.black) }
+	@inlinable func foregroundPlaceholder() -> Text { foregroundStyle(.placeholderText) }
 }
 
 // MARK: Max

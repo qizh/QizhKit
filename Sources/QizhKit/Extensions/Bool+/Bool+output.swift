@@ -23,6 +23,6 @@ extension Bool {
 	
 	public var imageCircle: some View {
 		Image(systemName: self ? "checkmark.circle" : "xmark.circle")
-			.foregroundColor(self ? .green : .red)
+			.foregroundStyle(self ? .green : .red)
 	}
 }

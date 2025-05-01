@@ -564,7 +564,7 @@ public extension GeneralBackendFetchState {
 	@MainActor func inProgressDefaultView(
 		size: ProgressView.Size = .visual,
 		success: Bool = false,
-		color mode: ProgressView.ColorMode = .mono,
+		color mode: ProgressView.ColorMode = .multi,
 		show states: ProgressView.StatesSet = .all
 	) -> ProgressView? {
 		progress
@@ -581,7 +581,7 @@ public extension GeneralBackendFetchState {
 	
 	@MainActor func defaultIdleAndProgress(
 		size: ProgressView.Size = .visual,
-		color: ProgressView.ColorMode = .mono,
+		color: ProgressView.ColorMode = .multi,
 		success: Bool = false,
 		show visibleStates: ProgressView.StatesSet = .all
 	) -> _ConditionalContent<Pixel, ProgressView>? {

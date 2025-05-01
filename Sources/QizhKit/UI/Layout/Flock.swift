@@ -195,7 +195,7 @@ public struct Flock <Input, Content>: View
 		.apply(when: data.isEmpty) { _ in
 			Pixel()
 		}
-		.onChange(of: data) { data in
+		.onChange(of: data) { _, data in
 			layout.reset(data.count)
 		}
     }

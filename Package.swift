@@ -7,9 +7,9 @@ let package = Package(
     name: "QizhKit",
 	defaultLocalization: "en",
 	platforms: [
-		.iOS(.v16),
-		.macOS(.v13),
-		.macCatalyst(.v13),
+		.iOS(.v17),
+		.macOS(.v14),
+		.macCatalyst(.v14),
 		.visionOS(.v1),
 	],
     products: [
