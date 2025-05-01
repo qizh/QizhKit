@@ -171,9 +171,13 @@ public extension View {
 	
 	// MARK: > Accent
 	
-	@inlinable
-	func backgroundAccentColor() -> some View {
-		background(Color.accentColor)
+	@inlinable func backgroundTint() -> some View {
+		background(.tint)
+	}
+	
+	@available(*, deprecated, renamed: "backgroundTint()", message: "This method is not using `Color.accentColor` anymore. Switch to `backgroundTint` instead.")
+	@inlinable func backgroundAccentColor() -> some View {
+		background(.tint)
 	}
 	
 	// MARK: > Deprecated
@@ -193,7 +197,7 @@ public extension View {
 	@available(*, deprecated, renamed: "backgroundAccentColor", message: "Use `backgroundAccentColor` instead")
 	@inlinable
 	func accentBackground() -> some View {
-		background(Color.accentColor)
+		background(.tint)
 	}
 }
 
