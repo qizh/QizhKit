@@ -31,7 +31,7 @@ public struct ProgressView: View {
 		error: FetchError? = .none,
 		size: Size = .visual,
 		show: StatesSet = .all,
-		color: ColorMode = .mono(.accentColor)
+		color: ColorMode = .multi
 	) {
 		self.state = state
 		self.name = name
@@ -46,7 +46,7 @@ public struct ProgressView: View {
 		state: GeneralBackendFetchState,
 		size: Size = .visual,
 		show: StatesSet = .all,
-		color: ColorMode = .mono(.accentColor)
+		color: ColorMode = .multi
 	) {
 		self.state = state.asBasic
 		self.name = state.fetcherName
@@ -61,7 +61,7 @@ public struct ProgressView: View {
 		state: GeneralBackendFetchState,
 		_ size: Size = .visual,
 		_ show: StatesSet = .all,
-		_ color: ColorMode = .mono(.accentColor)
+		_ color: ColorMode = .multi
 	) {
 		self.state = state.asBasic
 		self.name = state.fetcherName
@@ -76,7 +76,7 @@ public struct ProgressView: View {
 		states: [GeneralBackendFetchState],
 		size: Size = .visual,
 		show: StatesSet = .all,
-		color: ColorMode = .mono(.accentColor)
+		color: ColorMode = .multi
 	) {
 		assert(
 			states.isNotEmpty,
@@ -91,7 +91,7 @@ public struct ProgressView: View {
 		progress: FetchProgress,
 		size: Size = .visual,
 		show: StatesSet = .all,
-		color: ColorMode = .mono(.accentColor)
+		color: ColorMode = .multi
 	) {
 		self.state = .init(progress)
 		self.name = nil
@@ -107,7 +107,7 @@ public struct ProgressView: View {
 		_ progress: FetchProgress,
 		_ size: Size = .visual,
 		_ show: StatesSet = .all,
-		_ color: ColorMode = .mono(.accentColor)
+		_ color: ColorMode = .multi
 	) {
 		self.init(
 			progress: progress,
@@ -120,7 +120,7 @@ public struct ProgressView: View {
 	@inlinable public init(
 		_ progress: FetchProgress,
 		_ size: Size = .visual,
-		_ color: ColorMode = .mono(.accentColor)
+		_ color: ColorMode = .multi
 	) {
 		self.init(progress, size, .all, color)
 	}
@@ -141,7 +141,7 @@ public struct ProgressView: View {
 		_ value: Double,
 		_ size: Size = .visual,
 		_ show: StatesSet = .all,
-		_ color: ColorMode = .mono(.accentColor)
+		_ color: ColorMode = .multi
 	) {
 		self.init(FetchProgress(value), size, show, color)
 	}
@@ -149,14 +149,14 @@ public struct ProgressView: View {
 	@inlinable public init(
 		_ value: Double,
 		_ size: Size = .visual,
-		_ color: ColorMode = .mono(.accentColor)
+		_ color: ColorMode = .multi
 	) {
 		self.init(FetchProgress(value), size, .all, color)
 	}
 	
 	public static func sized(
 		_ size: Size,
-		color: ColorMode = .mono(.accentColor)
+		color: ColorMode = .multi
 	) -> (FetchProgress) -> ProgressView {
 		{ progress in ProgressView(progress, size, color) }
 	}
@@ -255,12 +255,14 @@ public struct ProgressView: View {
 			red,
 		])
 	
+	/*
 	public static var monoGradient: Gradient =
 		Gradient(colors: [
 			.accentColor,
 			.accentColor(0.2),
 			.accentColor,
 		])
+	*/
 	
 	public static func monoGradient(color: Color) -> Gradient {
 		Gradient(
@@ -273,9 +275,10 @@ public struct ProgressView: View {
 	}
 	
 	public var undeterminedGradient: Gradient {
-		color.is(.multi)
-			? Self.multiGradient
-			: Self.monoGradient
+		switch color {
+		case .multi: 			Self.multiGradient
+		case .mono(let color): 	Self.monoGradient(color: color)
+		}
 	}
 	
 	private var determinedGradient: Gradient {
