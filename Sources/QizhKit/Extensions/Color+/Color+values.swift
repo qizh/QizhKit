@@ -208,6 +208,21 @@ extension Optional where Wrapped == Color {
 	}
 }
 
+extension Material {
+	@inlinable public var asAnyShapeStyle: AnyShapeStyle {
+		AnyShapeStyle(self)
+	}
+}
+
+extension Optional where Wrapped == Material {
+	@inlinable public var asAnyShapeStyle: AnyShapeStyle? {
+		switch self {
+		case .none: .none
+		case .some(let wrapped): wrapped.asAnyShapeStyle
+		}
+	}
+}
+
 extension AnyShapeStyle {
 	public static let primary: AnyShapeStyle = .init(HierarchicalShapeStyle.primary)
 	public static let secondary: AnyShapeStyle = .init(HierarchicalShapeStyle.secondary)
