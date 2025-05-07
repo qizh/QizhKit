@@ -73,3 +73,91 @@ extension View {
 		alignmentGuide(g, computeValue: { _ in value })
 	}
 }
+
+// MARK: + Case Name
+
+extension VerticalAlignment {
+	@inlinable public var caseName: String {
+		switch self {
+		case .top: 					"top"
+		case .bottom: 				"bottom"
+		case .center: 				"center"
+		case .firstTextBaseline: 	"firstTextBaseline"
+		case .lastTextBaseline: 	"lastTextBaseline"
+			
+		case .topSide: 				"topSide"
+		case .topEdge: 				"topEdge"
+		case .bottomSide: 			"bottomSide"
+		case .bottomEdge: 			"bottomEdge"
+			
+		default: 					"unknown"
+		}
+	}
+	
+	@inlinable public var caseNameSimplified: String {
+		switch self {
+		case .top: 					"top"
+		case .bottom: 				"bottom"
+		case .center: 				.empty
+		case .firstTextBaseline: 	"firstTextBaseline"
+		case .lastTextBaseline: 	"lastTextBaseline"
+			
+		case .topSide: 				"topSide"
+		case .topEdge: 				"topEdge"
+		case .bottomSide: 			"bottomSide"
+		case .bottomEdge: 			"bottomEdge"
+			
+		default: 					.empty
+		}
+	}
+}
+
+extension HorizontalAlignment {
+	@inlinable public var caseName: String {
+		switch self {
+		case .leading: 				"leading"
+		case .trailing: 			"trailing"
+		case .center: 				"center"
+		
+		case .leadingSide: 			"leadingSide"
+		case .trailingSide: 		"trailingSide"
+		case .separator: 			"separator"
+			
+		default: 					"unknown"
+		}
+	}
+	
+	@inlinable public var caseNameSimplified: String {
+		switch self {
+		case .leading: 				"leading"
+		case .trailing: 			"trailing"
+		case .center: 				.empty
+		
+		case .leadingSide: 			"leadingSide"
+		case .trailingSide: 		"trailingSide"
+		case .separator: 			"separator"
+			
+		default: 					.empty
+		}
+	}
+}
+
+extension Alignment {
+	public var caseName: String {
+		"\(horizontal.caseNameSimplified)\(vertical.caseNameSimplified)".toCamelCase
+	}
+}
+
+// MARK: + Description
+
+extension VerticalAlignment: @retroactive CustomStringConvertible {
+	@inlinable public var description: String { "vertical.\(caseName)" }
+}
+
+extension HorizontalAlignment: @retroactive CustomStringConvertible {
+	@inlinable public var description: String { "horizontal.\(caseName)" }
+}
+
+extension Alignment: @retroactive CustomStringConvertible {
+	@inlinable public var description: String { "alignment.\(caseName)" }
+}
