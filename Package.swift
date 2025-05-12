@@ -37,6 +37,9 @@ let package = Package(
 		/// Apple's
 		.package(url: "https://github.com/apple/swift-collections", from: "1.1.4"),
 		
+		/// Documentation generation only
+		.package(url: "https://github.com/apple/swift-docc-plugin", from: "1.4.3"),
+		
 		/// Macros
 		.package(url: "https://github.com/qizh/QizhMacroKit", exact: "1.0.22"),
 	],
@@ -70,11 +73,24 @@ let package = Package(
 				// .enableExperimentalFeature("StrictConcurrency=complete", .when(configuration: .debug)),
 				// .unsafeFlags(["-Xfrontend", "-strict-concurrency=complete"], .when(configuration: .debug)),
 				// .unsafeFlags(["-cross-module-optimization"], .when(configuration: .release)),
+			],
+			plugins: [
+				// .plugin(name: "Swift-DocC", package: "swift-docc-plugin"),
+				// .plugin(name: "GenerateDocs"),
+			]
+		)
+		/*
+		.plugin(
+			name: "GenerateDocs",
+			capability: .buildTool,
+			dependencies: [
+				.product(name: "Swift-DocC", package: "swift-docc-plugin")
 			]
 		),
+		*/
     ],
 	swiftLanguageModes: [
-		// .v5,
+		.v5,
 		.v6,
 	]
 )
