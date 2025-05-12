@@ -15,6 +15,7 @@ public protocol ButtonStyleSelectable 				{ var selected: Bool 			{ get set } }
 public protocol ButtonStyleCurrentFontAware 		{ var font: Font? 				{ get set } }
 public protocol ButtonStyleHoverable 				{ var isHovering: Bool 			{ get set } }
 public protocol ButtonStylePlaceholderable 			{ var isPlaceholder: Bool 		{ get set } }
+public protocol ButtonStyleKnowingPixelLength 		{ var pixelLength: CGFloat 		{ get set } }
 
 public struct ButtonStyleModifier<Style: ButtonStyle>: ViewModifier {
 	@Environment(\.isEnabled) 			private var isEnabled: Bool
@@ -23,6 +24,7 @@ public struct ButtonStyleModifier<Style: ButtonStyle>: ViewModifier {
 	@Environment(\.selected) 			private var selected: Bool
 	@Environment(\.font) 				private var font: Font?
 	@Environment(\.redactionReasons) 	private var redactionReasons: RedactionReasons
+	@Environment(\.pixelLength) 		private var pixelLength: CGFloat
 	
 	@State private var isHovering: Bool = false
 	
@@ -70,6 +72,10 @@ public struct ButtonStyleModifier<Style: ButtonStyle>: ViewModifier {
 		var placeholderable = updated as? ButtonStylePlaceholderable
 		placeholderable?.isPlaceholder = redactionReasons.contains(.placeholder)
 		updated = (placeholderable as? Style) ?? updated
+		
+		var knowingPixelLength = updated as? ButtonStyleKnowingPixelLength
+		knowingPixelLength?.pixelLength = pixelLength
+		updated = (knowingPixelLength as? Style) ?? updated
 		
 		return updated
 	}
