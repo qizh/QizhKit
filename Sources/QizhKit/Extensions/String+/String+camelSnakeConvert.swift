@@ -112,6 +112,6 @@ extension String {
 	
 	/// `to.dot.case`
 	@inlinable public var toDotCase: String {
-		self.toLocalizedLowercasedWords(joinedBy: .minus)
+		self.toLocalizedLowercasedWords(joinedBy: .dot)
 	}
 }
