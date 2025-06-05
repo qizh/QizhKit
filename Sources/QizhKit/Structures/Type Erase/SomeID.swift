@@ -7,7 +7,9 @@
 //
 
 import Foundation
+import QizhMacroKit
 
+@IsCase @CaseName
 public enum SomeID: Hashable, Sendable {
 	case int(_ value: Int)
 	case uint(_ value: UInt)
