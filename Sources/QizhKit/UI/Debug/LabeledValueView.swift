@@ -22,6 +22,15 @@ extension EnvironmentValues {
 }
 
 extension View {
+	/// Sets a maximum character limit (`50` dy default)
+	/// for all `LabeledValueView` instances in this view hierarchy.
+	///
+	/// Use this modifier to override the default limit of 50 characters when displaying
+	/// value labels, truncating any text that exceeds the specified length.
+	///
+	/// - Parameter length: The maximum number of characters to display for value labels.
+	/// - Returns: A view that applies the specified length limit
+	/// 	to the `labeledViewLengthLimit` environment key.
 	public func labeledViewLengthLimit(_ length: Int) -> some View {
 		environment(\.labeledViewLengthLimit, length)
 	}
