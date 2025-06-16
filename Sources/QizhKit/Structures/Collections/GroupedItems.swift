@@ -39,6 +39,8 @@ extension GroupedItems: Identifiable where Group: Identifiable {
 	public var id: Group.ID { group.id }
 }
 
+extension GroupedItems: Sendable where Group: Sendable, Element: Sendable { }
+
 extension Collection {
 	@inlinable
 	public func groupedItems<G, I>() -> [I] where Element == GroupedItems<G, I> {
