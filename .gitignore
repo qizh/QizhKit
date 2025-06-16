@@ -1,7 +1,17 @@
 .DS_Store
 /.build
 /Packages
-# /Package.resolved
 /*.xcodeproj
 xcuserdata/
 /DerivedData
+
+# I have checked `Package.resolved` into source control, not ignored it. Here's why:
+# 	1.	Reproducible, deterministic builds
+# 	2.	Reliable CI/CD workflows
+# 	3.	Auditable dependency changes
+# /Package.resolved
+
+
+# keep .swiftpm (so Package.resolved and shared schemes stay in the repo)
+# but ignore only the user-specific subfolder:
+.swiftpm/xcode/xcuserdata/
