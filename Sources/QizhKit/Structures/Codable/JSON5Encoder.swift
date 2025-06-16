@@ -14,6 +14,7 @@ import RegexBuilder
 
 public final class JSON5Encoder: TopLevelEncoder, @unchecked Sendable {
 	fileprivate var encoder: JSONEncoder = .init()
+	fileprivate let regexes = Regexes()
 	
 	public init() { }
 	
@@ -39,8 +40,9 @@ public final class JSON5Encoder: TopLevelEncoder, @unchecked Sendable {
 	// MARK: ┣ Remove quotes
 	
 	fileprivate func convertToUnquotedPropertyNames(_ jsonString: String) -> String {
-		jsonString.replacing(Regexes.quotedPropertyNameRegex) { match in
-			match[Regexes.propertyNameRef] + .colon
+		
+		jsonString.replacing(regexes.quotedPropertyNameRegex) { match in
+			match[regexes.propertyNameRef] + .colon
 		}
 	}
 }
@@ -92,30 +94,32 @@ extension JSON5Encoder {
 // MARK: ┣ Regexes
 
 extension JSON5Encoder {
-	fileprivate actor Regexes {
-		fileprivate static let propertyNameRef = Reference(String.self)
-		fileprivate static let quotedPropertyNameRegex = Regex {
-			String.quot
-			TryCapture(as: propertyNameRef) {
-				CharacterClass(
-					.anyOf("_"),
-					("a"..."z"),
-					("A"..."Z")
-				)
-				ZeroOrMore {
+	fileprivate struct Regexes {
+		let propertyNameRef = Reference(String.self)
+		var quotedPropertyNameRegex: Regex<(Substring, String)> {
+			Regex {
+				String.quot
+				TryCapture(as: propertyNameRef) {
 					CharacterClass(
 						.anyOf("_"),
 						("a"..."z"),
-						("A"..."Z"),
-						("0"..."9")
+						("A"..."Z")
 					)
+					ZeroOrMore {
+						CharacterClass(
+							.anyOf("_"),
+							("a"..."z"),
+							("A"..."Z"),
+							("0"..."9")
+						)
+					}
+				} transform: { substring in
+					String(substring)
 				}
-			} transform: { substring in
-				String(substring)
+				String.quot
+				ZeroOrMore(.whitespace)
+				":"
 			}
-			String.quot
-			ZeroOrMore(.whitespace)
-			":"
 		}
 	}
 }

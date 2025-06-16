@@ -9,40 +9,47 @@
 import Foundation
 import RegexBuilder
 
-fileprivate actor Regexes {
-	fileprivate static let beforeLargeCharacterRef = Reference(Substring.self)
-	fileprivate static let largeCharacterRef = Reference(Character.self)
+fileprivate struct Regexes {
+	/*
+	let beforeLargeCharacterRef = Reference(Substring.self)
+	let largeCharacterRef = Reference(Character.self)
 
-	fileprivate static let captureLargeCharactersAfterSmall: Regex = Regex {
-		Capture(as: beforeLargeCharacterRef) {
-			CharacterClass(
-				("a"..."z"),
-				("0"..."9")
-			)
+	let captureLargeCharactersAfterSmall: Regex<(Substring, Substring, Character)> =
+		Regex {
+			Capture(as: beforeLargeCharacterRef) {
+				CharacterClass(
+					("a"..."z"),
+					("0"..."9")
+				)
+			}
+			TryCapture(as: largeCharacterRef) {
+				("A"..."Z")
+			} transform: { substring in
+				substring.first
+			}
 		}
-		TryCapture(as: largeCharacterRef) {
-			("A"..."Z")
-		} transform: { substring in
-			substring.first
-		}
-	}
+	*/
 	
-	fileprivate static let words: Regex = Regex {
-		ChoiceOf {
-			Regex {
-				Optionally { #/\p{Lu}/# }
-				OneOrMore { #/\p{Ll}/# }
+	static var words: Regex<Substring> {
+		Regex {
+			ChoiceOf {
+				Regex {
+					Optionally { #/\p{Lu}/# }
+					OneOrMore { #/\p{Ll}/# }
+				}
+				Regex {
+					OneOrMore { #/\p{Lu}/# }
+					NegativeLookahead { #/\p{Ll}/# }
+				}
+				OneOrMore { #/\p{L}/# }
+				OneOrMore { #/\d/# }
 			}
-			Regex {
-				OneOrMore { #/\p{Lu}/# }
-				NegativeLookahead { #/\p{Ll}/# }
-			}
-			OneOrMore { #/\p{L}/# }
 		}
 	}
 }
 
 extension String {
+	/*
 	/// Converts a `camelCase` string to `snake_case`.
 	@available(*, deprecated, renamed: "toSnakeCase", message: "It detects words in any string, not just in camelCase")
 	public var asCamelCaseToSnakeCase: String {
@@ -68,6 +75,7 @@ extension String {
 			}
 			.joined()
 	}
+	*/
 	
 	/// `toCamelCase`
 	public var toCamelCase: String {
@@ -115,3 +123,4 @@ extension String {
 		self.toLocalizedLowercasedWords(joinedBy: .dot)
 	}
 }
+

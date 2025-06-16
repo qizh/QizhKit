@@ -9,24 +9,22 @@
 import Foundation
 
 @propertyWrapper
-public struct AutoTypeCodable <T>: Codable
+public struct AutoTypeCodable <T>: Codable // , Sendable
 	where T: LosslessStringConvertible,
 		  T: Codable
+		  // T: Sendable
 {
 	private typealias LosslessStringCodable = LosslessStringConvertible & Codable
-	private let type: LosslessStringCodable.Type
 	
 	public var wrappedValue: T
 
 	public init(wrappedValue: T) {
 		self.wrappedValue = wrappedValue
-		self.type = T.self
 	}
 	
 	public init(from decoder: Decoder) throws {
 		do {
 			self.wrappedValue = try T.init(from: decoder)
-			self.type = T.self
 		} catch let error {
 			
 			func decode <D: LosslessStringCodable> (
@@ -69,15 +67,14 @@ public struct AutoTypeCodable <T>: Codable
 			else { throw error }
 			
 			self.wrappedValue = value
-			self.type = Swift.type(of: rawValue)
 		}
 	}
 	
 	public func encode(to encoder: Encoder) throws {
 		let string = String(describing: wrappedValue)
 		
-		guard let original = type.init(string) else {
-			let description = "Unable to encode `\(wrappedValue)` back to source type `\(type)`"
+		guard let original = T.self.init(string) else {
+			let description = "Unable to encode `\(wrappedValue)` back to source type `\(T.self)`"
 			throw EncodingError.invalidValue(string, .init(codingPath: [], debugDescription: description))
 		}
 		
@@ -164,19 +161,16 @@ public struct LossyAutoTypeCodable <T>: Codable
 		  T: Codable
 {
 	private typealias LosslessStringCodable = LosslessStringConvertible & Codable
-	private let type: LosslessStringCodable.Type
 	
 	public var wrappedValue: T
 	
 	public init(wrappedValue: T) {
 		self.wrappedValue = wrappedValue
-		self.type = T.self
 	}
 	
 	public init(from decoder: Decoder) throws {
 		do {
 			self.wrappedValue = try T.init(from: decoder)
-			self.type = T.self
 		} catch let error {
 			
 			func decode <D: LosslessStringCodable> (
@@ -219,15 +213,14 @@ public struct LossyAutoTypeCodable <T>: Codable
 			else { throw error }
 			
 			self.wrappedValue = value
-			self.type = Swift.type(of: rawValue)
 		}
 	}
 	
 	public func encode(to encoder: Encoder) throws {
 		let string = String(describing: wrappedValue)
 		
-		guard let original = type.init(string) else {
-			let description = "Unable to encode `\(wrappedValue)` back to source type `\(type)`"
+		guard let original = T.self.init(string) else {
+			let description = "Unable to encode `\(wrappedValue)` back to source type `\(T.self)`"
 			throw EncodingError.invalidValue(string, .init(codingPath: [], debugDescription: description))
 		}
 		

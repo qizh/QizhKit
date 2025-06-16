@@ -143,7 +143,10 @@ class IntrospectedScrollViewDelegate: NSObject, UIScrollViewDelegate {
 
 // MARK: Read Offset
 
-public struct ScrollOffsetReader <SpaceName: Hashable>: ViewModifier {
+public struct ScrollOffsetReader <SpaceName>: ViewModifier
+	where SpaceName: Hashable,
+		  SpaceName: Sendable
+{
 	@Binding private var offset: CGPoint
 	private let coordinateSpaceName: SpaceName
 	

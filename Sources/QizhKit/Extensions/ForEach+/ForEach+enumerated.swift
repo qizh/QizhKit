@@ -155,6 +155,8 @@ extension AnyEnumeratedElement where Element: Identifiable {
 	@inlinable public var id: Element.ID { element.id }
 }
 
+extension AnyEnumeratedElement: Sendable where Element: Sendable { }
+
 extension AnyEnumeratedElement {
 	public var id: Int { offset }
 }
@@ -171,6 +173,8 @@ public struct EnumeratedIdentifiableElement<Base: Collection>: EnumeratedElement
 	public var id: Element.ID { element.id }
 }
 
+extension EnumeratedIdentifiableElement: Sendable where Element: Sendable { }
+
 public struct EnumeratedHashableElement<Base: Collection>: EnumeratedElement where Base.Element: Hashable {
 	public let offset: Int
 	public let element: Element
@@ -183,25 +187,38 @@ public struct EnumeratedHashableElement<Base: Collection>: EnumeratedElement whe
 	public var id: Element { element }
 }
 
+extension EnumeratedHashableElement: Sendable where Element: Sendable { }
+
 // MARK: Collections
 
 extension Collection {
 	@inlinable
 	public func enumeratedElements() -> [AnyEnumeratedElement<Self>] {
-		enumerated().map(AnyEnumeratedElement<Self>.init)
+		enumerated()
+			.map { enumeratedElement in
+				AnyEnumeratedElement(enumeratedElement)
+			}
 	}
 }
 
 extension Collection where Element: Identifiable {
 	@inlinable
 	public func enumeratedIdentifiableElements() -> [EnumeratedIdentifiableElement<Self>] {
-		enumerated().map(EnumeratedIdentifiableElement<Self>.init)
+		enumerated()
+			.map { enumeratedElement in
+				EnumeratedIdentifiableElement(enumeratedElement)
+			}
+			// .map(EnumeratedIdentifiableElement<Self>.init)
 	}
 }
 
 extension Collection where Element: Hashable {
 	@inlinable
 	public func enumeratedHashableElements() -> [EnumeratedHashableElement<Self>] {
-		enumerated().map(EnumeratedHashableElement<Self>.init)
+		enumerated()
+			.map { enumeratedElement in
+				EnumeratedHashableElement(enumeratedElement)
+			}
+			// .map(EnumeratedHashableElement<Self>.init)
 	}
 }

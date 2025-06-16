@@ -38,7 +38,7 @@ let package = Package(
 		.package(url: "https://github.com/apple/swift-collections", from: "1.1.4"),
 		
 		/// Macros
-		.package(url: "https://github.com/qizh/QizhMacroKit", exact: "1.1.0"),
+		.package(url: "https://github.com/qizh/QizhMacroKit", exact: "1.1.1"),
 	],
     targets: [
         .target(
@@ -62,6 +62,9 @@ let package = Package(
 				/// Macros
 				.product(name: "QizhMacroKit", package: "QizhMacroKit"),
 				.product(name: "QizhMacroKitClient", package: "QizhMacroKit"),
+			],
+			exclude: [
+				"Off/",
 			],
 			resources: [
 				.process("PrivacyInfo.xcprivacy")

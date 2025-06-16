@@ -123,11 +123,11 @@ public enum CollectionAnchor <Source>
 		  in source: Source
 	) -> Range<Index>? {
 		let text = source
-			.map(String.init(reflecting:))
+			.map { String(reflecting: $0) }
 			.joined(separator: separator)
 		
 		let phrase = elements
-			.map(String.init(reflecting:))
+			.map { String(reflecting: $0) }
 			.joined(separator: separator)
 		
 		guard let range = order.is(.first)
@@ -247,3 +247,4 @@ public extension BidirectionalCollection
 	// TODO: Implement
 	/// string.take(all: .starting(with: .first, .dot), .before(.last, ")"))
 }
+
