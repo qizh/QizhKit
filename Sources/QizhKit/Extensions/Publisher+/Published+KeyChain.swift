@@ -16,8 +16,7 @@ extension Published where Value == String {
 	public init(
 		wrappedValue defaultValue: Value,
 		keychainKey key: String,
-		keychainGroup: KeychainGroup? = .none,
-		cancellables: inout Set<AnyCancellable>
+		keychainGroup: KeychainGroup? = .none
 	) {
 		if let string = KeyChain.string(for: key, at: keychainGroup) {
 			self.init(initialValue: string)
@@ -29,7 +28,7 @@ extension Published where Value == String {
 			.sink { value in
 				KeyChain.saveString(value, for: key, at: keychainGroup)
 			}
-			.store(in: &cancellables)
+			.store()
 	}
 }
 
@@ -37,8 +36,7 @@ extension Published where Value == String? {
 	public init(
 		wrappedValue defaultValue: Value,
 		keychainKey key: String,
-		keychainGroup: KeychainGroup? = .none,
-		cancellables: inout Set<AnyCancellable>
+		keychainGroup: KeychainGroup? = .none
 	) {
 		if let string = KeyChain.string(for: key, at: keychainGroup) {
 			self.init(initialValue: string)
@@ -50,7 +48,7 @@ extension Published where Value == String? {
 			.sink { value in
 				KeyChain.saveString(value, for: key, at: keychainGroup)
 			}
-			.store(in: &cancellables)
+			.store()
 	}
 }
 
@@ -63,7 +61,6 @@ extension Published {
 		wrappedValue defaultValue: Value = .none,
 		keychainKey key: String,
 		keychainGroup: KeychainGroup? = .none,
-		cancellables: inout Set<AnyCancellable>,
 		encoder: JSONEncoder = .init(),
 		decoder: JSONDecoder = .init()
 	) where Model: Codable, Value == Model? {
@@ -84,7 +81,7 @@ extension Published {
 					KeyChain.remove(for: key, at: keychainGroup)
 				}
 			}
-			.store(in: &cancellables)
+			.store()
 	}
 }
 
