@@ -10,6 +10,7 @@ import SwiftUI
 import UIKit
 
 extension Image {
+	/*
 	@_disfavoredOverload
 	@available(*, deprecated, renamed: "init(editingSystemName:pointSize:weight:scale:tint:)", message: "Use `editingSystemName` instead")
 	public init(
@@ -27,6 +28,7 @@ extension Image {
 			tint: tint
 		)
 	}
+	*/
 	
 	public init(
 		editingSystemName systemName: String,
