@@ -333,12 +333,14 @@ extension SomeID: Codable {
 	}
 	
 	public func encode(to encoder: Encoder) throws {
+		var container = encoder.singleValueContainer()
+		
 		switch self {
-		case .int(let value): 		try value.encode(to: encoder)
-		case .uint(let value): 		try value.encode(to: encoder)
-		case .string(let value): 	try value.encode(to: encoder)
-		case .uuid(let value): 		try value.encode(to: encoder)
-		case .url(let value): 		try value.encode(to: encoder)
+		case .int(let value): 		try container.encode(value)
+		case .uint(let value): 		try container.encode(value)
+		case .string(let value): 	try container.encode(value)
+		case .uuid(let value): 		try container.encode(value)
+		case .url(let value): 		try container.encode(value)
 		}
 	}
 }
