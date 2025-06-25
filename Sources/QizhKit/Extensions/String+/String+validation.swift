@@ -94,7 +94,7 @@ public extension String {
 extension String {
 	/// Returns true if the string can be parsed as JSON or JSON5.
 	public var isJson: Bool {
-		guard let data = self.data(using: .utf8) else {
+		guard let data = self.withLinesNSpacesTrimmed.data(using: .utf8) else {
 			return false
 		}
 		do {
