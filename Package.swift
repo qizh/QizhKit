@@ -75,9 +75,16 @@ let package = Package(
 				// .unsafeFlags(["-cross-module-optimization"], .when(configuration: .release)),
 			]
 		),
+		.testTarget(
+			name: "QizhKitTests",
+			dependencies: [
+				"QizhKit",
+			]
+		)
     ],
 	swiftLanguageModes: [
 		// .v5,
 		.v6,
 	]
 )
+
