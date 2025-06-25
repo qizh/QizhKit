@@ -88,3 +88,20 @@ public extension String {
 	var emojis: [Character] { filter { $0.isEmoji } }
 	var emojiScalars: [UnicodeScalar] { filter { $0.isEmoji }.flatMap { $0.unicodeScalars } }
 }
+
+// MARK: String + isJson
+
+extension String {
+	/// Returns true if the string can be parsed as JSON or JSON5.
+	public var isJson: Bool {
+		guard let data = self.data(using: .utf8) else {
+			return false
+		}
+		do {
+			_ = try JSONSerialization.jsonObject(with: data, options: [.json5Allowed])
+			return true
+		} catch {
+			return false
+		}
+	}
+}
