@@ -308,6 +308,18 @@ extension SomeID: CustomStringConvertible {
 // MARK: ┗ Codable
 
 extension SomeID: Codable {
+	/// Initializes a new instance of `SomeID` by decoding from the given decoder.
+	///
+	/// Attempts to decode a single value from the decoder. The following decoding
+	/// order and logic is used:
+	///  - If the container contains a `String`, and it can be parsed as a `URL`, 
+	///    initializes as `.url(url)`. Otherwise, initializes as `.string(value)`.
+	///  - If the container contains a `UInt`, initializes as `.uint(value)`.
+	///  - If the container contains an `Int`, initializes as `.int(value)`.
+	///  - If all decoding attempts fail, initializes as `.uuid` using a new UUID.
+	///
+	/// - Parameter decoder: The decoder to read data from.
+	/// - Throws: An error if reading from the decoder fails before reaching a fallback case.
 	public init(from decoder: Decoder) throws {
 		var container: SingleValueDecodingContainer
 		do {
@@ -332,6 +344,17 @@ extension SomeID: Codable {
 		}
 	}
 	
+	/// Encodes this `SomeID` value into the given encoder.
+	///
+	/// Encodes the associated value based on the case of `SomeID`:
+	/// - For `.int`, encodes the `Int` value.
+	/// - For `.uint`, encodes the `UInt` value.
+	/// - For `.string`, encodes the `String` value.
+	/// - For `.uuid`, encodes the `UUID` value.
+	/// - For `.url`, encodes the `URL` value.
+	///
+	/// - Parameter encoder: The encoder to write data to.
+	/// - Throws: An error if any value fails to encode.
 	public func encode(to encoder: Encoder) throws {
 		var container = encoder.singleValueContainer()
 		
