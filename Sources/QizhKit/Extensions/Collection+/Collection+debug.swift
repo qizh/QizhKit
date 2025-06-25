@@ -9,7 +9,7 @@
 import Foundation
 
 extension Dictionary {
-	@inlinable public var multilineDescription: String {
+	public var multilineDescription: String {
 		isEmpty
 		? 	.leftBrace + .rightBrace
 		: 	map { key, value in
@@ -23,7 +23,7 @@ extension Dictionary {
 }
 
 extension Array {
-	@inlinable public var multilineDescription: String {
+	public var multilineDescription: String {
 		isEmpty
 		? 	.leftBracket + .rightBracket
 		: 	map { element in

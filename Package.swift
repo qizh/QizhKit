@@ -70,6 +70,7 @@ let package = Package(
 				.process("PrivacyInfo.xcprivacy")
 			],
 			swiftSettings: [
+				// .defaultIsolation(MainActor.self)
 				// .enableExperimentalFeature("StrictConcurrency=complete", .when(configuration: .debug)),
 				// .unsafeFlags(["-Xfrontend", "-strict-concurrency=complete"], .when(configuration: .debug)),
 				// .unsafeFlags(["-cross-module-optimization"], .when(configuration: .release)),
