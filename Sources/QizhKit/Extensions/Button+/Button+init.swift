@@ -47,27 +47,18 @@ extension View {
 		isActive: Binding<Bool>? = .none
 	) -> some View {
 		if let url {
-			if #available(iOS 14.0, *) {
-				switch target {
-				case .app:
-					SafariButton(
-						opening: url,
-						tintColor: tint,
-						isActive: isActive,
-						content: { self }
-					)
-				case .safari:
-					Link(
-						destination: url,
-						label: { self }
-					)
-				}
-			} else {
+			switch target {
+			case .app:
 				SafariButton(
 					opening: url,
 					tintColor: tint,
 					isActive: isActive,
 					content: { self }
+				)
+			case .safari:
+				Link(
+					destination: url,
+					label: { self }
 				)
 			}
 		} else {
