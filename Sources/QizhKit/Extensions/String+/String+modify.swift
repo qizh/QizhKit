@@ -408,11 +408,27 @@ extension String {
 	///   - prefix: String to prepend.
 	///   - suffix: String to append. If not provided, reversed prefix is used instead.
 	/// - Returns: prefix + self + suffix or reversed prefix
-	@inlinable public func wrapped(
+	public func wrapped(
 		in prefix: String,
 		and suffix: String? = .none
 	) -> String {
-		prefix + self + (suffix ?? String(prefix.reversed()))
+		"\(prefix)\(self)\(suffix ?? prefix.reversed().asString())"
+		// prefix + self + (suffix ?? String(prefix.reversed()))
+	}
+	
+	/// Returns a new string with the specified character prepended and appended
+	/// to the original string.
+	///
+	/// - Parameter character: The character to wrap around the string.
+	/// 	This character is added to both the beginning and end of the string.
+	/// - Returns: A new string with `character` before and after the original string.
+	///
+	/// Example:
+	/// ```swift
+	/// let value = "hello".wrapped(in: "*") // "*hello*"
+	/// ```
+	public func wrapped(in character: Character) -> String {
+		"\(character)\(self)\(character)"
 	}
 }
 

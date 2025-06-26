@@ -8,7 +8,7 @@
 
 import Foundation
 
-public extension RangeReplaceableCollection {
+public extension RangeReplaceableCollection where Element: Sendable {
 	static func just(_ element: Element) -> Self {
 		Self(CollectionOfOne(element))
 	}

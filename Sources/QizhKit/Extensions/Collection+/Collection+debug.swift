@@ -8,30 +8,35 @@
 
 import Foundation
 
-extension Dictionary {
+extension Dictionary where Key: Sendable,
+						   Value: Sendable {
 	public var multilineDescription: String {
-		isEmpty
-		? 	.leftBrace + .rightBrace
-		: 	map { key, value in
+		if self.isEmpty {
+			.leftBrace + .rightBrace
+		} else {
+			self.map { key, value in
 				"\(key): \(value),"
 			}
 			.joined(separator: .newLine)
 			.offsettingLines()
 			.wrapped(in: .newLine)
 			.wrapped(in: .leftBrace, and: .rightBrace)
+		}
 	}
 }
 
-extension Array {
+extension Array where Element: Sendable {
 	public var multilineDescription: String {
-		isEmpty
-		? 	.leftBracket + .rightBracket
-		: 	map { element in
+		if self.isEmpty {
+			.leftBracket + .rightBracket
+		} else {
+			self.map { element in
 				"\(element),"
 			}
 			.joined(separator: .newLine)
 			.offsettingLines()
 			.wrapped(in: .newLine)
 			.wrapped(in: .leftBracket, and: .rightBracket)
+		}
 	}
 }

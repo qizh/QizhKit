@@ -8,7 +8,9 @@
 
 import Foundation
 
-fileprivate struct DecodingErrorPrettyPrinter: CustomStringConvertible, CustomDebugStringConvertible {
+fileprivate struct DecodingErrorPrettyPrinter: Sendable,
+											   CustomStringConvertible,
+											   CustomDebugStringConvertible {
 	let decodingError: DecodingError
 	
 	init(decodingError: DecodingError) {

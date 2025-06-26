@@ -8,7 +8,7 @@
 
 import Foundation
 
-public extension Collection {
+public extension Collection where Element: Sendable {
 	@inlinable func chunked(into size: Int) -> [[Element]] {
 		stride(from: 0, to: count, by: size)
 			.map { self[indexes(from: $0, count: size)].asArray() }
@@ -27,16 +27,25 @@ public extension Collection {
 	*/
 	
 	@inlinable func indexes(from offset: Int, count size: Int) -> Range<Self.Index> {
+		let lowerBound = index(startIndex, offsetBy: offset)
+		let upperBound = index(lowerBound, offsetBy: size, limitedBy: endIndex) ?? endIndex
+		return lowerBound ..< upperBound
+		
+		/*
 		Range<Self.Index>(
 			uncheckedBounds: (
 				lower: index(startIndex, offsetBy: offset),
 				upper: index(startIndex, offsetBy: Swift.min(offset + size, count))
 			)
 		)
+		*/
 	}
 }
 
-public extension Collection where Index == Int {
+public extension Collection
+	where Index == Int,
+		  Element: Sendable
+{
 	@inlinable func chunked(into size: Int) -> [[Element]] {
 		stride(from: 0, to: count, by: size)
 			.map { offset in
