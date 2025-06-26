@@ -13,7 +13,7 @@ public extension Collection where Element: Equatable,
 	
 	func next(after element: Element) -> Element? {
 		if let currentIndex = firstIndex(of: element),
-		   let nextIndex = index(currentIndex, offsetBy: .one, limitedBy: index(before: endIndex)) {
+		   let nextIndex = index(currentIndex, offsetBy: .one, limitedBy: index(endIndex, offsetBy: .minusOne)) {
 			self[nextIndex]
 		} else {
 			.none

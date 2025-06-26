@@ -8,13 +8,7 @@
 
 import SwiftUI
 
-// By declaring EdgeInsets as Sendable, we tell the compiler it's safe to
-// pass across concurrency domains. This is valid because it's a struct
-// made of Sendable CGFloat values.
-extension EdgeInsets: @retroactive Sendable {}
-
-// We do the same for UIEdgeInsets.
-extension UIEdgeInsets: @retroactive Sendable {}
+extension UIEdgeInsets: @unchecked @retroactive Sendable {}
 
 extension EdgeInsets {
 	public static let zero = EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
