@@ -10,6 +10,7 @@ import SwiftUI
 
 // MARK: Selfmade
 
+/*
 extension View {
 	/// Just a function returning `self`.
 	/// Useful when you need to provide
@@ -17,6 +18,7 @@ extension View {
 	/// where this view should be `self`
 	@inlinable public func selfmade() -> Self { self }
 }
+*/
 
 // MARK: Just button
 
@@ -24,7 +26,7 @@ extension View {
 	@inlinable public func button() -> Button<Self> {
 		.init(
 			action: { },
-			label: selfmade
+			label: { self }
 		)
 	}
 }
@@ -141,14 +143,14 @@ extension View {
 	@inlinable public func button(
 		action: @escaping () -> Void
 	) -> Button<Self> {
-		Button(action: action, label: selfmade)
+		Button(action: action, label: { self })
 	}
 	
 	@inlinable public func button(
 		role: ButtonRole,
 		action: @escaping () -> Void
 	) -> Button<Self> {
-		Button(role: role, action: action, label: selfmade)
+		Button(role: role, action: action, label: { self })
 	}
 	
 	@inlinable public func asyncButton(
@@ -167,13 +169,13 @@ extension View {
 
 extension View {
 	@inlinable public func button(copyingToClipboard text: String) -> Button<Self> {
-		Button(action: { UIPasteboard.general.string = text }, label: selfmade)
+		Button(action: { UIPasteboard.general.string = text }, label: { self })
 	}
 	
 	@inlinable public func button(copyingToClipboard text: AttributedString) -> Button<Self> {
 		Button(
-			action: { UIPasteboard.general.setObjects(.just(NSAttributedString(text))) },
-			label: selfmade
+			action: { UIPasteboard.general.setObjects([NSAttributedString(text)]) },
+			label: { self }
 		)
 	}
 }

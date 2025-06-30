@@ -717,7 +717,7 @@ extension Collection where Self: MutableCollection & RangeReplaceableCollection 
 		with element: Element,
 		add: Bool = false,
 		where condition: (Element) -> Bool
-	) -> Self {
+	) -> Self where Element: Sendable {
 		if let index = firstIndex(where: condition) {
 			var copy = self
 			copy[index] = element
@@ -739,7 +739,7 @@ extension Collection where Self: MutableCollection & RangeReplaceableCollection 
 		with element: Element,
 		add: Bool = false,
 		where condition: (Element) -> Bool
-	) -> Self {
+	) -> Self where Element: Sendable {
 		var wasAdded = false
 		var copy = self
 		

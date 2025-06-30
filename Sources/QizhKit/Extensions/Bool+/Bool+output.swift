@@ -21,8 +21,14 @@ extension Bool {
 		self ? .checkMarkChar : .xMarkChar
 	}
 	
+	@MainActor
 	public var imageCircle: some View {
-		Image(systemName: self ? "checkmark.circle" : "xmark.circle")
-			.foregroundStyle(self ? .green : .red)
+		if self {
+			Image(systemName: "checkmark.circle")
+				.foregroundStyle(.green)
+		} else {
+			Image(systemName: "xmark.circle")
+				.foregroundStyle(.red)
+		}
 	}
 }

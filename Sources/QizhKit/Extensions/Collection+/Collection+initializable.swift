@@ -9,11 +9,12 @@
 import Foundation
 import SwiftUI
 
-public protocol Initializable: Sendable {
+public protocol Initializable {
 	init()
 }
-public protocol InitializableCollection: Collection, Initializable, Sendable where Element: Sendable { }
-public protocol InitializableWithSequenceCollection: Collection, Sendable where Element: Sendable {
+
+public protocol InitializableCollection: Collection, Sendable, Initializable { }
+public protocol InitializableWithSequenceCollection: Collection, Sendable {
 	init<S: Sequence>(_ elements: S) where S.Element == Element
 }
 
@@ -21,14 +22,14 @@ public extension InitializableCollection where Self: EmptyProvidable {
 	static var empty: Self { .init() }
 }
 
-extension Array: InitializableWithSequenceCollection where Element: Sendable { }
-extension Set: InitializableWithSequenceCollection where Element: Sendable { }
+extension Array: InitializableWithSequenceCollection { }
+extension Set: InitializableWithSequenceCollection { }
 extension String: InitializableWithSequenceCollection { }
 
-extension Array: InitializableCollection, EmptyProvidable where Element: Sendable { }
-extension Set: InitializableCollection, EmptyProvidable where Element: Sendable { }
+extension Array: InitializableCollection, EmptyProvidable { }
+extension Set: InitializableCollection, EmptyProvidable { }
 extension String: InitializableCollection, EmptyProvidable { }
-extension Dictionary: InitializableCollection, EmptyProvidable where Key: Sendable, Value: Sendable { }
+extension Dictionary: InitializableCollection, EmptyProvidable { }
 
 extension Bool: Initializable { }
 extension Int: Initializable { }
@@ -43,16 +44,16 @@ extension CGRect: Initializable { }
 extension Date: Initializable { }
 extension Data: Initializable { }
 
-public protocol AnyElementCollection: Sendable {
+public protocol AnyElementCollection {
 	var anyFirst: Any { get }
 	var elementType: Any.Type { get }
 }
 
-extension Array: AnyElementCollection where Element: Sendable {
+extension Array: AnyElementCollection {
 	public var anyFirst: Any { first as Any }
 	public var elementType: Any.Type { Element.self }
 }
-extension Set: AnyElementCollection where Element: Sendable {
+extension Set: AnyElementCollection {
 	public var anyFirst: Any { first as Any }
 	public var elementType: Any.Type { Element.self }
 }
@@ -60,7 +61,7 @@ extension String: AnyElementCollection {
 	public var anyFirst: Any { first as Any }
 	public var elementType: Any.Type { Element.self }
 }
-extension Dictionary: AnyElementCollection where Key: Sendable, Value: Sendable {
+extension Dictionary: AnyElementCollection {
 	public var anyFirst: Any { first as Any }
 	public var elementType: Any.Type { Element.self }
 }

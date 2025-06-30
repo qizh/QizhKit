@@ -6,6 +6,7 @@
 //  Copyright © 2020 Serhii Shevchenko. All rights reserved.
 //
 
+/*
 import SwiftUI
 
 public enum FlockHeight: EasyCaseComparable {
@@ -728,3 +729,4 @@ struct Flock_Previews: PreviewProvider {
 	}
 }
 #endif
+*/

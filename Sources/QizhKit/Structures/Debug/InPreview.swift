@@ -26,13 +26,14 @@ public var isInPreviewEnvironment: Bool {
 /// Same as `print`, but only works when ``isInPreviewEnvironment``
 public func printInPreview(_ items: Any..., separator: String = " ", terminator: String = "\n") {
 	if isInPreviewEnvironment {
-		print(items.justOne ?? items, separator: separator, terminator: terminator)
+		// print(items.count == 1 ? items.first ?? items : items, separator: separator, terminator: terminator)
+		print(items, separator: separator, terminator: terminator)
 	}
 }
 
 /// Same as `print`, but only works when ``isInPreviewEnvironment``
 public func debugPrintInPreview(_ items: Any..., separator: String = " ", terminator: String = "\n") {
 	if isInPreviewEnvironment {
-		debugPrint(items.justOne ?? items, separator: separator, terminator: terminator)
+		debugPrint(items, separator: separator, terminator: terminator)
 	}
 }

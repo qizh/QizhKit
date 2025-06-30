@@ -10,7 +10,7 @@ import Foundation
 
 // MARK: One element
 
-public extension Collection where Element: Sendable {
+public extension Collection {
 	@inlinable var hasMoreThanOne: Bool { count > .one }
 	@inlinable var     isNotAlone: Bool { count > .one }
 	@inlinable var        isAlone: Bool { count .isOne }

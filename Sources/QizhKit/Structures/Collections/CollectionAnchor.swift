@@ -207,8 +207,11 @@ public enum CollectionAnchor <Source>
 		find(.match, in: source)
 	}
 	
-	public func replacing(in source: Source, with replacement: Source) -> Source where Source: Equatable {
-		let remains: Source = left(from: source).asCollection()
+	public func replacing(
+		in source: Source,
+		with replacement: Source
+	) -> Source where Source: Equatable {
+		let remains: Source = Source(left(from: source))
 		if remains != source {
 			switch part {
 			case .prefix: return replacement + remains
@@ -229,15 +232,15 @@ public extension BidirectionalCollection
 	typealias Anchor = CollectionAnchor<Self>
 	
 	@inlinable func deleting(_ what: Anchor) -> Self {
-		what.left(from: self).asCollection()
+		Self(what.left(from: self))
 	}
 	
 	@inlinable func take(all what: Anchor) -> Self {
-		what.match(in: self).asCollection()
+		Self(what.match(in: self))
 	}
 	
 	@inlinable func matching(_ what: Anchor) -> Self {
-		what.match(in: self).asCollection()
+		Self(what.match(in: self))
 	}
 	
 	@inlinable func replacing(_ what: Anchor, with replacement: Self) -> Self where Self: Equatable {

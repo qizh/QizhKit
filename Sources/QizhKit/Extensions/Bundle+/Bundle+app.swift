@@ -8,7 +8,7 @@
 
 import Foundation
 
-fileprivate final class BundleKeeper {
+fileprivate final class BundleKeeper { // : @unchecked Sendable {
 	fileprivate static let cachedAppBundle: Bundle? = {
 		var result: Bundle? = .none
 		var components = Bundle.main.bundleURL.path.split(separator: .slashChar)

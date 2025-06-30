@@ -26,8 +26,7 @@ extension RangeReplaceableCollection
 {
 	@inlinable public func asCollection <C> () -> C
 		where C: RangeReplaceableCollection,
-			  C.Element == Element,
-			  C: Sendable
+			  C.Element == Element
 	{
 		C(self)
 	}

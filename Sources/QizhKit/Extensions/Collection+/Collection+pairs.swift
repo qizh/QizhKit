@@ -9,13 +9,13 @@
 import Foundation
 import SwiftUI
 
-public extension Collection {
+public extension Collection where Element: Sendable {
 	typealias Pair = PairOf<Element>
 	@inlinable var pairs: [Pair] {
 		stride(from: 0, to: count, by: 2)
-			.map {
-				Pair(elements:
-					self[indexes(from: $0, count: 2)].asArray()
+			.map { offset in
+				Pair(
+					elements: self[indexes(from: offset, count: 2)].asArray()
 				)
 			}
 	}
@@ -38,6 +38,7 @@ public struct PairOf<Element> {
 	}
 }
 
+extension PairOf: Sendable where Element: Sendable { }
 extension PairOf: Equatable where Element: Equatable { }
 extension PairOf: Hashable where Element: Hashable { }
 extension PairOf: Identifiable where Element: Identifiable {
