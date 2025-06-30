@@ -730,7 +730,7 @@ public extension Binding where Value: EasySelfComparable {
 
 // MARK: Collection
 
-extension Collection {
+extension Collection where Element: Sendable {
 	@ViewBuilder @MainActor public func labeledViews(label: String? = nil) -> some View {
 		if isEmpty {
 			NilReplacement.emptySet.labeledView(label: label)
@@ -758,7 +758,7 @@ extension Collection {
 
 // MARK: Dictionary
 
-extension Dictionary {
+extension Dictionary where Key: Sendable, Value: Sendable {
 	@ViewBuilder @MainActor public func labeledViews(label: String? = nil) -> some View {
 		if isEmpty {
 			NilReplacement.emptySet.labeledView(label: label)
@@ -775,7 +775,7 @@ extension Dictionary {
 
 // MARK: Set
 
-extension Set {
+extension Set where Element: Sendable {
 	@ViewBuilder @MainActor public func labeledViews(label: String? = .none) -> some View {
 		if isEmpty {
 			NilReplacement.emptySet.labeledView(label: label)
@@ -813,7 +813,7 @@ extension OrderedDictionary {
 
 // MARK: - Optional Collection
 
-extension Optional where Wrapped: Collection { //, Wrapped: Hashable, Wrapped.Element: Hashable {
+extension Optional where Wrapped: Collection, Wrapped.Element: Sendable { //, Wrapped: Hashable, Wrapped.Element: Hashable {
 	@ViewBuilder @MainActor public func labeledViews(label: String? = .none) -> some View {
 		switch self {
 		case .none:
