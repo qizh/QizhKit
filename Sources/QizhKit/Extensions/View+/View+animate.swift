@@ -9,12 +9,13 @@
 import SwiftUI
 
 extension View {
-	@inlinable
-	public func animate <Value: Equatable> (
+	// @inlinable
+	public func animate <Value> (
 		using anim: Animation = .easeInOut(duration: 0.3),
 		updating value: Value,
 		_ action: @escaping @Sendable () -> Void
-	) -> some View {
+	) -> some View where Value: Equatable,
+						 Value: Sendable {
 		animation(anim, value: value)
 		.onAppear {
 			execute {
@@ -99,19 +100,32 @@ extension View {
 	}
 	#endif
 	
-	@inlinable
-	public func animateForever <Value: Equatable> (
+	/// Adds `repeatForever(autoreverses:)` for any provided animation
+	// @inlinable
+	public func animateForever <Value> (
 		assigning value: Value,
 		to binding: Binding<Value>,
 		using anim: Animation = .linear(duration: 1),
 		autoreverses: Bool = false
-	) -> some View {
+	) -> some View where Value: Equatable {
 		animation(
 			anim.repeatForever(autoreverses: autoreverses),
 			value: value
 		)
 		.onAppear {
 			binding.wrappedValue = value
+		}
+	}
+	
+	/// You should manually add `repeatForever(autoreverses:)` on your own
+	public func animate <Value> (
+		assigning value: @escaping @autoclosure @Sendable @MainActor () -> Value,
+		to binding: Binding<Value>,
+		using anim: Animation = .linear(duration: 1),
+	) -> some View where Value: Equatable, Value: Sendable {
+		 animation(anim, value: value())
+		.onAppear {
+			binding.wrappedValue = value()
 		}
 	}
 }
