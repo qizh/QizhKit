@@ -117,3 +117,45 @@ extension EdgeInsets {
 		increased(horizontally: -horizontalAmount, vertically: -verticalAmount)
 	}
 }
+
+// MARK: Init Defaults
+
+extension EdgeInsets {
+	@_disfavoredOverload
+	public init(
+		vertical: CGFloat = .zero,
+		horizontal: CGFloat = .zero,
+	) {
+		self.init(
+			top: vertical,
+			leading: horizontal,
+			bottom: vertical,
+			trailing: horizontal
+		)
+	}
+	
+	@inlinable public static func horizontal(_ inset: CGFloat) -> EdgeInsets {
+		.init(horizontal: inset)
+	}
+	
+	@inlinable public static func vertical(_ inset: CGFloat) -> EdgeInsets {
+		.init(vertical: inset)
+	}
+	
+	@inlinable public static func top(_ inset: CGFloat) -> EdgeInsets {
+		.init(top: inset, leading: .zero, bottom: .zero, trailing: .zero)
+	}
+	
+	@inlinable public static func leading(_ inset: CGFloat) -> EdgeInsets {
+		.init(top: .zero, leading: inset, bottom: .zero, trailing: .zero)
+	}
+	
+	@inlinable public static func bottom(_ inset: CGFloat) -> EdgeInsets {
+		.init(top: .zero, leading: .zero, bottom: inset, trailing: .zero)
+	}
+	
+	@inlinable public static func trailing(_ inset: CGFloat) -> EdgeInsets {
+		.init(top: .zero, leading: .zero, bottom: .zero, trailing: inset)
+	}
+
+}
