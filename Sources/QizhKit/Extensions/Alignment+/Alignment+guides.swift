@@ -13,6 +13,12 @@ public extension HorizontalAlignment {
 		static func defaultValue(in context: ViewDimensions) -> CGFloat { context[HorizontalAlignment.center] }
 	}
 	
+	private enum Middle: AlignmentID {
+		static func defaultValue(in context: ViewDimensions) -> CGFloat {
+			context[HorizontalAlignment.center]
+		}
+	}
+	
 	private enum LeadingSide: AlignmentID {
 		static func defaultValue(in context: ViewDimensions) -> CGFloat { context[.leading] }
 	}
@@ -22,11 +28,25 @@ public extension HorizontalAlignment {
 	}
 	
 	static let separator = HorizontalAlignment(Separator.self)
+	static let middle = HorizontalAlignment(Middle.self)
+	
 	static let leadingSide = HorizontalAlignment(LeadingSide.self)
 	static let trailingSide = HorizontalAlignment(TrailingSide.self)
 }
 
 public extension VerticalAlignment {
+	/*
+	private enum Separator: AlignmentID {
+		static func defaultValue(in context: ViewDimensions) -> CGFloat { context[VerticalAlignment.center] }
+	}
+	*/
+	
+	private enum Middle: AlignmentID {
+		static func defaultValue(in context: ViewDimensions) -> CGFloat {
+			context[VerticalAlignment.center]
+		}
+	}
+	
 	private enum BottomSide: AlignmentID {
 		static func defaultValue(in context: ViewDimensions) -> CGFloat { context[.bottom] }
 	}
@@ -43,8 +63,12 @@ public extension VerticalAlignment {
 		static func defaultValue(in context: ViewDimensions) -> CGFloat { context[.top] }
 	}
 	
+	// static let separator = VerticalAlignment(Separator.self)
+	static let middle = VerticalAlignment(Middle.self)
+	
 	static let topSide = VerticalAlignment(TopSide.self)
 	static let topEdge = VerticalAlignment(TopEdge.self)
+	
 	static let bottomSide = VerticalAlignment(BottomSide.self)
 	static let bottomEdge = VerticalAlignment(BottomEdge.self)
 }
@@ -56,6 +80,7 @@ public extension Alignment {
 	static let bottomEdge = Alignment(horizontal: .center, vertical: .bottomEdge)
 
 	static let separator = Alignment(horizontal: .separator, vertical: .center)
+	static let middle = Alignment(horizontal: .middle, vertical: .middle)
 	static let leadingSide = Alignment(horizontal: .leadingSide, vertical: .center)
 	static let trailingSide = Alignment(horizontal: .trailingSide, vertical: .center)
 }
