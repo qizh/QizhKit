@@ -6,7 +6,7 @@
 //  Copyright © 2025 Serhii Shevchenko. All rights reserved.
 //
 
-public import Foundation
+public import SwiftUI
 
 extension Layout where Self == VStackLayout {
 	@inlinable public static func vStack(
