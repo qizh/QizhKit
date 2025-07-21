@@ -6,62 +6,117 @@
 //  Copyright © 2020 Serhii Shevchenko. All rights reserved.
 //
 
-import SwiftUI
+public import SwiftUI
+import QizhMacroKit
 
-@available(iOS 14.0, *)
 public struct NavbarLabelStyle: LabelStyle {
 	private let iconSide: Side
-	private let color: Color?
+	private let foregroundStyle: AnyShapeStyle?
+	private let customSpacing: CGFloat?
+	
+	@ScaledMetric(relativeTo: .callout) fileprivate var defaultSpacing: CGFloat = 6
+	
+	@Environment(\.font) fileprivate var font
 	
 	public init(
-		_ color: Color?,
-		icon iconSide: Side
+		style foregroundStyle: (some ShapeStyle)?,
+		icon iconSide: Side,
+		spacing customSpacing: CGFloat? = .none
 	) {
-		self.color = color
+		self.foregroundStyle = foregroundStyle?.asAnyShapeStyle
 		self.iconSide = iconSide
+		self.customSpacing = customSpacing
+	}
+	
+	public init(
+		icon iconSide: Side,
+		spacing customSpacing: CGFloat? = .none
+	) {
+		self.foregroundStyle = .none
+		self.iconSide = iconSide
+		self.customSpacing = customSpacing
+	}
+	
+	@available(*, deprecated, renamed: "init(style:icon:)", message: "Switch to the updated initializer where you can provide ShapeStyle instead of just Color.")
+	@inlinable public init(
+		_ color: Color?,
+		icon iconSide: Side,
+		spacing customSpacing: CGFloat? = .none
+	) {
+		self.init(style: color, icon: iconSide, spacing: customSpacing)
 	}
 	
 	public func makeBody(configuration: Configuration) -> some View {
-		HStack(spacing: 5) {
-			if iconSide.is(.leading) {
+		HStack(spacing: spacing) {
+			if iconSide.isLeading {
 				configuration.icon
 			}
 			
 			configuration.title
-				.regular(16)
+				.font(font ?? .callout.weight(.regular))
 			
-			if iconSide.is(.trailing) {
+			if iconSide.isTrailing {
 				configuration.icon
 			}
 		}
-		.apply(when: color) { view, color in
-			view.foregroundStyle(color)
-		}
+		.foregroundStyle(foregroundStyle ?? ForegroundStyle.foreground.asAnyShapeStyle)
 	}
 	
-	public enum Side: EasyCaseComparable {
+	fileprivate var spacing: CGFloat {
+		customSpacing ?? defaultSpacing
+	}
+	
+	@IsCase
+	public enum Side: Hashable, Sendable {
 		case leading
 		case trailing
 	}
 }
 
-@available(iOS 14.0, *)
-public extension View {
-	@inlinable func labelStyleNavbar(
-		_ color: Color? = .none,
-		icon iconSide: NavbarLabelStyle.Side
-	) -> some View {
-		labelStyle(
-			NavbarLabelStyle(color, icon: iconSide)
+extension LabelStyle where Self == NavbarLabelStyle {
+	@inlinable public static func navbar(
+		style foregroundStyle: (some ShapeStyle)?,
+		icon iconSide: NavbarLabelStyle.Side,
+		spacing customSpacing: CGFloat? = .none
+	) -> Self {
+		NavbarLabelStyle(
+			style: foregroundStyle,
+			icon: iconSide,
+			spacing: customSpacing
 		)
 	}
 	
-	@inlinable func labelStyleIcon() -> some View {
-		labelStyle(IconOnlyLabelStyle())
+	@inlinable public static func navbar(
+		icon iconSide: NavbarLabelStyle.Side,
+		spacing customSpacing: CGFloat? = .none
+	) -> Self {
+		NavbarLabelStyle(
+			icon: iconSide,
+			spacing: customSpacing
+		)
+	}
+}
+
+extension View {
+	@available(*, deprecated, renamed: "labelStyle(_:)", message: "Switch to the `LabelStyle.navbar(color:icon:)` static function.")
+	@inlinable public func labelStyleNavbar(
+		_ color: Color? = .none,
+		icon iconSide: NavbarLabelStyle.Side,
+		spacing customSpacing: CGFloat? = .none
+	) -> some View {
+		labelStyle(
+			NavbarLabelStyle(color, icon: iconSide, spacing: customSpacing)
+		)
 	}
 	
-	@inlinable func labelStyleTitle() -> some View {
-		labelStyle(TitleOnlyLabelStyle())
+	@available(*, deprecated, renamed: "labelStyle(_:)", message: "Switch to the `LabelStyle.iconOnly` static property.")
+	@inlinable public func labelStyleIcon() -> some View {
+		labelStyle(.iconOnly)
+	}
+	
+	@available(*, deprecated, renamed: "labelStyle(_:)", message: "Switch to the `LabelStyle.titleOnly` static property.")
+	@inlinable public func labelStyleTitle() -> some View {
+		labelStyle(.titleOnly)
 	}
 }
 
