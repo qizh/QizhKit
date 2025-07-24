@@ -16,7 +16,12 @@ public struct NavbarLabelStyle: LabelStyle {
 	
 	@ScaledMetric(relativeTo: .callout) fileprivate var defaultSpacing: CGFloat = 6
 	
+	@ScaledMetric(relativeTo: .body) fileprivate var heightSmall: CGFloat = 24
+	@ScaledMetric(relativeTo: .body) fileprivate var heightMedium: CGFloat = 30
+	@ScaledMetric(relativeTo: .body) fileprivate var heightLarge: CGFloat = 40
+	
 	@Environment(\.font) fileprivate var font
+	@Environment(\.imageScale) fileprivate var imageScale
 	
 	public init(
 		style foregroundStyle: (some ShapeStyle)?,
@@ -50,6 +55,8 @@ public struct NavbarLabelStyle: LabelStyle {
 		HStack(spacing: spacing) {
 			if iconSide.isLeading {
 				configuration.icon
+					.scaledToFit()
+					.square(imageHeight, .center)
 			}
 			
 			configuration.title
@@ -57,6 +64,8 @@ public struct NavbarLabelStyle: LabelStyle {
 			
 			if iconSide.isTrailing {
 				configuration.icon
+					.scaledToFit()
+					.square(imageHeight, .center)
 			}
 		}
 		.foregroundStyle(foregroundStyle ?? ForegroundStyle.foreground.asAnyShapeStyle)
@@ -64,6 +73,15 @@ public struct NavbarLabelStyle: LabelStyle {
 	
 	fileprivate var spacing: CGFloat {
 		customSpacing ?? defaultSpacing
+	}
+	
+	fileprivate var imageHeight: CGFloat {
+		switch imageScale {
+		case .small: 		heightSmall
+		case .medium: 		heightMedium
+		case .large: 		heightLarge
+		@unknown default: 	heightLarge
+		}
 	}
 	
 	@IsCase
