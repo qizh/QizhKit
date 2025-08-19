@@ -122,5 +122,11 @@ extension String {
 	@inlinable public var toDotCase: String {
 		self.toLocalizedLowercasedWords(joinedBy: .dot)
 	}
+	
+	/// `To regular sentence case`
+	@inlinable public var toRegularSentenceCase: String {
+		toLocalizedLowercasedWords(joinedBy: .space)
+			.localizedCapitalized
+	}
 }
 
