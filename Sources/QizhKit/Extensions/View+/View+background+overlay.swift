@@ -11,32 +11,28 @@ import SwiftUI
 // MARK: Background, Overlay
 
 public extension View {
-	@inlinable
-	func background <Background> (
+	@inlinable @MainActor func background <Background> (
 		_ alignment: Alignment,
 		_ view: Background
 	) -> some View where Background: View {
 		background(view, alignment: alignment)
 	}
 	
-	@inlinable
-	func overlay <Overlay> (
+	@inlinable @MainActor func overlay <Overlay> (
 		_ alignment: Alignment,
 		_ view: Overlay
 	) -> some View where Overlay: View {
 		overlay(view, alignment: alignment)
 	}
 	
-	@inlinable
-	func background <Background> (
+	@inlinable @MainActor func background <Background> (
 		_ alignment: Alignment,
 		@ViewBuilder view: () -> Background
 	) -> some View where Background: View {
 		background(view(), alignment: alignment)
 	}
 	
-	@inlinable
-	func overlay <Overlay> (
+	@inlinable @MainActor func overlay <Overlay> (
 		_ alignment: Alignment,
 		@ViewBuilder view: () -> Overlay
 	) -> some View where Overlay: View {
@@ -44,16 +40,14 @@ public extension View {
 	}
 	
 	@available(iOS, obsoleted: 15, message: "Implemented in SwiftUI")
-	@inlinable
-	func background <Background> (
+	@inlinable @MainActor func background <Background> (
 		@ViewBuilder view: () -> Background
 	) -> some View where Background: View {
 		background(view(), alignment: .center)
 	}
 	
 	@available(iOS, obsoleted: 15, message: "Implemented in SwiftUI")
-	@inlinable
-	func overlay <Overlay> (
+	@inlinable @MainActor func overlay <Overlay> (
 		@ViewBuilder view: () -> Overlay
 	) -> some View where Overlay: View {
 		overlay(view(), alignment: .center)
@@ -62,9 +56,8 @@ public extension View {
 
 // MARK: Library Content
 
-@available(iOS 14.0, *)
 public struct BackgroundAndOverlaySugarLibraryContent: LibraryContentProvider {
-	@LibraryContentBuilder
+	@LibraryContentBuilder @MainActor
 	public func modifiers <Base: View> (base: Base) -> [LibraryItem] {
 		[
 			LibraryItem(
@@ -103,20 +96,23 @@ public struct BackgroundAndOverlaySugarLibraryContent: LibraryContentProvider {
 
 public extension View {
 	@available(*, deprecated, renamed: "background(_:_:)")
-	@inlinable
-	func background<Background>(aligned: Alignment, _ view: Background) -> some View where Background: View {
+	@inlinable @MainActor func background<Background>(
+		aligned: Alignment,
+		_ view: Background
+	) -> some View where Background: View {
 		background(view, alignment: aligned)
 	}
 	
 	@available(*, deprecated, renamed: "overlay(_:_:)")
-	@inlinable
-	func overlay<Overlay>(aligned: Alignment, _ view: Overlay) -> some View where Overlay: View {
+	@inlinable @MainActor func overlay<Overlay>(
+		aligned: Alignment,
+		_ view: Overlay
+	) -> some View where Overlay: View {
 		overlay(view, alignment: aligned)
 	}
 	
 	@available(*, deprecated, renamed: "background(_:view:)")
-	@inlinable
-	func background <Background: View> (
+	@inlinable @MainActor func background <Background: View> (
 		aligned alignment: Alignment,
 		@ViewBuilder _ content: () -> Background
 	) -> some View {
@@ -124,8 +120,7 @@ public extension View {
 	}
 	
 	@available(*, deprecated, renamed: "overlay(_:view:)")
-	@inlinable
-	func overlay <Overlay: View> (
+	@inlinable @MainActor func overlay <Overlay: View> (
 		aligned alignment: Alignment,
 		@ViewBuilder _ content: () -> Overlay
 	) -> some View {
@@ -176,9 +171,13 @@ public extension View {
 	
 	// MARK: > Accent
 	
-	@inlinable
-	func backgroundAccentColor() -> some View {
-		background(Color.accentColor)
+	@inlinable func backgroundTint() -> some View {
+		background(.tint)
+	}
+	
+	@available(*, deprecated, renamed: "backgroundTint()", message: "This method is not using `Color.accentColor` anymore. Switch to `backgroundTint` instead.")
+	@inlinable func backgroundAccentColor() -> some View {
+		background(.tint)
 	}
 	
 	// MARK: > Deprecated
@@ -198,7 +197,7 @@ public extension View {
 	@available(*, deprecated, renamed: "backgroundAccentColor", message: "Use `backgroundAccentColor` instead")
 	@inlinable
 	func accentBackground() -> some View {
-		background(Color.accentColor)
+		background(.tint)
 	}
 }
 
@@ -215,69 +214,62 @@ public extension View {
 	
 	/// Black for default ColorScheme
 	@inlinable func foregroundLabel() -> some View {
-		foregroundColor(Color(uiColor: .label))
+		foregroundStyle(.label)
 	}
 	
 	/// Dark Gray for default ColorScheme
 	@inlinable func foregroundSecondaryLabel() -> some View {
-		foregroundColor(Color(uiColor: .secondaryLabel))
+		foregroundStyle(.secondaryLabel)
 	}
 	
 	// MARK: > Inverted
 	
 	/// White for default ColorScheme
 	@inlinable func foregroundSystemBackground() -> some View {
-		foregroundColor(Color(uiColor: .systemBackground))
+		foregroundStyle(.systemBackground)
 	}
 	
 	/// > Light Gran for default ColorScheme
 	@inlinable func foregroundSecondarySystemBackground() -> some View {
-		foregroundColor(Color(uiColor: .secondarySystemBackground))
+		foregroundStyle(.secondarySystemBackground)
 	}
 	
 	// MARK: > Accent
 	
+	@available(*, deprecated, renamed: "foregroundStyle(_:)", message: "This function is using deprecated `foregroundColor(_:)` function")
 	@inlinable func foregroundAccent() -> some View { foregroundColor(.accentColor) }
 	
 	/// Setting `foregroundStyle(.secondary)` when on iOS 15
 	/// or `foregroundColor(.accentColor)` when on earlier iOS
+	@available(*, deprecated, renamed: "foregroundStyle(_:)", message: "Just use `foregroundStyle(.secondary)` instead.")
 	@ViewBuilder
 	func foregroundAccentOrSecondary() -> some View {
-		if #available(iOS 15.0, *) {
-			self.foregroundStyle(.secondary)
-		} else {
-			self.foregroundAccent()
-		}
+		foregroundStyle(.secondary)
 	}
 	
 	/// Setting `foregroundStyle(.tertiary)` when on iOS 15
 	/// or `foregroundColor(.accentColor)` when on earlier iOS
+	@available(*, deprecated, renamed: "foregroundStyle(_:)", message: "Just use `foregroundStyle(.tertiary)` instead.")
 	@ViewBuilder
 	func foregroundAccentOrTertiary() -> some View {
-		if #available(iOS 15.0, *) {
-			self.foregroundStyle(.tertiary)
-		} else {
-			self.foregroundAccent()
-		}
+		foregroundStyle(.tertiary)
 	}
 	
 	/// Setting `foregroundStyle(.quaternary)` when on iOS 15
 	/// or `foregroundColor(.accentColor)` when on earlier iOS
+	@available(*, deprecated, renamed: "foregroundStyle(_:)", message: "Just use `foregroundStyle(.quaternary)` instead.")
 	@ViewBuilder
 	func foregroundAccentOrQuaternary() -> some View {
-		if #available(iOS 15.0, *) {
-			self.foregroundStyle(.quaternary)
-		} else {
-			self.foregroundAccent()
-		}
+		foregroundStyle(.quaternary)
 	}
 	
 	// MARK: > Common
 	
-	@inlinable func foregroundWhite() -> some View { foregroundColor(.white) }
-	@inlinable func foregroundBlack() -> some View { foregroundColor(.black) }
-	@inlinable func foregroundPlaceholder() -> some View { foregroundColor(Color(uiColor: .placeholderText)) }
+	@inlinable func foregroundWhite() -> some View { foregroundStyle(.white) }
+	@inlinable func foregroundBlack() -> some View { foregroundStyle(.black) }
+	@inlinable func foregroundPlaceholder() -> some View { foregroundStyle(.placeholderText) }
 	
+	/*
 	// MARK: > Deprecated
 	
 	@available(*, deprecated, renamed: "foregroundAccent", message: "Use `foregroundAccent` instead")
@@ -297,9 +289,11 @@ public extension View {
 	func secondaryLabelForeground() -> some View {
 		foregroundColor(Color(uiColor: .secondaryLabel))
 	}
+	*/
 }
 
 public extension Text {
+	@available(*, deprecated, renamed: "foregroundStyle(_:)", message: "There's no need to use KeyPath anymore. Just use the style directly.")
 	@inlinable func foregroundColor(_ key: BorderCrafterValues.UIColors.Key) -> Text {
 		foregroundColor(Color(uiColor: BorderCrafterValues.UIColors.value(for: key)))
 	}
@@ -308,35 +302,35 @@ public extension Text {
 	
 	/// Black for default ColorScheme
 	@inlinable func foregroundLabel() -> Text {
-		foregroundColor(Color(uiColor: .label))
+		foregroundStyle(.label)
 	}
 	
 	/// Dark Gray for default ColorScheme
 	@inlinable func foregroundSecondaryLabel() -> Text {
-		foregroundColor(Color(uiColor: .secondaryLabel))
+		foregroundStyle(.secondaryLabel)
 	}
 	
 	// MARK: > Inverted
 	
 	/// White for default ColorScheme
 	@inlinable func foregroundSystemBackground() -> Text {
-		foregroundColor(Color(uiColor: .systemBackground))
+		foregroundStyle(.systemBackground)
 	}
 	
 	/// > Light Gran for default ColorScheme
 	@inlinable func foregroundSecondarySystemBackground() -> Text {
-		foregroundColor(Color(uiColor: .secondarySystemBackground))
+		foregroundStyle(.secondarySystemBackground)
 	}
 	
 	// MARK: > Accent
 	
-	@inlinable func foregroundAccent() -> Text { foregroundColor(.accentColor) }
+	@inlinable func foregroundAccent() -> Text { foregroundStyle(.tint) }
 	
 	// MARK: > Common
 	
-	@inlinable func foregroundWhite() -> Text { foregroundColor(.white) }
-	@inlinable func foregroundBlack() -> Text { foregroundColor(.black) }
-	@inlinable func foregroundPlaceholder() -> Text { foregroundColor(Color(uiColor: .placeholderText)) }
+	@inlinable func foregroundWhite() -> Text { foregroundStyle(.white) }
+	@inlinable func foregroundBlack() -> Text { foregroundStyle(.black) }
+	@inlinable func foregroundPlaceholder() -> Text { foregroundStyle(.placeholderText) }
 }
 
 // MARK: Max
@@ -444,7 +438,7 @@ public extension View {
 		frame(width: value, alignment: alignment)
 	}
 	
-//	@inlinable
+	@inlinable
 	func height(_ value: CGFloat? = nil, _ alignment: Alignment = .center) -> some View {
 		frame(height: value, alignment: alignment)
 	}

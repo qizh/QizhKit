@@ -12,8 +12,9 @@ import SwiftUI
 public protocol Initializable {
 	init()
 }
-public protocol InitializableCollection: Collection, Initializable { }
-public protocol InitializableWithSequenceCollection: Collection {
+
+public protocol InitializableCollection: Collection, Sendable, Initializable { }
+public protocol InitializableWithSequenceCollection: Collection, Sendable {
 	init<S: Sequence>(_ elements: S) where S.Element == Element
 }
 

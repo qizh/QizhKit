@@ -64,10 +64,10 @@ public enum DebugDepth: Comparable, Sendable, EasyCaseComparable {
 	
 	public var maxDataCount: Int {
 		switch self {
-		case .none: 	return 0
-		case .minimum: 	return 500
-		case .default: 	return 5_000
-		case .extra: 	return .max
+		case .none: 	0
+		case .minimum: 	500
+		case .default: 	5_000
+		case .extra: 	.max
 		}
 	}
 }
@@ -114,7 +114,9 @@ public protocol CollectionFetcher: Fetcher
 	Value: InitializableCollection,
 	Value: InitializableWithSequenceCollection,
 	Value: EmptyTestable,
-	Value.Element: Codable
+	Value: Sendable,
+	Value.Element: Codable,
+	Value.Element: Sendable
 {
 	
 }
@@ -195,8 +197,8 @@ public extension SingleItemFetcher {
 
 // MARK: Collection Extension
 
-public extension CollectionFetcher {
-	typealias Item = Value.Element where Value.Element: Sendable
+public extension CollectionFetcher where Value.Element: Sendable {
+	typealias Item = Value.Element
 	typealias LossyValue = LossyArray<Item>
 	typealias AirtableItemRecords = AirtableRecords<Value.Element>
 	typealias RailsLossyItemData = RailsLossyResponses<Value.Element>
@@ -377,7 +379,7 @@ extension CollectionFetcher {
 #endif
 
 #if canImport(Alamofire)
-public extension CollectionFetcher where Value.Element: Identifiable {
+public extension CollectionFetcher where Value.Element: Identifiable, Value.Element: Sendable {
 	func defaultResponse(_ response: AFRailsLossyResponse, _ animate: Bool, debug debugDepth: DebugDepth) {
 		if debug || debugDepth.is(not: .none, .default) { print(response.debugDescription(depth: debugDepth)) }
 		withAnimation(animate ? .spring() : .none) {

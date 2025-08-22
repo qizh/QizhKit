@@ -9,7 +9,7 @@
 import SwiftUI
 
 public struct SizePreferenceKey: PreferenceKey {
-	public static var defaultValue: CGSize = .zero
+	public static let defaultValue: CGSize = .zero
 	public static func reduce(value: inout CGSize, nextValue: () -> CGSize) {
 		value = nextValue()
 	}
@@ -24,14 +24,18 @@ public struct ContainerSizeBindingModifier: ViewModifier {
 				GeometryReader { geometry in
 					Color.almostClear
 						.transformPreference(SizePreferenceKey.self) { $0 = geometry.size }
-						.onPreferenceChange(SizePreferenceKey.self) { self.size = $0 }
+						.onPreferenceChange(SizePreferenceKey.self) { value in
+							Task { @MainActor in
+								self.size = value
+							}
+						}
 				}
 			)
 	}
 }
 
 public struct ContainerSizeCallbackModifier: ViewModifier {
-	public typealias Callback = (_ size: CGSize) -> Void
+	public typealias Callback = @Sendable @MainActor (_ size: CGSize) -> Void
 	public var receive: Callback
 	
 	public func body(content: Content) -> some View {
@@ -40,17 +44,26 @@ public struct ContainerSizeCallbackModifier: ViewModifier {
 				GeometryReader { geometry in
 					Color.almostClear
 						.transformPreference(SizePreferenceKey.self) { $0 = geometry.size }
-						.onPreferenceChange(SizePreferenceKey.self, perform: self.receive)
+						.onPreferenceChange(SizePreferenceKey.self) { value in
+							Task { @MainActor in
+								receive(value)
+							}
+						}
 				}
 			)
 	}
 }
 
-public extension View {
-	func containerSize(_ size: Binding<CGSize>) -> some View {
+extension View {
+	public func containerSize(
+		_ size: Binding<CGSize>
+	) -> some View {
 		modifier(ContainerSizeBindingModifier(size: size))
 	}
-	func containerSize(_ receive: @escaping ContainerSizeCallbackModifier.Callback) -> some View {
+	
+	public func containerSize(
+		_ receive: @escaping ContainerSizeCallbackModifier.Callback
+	) -> some View {
 		modifier(ContainerSizeCallbackModifier(receive: receive))
 	}
 }

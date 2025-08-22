@@ -9,7 +9,6 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
-@available(iOS 14.0, *)
 public struct WebpageScreen: View {
 	private let title: Text
 	private let source: WebView.Source
@@ -66,7 +65,7 @@ public struct WebpageScreen: View {
 	
 	private var debugColorScheme: some View {
 		VStack.LabeledViews {
-			colorScheme.labeledView(label: "color scheme")
+			colorScheme.caseView(label: "color scheme")
 		}
 	}
 	
@@ -74,41 +73,30 @@ public struct WebpageScreen: View {
 		UIPasteboard.general.string = source.string
 	}
 	
-	@available(iOS 14.0, *)
 	@ViewBuilder
 	private var shareButton: some View {
-		if #available(iOS 16.0, *) {
-			let filenameDate = Date.now
-				.formatted(date: .abbreviated, time: .standard)
-				.replacing(.colon, with: .minus)
-			
-			if let data = source.string.data(using: .utf8),
-			   let fileURL = sharedFileURL(
-					named: "\(source.debugName) \(filenameDate)",
-					for: data
-			   ) {
-				ShareLink(
-					item: fileURL,
-					subject: title
-				)
-			} else {
-				ShareLink(
-					item: source.string,
-					subject: title,
-					preview: SharePreview(title)
-				)
-			}
-		} else if let data = source.string.data(using: .utf8) {
-			Label {
-				Text("Share", comment: "Share button text, for prior to iOS 16")
-			} icon: {
-				Image(systemName: "square.and.arrow.up")
-			}
-			.button(action: share(_:), data)
+		let filenameDate = Date.now
+			.formatted(date: .abbreviated, time: .standard)
+			.replacing(.colon, with: .minus)
+		
+		if let data = source.string.data(using: .utf8),
+		   let fileURL = sharedFileURL(
+				named: "\(source.debugName) \(filenameDate)",
+				for: data
+		   ) {
+			ShareLink(
+				item: fileURL,
+				subject: title
+			)
+		} else {
+			ShareLink(
+				item: source.string,
+				subject: title,
+				preview: SharePreview(title)
+			)
 		}
 	}
 	
-	@available(iOS 16.0, *)
 	private func sharedFileURL(named name: String, for data: Data) -> URL? {
 		let fileExtension: String
 		switch source.type {
@@ -203,7 +191,6 @@ public struct WebpageScreen: View {
 // MARK: Previews
 
 #if DEBUG
-@available(iOS 14.0, *)
 struct WebpageScreen_Previews: PreviewProvider {
     static var previews: some View {
 		Group {

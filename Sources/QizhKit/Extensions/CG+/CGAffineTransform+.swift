@@ -11,7 +11,7 @@ import SwiftUI
 // MARK: Scaled with anchor
 
 extension CGAffineTransform {
-	public func scaled(
+	@MainActor public func scaled(
 		by scale: CGFloat,
 		with anchor: CGPoint
 	) -> CGAffineTransform {
@@ -24,7 +24,8 @@ extension CGAffineTransform {
 
 // MARK: +Hashable
 
-extension CGAffineTransform: @retroactive Hashable {
+extension CGAffineTransform: @retroactive Hashable,
+							 @retroactive @unchecked Sendable {
 	public func hash(into hasher: inout Hasher) {
 		hasher.combine(a)
 		hasher.combine(b)
@@ -34,3 +35,4 @@ extension CGAffineTransform: @retroactive Hashable {
 		hasher.combine(ty)
 	}
 }
+

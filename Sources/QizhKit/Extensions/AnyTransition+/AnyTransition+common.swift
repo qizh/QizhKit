@@ -1,0 +1,38 @@
+//
+//  AnyTransition+common.swift
+//  QizhKit
+//
+//  Created by Serhii Shevchenko on 14.01.2025.
+//  Copyright © 2025 Serhii Shevchenko. All rights reserved.
+//
+
+import SwiftUI
+
+extension AnyTransition {
+	// TODO: Create a transition, which clips the contents in ContainerRelativeShape, then scales it down to 0.98, then slides or unslides
+	
+	@MainActor public static let unslide: Self =
+		.asymmetric(
+			insertion: .move(edge: .trailing),
+			  removal: .move(edge: .leading)
+		)
+	
+	@MainActor public static let jump: Self =
+		.asymmetric(
+			insertion: .move(edge: .bottom),
+			  removal: .move(edge: .top)
+		)
+	
+	@MainActor public static let fall: Self =
+		.asymmetric(
+			insertion: .move(edge: .top),
+			  removal: .move(edge: .bottom)
+		)
+	
+	@MainActor public static func asymmetricHorizontalOffset(distance: CGFloat) -> Self {
+		.asymmetric(
+			insertion: .offset(x: -distance) + .opacity,
+			removal: .offset(x: distance) + .opacity
+		)
+	}
+}

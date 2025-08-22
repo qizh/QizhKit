@@ -37,3 +37,26 @@ public extension Binding where Value == Date {
 	static var now: Self { .constant(.now) }
 	static var reference0: Self { .constant(.reference0) }
 }
+
+// MARK: is constant?
+
+extension Binding {
+	/// A Boolean value indicating whether this `Binding` instance
+	/// represents a constant binding.
+	///
+	/// This property uses Swift’s `Mirror` to inspect the underlying storage
+	/// and checks for a type name containing "Constant", which is how SwiftUI
+	/// represents a binding created from a literal or constant value.
+	///
+	/// - Warning: Do not rely on this property in production.
+	/// 	Because this implementation relies on undocumented details
+	/// 	and may break in any SwiftUI update.
+	public var isConstantMirror: Bool {
+		Mirror(reflecting: self)
+			.children
+			.contains { _, value in
+				String(describing: type(of: value))
+					.contains("Constant")
+			}
+	}
+}

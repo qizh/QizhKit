@@ -8,6 +8,8 @@
 
 import Foundation
 
+// MARK: Character
+
 public extension Character {
 	static let newLineChar: Character      			= "\n"
 	static let spaceChar: Character        			= " "
@@ -43,6 +45,20 @@ public extension Character {
 	static let tridotChar: Character       			= "…"
 	static let colonChar: Character        			= ":"
 	
+	/** → */ static let arrowRightChar: Character 			= "→"
+	/** ← */ static let arrowLeftChar: Character 			= "←"
+	/** ↓ */ static let arrowUpChar: Character 				= "↓"
+	/** ↑ */ static let arrowDownChar: Character 			= "↑"
+	
+	/** « */ static let leftDoubleQuoteChar: Character 		= "«"
+	/** » */ static let rightDoubleQuoteChar: Character 	= "»"
+	/** « */ static let openingDoubleQuoteChar: Character 	= "«"
+	/** » */ static let closingDoubleQuoteChar: Character 	= "»"
+	
+	/** ┃ */ static let treeLineChar: Character 			= "┃"
+	/** ┣ */ static let treeLineBranchChar: Character 		= "┣"
+	/** ┗ */ static let treeLineEndChar: Character 			= "┗"
+	
 	/** ( */ static let leftParenthesisChar: Character  	= "("
 	/** ) */ static let rightParenthesisChar: Character 	= ")"
 	/** [ */ static let leftBracketChar: Character  		= "["
@@ -53,7 +69,11 @@ public extension Character {
 	/** > */ static let rightChevronChar: Character 		= ">"
 	
 	/** ⚡️ */ static let boltChar: Character = "⚡️"
+	/** ✅ */ static let checkmarkEmojiChar: Character = "✅"
+	/** ❌ */ static let xmarkEmojiChar: Character = "❌"
 }
+
+// MARK: String
 
 public extension String {
 	static let newLine      		= String(Character.newLineChar)
@@ -62,6 +82,7 @@ public extension String {
 	/** \ */ static let backslash 	= String(Character.backslashChar)
 	static let tab          		= String(Character.tabChar)
 	static let nbsp         		= String(Character.nbspChar)
+	static let nonBreakingSpace 	= String.nbsp
 	static let quot         		= String(Character.quotChar)
 	/** | */ static let line 		= String(Character.lineChar)
 	static let apostrophe   		= String(Character.apostropheChar)
@@ -90,6 +111,20 @@ public extension String {
 	static let tridot       		= String(Character.tridotChar)
 	/** : */ static let colon 		= String(Character.colonChar)
 	
+	/** → */ static let arrowRight 			= String(Character.arrowRightChar)
+	/** ← */ static let arrowLeft 			= String(Character.arrowLeftChar)
+	/** ↓ */ static let arrowUp 			= String(Character.arrowUpChar)
+	/** ↑ */ static let arrowDown 			= String(Character.arrowDownChar)
+	
+	/** « */ static let leftDoubleQuote 	= String(Character.leftDoubleQuoteChar)
+	/** » */ static let rightDoubleQuote 	= String(Character.rightDoubleQuoteChar)
+	/** « */ static let openingDoubleQuote 	= String(Character.openingDoubleQuoteChar)
+	/** » */ static let closingDoubleQuote 		= String(Character.closingDoubleQuoteChar)
+	
+	/** ┃ */ static let treeLine 			= String(Character.treeLineChar)
+	/** ┣ */ static let treeLineBranch 		= String(Character.treeLineBranchChar)
+	/** ┗ */ static let treeLineEnd 		= String(Character.treeLineEndChar)
+	
 	/** ( */ static let leftParenthesis  	= String(Character.leftParenthesisChar)
 	/** ) */ static let rightParenthesis 	= String(Character.rightParenthesisChar)
 	/** [ */ static let leftBracket 		= String(Character.leftBracketChar)
@@ -98,20 +133,51 @@ public extension String {
 	/** } */ static let rightBrace 			= String(Character.rightBraceChar)
 	/** < */ static let leftChevron 		= String(Character.leftChevronChar)
 	/** > */ static let rightChevron 		= String(Character.rightChevronChar)
-
-	static let leftSkobka       		= leftParenthesis
-	static let rightSkobka      		= rightParenthesis
-	static let leftKvadratnayaSkobka 	= leftBracket
-	static let rightKvadratnayaSkobka 	= rightBracket
-	static let leftFigurnayaSkobka 		= leftBrace
-	static let rightFigurnayaSkobka 	= rightBrace
+	
+	/** ( */ static let leftSkobka       		= leftParenthesis
+	/** ) */ static let rightSkobka      		= rightParenthesis
+	/** [ */ static let leftKvadratnayaSkobka 	= leftBracket
+	/** ] */ static let rightKvadratnayaSkobka 	= rightBracket
+	/** { */ static let leftFigurnayaSkobka 	= leftBrace
+	/** } */ static let rightFigurnayaSkobka 	= rightBrace
+	/** < */ static let leftUgolnayaSkobka 		= leftChevron
+	/** > */ static let rightUgolnayaSkobka 	= rightChevron
 	
 	/** ⚡️ */ static let bolt = String(Character.boltChar)
+	/** ✅ */ static let checkmarkEmoji = String(Character.checkmarkEmojiChar)
+	/** ❌ */ static let xmarkEmoji = String(Character.xmarkEmojiChar)
 	
-	static let comaspace    = .coma + .space
-	static let colonspace   = .colon + .space
+	/** «`. `» */ static let dotspace    			= .coma + .space
+	/** «`, `» */ static let comaspace    		= .coma + .space
+	/** «`: `» */ static let colonspace   		= .colon + .space
+	/** «` → `» */ static let spaceArrowSpace 	= .space + .arrowRight + .space
 }
 
-public extension String {
-	static let nonBreakingSpace = String.nbsp
+// MARK: Surround by
+
+extension String {
+	/// `"..."`
+	@inlinable public var inQuotes: String {
+		"\"\(self)\""
+	}
+	
+	/// `«...»`
+	@inlinable public var inDoubleQuotes: String {
+		"«\(self)»"
+	}
+	
+	/// `(...)`
+	@inlinable public var inParenthesis: String {
+		"(\(self))"
+	}
+	
+	/// `[...]`
+	@inlinable public var inBrackets: String {
+		"[\(self)]"
+	}
+	
+	/// `<...>`
+	@inlinable public var inChevrons: String {
+		"<\(self)>"
+	}
 }

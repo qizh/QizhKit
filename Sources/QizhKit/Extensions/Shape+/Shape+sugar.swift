@@ -6,13 +6,17 @@
 //  Copyright © 2020 Serhii Shevchenko. All rights reserved.
 //
 
-import SwiftUI
+public import SwiftUI
+
+// MARK: - Clip
 
 extension View {
 	@inlinable public func clipCircle() -> some View {
 		clipShape(Circle())
 	}
 }
+
+// MARK: - Fill & Stroke
 
 extension Shape {
 	public func fill <Fill: ShapeStyle, Stroke: ShapeStyle> (
@@ -55,5 +59,13 @@ extension InsettableShape {
 		self
 			.strokeBorder(strokeColor, style: strokeStyle)
 			.background(self.fill(fillStyle))
+	}
+}
+
+// MARK: - Any Shape
+
+extension Shape {
+	public var asAnyShape: AnyShape {
+		AnyShape(self)
 	}
 }

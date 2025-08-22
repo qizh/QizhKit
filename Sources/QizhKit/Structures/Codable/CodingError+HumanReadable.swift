@@ -37,6 +37,6 @@ extension Array where Element == CodingKey {
 		map { key in
 			key.intValue?.s ?? key.stringValue
 		}
-		.joined(separator: .dot)
+		.joined(separator: .spaceArrowSpace)
 	}
 }

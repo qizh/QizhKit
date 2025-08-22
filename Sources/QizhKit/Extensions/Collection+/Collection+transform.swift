@@ -1,5 +1,5 @@
 //
-//  Collection+KeyPath.swift
+//  Collection+transform.swift
 //  Cooktour Concierge
 //
 //  Created by Serhii Shevchenko on 21.02.2020.
@@ -37,6 +37,7 @@ public extension Sequence {
 		}
 	}
 	
+	/// Using `<`
 	@inlinable func sorted(
 		by transform: (Element) -> some Comparable
 	) -> [Element] {
@@ -45,6 +46,8 @@ public extension Sequence {
 	
 	// MARK: ┗ Same with KeyPath
 	
+	/// Is here just of ignore the error
+	/// introduced by adding the same public function in  `InstantSearchCore` SPM
 	@_disfavoredOverload
 	@inlinable func sorted <Value> (
 		by keyPath: KeyPath<Element, Value>,
@@ -58,6 +61,8 @@ public extension Sequence {
 		}
 	}
 	
+	/// Is here just of ignore the error
+	/// introduced by adding the same public function in  `InstantSearchCore` SPM
 	@_disfavoredOverload
 	@inlinable func sorted(
 		by keyPath: KeyPath<Element, some Comparable>
@@ -69,20 +74,39 @@ public extension Sequence {
 // MARK: First
 
 extension Collection {
-	@inlinable
-	public func first <Value: Equatable> (
+	@inlinable public func first <Value: Equatable> (
 		where transform: (Element) -> Value,
 		equals value: Value
 	) -> Element? {
 		first(where: { transform($0) == value })
 	}
 	
-	@inlinable
-	public func first <Value: Equatable> (
+	@inlinable public func first <Value: Equatable> (
 		where transform: (Element) -> Value,
 		equals value: Value?
 	) -> Element? {
 		first(where: { transform($0) == value })
+	}
+	
+	@inlinable public func first <Value: Equatable, Sortable> (
+		by sortTransform: (Element) -> Sortable,
+		using valuesAreInIncreasingOrder: (Sortable, Sortable) throws -> Bool,
+		where compareTransform: (Element) -> Value,
+		equals value: Value
+	) rethrows -> Element? {
+		try self
+			.filter({ compareTransform($0) == value })
+			.min(by: sortTransform, using: valuesAreInIncreasingOrder)
+	}
+	
+	/// Sorting by `<`
+	@inlinable public func first <Value: Equatable> (
+		by sortTransform: (Element) -> some Comparable,
+		where compareTransform: (Element) -> Value,
+		equals value: Value
+	) -> Element? {
+		self.filter({ compareTransform($0) == value })
+			.min(by: sortTransform)
 	}
 	
 	@inlinable
@@ -134,7 +158,7 @@ extension Collection {
 		first(where: { $0 is Cast }).flatMap({ $0 as? Cast })
 	}
 	
-	// MARK: > CC
+	// MARK: > Easy Comparable
 	
 	/*
 	@available(*, deprecated, message: "Switch from `CaseComparable` to `EasyComparable`")
@@ -199,6 +223,43 @@ public extension Collection where Element: EasyComparable {
 // MARK: Last
 
 extension BidirectionalCollection {
+	@inlinable public func last <Value: Equatable> (
+		where transform: (Element) -> Value,
+		equals value: Value
+	) -> Element? {
+		last(where: { transform($0) == value })
+	}
+	
+	@inlinable public func last <Value: Equatable> (
+		where transform: (Element) -> Value,
+		equals value: Value?
+	) -> Element? {
+		last(where: { transform($0) == value })
+	}
+	
+	@inlinable public func last <Value: Equatable, Sortable> (
+		by sortTransform: (Element) -> Sortable,
+		using valuesAreInIncreasingOrder: (Sortable, Sortable) throws -> Bool,
+		where compareTransform: (Element) -> Value,
+		equals value: Value
+	) rethrows -> Element? {
+		try self
+			.filter({ compareTransform($0) == value })
+			.min(by: sortTransform, using: valuesAreInIncreasingOrder)
+	}
+	
+	/// Sorting by `<`
+	@inlinable public func last <Value: Equatable> (
+		by sortTransform: (Element) -> some Comparable,
+		where compareTransform: (Element) -> Value,
+		equals value: Value
+	) -> Element? {
+		self.filter({ compareTransform($0) == value })
+			.min(by: sortTransform)
+	}
+	
+	// MARK: > Easy Comparable
+	
 	@inlinable public func last <Value: EasyComparable> (
 		where transform: (Element) -> Value,
 		is value: Value.Other
@@ -297,17 +358,17 @@ extension Sequence {
 
 public extension Collection {
 	@inlinable func filter<Value: Equatable>(
-		_ keyPath: KeyPath<Element, Value>,
+		_ transform: (Element) -> Value,
 		equals value: Value
 	) -> [Element] {
-		filter({ $0[keyPath: keyPath] == value })
+		filter({ transform($0) == value })
 	}
 	
 	@inlinable func filter<Value: Equatable>(
-		_ keyPath: KeyPath<Element, Value>,
+		_ transform: (Element) -> Value,
 		notEquals value: Value
 	) -> [Element] {
-		filter({ $0[keyPath: keyPath] != value })
+		filter({ transform($0) != value })
 	}
 	
 	@inlinable func filter <Medium> (
@@ -334,6 +395,7 @@ public extension Collection {
 	///   - other: An array to check if contains a part
 	///   - transformed: A transfrom of an element to receive its part
 	/// - Returns: filtered array
+	@available(*, deprecated, renamed: "removing(where:in:)", message: "Renamed to `removing(where:in:)` for better readability")
 	@inlinable func removing <Medium: Equatable> (
 		all other: [Medium],
 		_ transformed: (Element) -> Medium
@@ -341,6 +403,36 @@ public extension Collection {
 		filter({ element in other.contains(no: transformed(element)) })
 	}
 	
+	/// Returns an array with elements
+	/// whose transformed values are **not** in the given array.
+	///
+	/// This method iterates over the collection and applies the provided
+	/// `transformed` closure to each element to extract a comparable value
+	/// of type `Medium`. If the resulting value is found in the `other` array,
+	/// the element is excluded from the returned array.
+	///
+	/// - Parameters:
+	///   - transformed: A closure that converts each element into a comparable value.
+	///   - other: An array of values;
+	///   		if an element's transformed value is found in this array, it is excluded.
+	/// - Returns: An array containing only the elements that pass the filter.
+	/// - Note: The original collection remains unmodified.
+	/// - Example:
+	/// 	```swift
+	/// 	let words = ["apple", "banana", "cherry"]
+	/// 	// Remove words whose length is present in the forbidden lengths array.
+	/// 	let filteredWords = words.removing(where: \.count, in: [6, 7])
+	/// 	// filteredWords contains ["apple"] because "banana" and "cherry" has 6 letters.
+	/// 	```
+	@inlinable func removing <Medium: Equatable, Mediums: Sequence> (
+		where transformed: (Element) -> Medium,
+		in other: Mediums
+	) -> [Element] where Mediums.Element == Medium {
+		filter { element in
+			not(other.contains(transformed(element)))
+		}
+	}
+
 	@inlinable func removingAll <Medium: Equatable> (
 		where transformed: (Element) -> Medium,
 		equals other: Medium
@@ -348,18 +440,18 @@ public extension Collection {
 		filter({ transformed($0) != other })
 	}
 	
-	@inlinable func filter <Medium: Equatable> (
+	@inlinable func filter <Medium: Equatable, Mediums: Sequence> (
 		leave transformed: (Element) -> Medium,
-		from other: [Medium]
-	) -> [Self.Element] {
+		from other: Mediums
+	) -> [Self.Element] where Mediums.Element == Medium {
 		filter({ element in other.contains(transformed(element)) })
 	}
 	
-	@inlinable func filter <Medium: Equatable> (
+	@inlinable func filter <Medium: Equatable, Mediums: Sequence> (
 		remove transformed: (Element) -> Medium,
-		from other: [Medium]
-	) -> [Self.Element] {
-		filter({ element in other.contains(no: transformed(element)) })
+		from other: Mediums
+	) -> [Self.Element] where Mediums.Element == Medium {
+		filter({ element in not(other.contains(transformed(element))) })
 	}
 	
 	@inlinable func filter <Medium: Equatable> (
@@ -371,16 +463,20 @@ public extension Collection {
 	
 	// MARK: > Not
 	
+	/*
+	@_disfavoredOverload
 	@inlinable func filterNot(_ isIncluded: KeyPath<Element, Bool>) -> [Element] {
 		filter(isIncluded, equals: false)
 	}
+	*/
 	
-	@inlinable func filterNot(_ isIncluded: @escaping (Element) -> Bool) -> [Element] {
-		filter(not(isIncluded))
+	@inlinable func filterNot(_ isIncluded: (Element) -> Bool) -> [Element] {
+		self.filter({not(isIncluded($0))})
 	}
 	
 	// MARK: > CC
 	
+	@available(*, deprecated, message: "CaseComparable is outdated, use EasyComparable or @IsCase instead")
 	@inlinable func filter<Value: CaseComparable>(
 		_ keyPath: KeyPath<Element, Value>,
 		is value: Value
@@ -388,6 +484,7 @@ public extension Collection {
 		filter({ $0[keyPath: keyPath].is(value) })
 	}
 	
+	@available(*, deprecated, message: "CaseComparable is outdated, use EasyComparable or @IsCase instead")
 	@inlinable func filter<Value: CaseComparable>(
 		_ keyPath: KeyPath<Element, Value>,
 		isNot value: Value
@@ -398,31 +495,31 @@ public extension Collection {
 	// MARK: > ECC
 	
 	@inlinable func filter<Value: EasyComparable>(
-		_ keyPath: KeyPath<Element, Value>,
+		_ transform: (Element) -> Value,
 		is value: Value.Other
 	) -> [Element] {
-		filter({ $0[keyPath: keyPath].is(value) })
+		filter({ transform($0).is(value) })
 	}
 	
 	@inlinable func filter<Value: EasyComparable>(
-		_ keyPath: KeyPath<Element, Value>,
+		_ transform: (Element) -> Value,
 		in values: [Value.Other]
 	) -> [Element] {
-		filter({ $0[keyPath: keyPath].in(values) })
+		filter({ transform($0).in(values) })
 	}
 	
 	@inlinable func filter<Value: EasyComparable>(
-		_ keyPath: KeyPath<Element, Value>,
+		_ transform: (Element) -> Value,
 		isNot value: Value.Other
 	) -> [Element] {
-		filter({ $0[keyPath: keyPath].is(not: value) })
+		filter({ transform($0).is(not: value) })
 	}
 	
 	@inlinable func filter<Value: EasyComparable>(
-		_ keyPath: KeyPath<Element, Value>,
+		_ transform: (Element) -> Value,
 		isNot values: [Value.Other]
 	) -> [Element] {
-		filter({ $0[keyPath: keyPath].is(not: values) })
+		filter({ transform($0).is(not: values) })
 	}
 }
 
@@ -620,7 +717,7 @@ extension Collection where Self: MutableCollection & RangeReplaceableCollection 
 		with element: Element,
 		add: Bool = false,
 		where condition: (Element) -> Bool
-	) -> Self {
+	) -> Self where Element: Sendable {
 		if let index = firstIndex(where: condition) {
 			var copy = self
 			copy[index] = element
@@ -642,7 +739,7 @@ extension Collection where Self: MutableCollection & RangeReplaceableCollection 
 		with element: Element,
 		add: Bool = false,
 		where condition: (Element) -> Bool
-	) -> Self {
+	) -> Self where Element: Sendable {
 		var wasAdded = false
 		var copy = self
 		

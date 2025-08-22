@@ -9,19 +9,19 @@
 import Foundation
 
 @propertyWrapper
-public struct CodableAnyDictionary: ExpressibleByDictionaryLiteral, EmptyProvidable {
-	public var wrappedValue: [String: Any]
+public struct CodableAnyDictionary: ExpressibleByDictionaryLiteral, EmptyProvidable, Sendable {
+	public var wrappedValue: [String: any Sendable]
 	
-	public init(wrappedValue: [String: Any] = .empty) {
+	public init(wrappedValue: [String: any Sendable] = .empty) {
 		self.wrappedValue = wrappedValue
 	}
 	
-	public init(dictionaryLiteral elements: (String, Any)...) {
+	public init(dictionaryLiteral elements: (String, any Sendable)...) {
 		self.wrappedValue = .init(uniqueKeysWithValues: elements)
 	}
 	
 	@inlinable
-	public static func some(_ value: [String: Any]) -> Self {
+	public static func some(_ value: [String: any Sendable]) -> Self {
 		.init(wrappedValue: value)
 	}
 	
@@ -33,7 +33,17 @@ public struct CodableAnyDictionary: ExpressibleByDictionaryLiteral, EmptyProvida
 extension CodableAnyDictionary: Codable {
 	public init(from decoder: Decoder) throws {
 		let container = try decoder.container(keyedBy: JSONCodingKeys.self)
-		wrappedValue = try container.decode([String: Any].self)
+		self.wrappedValue = try container.decode([String: any Sendable].self)
+		/*
+		let dictionary = try container.decode([String: Any].self)
+		var finalDictionary: [String: AnyHashable] = .empty
+		for (key, value) in dictionary {
+			if let hashableValue = value as? (any Hashable) {
+				finalDictionary[key] = AnyHashable(hashableValue)
+			}
+		}
+		self.wrappedValue = finalDictionary
+		*/
 	}
 	
 	public func encode(to encoder: Encoder) throws {
@@ -56,7 +66,7 @@ public extension Encodable {
 	func asDictionary(
 		encoder: JSONEncoder = .init(),
 		decoder: JSONDecoder = .init()
-	) -> [String: Any] {
+	) -> [String: any Sendable] {
 		do {
 			let data = try encoder.encode(self)
 			let dictionary = try decoder.decode(CodableAnyDictionary.self, from: data)

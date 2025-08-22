@@ -8,19 +8,19 @@
 
 import SwiftUI
 
-public extension Double {
-	@inlinable var degrees: Angle { .degrees(self) }
-	@inlinable var radians: Angle { .radians(self) }
+extension Double {
+	@inlinable public var degrees: Angle { .degrees(self) }
+	@inlinable public var radians: Angle { .radians(self) }
 }
 
-public extension BinaryInteger {
-	@inlinable var degrees: Angle { .degrees(Double(self)) }
-	@inlinable var radians: Angle { .radians(Double(self)) }
+extension BinaryInteger where Self: Sendable {
+	@inlinable public var degrees: Angle { .degrees(Double(self)) }
+	@inlinable public var radians: Angle { .radians(Double(self)) }
 }
 
-public extension BinaryFloatingPoint {
-	@inlinable var degrees: Angle { .degrees(Double(self)) }
-	@inlinable var radians: Angle { .radians(Double(self)) }
+extension BinaryFloatingPoint where Self: Sendable {
+	@inlinable public var degrees: Angle { .degrees(Double(self)) }
+	@inlinable public var radians: Angle { .radians(Double(self)) }
 }
 
 extension Angle {

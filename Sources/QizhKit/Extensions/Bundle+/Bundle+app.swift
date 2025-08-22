@@ -8,15 +8,28 @@
 
 import Foundation
 
-fileprivate var cachedAppBundle: Bundle?
+fileprivate final class BundleKeeper { // : @unchecked Sendable {
+	fileprivate static let cachedAppBundle: Bundle? = {
+		var result: Bundle? = .none
+		var components = Bundle.main.bundleURL.path.split(separator: .slashChar)
+		
+		if let index = components.lastIndex(where: { $0.hasSuffix(".app") }) {
+			components.removeLast((components.count - 1) - index)
+			result = Bundle(path: components.joined(separator: .slash))
+		}
+		
+		return result
+	}()
+}
 
 extension Bundle {
 	/// Return the main bundle when in the app or an app extension.
 	public static var app: Bundle {
-		cachedAppBundle ?? findAppBundle() ?? .main
+		BundleKeeper.cachedAppBundle ?? .main
 	}
 	
-	private static func findAppBundle() -> Bundle? {
+	/*
+	@MainActor private static func findAppBundle() -> Bundle? {
 		var components = main.bundleURL.path.split(separator: .slashChar)
 		
 		if let index = components.lastIndex(where: { $0.hasSuffix(".app") }) {
@@ -26,6 +39,7 @@ extension Bundle {
 		
 		return cachedAppBundle
 	}
+	*/
 	
 	/// Finds the main app's bundle and returns its bundle identifier.
 	/// - Warning: Unwrapping an optional identifier since the app should always have an identifier.

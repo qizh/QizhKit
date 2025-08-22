@@ -31,12 +31,15 @@ public struct DefaultNow: Codable, Hashable, Sendable {
 	
 	public func encode(to encoder: Encoder) throws {
 		var container = encoder.singleValueContainer()
+		try container.encode(wrappedValue)
 		
+		/*
 		if isDefault {
 			try container.encodeNil()
 		} else {
 			try container.encode(wrappedValue)
 		}
+		*/
 	}
 }
 

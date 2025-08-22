@@ -24,7 +24,7 @@ public extension Collection {
 
 // MARK: Two elements
 
-extension Collection {
+extension Collection where Element: Sendable {
 	@inlinable public var        isPair: Bool { count == .two }
 	@inlinable public var     isNotPair: Bool { count != .two }
 	@inlinable public var    isOverPair: Bool { count >  .two }
@@ -37,9 +37,21 @@ extension Collection {
 	
 	public var elementsPair: (Element, Element)? {
 		if let first, let second {
-			return (first, second)
+			(first, second)
+		} else {
+			.none
+		}
+		
+		/// Gemini suggested approach
+		/*
+		/// A collection with count == 2 is guaranteed to have a first element
+		/// and a second element at the index after start.
+		if count == 2, let first = self.first {
+			let secondIndex = index(after: startIndex)
+			return (first, self[secondIndex])
 		} else {
 			return .none
 		}
+		*/
 	}
 }

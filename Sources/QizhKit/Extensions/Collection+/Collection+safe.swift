@@ -8,8 +8,22 @@
 
 import Foundation
 
-public extension Collection {
-    subscript (safe index: Index) -> Element? {
-        indices.contains(index) ? self[index] : nil
-    }
+extension Collection {
+	public subscript(safe index: Index) -> Element? {
+		if indices.contains(index) {
+			self[index]
+		} else {
+			nil
+		}
+	}
+}
+
+extension Collection {
+	public subscript<Wrapped>(safe index: Index) -> Wrapped? where Element == Wrapped? {
+		if indices.contains(index) {
+			self[index]
+		} else {
+			nil
+		}
+	}
 }

@@ -11,35 +11,42 @@ import SwiftUI
 public func execute(
 	in ms: Int = .zero,
 	withAnimation animation: Animation? = .none,
-	_ work: @escaping () -> Void
+	_ work: @escaping @Sendable @MainActor () -> Void
 ) {
-	var action: () -> Void
-	if let animation = animation {
+	var action: @Sendable @MainActor () -> Void
+	if let animation {
 		action = {
-			withAnimation(animation, work)
+			withAnimation(animation) {
+				work()
+			}
 		}
 	} else {
 		action = work
 	}
 	
-	if ms.isZero {
-		DispatchQueue.main.async(execute: action)
-	} else {
-		DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(ms), execute: action)
+	Task { @MainActor in
+		if ms.isZero {
+			action()
+		} else {
+			await Task.sleep(milliseconds: ms)
+			action()
+		}
 	}
+
 }
 
 public func execute <T> (
 	in ms: Int = .zero,
-	_ work: @escaping (T) -> Void,
+	_ work: @escaping @Sendable @MainActor (T) -> Void,
 	_ argument: T
-) {
+) where T: Sendable {
 	if ms.isZero {
-		DispatchQueue.main.async {
+		Task { @MainActor in
 			work(argument)
 		}
 	} else {
-		DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(ms)) {
+		Task { @MainActor in
+			await Task.sleep(milliseconds: ms)
 			work(argument)
 		}
 	}
@@ -47,16 +54,18 @@ public func execute <T> (
 
 public func execute <T1, T2> (
 	in ms: Int = .zero,
-	_ work: @escaping (T1, T2) -> Void,
+	_ work: @escaping @Sendable @MainActor (T1, T2) -> Void,
 	_ argument1: T1,
 	_ argument2: T2
-) {
+) where T1: Sendable,
+		T2: Sendable {
 	if ms.isZero {
-		DispatchQueue.main.async {
+		Task { @MainActor in
 			work(argument1, argument2)
 		}
 	} else {
-		DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(ms)) {
+		Task { @MainActor in
+			await Task.sleep(milliseconds: ms)
 			work(argument1, argument2)
 		}
 	}
@@ -68,17 +77,22 @@ public func executing(
 ) -> () -> Void {
 	if ms.isZero {
 		return {
-			DispatchQueue.main.async(execute: work)
+			Task { @MainActor in
+				work()
+			}
 		}
 	} else {
 		return {
-			DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(ms), execute: work)
+			Task { @MainActor in
+				await Task.sleep(milliseconds: ms)
+				work()
+			}
 		}
 	}
 }
 
 @inlinable public func animating(
-	_ work: @escaping MainQueue.Callback,
+	_ work: @escaping @Sendable () -> Void,
 	with animation: Animation?
 ) -> () -> Void {
 	{ withAnimation(animation, work) }
@@ -88,13 +102,20 @@ public func executing(
 
 /// Assign a value on the Main Queue
 @inlinable
-public func executeAssign <T> (_ value: T, to binding: Binding<T>) {
+public func executeAssign <T> (
+	_ value: T,
+	to binding: Binding<T>
+) where T: Sendable {
 	execute { binding.wrappedValue = value }
 }
 
 /// Will only assign a different value on the Main Queue
 @inlinable
-public func executeUpdate <T: Equatable> (_ binding: Binding<T>, with value: T) {
+public func executeUpdate <T> (
+	_ binding: Binding<T>,
+	with value: T
+) where T: Equatable,
+		T: Sendable {
 	if binding.wrappedValue != value {
 		executeAssign(value, to: binding)
 	}
@@ -102,7 +123,7 @@ public func executeUpdate <T: Equatable> (_ binding: Binding<T>, with value: T) 
 
 // MARK: Flow
 
-public enum ExecutionFlow: Equatable {
+public enum ExecutionFlow: Equatable, Sendable {
 	case current
 	case onMainThread
 	case delayed(milliseconds: Int)
@@ -110,7 +131,7 @@ public enum ExecutionFlow: Equatable {
 	// MARK: Now
 	
 	@inlinable public func proceed(
-		with callback: @escaping () -> Void
+		with callback: @escaping @Sendable () -> Void
 	) {
 		switch self {
 		case .current: callback()
@@ -120,9 +141,9 @@ public enum ExecutionFlow: Equatable {
 	}
 	
 	@inlinable public func proceed <T> (
-		with callback: @escaping (T) -> Void,
+		with callback: @escaping @Sendable (T) -> Void,
 		_ arg: T
-	) {
+	) where T: Sendable {
 		switch self {
 		case .current: callback(arg)
 		case .onMainThread: execute { callback(arg) }
@@ -131,10 +152,11 @@ public enum ExecutionFlow: Equatable {
 	}
 	
 	@inlinable public func proceed <T1, T2> (
-		with callback: @escaping (T1, T2) -> Void,
+		with callback: @escaping @Sendable (T1, T2) -> Void,
 		_ arg1: T1,
 		_ arg2: T2
-	) {
+	) where T1: Sendable,
+			T2: Sendable {
 		switch self {
 		case .current: callback(arg1, arg2)
 		case .onMainThread: execute { callback(arg1, arg2) }
@@ -145,82 +167,94 @@ public enum ExecutionFlow: Equatable {
 	// MARK: In Future
 	
 	@inlinable public func proceeding(
-		with callback: @escaping () -> Void
+		with callback: @escaping @Sendable () -> Void
 	) -> () -> Void {
 		{ self.proceed(with: callback) }
 	}
 	
 	@inlinable public func proceeding <T> (
-		with callback: @escaping (T) -> Void,
+		with callback: @escaping @Sendable (T) -> Void,
 		_ arg: T
-	) -> () -> Void {
+	) -> () -> Void where T: Sendable {
 		{ self.proceed(with: callback, arg) }
 	}
 	
 	@inlinable public func proceeding <T> (
-		with callback: @escaping (T) -> Void
-	) -> (T) -> Void {
+		with callback: @escaping @Sendable (T) -> Void
+	) -> (T) -> Void where T: Sendable {
 		{ arg in self.proceed(with: callback, arg) }
 	}
 	
 	@inlinable public func proceeding <T1, T2> (
-		with callback: @escaping (T1, T2) -> Void,
+		with callback: @escaping @Sendable (T1, T2) -> Void,
 		_ arg1: T1,
 		_ arg2: T2
-	) -> () -> Void {
+	) -> () -> Void where T1: Sendable,
+						  T2: Sendable {
 		{ self.proceed(with: callback, arg1, arg2) }
 	}
 	
 	@inlinable public func proceeding <T1, T2> (
-		with callback: @escaping (T1, T2) -> Void
-	) -> (T1, T2) -> Void {
+		with callback: @escaping @Sendable (T1, T2) -> Void
+	) -> (T1, T2) -> Void where T1: Sendable,
+								T2: Sendable {
 		{ arg1, arg2 in self.proceed(with: callback, arg1, arg2) }
 	}
 }
 
 public struct MainQueue {
-	public typealias Callback = () -> Void
-	public typealias CallbackWithValue<T> = (T) -> Void
-	public typealias CallbackWithTwoValues<T1, T2> = (T1, T2) -> Void
-	public typealias CallbackWithThreeValues<T1, T2, T3> = (T1, T2, T3) -> Void
+	public typealias Callback = @Sendable @MainActor () -> Void
+	public typealias CallbackWithValue<T> = @Sendable @MainActor (T) -> Void where T: Sendable
+	public typealias CallbackWithTwoValues<T1, T2> = @Sendable @MainActor (T1, T2) -> Void
+		where T1: Sendable, T2: Sendable
+	public typealias CallbackWithThreeValues<T1, T2, T3> = @Sendable @MainActor (T1, T2, T3) -> Void
+		where T1: Sendable, T2: Sendable, T3: Sendable
 
 	@inlinable public static func call(in milliseconds: Int, execute work: @escaping Callback) {
-		DispatchQueue.main.asyncAfter(
-			deadline: .now() + .milliseconds(milliseconds),
-			execute: work
-		)
+		Task { @MainActor in
+			await Task.sleep(milliseconds: milliseconds)
+			work()
+		}
 	}
 	
 	@inlinable public static func function(calling work: @escaping Callback, in milliseconds: Int) -> Callback {{
-		DispatchQueue.main.asyncAfter(
-			deadline: .now() + .milliseconds(milliseconds),
-			execute: work
-		)
+		Task { @MainActor in
+			await Task.sleep(milliseconds: milliseconds)
+			work()
+		}
 	}}
 	
 	@inlinable public static func execute(_ work: @escaping Callback) {
-		DispatchQueue.main.async(execute: work)
+		Task { @MainActor in
+			work()
+		}
 	}
 	
 	@inlinable public static func function(executing work: @escaping Callback) -> Callback {{
-		DispatchQueue.main.async(execute: work)
+		Task { @MainActor in
+			work()
+		}
 	}}
 	
-	@inlinable public static func function<T>(executing work: @escaping CallbackWithValue<T>) -> CallbackWithValue<T> {
+	@inlinable public static func function<T>(
+		executing work: @escaping CallbackWithValue<T>
+	) -> CallbackWithValue<T> {
 		{ t in
-			DispatchQueue.main.async {
+			Task { @MainActor in
 				work(t)
 			}
 		}
 	}
 	
-	@inlinable public static func function<T1, T2>(executing work: @escaping CallbackWithTwoValues<T1, T2>) -> CallbackWithTwoValues<T1, T2> {
+	@inlinable public static func function<T1, T2>(
+		executing work: @escaping CallbackWithTwoValues<T1, T2>
+	) -> CallbackWithTwoValues<T1, T2> {
 		{ t1, t2 in
-			DispatchQueue.main.async {
+			Task { @MainActor in
 				work(t1, t2)
 			}
 		}
 	}
 	
-	// TODO: Finish for 3 values, do the same for `function(calling:in:)`")
+	// TODO: Finish with Variadic Generics
 }

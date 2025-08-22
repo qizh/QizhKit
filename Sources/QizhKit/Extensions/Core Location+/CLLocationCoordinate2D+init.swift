@@ -35,11 +35,19 @@ extension CLLocationCoordinate2D {
 			longitude: lon.truncatingRemainder(dividingBy: 180)
 		)
 	}
+	
+	public var location: CLLocation {
+		.init(latitude: latitude, longitude: longitude)
+	}
 }
 
 extension CLLocation {
 	convenience public init(coordinate: CLLocationCoordinate2D) {
 		self.init(latitude: coordinate.latitude, longitude: coordinate.longitude)
+	}
+	
+	public var locationCoordinate2D: CLLocationCoordinate2D {
+		CLLocationCoordinate2D(latitude: coordinate.latitude, longitude: coordinate.longitude)
 	}
 }
 

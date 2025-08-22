@@ -30,10 +30,17 @@ extension DataResponse {
 			debugDepth = debug
 		}
 		
-		guard let request = request else {
+		guard let request else {
+			let resultOutput = if case .success(let model) = result,
+					  let imodel = model as? any Identifiable {
+				"\(imodel.id)"
+			} else {
+				result.caseName
+			}
+			
 			return """
 			[Request]: None
-			[Result]: \(result.caseName)
+			[Result]: \(resultOutput)
 			"""
 		}
 		
@@ -123,14 +130,14 @@ extension DataResponse {
 							)
 							let dataString = formattedJsonData.asString(encoding: .utf8).orEmpty
 							responseBodyDescription = """
-							[Body]: (formatted)
+							[Body] [Formatted]:
 								\(dataString.tabOffsettingNewLines())
 							"""
 						} catch {
 							let dataString = String(decoding: data, as: UTF8.self)
 								.withLinesNSpacesTrimmed
 							responseBodyDescription = """
-							[Body]: (json formatting failed)
+							[Body] [JSON formatting failed]:
 								\(dataString.tabOffsettingNewLines())
 							"""
 						}
@@ -198,9 +205,35 @@ extension DataResponse {
 			output += .newLine + "[Serialization Duration]: \(serializationDuration)s"
 		}
 		
+		/*
 		let resultOutput = debugDepth > .default
 			? "\(result)"
 			: result.caseName
+		*/
+		
+		let resultOutput =
+			switch result {
+			case .success(let model):
+				switch debugDepth {
+				case .none,
+					 .minimum:
+					result.caseName
+				case .default:
+					if let imodel = model as? (any Identifiable) {
+						"success(\(imodel.id))"
+					} else {
+						result.caseName
+					}
+				case .extra:
+					if let imodel = model as? (any Identifiable) {
+						"success(\(caseName(of: model.self, .name))(\(imodel.id)))"
+					} else {
+						"success(\(caseName(of: model.self, .name)))"
+					}
+				}
+			case .failure(let error):
+				"failure(\(error))"
+			}
 		
 		output += .newLine + "[Result]: \(resultOutput)"
 		

@@ -8,14 +8,16 @@
 
 import SwiftUI
 
-public struct CustomEnvironmentAction {
-	private let action: () -> Void
+// MARK: Empty
+
+public struct CustomEnvironmentAction: Sendable {
+	private let action: @Sendable @MainActor () -> Void
 	
-	internal init(_ action: @escaping () -> Void) {
+	internal init(_ action: @escaping @Sendable @MainActor () -> Void) {
 		self.action = action
 	}
 	
-	public func callAsFunction() {
+	@MainActor public func callAsFunction() {
 		action()
 	}
 }
@@ -31,15 +33,35 @@ extension CustomEnvironmentAction {
 		}
 	}
 	
-	public static func reset<T>(_ binding: Binding<T?>) -> Self {
+	public static func reset<T>(_ binding: Binding<T?>) -> Self where T: Sendable {
 		.init {
 			binding.wrappedValue = .none
 		}
 	}
 	
-	public static func assign<T>(_ value: T, to binding: Binding<T>) -> Self {
+	public static func assign<T>(_ value: T, to binding: Binding<T>) -> Self where T: Sendable {
 		.init {
 			binding.wrappedValue = value
 		}
+	}
+}
+
+// MARK: Bool
+
+public struct CustomEnvironmentBoolAction: Sendable {
+	public let action: @Sendable (Bool) -> Void
+	
+	public init(action: @escaping @Sendable (Bool) -> Void) {
+		self.action = action
+	}
+	
+	public func callAsFunction(_ value: Bool) {
+		action(value)
+	}
+}
+
+extension CustomEnvironmentBoolAction {
+	public static var doNothing: CustomEnvironmentBoolAction {
+		.init { _ in }
 	}
 }

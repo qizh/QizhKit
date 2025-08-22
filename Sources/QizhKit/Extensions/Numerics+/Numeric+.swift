@@ -149,3 +149,61 @@ public extension DataProtocol {
 		return value
 	}
 }
+
+// MARK: - Random
+
+extension BinaryFloatingPoint where Self.RawSignificand: FixedWidthInteger {
+	public static func random(
+		in range: ClosedRange<Self>,
+		seed: UInt64
+	) -> Self {
+		var generator = SeededRandomGenerator(seed: seed)
+		return Self.random(in: range, using: &generator)
+	}
+	
+	public static func random(
+		in range: Range<Self>,
+		seed: UInt64
+	) -> Self {
+		var generator = SeededRandomGenerator(seed: seed)
+		return Self.random(in: range, using: &generator)
+	}
+}
+
+extension FixedWidthInteger {
+	public static func random(
+		in range: Range<Self>,
+		seed: UInt64
+	) -> Self {
+		var generator = SeededRandomGenerator(seed: seed)
+		return Self.random(in: range, using: &generator)
+	}
+	
+	public static func random(
+		in range: ClosedRange<Self>,
+		seed: UInt64
+	) -> Self {
+		var generator = SeededRandomGenerator(seed: seed)
+		return Self.random(in: range, using: &generator)
+	}
+}
+
+/*
+extension <#SomeProtocol#> {
+	public static func random(
+		in range: Range<Self>,
+		seed: UInt64
+	) -> Self {
+		var generator = SeededRandomGenerator(seed: seed)
+		return Self.random(in: range, using: &generator)
+	}
+	
+	public static func random(
+		in range: ClosedRange<Self>,
+		seed: UInt64
+	) -> Self {
+		var generator = SeededRandomGenerator(seed: seed)
+		return Self.random(in: range, using: &generator)
+	}
+}
+*/

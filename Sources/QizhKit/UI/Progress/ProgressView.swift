@@ -31,7 +31,7 @@ public struct ProgressView: View {
 		error: FetchError? = .none,
 		size: Size = .visual,
 		show: StatesSet = .all,
-		color: ColorMode = .mono
+		color: ColorMode = .multi
 	) {
 		self.state = state
 		self.name = name
@@ -46,7 +46,7 @@ public struct ProgressView: View {
 		state: GeneralBackendFetchState,
 		size: Size = .visual,
 		show: StatesSet = .all,
-		color: ColorMode = .mono
+		color: ColorMode = .multi
 	) {
 		self.state = state.asBasic
 		self.name = state.fetcherName
@@ -61,7 +61,7 @@ public struct ProgressView: View {
 		state: GeneralBackendFetchState,
 		_ size: Size = .visual,
 		_ show: StatesSet = .all,
-		_ color: ColorMode = .mono
+		_ color: ColorMode = .multi
 	) {
 		self.state = state.asBasic
 		self.name = state.fetcherName
@@ -76,7 +76,7 @@ public struct ProgressView: View {
 		states: [GeneralBackendFetchState],
 		size: Size = .visual,
 		show: StatesSet = .all,
-		color: ColorMode = .mono
+		color: ColorMode = .multi
 	) {
 		assert(
 			states.isNotEmpty,
@@ -91,7 +91,7 @@ public struct ProgressView: View {
 		progress: FetchProgress,
 		size: Size = .visual,
 		show: StatesSet = .all,
-		color: ColorMode = .mono
+		color: ColorMode = .multi
 	) {
 		self.state = .init(progress)
 		self.name = nil
@@ -107,7 +107,7 @@ public struct ProgressView: View {
 		_ progress: FetchProgress,
 		_ size: Size = .visual,
 		_ show: StatesSet = .all,
-		_ color: ColorMode = .mono
+		_ color: ColorMode = .multi
 	) {
 		self.init(
 			progress: progress,
@@ -120,7 +120,7 @@ public struct ProgressView: View {
 	@inlinable public init(
 		_ progress: FetchProgress,
 		_ size: Size = .visual,
-		_ color: ColorMode = .mono
+		_ color: ColorMode = .multi
 	) {
 		self.init(progress, size, .all, color)
 	}
@@ -141,7 +141,7 @@ public struct ProgressView: View {
 		_ value: Double,
 		_ size: Size = .visual,
 		_ show: StatesSet = .all,
-		_ color: ColorMode = .mono
+		_ color: ColorMode = .multi
 	) {
 		self.init(FetchProgress(value), size, show, color)
 	}
@@ -149,20 +149,21 @@ public struct ProgressView: View {
 	@inlinable public init(
 		_ value: Double,
 		_ size: Size = .visual,
-		_ color: ColorMode = .mono
+		_ color: ColorMode = .multi
 	) {
 		self.init(FetchProgress(value), size, .all, color)
 	}
 	
-	public static func sized(_ size: Size, color: ColorMode = .mono)
-		-> (FetchProgress) -> ProgressView
-	{
+	public static func sized(
+		_ size: Size,
+		color: ColorMode = .multi
+	) -> (FetchProgress) -> ProgressView {
 		{ progress in ProgressView(progress, size, color) }
 	}
 	
-	public static func visual(_ progress: FetchProgress)
-		-> ProgressView
-	{
+	public static func visual(
+		_ progress: FetchProgress
+	) -> ProgressView {
 		ProgressView(progress, .visual)
 	}
 	
@@ -254,17 +255,30 @@ public struct ProgressView: View {
 			red,
 		])
 	
+	/*
 	public static var monoGradient: Gradient =
 		Gradient(colors: [
 			.accentColor,
 			.accentColor(0.2),
 			.accentColor,
 		])
+	*/
+	
+	public static func monoGradient(color: Color) -> Gradient {
+		Gradient(
+			colors: [
+				color,
+				color.opacity(0.2),
+				color,
+			]
+		)
+	}
 	
 	public var undeterminedGradient: Gradient {
-		color.is(.multi)
-			? Self.multiGradient
-			: Self.monoGradient
+		switch color {
+		case .multi: 			Self.multiGradient
+		case .mono(let color): 	Self.monoGradient(color: color)
+		}
 	}
 	
 	private var determinedGradient: Gradient {
@@ -295,7 +309,7 @@ public struct ProgressView: View {
 				.rotationEffect(rotation)
 				.animateForever(
 					assigning: rotation.circle,
-					to: \.rotation, on: self,
+					to: $rotation,
 					using: .linear(duration: 1)
 				)
 		}
@@ -326,7 +340,7 @@ public struct ProgressView: View {
 			*/
 			.animateForever(
 				assigning: rotation.circle,
-				to: \.rotation, on: self,
+				to: $rotation,
 				using: .linear(duration: 3)
 			)
 	}
@@ -343,7 +357,7 @@ public struct ProgressView: View {
 			)
 			.animateForever(
 				assigning: rotation.circle,
-				to: \.rotation, on: self,
+				to: $rotation,
 				using: .linear(duration: 3)
 			)
 			.aspectRatio([100, 91], contentMode: .fill)
@@ -400,7 +414,7 @@ public struct ProgressView: View {
 			)
 			.animateForever(
 				assigning: rotation.circle,
-				to: \.rotation, on: self,
+				to: $rotation,
 				using: .linear(duration: 3)
 			)
 			.square(size.value * 1.04, .center)
@@ -508,16 +522,20 @@ public struct ProgressView: View {
 		}
 	}
 	
-	public enum ColorMode: CaseIterable, EasyCaseComparable, Identifiable, Hashable {
+	public enum ColorMode: Hashable, Sendable, EasyCaseComparable {
 		case multi
-		case mono
+		case mono(_ color: Color)
 		
-		@inlinable
-		public var id: Int8 {
+		public var id: Color {
 			switch self {
-			case .multi: return 1
-			case .mono: return 0
+			case .multi: 		  .clear
+			case .mono(let color): color
 			}
+		}
+		
+		@available(*, deprecated, renamed: "mono(_:)", message: "You should provide color explicitly")
+		internal static var mono: ColorMode {
+			.mono(.accentColor)
 		}
 	}
 	
@@ -776,6 +794,17 @@ public extension View {
 
 #if DEBUG
 
+/*
+extension ProgressView.ColorMode {
+	fileprivate static var allCases: [Self] {
+		[
+			.mono(.accentColor),
+			.multi,
+		]
+	}
+}
+*/
+
 fileprivate struct DemoValue: Hashable, Identifiable {
 	var name: String
 	var id: String { name }
@@ -787,7 +816,7 @@ fileprivate extension ProgressView {
 	init(
 		state: DemoBackendFetchState,
 		size: Size = .visual,
-		color: ColorMode = .mono
+		color: ColorMode = .mono(.blue)
 	) {
 		self.init(state: state.asGeneral, size: size, color: color)
 	}
@@ -802,13 +831,14 @@ fileprivate struct DemoProgressView: View {
 		ProgressView(value, size, color)
 			.animateForever(
 				assigning: 0.99,
-				to: \.value, on: self,
+				to: $value,
 				using: .easeInOut(duration: 6),
 				autoreverses: true
 			)
 	}
 }
 
+/*
 struct ProgressView_Previews: PreviewProvider {
 	fileprivate static let states: [DemoBackendFetchState] = [
 		.idle,
@@ -861,7 +891,7 @@ struct ProgressView_Previews: PreviewProvider {
 									Spacer()
 								}
 								.background(.bottom) {
-									Color(.systemGray5)
+									Color.systemGray5
 										.height(1)
 										.offset(y: 8)
 								}
@@ -885,7 +915,7 @@ struct ProgressView_Previews: PreviewProvider {
 	static var previews: some View {
 		Group {
 			VStack(alignment: .leading, spacing: 16) {
-				Text("States").foregroundAccent()
+				Text("States").foregroundStyle(.tint)
 				ForEach(states) { state in
 					HStack {
 						state.id.labeledView()
@@ -895,7 +925,7 @@ struct ProgressView_Previews: PreviewProvider {
 					.background(aligned: .bottom, Color(uiColor: .systemGray5).height(1).offset(y: 8))
 				}
 				
-				Text("Progresses").foregroundAccent()
+				Text("Progresses").foregroundStyle(.tint)
 				ForEach(hashing: progresses) { _, progress in
 					HStack {
 						progress.labeledView()
@@ -905,7 +935,7 @@ struct ProgressView_Previews: PreviewProvider {
 					.background(aligned: .bottom, Color(uiColor: .systemGray5).height(1).offset(y: 8))
 				}
 				
-				Text("Sizes").foregroundAccent()
+				Text("Sizes").foregroundStyle(.tint)
 				ForEach(ProgressView.Size.allCases, id: \.self) { size in
 					HStack(alignment: .center, spacing: 16) {
 						size.labeledView(label: "Size")
@@ -928,4 +958,5 @@ struct ProgressView_Previews: PreviewProvider {
 	}
 	*/
 }
+*/
 #endif

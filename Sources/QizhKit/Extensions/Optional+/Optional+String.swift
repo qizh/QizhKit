@@ -37,3 +37,16 @@ extension Optional {
 		}
 	}
 }
+
+extension Optional: @retroactive CustomStringConvertible {
+	public var description: String {
+		switch self {
+		case .none:
+			.xMark
+		case .some(let value as CustomStringConvertible):
+			value.description
+		case .some(let value):
+			"\(value)"
+		}
+	}
+}

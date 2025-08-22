@@ -66,7 +66,7 @@ public struct DistanceMeasurement<Element> {
 		{ distance(sample, $0) > distance(sample, $1) }
 	}
 	
-	public struct IncreasingOrder {
+	public struct IncreasingOrder: Sendable {
 		public typealias Key<Measure: Comparable> = KeyPath<IncreasingOrder, CalculateDistance<Measure>>
 		fileprivate init() { }
 	}

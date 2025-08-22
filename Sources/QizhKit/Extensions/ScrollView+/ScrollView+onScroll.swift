@@ -38,8 +38,7 @@ public extension View {
 // MARK: ScrollView + reader
 
 public extension ScrollView {
-	@inlinable
-	static func reading <SpaceName: Hashable> (
+	@inlinable @MainActor static func reading <SpaceName: Hashable> (
 		offset: Binding<CGPoint>,
 		delayed: Bool = false,
 		in coordinateSpaceName: SpaceName,
@@ -68,7 +67,7 @@ public struct ScrollViewEndDraggingDelegateModifier: ViewModifier {
 	
 	public func body(content: Content) -> some View {
 		content
-			.introspect(.scrollView, on: .iOS(.v15, .v16, .v17)) { scrollView in
+			.introspect(.scrollView, on: .iOS(.v16, .v17, .v18)) { scrollView in
 				if let delegateAssigned = scrollView.delegate as? IntrospectedScrollViewDelegate {
 					self.delegate = delegateAssigned
 				} else {
@@ -144,7 +143,10 @@ class IntrospectedScrollViewDelegate: NSObject, UIScrollViewDelegate {
 
 // MARK: Read Offset
 
-public struct ScrollOffsetReader <SpaceName: Hashable>: ViewModifier {
+public struct ScrollOffsetReader <SpaceName>: ViewModifier
+	where SpaceName: Hashable,
+		  SpaceName: Sendable
+{
 	@Binding private var offset: CGPoint
 	private let coordinateSpaceName: SpaceName
 	
@@ -165,7 +167,9 @@ public struct ScrollOffsetReader <SpaceName: Hashable>: ViewModifier {
 							value = geometry.frame(in: .named(coordinateSpaceName)).origin
 						}
 						.onPreferenceChange(OriginPreferenceKey.self) { value in
-							offset = value
+							Task { @MainActor in
+								offset = value
+							}
 						}
 				}
 				.size0()
@@ -174,55 +178,139 @@ public struct ScrollOffsetReader <SpaceName: Hashable>: ViewModifier {
 }
 
 fileprivate struct OriginPreferenceKey: PreferenceKey {
-	static var defaultValue: CGPoint = .zero
+	static let defaultValue: CGPoint = .zero
 	static func reduce(value: inout CGPoint, nextValue: () -> CGPoint) {
 		value = nextValue()
 	}
 }
 
+fileprivate struct ScrollOriginPreferenceKey: PreferenceKey {
+	static let defaultValue: CGPoint = .zero
+	static func reduce(value: inout CGPoint, nextValue: () -> CGPoint) {
+		value += nextValue()
+	}
+}
 
 // MARK: Native Offset Reader
 
 fileprivate struct ScrollOffsetStackPreferenceKey: PreferenceKey {
-	static var defaultValue: [CGPoint] = .just(.zero)
+	static let defaultValue: [CGPoint] = .just(.zero)
 	static func reduce(value: inout [CGPoint], nextValue: () -> [CGPoint]) {
 		value.append(contentsOf: nextValue())
 	}
 }
 
-public extension ScrollView {
-	@inlinable
-	static func nativeReading(
+extension ScrollView {
+	@MainActor
+	@inlinable public static func nativeReading(
 		offset: Binding<CGPoint>,
 		_ axes: Axis.Set = .vertical,
 		showsIndicators: Bool = true,
-		@ViewBuilder content: () -> Content
+		@ViewBuilder content: @escaping () -> Content
 	) -> some View {
-		OffsetReadingScrollView(axes, showIndicators: showsIndicators, offset: offset) {
-			content()
+		OffsetReadingScrollView(
+			axes,
+			showsIndicators: showsIndicators,
+			offset: offset,
+			content: content
+		)
+	}
+}
+
+// MARK: - March 2025 approach
+
+fileprivate struct PositionObservingView<Content: View>: View {
+	var coordinateSpace: CoordinateSpace
+	@Binding var position: CGPoint
+	@ViewBuilder var content: () -> Content
+	
+	var body: some View {
+		content()
+			.background {
+				GeometryReader { geometry in
+					Color.clear.preference(
+						key: PreferenceKey.self,
+						value: geometry.frame(in: coordinateSpace).origin
+					)
+				}
+			}
+			.onPreferenceChange(PreferenceKey.self) { position in
+				#if swift(>=6.1)
+				/// Works in Xcode 16.3
+				self.position = position
+				#else
+				/// Works in Xcode 16.2 and lags
+				Task { @MainActor in
+					self.position = position
+				}
+				#endif
+			}
+	}
+	
+	struct PreferenceKey: SwiftUI.PreferenceKey {
+		static var defaultValue: CGPoint { .zero }
+
+		static func reduce(value: inout CGPoint, nextValue: () -> CGPoint) {
+			/// We don’t actually need to implement any kind of reduce algorithm above,
+			/// since we’ll only have a single view delivering values using that preference
+			/// key within any given hierarchy (since our implementation is entirely
+			/// contained within our PositionObservingView).
 		}
 	}
 }
 
 public struct OffsetReadingScrollView <Content>: View where Content: View {
 	private let axes: Axis.Set
-	private let showIndicators: Bool
+	private let showsIndicators: Bool
 	@Binding private var offset: CGPoint
-	private let content: Content
+	private let contentBuilder: () -> Content
+	
+	@Namespace private var scrollNS
 	
 	public init(
 		_ axes: Axis.Set = .vertical,
-		showIndicators: Bool = true,
+		showsIndicators: Bool = true,
 		offset: Binding<CGPoint>,
-		@ViewBuilder content: () -> Content
+		@ViewBuilder content contentBuilder: @escaping () -> Content
 	) {
 		self.axes = axes
-		self.showIndicators = showIndicators
+		self.showsIndicators = showsIndicators
 		self._offset = offset
-		self.content = content()
+		self.contentBuilder = contentBuilder
 	}
 	
 	public var body: some View {
+		ScrollView(axes, showsIndicators: showsIndicators) {
+			PositionObservingView(
+				coordinateSpace: .named(scrollNS),
+				position: $offset,
+				content: contentBuilder
+			)
+		}
+		.coordinateSpace(name: scrollNS)
+		
+		/*
+		ScrollView(axes, showsIndicators: showsIndicators) {
+			content
+				.background {
+					GeometryReader { insideGeometry in
+						Color.clear
+							.preference(
+								key: ScrollOriginPreferenceKey.self,
+								value: insideGeometry.frame(in: .named(scrollNS)).topLeading
+							)
+					}
+				}
+		}
+		.coordinateSpace(name: scrollNS)
+		.onPreferenceChange(ScrollOriginPreferenceKey.self) { value in
+			Task { @MainActor in
+				offset = value
+			}
+		}
+		*/
+		
+		/*
 		GeometryReader { outside in
 			ScrollView(axes, showsIndicators: showIndicators) {
 				content
@@ -254,9 +342,12 @@ public struct OffsetReadingScrollView <Content>: View where Content: View {
 				offset = value
 			}
 		}
+		*/
 	}
 	
+	/*
 	private func offset(of inside: GeometryProxy, in outside: GeometryProxy) -> CGPoint {
 		inside.frame(in: .global).topLeading - outside.frame(in: .global).topLeading
 	}
+	*/
 }

@@ -8,16 +8,18 @@
 
 import SwiftUI
 
-public extension View {
-	func hapticFeedback(_ action: HapticAction) -> some View {
+extension View {
+	@available(iOS, introduced: 13.0, deprecated: 17.0, renamed: "sensoryFeedback", message: "sensoryFeedback is available on iOS 17")
+	public func hapticFeedback(_ action: HapticAction) -> some View {
 		simultaneousGesture(TapGesture().onEnded { action.produceHapticFeedback() })
 	}
-	func debugWithRandomHapticFeedback() -> some View {
+	
+	internal func debugWithRandomHapticFeedback() -> some View {
 		simultaneousGesture(TapGesture().onEnded { HapticAction.randomAction.produceHapticFeedback() })
 	}
 }
 
-public enum HapticAction: CaseIterable, CaseComparable, DefaultCaseFirst {
+public enum HapticAction: CaseIterable, Sendable, CaseComparable, DefaultCaseFirst {
 	case none
 	case random
 	
@@ -33,7 +35,7 @@ public enum HapticAction: CaseIterable, CaseComparable, DefaultCaseFirst {
 	case successNotification
 	case warningNotification
 	
-	public func produceHapticFeedback() {
+	@MainActor public func produceHapticFeedback() {
 		#if os(iOS)
 		switch self {
 		case .none: break
@@ -53,7 +55,7 @@ public enum HapticAction: CaseIterable, CaseComparable, DefaultCaseFirst {
 		#endif
 	}
 	
-	@inlinable public static func produceHapticFeedback(_ action: HapticAction) {
+	@inlinable @MainActor public static func produceHapticFeedback(_ action: HapticAction) {
 		action.produceHapticFeedback()
 	}
 	

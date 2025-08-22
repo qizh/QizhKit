@@ -18,12 +18,11 @@ public struct AnyEncodable: Encodable, Sendable {
 		self.wrappedValue = wrappedValue
 	}
 	
-	public init<T>(_ value: T?) {
+	public init<T>(_ value: T?) where T: Sendable {
 		self.wrappedValue = value ?? ()
 	}
 	
-	@inlinable
-	public static func some<T>(_ value: T?) -> Self {
+	@inlinable public static func some<T>(_ value: T?) -> Self where T: Sendable {
 		.init(value)
 	}
 	
@@ -33,7 +32,7 @@ public struct AnyEncodable: Encodable, Sendable {
 @usableFromInline
 internal protocol AnyEncodableProtocol {
 	var wrappedValue: any Sendable { get }
-	init<T>(_ value: T?)
+	init<T>(_ value: T?) where T: Sendable
 }
 
 extension AnyEncodable: AnyEncodableProtocol {}
@@ -43,10 +42,12 @@ extension AnyEncodableProtocol {
 		var container = encoder.singleValueContainer()
 		
 		switch wrappedValue {
+		/*
 		case is NSNull:
 			if encoder.userInfo[AnyEncodable.skipNilValues] as? Bool != true {
 				try container.encodeNil()
 			}
+		*/
 		case is Void:
 			if encoder.userInfo[AnyEncodable.skipNilValues] as? Bool != true {
 				try container.encodeNil()
@@ -110,17 +111,17 @@ extension AnyEncodableProtocol {
 			try container.encode(url)
 		case let data as Data:
 			try container.encode(data)
-		case let array as [Any?]:
+		case let array as [(any Sendable)?]:
 			// print("::encoding as [Any?]: \(array)")
 			try container.encode(array.map { AnyEncodable($0) })
-		case let dictionary as [String: Any?]:
+		case let dictionary as [String: (any Sendable)?]:
 			// print("::encoding as [String: Any?]: \(dictionary)")
 			try container.encode(dictionary.mapValues { AnyEncodable($0) })
 		case let encodable as Encodable:
 			// print("::encoding as Encodable: \(encodable)")
 			try encodable.encode(to: encoder)
-		case let optional as Optional<any Sendable>:
-			switch optional {
+		case let optionalValue as Optional<any Sendable>:
+			switch optionalValue {
 			case .none:
 				if encoder.userInfo[AnyEncodable.skipNilValues] as? Bool != true {
 					try container.encodeNil()
@@ -212,6 +213,17 @@ extension AnyEncodable: Equatable {
 	}
 }
 
+extension AnyEncodable: Hashable {
+	public func hash(into hasher: inout Hasher) {
+		switch wrappedValue {
+		case let value as any Hashable:
+			hasher.combine(value)
+		default:
+			hasher.combine(description)
+		}
+	}
+}
+
 extension AnyEncodable: CustomStringConvertible {
 	public var description: String {
 		switch wrappedValue {
@@ -247,7 +259,7 @@ extension AnyEncodable: ExpressibleByDictionaryLiteral {}
 
 extension AnyEncodableProtocol {
 	public init(nilLiteral _: ()) {
-		self.init(nil as Any?)
+		self.init(nil as (any Sendable)?)
 	}
 
 	public init(booleanLiteral value: Bool) {
@@ -270,11 +282,11 @@ extension AnyEncodableProtocol {
 		self.init(value)
 	}
 
-	public init(arrayLiteral elements: Any...) {
+	public init(arrayLiteral elements: (any Sendable)...) {
 		self.init(elements)
 	}
-
-	public init(dictionaryLiteral elements: (AnyHashable, Any)...) {
-		self.init([AnyHashable: Any](elements, uniquingKeysWith: { first, _ in first }))
+	
+	public init(dictionaryLiteral elements: (String, any Sendable)...) {
+		self.init([String: any Sendable](elements, uniquingKeysWith: { first, _ in first }))
 	}
 }

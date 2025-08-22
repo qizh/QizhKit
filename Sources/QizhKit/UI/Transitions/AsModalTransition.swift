@@ -45,7 +45,7 @@ public struct HalfModalStyleModifier: ViewModifier {
 }
 
 public extension AnyTransition {
-	static var asModal: AnyTransition {
+	@MainActor static var asModal: AnyTransition {
 		.modifier(
 			  active: HalfModalStyleModifier(factor: .zero),
 			identity: HalfModalStyleModifier(factor: .one)

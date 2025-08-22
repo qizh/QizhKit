@@ -95,3 +95,31 @@ public enum FontModification {
 	@available(iOS 14, *)
 	case loose
 }
+
+extension Font.Weight: @retroactive CaseIterable {
+	public static var allCases: [Font.Weight] {
+		[
+			.ultraLight,
+			.thin,
+			.light,
+			.regular,
+			.medium,
+			.semibold,
+			.bold,
+			.heavy,
+			.black,
+		]
+	}
+	
+	public static var allWeightsCases: [Font.Weight] {
+		[
+			.ultraLight,
+			.thin,
+			.light,
+			.regular,
+			.medium,
+			.semibold,
+			.bold,
+		]
+	}
+}

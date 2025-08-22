@@ -14,9 +14,8 @@ extension LazyView {
 	}
 }
 
-public extension NavigationLink {
-	
-	static func lazy<Heavy>(
+extension NavigationLink {
+	@MainActor public static func lazy<Heavy>(
 		destination: @autoclosure @escaping () -> Heavy,
 		@ViewBuilder label: () -> Label
 	) -> NavigationLink where Destination == LazyView<Heavy> {
@@ -26,6 +25,7 @@ public extension NavigationLink {
 		)
 	}
 	
+	/*
 	static func lazy<Heavy>(
 		@ViewBuilder destination: @escaping () -> Heavy,
 		isActive: Binding<Bool>,
@@ -37,7 +37,9 @@ public extension NavigationLink {
 			label: label
 		)
 	}
+	*/
 	
+	/*
 	static func lazy<Heavy, Tag>(
 		destination: @autoclosure @escaping () -> Heavy,
 		tag: Tag,
@@ -52,19 +54,20 @@ public extension NavigationLink {
 			label: label
 		)
 	}
+	*/
 }
 
-public extension NavigationLink where Label == Text {
-	
-	static func lazy<Heavy>(_ titleKey: LocalizedStringKey, destination: @autoclosure @escaping () -> Heavy) -> NavigationLink where Destination == LazyView<Heavy> {
+extension NavigationLink where Label == Text {
+	@MainActor public static func lazy<Heavy>(_ titleKey: LocalizedStringKey, destination: @autoclosure @escaping () -> Heavy) -> NavigationLink where Destination == LazyView<Heavy> {
 		NavigationLink(titleKey, destination: LazyView(escaped: destination))
 	}
 	
 	@_disfavoredOverload
-	static func lazy<Heavy, S>(_ title: S, destination: @autoclosure @escaping () -> Heavy) -> NavigationLink where S: StringProtocol, Destination == LazyView<Heavy> {
+	@MainActor public static func lazy<Heavy, S>(_ title: S, destination: @autoclosure @escaping () -> Heavy) -> NavigationLink where S: StringProtocol, Destination == LazyView<Heavy> {
 		NavigationLink(title, destination: LazyView(escaped: destination))
 	}
 	
+	/*
 	static func lazy<Heavy>(_ titleKey: LocalizedStringKey, destination: @autoclosure @escaping () -> Heavy, isActive: Binding<Bool>) -> NavigationLink where Destination == LazyView<Heavy> {
 		NavigationLink(titleKey, destination: LazyView(escaped: destination), isActive: isActive)
 	}
@@ -82,10 +85,11 @@ public extension NavigationLink where Label == Text {
 	static func lazy<Heavy, S, V>(_ title: S, destination: @autoclosure @escaping () -> Heavy, tag: V, selection: Binding<V?>) -> NavigationLink where S: StringProtocol, V: Hashable, Destination == LazyView<Heavy> {
 		NavigationLink(title, destination: LazyView(escaped: destination), tag: tag, selection: selection)
 	}
+	*/
 }
 
-public extension NavigationLink where Label == Pixel {
-	static func lazy <Heavy> (
+extension NavigationLink where Label == Pixel {
+	@MainActor public static func lazy <Heavy> (
 		_ destination: @autoclosure @escaping () -> Heavy
 	) -> NavigationLink
 		where Destination == LazyView<Heavy>
@@ -95,7 +99,7 @@ public extension NavigationLink where Label == Pixel {
 		}
 	}
 	
-	static func lazy <Heavy> (
+	@MainActor public static func lazy <Heavy> (
 		destination: @autoclosure @escaping () -> Heavy
 	) -> NavigationLink where Destination == LazyView<Heavy> {
 		NavigationLink(destination: LazyView(escaped: destination)) {
@@ -103,6 +107,7 @@ public extension NavigationLink where Label == Pixel {
 		}
 	}
 	
+	/*
 	static func lazy <Heavy> (
 		destination: @autoclosure @escaping () -> Heavy,
 		isActive: Binding<Bool>
@@ -111,6 +116,7 @@ public extension NavigationLink where Label == Pixel {
 			Pixel()
 		}
 	}
+	*/
 }
 
 /*

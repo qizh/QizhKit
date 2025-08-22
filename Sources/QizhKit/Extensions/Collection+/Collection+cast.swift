@@ -20,13 +20,18 @@ extension Collection {
 	@inlinable public func asArray() -> [Element] { Array(self) }
 }
 
-extension RangeReplaceableCollection where Self == Self.SubSequence {
-	@inlinable public func asCollection <C> () -> C 
-	where C: RangeReplaceableCollection, C.Element == Element {
+extension RangeReplaceableCollection
+	where Self == Self.SubSequence,
+		  Self: Sendable
+{
+	@inlinable public func asCollection <C> () -> C
+		where C: RangeReplaceableCollection,
+			  C.Element == Element
+	{
 		C(self)
 	}
 }
 
-extension Sequence where Element: Hashable {
+extension Sequence where Element: Hashable, Self: Sendable {
 	@inlinable public func asSet() -> Set<Element> { Set(self) }
 }

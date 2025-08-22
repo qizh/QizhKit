@@ -6,6 +6,7 @@
 //  Copyright © 2020 Serhii Shevchenko. All rights reserved.
 //
 
+/*
 import SwiftUI
 
 fileprivate struct IdentifiedRect: Equatable {
@@ -33,8 +34,9 @@ fileprivate struct IdentifiedRect: Equatable {
 	}
 }
 
+@available(*, deprecated, message: "Use `Flock` instead")
 fileprivate struct UnionRectPreferenceKey: PreferenceKey {
-	public static var defaultValue: IdentifiedRect = .zero
+	public static let defaultValue: IdentifiedRect = .zero
 	
 	fileprivate static var  fitValues: [String: CGRect] = [:]
 	fileprivate static var fullValues: [String: CGRect] = [:]
@@ -328,3 +330,4 @@ struct LineStack_Previews: PreviewProvider {
     }
 }
 #endif
+*/

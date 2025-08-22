@@ -9,10 +9,27 @@
 import Foundation
 import os.log
 
-fileprivate let logger = Logger(
-	subsystem: "Coding",
-	category: "Lossy Array"
-)
+fileprivate final actor LossyArrayLogger {
+	fileprivate static let shared = LossyArrayLogger()
+	
+	fileprivate var level: DebugDepth = .minimum
+	fileprivate let logger = Logger(
+		subsystem: "Coding",
+		category: "Lossy Array"
+	)
+	
+	fileprivate func setLogLevel(_ level: DebugDepth) {
+		self.level = level
+	}
+	
+	fileprivate func logger(when debug: DebugDepth) -> Logger? {
+		if self.level >= debug {
+			logger
+		} else {
+			.none
+		}
+	}
+}
 
 /// Decodes Arrays and filters invalid values if the Decoder is unable to decode the value.
 @propertyWrapper
@@ -38,23 +55,35 @@ public struct LossyArray <Item: Codable>: Codable, EmptyProvidable, ExpressibleB
 					elements.append(value)
 					// logger.debug("[LossyArray] decoded \(Item.self) element")
 				} catch let error as DecodingError {
-					logger.warning("""
-						Skipping \(Item.self) element while decoding
-						┗ \(error.humanReadableDescription)
-						""")
+					Task {
+						await LossyArrayLogger.shared.logger(when: .default)?
+							.warning("""
+								Skipping \(Item.self) element while decoding
+								┗ \(error.humanReadableDescription)
+								""")
+					}
 					_ = try? container.decode(Blancodable.self)
 				} catch {
-					logger.warning("Skipping \(Item.self) element while decoding. \(error)")
+					Task {
+						await LossyArrayLogger.shared.logger(when: .default)?
+							.warning("Skipping \(Item.self) element while decoding. \(error)")
+					}
 					_ = try? container.decode(Blancodable.self)
 				}
 			}
 		} catch let error as DecodingError {
-			logger.warning("""
-				Skipping the whole non-array
-				┗ \(error.humanReadableDescription)
-				""")
+			Task {
+				await LossyArrayLogger.shared.logger(when: .default)?
+					.warning("""
+						Skipping the whole non-array
+						┗ \(error.humanReadableDescription)
+						""")
+			}
 		} catch {
-			logger.warning("Non-array skipped: \(error)")
+			Task {
+				await LossyArrayLogger.shared.logger(when: .default)?
+					.warning("Non-array skipped: \(error)")
+			}
 		}
 		
 		self.wrappedValue = elements
@@ -97,7 +126,10 @@ public extension KeyedDecodingContainer {
 			// print("[LossyArray] try to decode \(Wrapped.self) optionally")
 			result = try decodeIfPresent(LossyArray<Wrapped>.self, forKey: key)
 		} catch {
-			logger.warning("No value for \"\(key)\" key")
+			Task {
+				await LossyArrayLogger.shared.logger(when: .default)?
+					.warning("No value for \"\(key)\" key")
+			}
 			result = nil
 		}
 		/*

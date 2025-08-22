@@ -10,6 +10,7 @@ import SwiftUI
 
 // MARK: Selfmade
 
+/*
 extension View {
 	/// Just a function returning `self`.
 	/// Useful when you need to provide
@@ -17,6 +18,7 @@ extension View {
 	/// where this view should be `self`
 	@inlinable public func selfmade() -> Self { self }
 }
+*/
 
 // MARK: Just button
 
@@ -24,7 +26,7 @@ extension View {
 	@inlinable public func button() -> Button<Self> {
 		.init(
 			action: { },
-			label: selfmade
+			label: { self }
 		)
 	}
 }
@@ -43,28 +45,22 @@ extension View {
 	public func button(
 		opening url: URL?,
 		target: ButtonURLOpenTarget = .app,
+		tint: Color? = .none,
 		isActive: Binding<Bool>? = .none
 	) -> some View {
 		if let url {
-			if #available(iOS 14.0, *) {
-				switch target {
-				case .app:
-					SafariButton(
-						opening: url,
-						isActive: isActive,
-						content: { self }
-					)
-				case .safari:
-					Link(
-						destination: url,
-						label: { self }
-					)
-				}
-			} else {
+			switch target {
+			case .app:
 				SafariButton(
 					opening: url,
+					tintColor: tint,
 					isActive: isActive,
 					content: { self }
+				)
+			case .safari:
+				Link(
+					destination: url,
+					label: { self }
 				)
 			}
 		} else {
@@ -86,10 +82,10 @@ extension View {
 	@inlinable public func button <Value> (
 		resetting binding: Binding<Value?>,
 					 flow: ExecutionFlow = .current
-	) -> Button<Self> {
+	) -> Button<Self> where Value: Sendable {
 		Button(
 			action: {
-				let callback = {
+				let callback: @Sendable () -> Void = {
 					binding.wrappedValue = .none
 				}
 				
@@ -107,10 +103,10 @@ extension View {
 		assigning value: Value,
 			 to binding: Binding<Value>,
 				   flow: ExecutionFlow = .current
-	) -> Button<Self> {
+	) -> Button<Self> where Value: Sendable {
 		Button(
 			action: {
-				let callback = {
+				let callback: @Sendable () -> Void = {
 					binding.wrappedValue = value
 				}
 				
@@ -147,14 +143,14 @@ extension View {
 	@inlinable public func button(
 		action: @escaping () -> Void
 	) -> Button<Self> {
-		Button(action: action, label: selfmade)
+		Button(action: action, label: { self })
 	}
 	
 	@inlinable public func button(
 		role: ButtonRole,
 		action: @escaping () -> Void
 	) -> Button<Self> {
-		Button(role: role, action: action, label: selfmade)
+		Button(role: role, action: action, label: { self })
 	}
 	
 	@inlinable public func asyncButton(
@@ -169,13 +165,27 @@ extension View {
 	}
 }
 
-/*
+// MARK: View + Special Button
+
+extension View {
+	@inlinable public func button(copyingToClipboard text: String) -> Button<Self> {
+		Button(action: { UIPasteboard.general.string = text }, label: { self })
+	}
+	
+	@inlinable public func button(copyingToClipboard text: AttributedString) -> Button<Self> {
+		Button(
+			action: { UIPasteboard.general.setObjects([NSAttributedString(text)]) },
+			label: { self }
+		)
+	}
+}
+
+
 #if swift(>=5.9)
 
 // MARK: > Variadic Generics
 
 extension View {
-	// @inlinable
 	public func button <each P> (
 		action: @escaping (repeat each P) -> Void,
 		_ parameters: repeat each P
@@ -187,7 +197,6 @@ extension View {
 		}
 	}
 	
-	// @inlinable
 	public func asyncButton <each P: Sendable> (
 		priority: TaskPriority? = .none,
 		action: @escaping @Sendable (repeat each P) async -> Void,
@@ -202,7 +211,21 @@ extension View {
 		}
 	}
 	
-	// @inlinable
+	public func asyncButton <each P: Sendable> (
+		role: ButtonRole,
+		priority: TaskPriority? = .none,
+		action: @escaping @Sendable (repeat each P) async -> Void,
+		_ parameters: repeat each P
+	) -> Button<Self> {
+		Button(role: role) {
+			Task(priority: priority) {
+				await action(repeat each parameters)
+			}
+		} label: {
+			self
+		}
+	}
+	
 	public func button <each P> (
 		role: ButtonRole,
 		action: @escaping (repeat each P) -> Void,
@@ -219,7 +242,6 @@ extension View {
 #else
 
 // MARK: > Outdated
-*/
 
 extension View {
 	@inlinable public func button <A> (
@@ -329,7 +351,51 @@ extension View {
 	}
 }
 
-// #endif
+extension View {
+	@inlinable public func asyncButton <A> (
+		role: ButtonRole,
+		priority: TaskPriority? = .none,
+		action: @escaping @Sendable (A) async -> Void,
+		_ argument: A
+	) -> Button<Self> {
+		button(role: role) {
+			Task(priority: priority) {
+				await action(argument)
+			}
+		}
+	}
+	
+	@inlinable public func asyncButton <A1, A2> (
+		role: ButtonRole,
+		priority: TaskPriority? = .none,
+		action: @escaping @Sendable (A1, A2) async -> Void,
+		_ argument1: A1,
+		_ argument2: A2
+	) -> Button<Self> {
+		button(role: role) {
+			Task(priority: priority) {
+				await action(argument1, argument2)
+			}
+		}
+	}
+	
+	@inlinable public func asyncButton <A1, A2, A3> (
+		role: ButtonRole,
+		priority: TaskPriority? = .none,
+		action: @escaping @Sendable (A1, A2, A3) async -> Void,
+		_ argument1: A1,
+		_ argument2: A2,
+		_ argument3: A3
+	) -> Button<Self> {
+		button(role: role) {
+			Task(priority: priority) {
+				await action(argument1, argument2, argument3)
+			}
+		}
+	}
+}
+
+#endif
 
 // MARK: - Tests
 
@@ -351,7 +417,7 @@ fileprivate let a = Text(String(""))
 extension View {
 	@available(*, deprecated, message: "Just use the `withAnimation { ... }` action")
 	@inlinable public func button(
-		action: @escaping () -> Void,
+		action: @escaping @Sendable () -> Void,
 		animation: Animation
 	) -> Button<Self> {
 		Button(action: animating(action, with: animation), label: { self })
@@ -360,7 +426,7 @@ extension View {
 	@available(*, deprecated, message: "Just use the `withAnimation { ... }` action")
 	@inlinable public func button(
 		animation: Animation,
-		action: @escaping () -> Void
+		action: @escaping @Sendable () -> Void
 	) -> Button<Self> {
 		Button(action: animating(action, with: animation), label: { self })
 	}
@@ -374,7 +440,7 @@ extension View {
 		resetting binding: Binding<Value?>,
 				animation: Animation? = .none,
 				   _ flow: ExecutionFlow = .current
-	) -> Button<Self> {
+	) -> Button<Self> where Value: Sendable {
 		Button(
 			action: {
 				flow.proceed {
@@ -398,7 +464,7 @@ extension View {
 			 to binding: Binding<Value>,
 			  animation: Animation? = .none,
 				 _ flow: ExecutionFlow = .current
-	) -> Button<Self> {
+	) -> Button<Self> where Value: Sendable {
 		Button(
 			action: {
 				flow.proceed {
@@ -453,8 +519,9 @@ extension View {
 		)
 	}
 	
+	/*
 	/// - Warning: Deprecated. This method is using `NavigationLink`, which is outdated
-	// @available(*, deprecated, message: "This method is using `NavigationLink`, which is outdated")
+	@available(*, deprecated, message: "This method is using `NavigationLink`, which is outdated")
 	@inlinable public func button <Screen: View> (
 		showing screen: Screen,
 		isActive: Binding<Bool>
@@ -465,6 +532,7 @@ extension View {
 			label: { self }
 		)
 	}
+	*/
 }
 
 /*

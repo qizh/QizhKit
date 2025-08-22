@@ -117,8 +117,8 @@ extension ForEach where Content: View {
 
 // MARK: Elements
 
-public protocol EnumeratedElement: Identifiable {
-	associatedtype Base: Collection
+public protocol EnumeratedElement: Identifiable, Sendable {
+	associatedtype Base: Collection where Element: Sendable
 	
 	typealias Element = Base.Element
 	typealias Enumerated = EnumeratedSequence<Base>
@@ -141,7 +141,10 @@ public extension EnumeratedElement {
 	}
 }
 
-public struct AnyEnumeratedElement<Base: Collection>: EnumeratedElement {
+public struct AnyEnumeratedElement<Base>: EnumeratedElement
+	where Base: Collection,
+		  Base.Element: Sendable
+{
 	public let offset: Int
 	public let element: Element
 	
@@ -149,11 +152,23 @@ public struct AnyEnumeratedElement<Base: Collection>: EnumeratedElement {
 		offset = enumerated.offset
 		element = enumerated.element
 	}
-	
+}
+
+extension AnyEnumeratedElement where Element: Identifiable {
+	@inlinable public var id: Element.ID { element.id }
+}
+
+// extension AnyEnumeratedElement: Sendable where Element: Sendable { }
+
+extension AnyEnumeratedElement {
 	public var id: Int { offset }
 }
 
-public struct EnumeratedIdentifiableElement<Base: Collection>: EnumeratedElement where Base.Element: Identifiable {
+public struct EnumeratedIdentifiableElement<Base>: EnumeratedElement
+	where Base: Collection,
+		  Base.Element: Identifiable,
+		  Base.Element: Sendable
+{
 	public let offset: Int
 	public let element: Element
 	
@@ -165,7 +180,13 @@ public struct EnumeratedIdentifiableElement<Base: Collection>: EnumeratedElement
 	public var id: Element.ID { element.id }
 }
 
-public struct EnumeratedHashableElement<Base: Collection>: EnumeratedElement where Base.Element: Hashable {
+// extension EnumeratedIdentifiableElement: Sendable where Element: Sendable { }
+
+public struct EnumeratedHashableElement<Base>: EnumeratedElement
+	where Base: Collection,
+		  Base.Element: Hashable,
+		  Base.Element: Sendable
+{
 	public let offset: Int
 	public let element: Element
 	
@@ -177,25 +198,38 @@ public struct EnumeratedHashableElement<Base: Collection>: EnumeratedElement whe
 	public var id: Element { element }
 }
 
+// extension EnumeratedHashableElement: Sendable where Element: Sendable { }
+
 // MARK: Collections
 
-extension Collection {
+extension Collection where Element: Sendable {
 	@inlinable
 	public func enumeratedElements() -> [AnyEnumeratedElement<Self>] {
-		enumerated().map(AnyEnumeratedElement<Self>.init)
+		enumerated()
+			.map { enumeratedElement in
+				AnyEnumeratedElement(enumeratedElement)
+			}
 	}
 }
 
-extension Collection where Element: Identifiable {
+extension Collection where Element: Identifiable, Element: Sendable {
 	@inlinable
 	public func enumeratedIdentifiableElements() -> [EnumeratedIdentifiableElement<Self>] {
-		enumerated().map(EnumeratedIdentifiableElement<Self>.init)
+		enumerated()
+			.map { enumeratedElement in
+				EnumeratedIdentifiableElement(enumeratedElement)
+			}
+			// .map(EnumeratedIdentifiableElement<Self>.init)
 	}
 }
 
-extension Collection where Element: Hashable {
+extension Collection where Element: Hashable, Element: Sendable {
 	@inlinable
 	public func enumeratedHashableElements() -> [EnumeratedHashableElement<Self>] {
-		enumerated().map(EnumeratedHashableElement<Self>.init)
+		enumerated()
+			.map { enumeratedElement in
+				EnumeratedHashableElement(enumeratedElement)
+			}
+			// .map(EnumeratedHashableElement<Self>.init)
 	}
 }

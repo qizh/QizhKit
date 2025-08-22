@@ -10,7 +10,7 @@ import Foundation
 
 // MARK: Generic
 
-public struct GenericType: CustomStringConvertible, Updatable {
+public struct GenericType: CustomStringConvertible, Sendable, Updatable {
 	private(set) public var     name:  String
 	public let                  path: [String]
 	public let              children: [GenericType]
@@ -190,7 +190,7 @@ public struct GenericType: CustomStringConvertible, Updatable {
 	
 	// MARK: > Origin
 	
-	public enum Source: String, WithUnknown, EasyCaseComparable {
+	public enum Source: String, Sendable, WithUnknown, EasyCaseComparable {
 		case unknown
 		case system
 		case user
@@ -199,11 +199,11 @@ public struct GenericType: CustomStringConvertible, Updatable {
 	
 	// MARK: > Inline Type
 	
-	public struct InlineType:
-		OptionSet,
-		WithDefault,
-		CustomStringConvertible,
-		ExpressibleByIntegerLiteral
+	public struct InlineType: OptionSet,
+							  Sendable,
+							  WithDefault,
+							  CustomStringConvertible,
+							  ExpressibleByIntegerLiteral
 	{
 		public let rawValue: Int
 		public init(rawValue: RawValue) {

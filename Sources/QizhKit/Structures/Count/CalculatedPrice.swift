@@ -10,7 +10,7 @@ import Foundation
 
 // MARK: Protocols
 
-public protocol PriceCalculationProvider {
+public protocol PriceCalculationProvider: Sendable {
 	var unit: 	  Price.Output   { get }
 	var all: 	  Price.Output   { get }
 	var taxes: 	 [Price.Output]  { get }
@@ -22,17 +22,17 @@ public protocol PriceCalculationProvider {
 	var price:    Price.Provider { get }
 }
 
-public extension PriceCalculationProvider {
-	@inlinable static var zero: Price.CalculatedItem { .init(Price.zero, .zero) }
-	@inlinable var isZero: Bool { all.isZero }
-	@inlinable var isNotZero: Bool { not(isZero) }
+extension PriceCalculationProvider {
+	@inlinable public static var zero: Price.CalculatedItem { .init(Price.zero, .zero) }
+	@inlinable public var isZero: Bool { all.isZero }
+	@inlinable public var isNotZero: Bool { not(isZero) }
 }
 
 // MARK: Calculated
 
 extension Price {
 	public typealias Calculated = PriceCalculationProvider
-	public struct CalculatedItem: Calculated {
+	public struct CalculatedItem: Equatable, Calculated {
 		public let price: Price.Provider
 		fileprivate let amount: UInt
 		
@@ -271,9 +271,9 @@ public extension Price {
 			details.taxes.map { tax in
 				switch tax {
 				case let .flat(amount, name):
-					return calculate(amount, name, rounded: true)
+					calculate(amount, name, rounded: true)
 				case let .percent(percent, name):
-					return calculate(value * percent.percents, name, rounded: true)
+					calculate(value * percent.percents, name, rounded: true)
 				}
 			}
 		}
@@ -353,7 +353,7 @@ public extension Price {
 // MARK: Sum
 
 public extension Price {
-	struct CalculatedSum: Calculated, ExpressibleByArrayLiteral {
+	struct CalculatedSum: Calculated, Sendable, ExpressibleByArrayLiteral {
 		fileprivate let items: [Calculated]
 		
 		@inlinable public init() { self.init(of: .empty) }

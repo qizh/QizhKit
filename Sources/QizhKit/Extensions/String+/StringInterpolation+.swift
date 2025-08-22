@@ -10,96 +10,80 @@ import Foundation
 
 // MARK: Nil
 
-public struct NilReplacement:
-	ExpressibleByStringLiteral,
-	CustomStringConvertible
-{
+public struct NilReplacement: ExpressibleByStringLiteral,
+							  CustomStringConvertible,
+							  Sendable {
 	public let description: String
 	public init(stringLiteral value: StringLiteralType) { description = value }
 	
-	public static let `nil`         : Self = "nil"
-	public static let  undefined    : Self = "undefined"
-	public static let  questionMark : Self = "?"
-	public static let  x            : Self = "×"
-	public static let  emptySet     : Self = "∅"
+	public static let `nil`         : NilReplacement = "nil"
+	public static let  undefined    : NilReplacement = "undefined"
+	public static let  questionMark : NilReplacement = "?"
+	public static let  x            : NilReplacement = "×"
+	public static let  emptySet     : NilReplacement = "∅"
+}
+
+extension String {
+	fileprivate func replacingPatterns(
+		_ patterns: [String] = DefaultStringInterpolation.patternsMatch,
+		with replacement: String
+	) -> String {
+		if let pattern = patterns.first(where: self.contains(_:)) {
+			self.replacingOccurrences(of: pattern, with: replacement)
+		} else {
+			self
+		}
+	}
 }
 
 public extension DefaultStringInterpolation {
 	// MARK: Optional
 	
-	private static let patternMatch: String = "$0"
-	
-	/*
-	mutating func appendInterpolation<Wrapped>(
-		map value: Wrapped?,
-		or fallback: NilReplacement? = nil
-	) where Wrapped: CustomStringConvertible {
-		appendInterpolation(map: value, String?.none, or: fallback)
-	}
+	fileprivate static let patternsMatch = [
+		"$0",
+		"$@",
+		"%@",
+		"##",
+	]
 	
 	mutating func appendInterpolation(
 		map value: String?,
-		or fallback: NilReplacement? = nil
-	) {
-		appendInterpolation(map: value, String?.none, or: fallback)
-	}
-	*/
-	
-	mutating func appendInterpolation(
-		  map value: String?,
-		  _ pattern: String? = nil,
+		_ pattern: String? = nil,
 		or fallback: NilReplacement? = nil
 	) {
 		value.map { value in
 			pattern.map { pattern in
-				let result = pattern
-					.replacingOccurrences(
-						of: Self.patternMatch,
-						with: value
-					)
-				appendInterpolation(result)
+				appendInterpolation(pattern.replacingPatterns(with: value))
 			} ?? appendInterpolation(value)
 		} ?? fallback.map { fallback in
 			appendInterpolation(fallback)
 		}
 	}
 	
-	mutating func appendInterpolation<Wrapped>(
-		   map value: Wrapped?,
-		   _ pattern: String? = nil,
-		 or fallback: NilReplacement? = nil
-	)
-		where Wrapped: TextOutputStreamable
-	{
+	mutating func appendInterpolation <Wrapped: TextOutputStreamable> (
+		map value: Wrapped?,
+		_ pattern: String? = nil,
+		or fallback: NilReplacement? = nil
+	) {
 		value.map { value in
 			pattern.map { pattern in
-				let result = pattern
-					.replacingOccurrences(
-						of: Self.patternMatch,
-						with: "\(value)"
-				)
-				appendInterpolation(result)
+				appendInterpolation(pattern.replacingPatterns(with: "\(value)"))
 			} ?? appendInterpolation(value)
 		} ?? fallback.map { fallback in
 			appendInterpolation(fallback)
 		}
 	}
-
-	mutating func appendInterpolation<Wrapped>(
-		   map value: Wrapped?,
-		   _ pattern: String? = nil,
-		 or fallback: NilReplacement? = nil
-	)
-		where Wrapped: CustomStringConvertible
-	{
+	
+	/// - Requires: One of the following in the `pattern` attribute:
+	/// `$0`, `$@`, `%@`, `##`
+	mutating func appendInterpolation <Wrapped: CustomStringConvertible> (
+		map value: Wrapped?,
+		_ pattern: String? = nil,
+		or fallback: NilReplacement? = nil
+	) {
 		value.map { value in
 			pattern.map { pattern in
-				let result = pattern
-					.replacingOccurrences(
-						of: Self.patternMatch,
-						with: "\(value)"
-					)
-				appendInterpolation(result)
+				appendInterpolation(pattern.replacingPatterns(with: value.description))
 			} ?? appendInterpolation(value)
 		} ?? fallback.map { fallback in
 			appendInterpolation(fallback)
@@ -108,32 +92,26 @@ public extension DefaultStringInterpolation {
 	
 	// MARK: Condition
 	
-	mutating func appendInterpolation<S>(
+	mutating func appendInterpolation <S: CustomStringConvertible> (
 		 _ value: S,
 		if condition: @autoclosure () -> Bool
-	)
-		where S: CustomStringConvertible
-	{
-		guard condition() else { return }
-		appendInterpolation(value)
+	) {
+		if condition() {
+			appendInterpolation(value)
+		}
 	}
 	
 	// MARK: Float Fraction Digits
 	
 	mutating func appendInterpolation<F: BinaryFloatingPoint>(_ value: F, f fractionDigits: Int) {
-		let formatter = NumberFormatter()
-		formatter.maximumFractionDigits = fractionDigits
-		
-		if let result = formatter.string(from: Double(value) as NSNumber) {
-			appendLiteral(result)
-		}
+		appendLiteral(Double(value).formatted(.number.precision(.fractionLength(fractionDigits))))
 	}
 	
 	// MARK: Spell a Number
 	
 	mutating func appendInterpolation<N: NSNumber>(
 		spell value: N,
-		locale: Locale
+		locale: Locale = .autoupdatingCurrent
 	) {
 		let formatter = NumberFormatter()
 		formatter.numberStyle = .spellOut
@@ -165,29 +143,49 @@ public extension DefaultStringInterpolation {
 		appendInterpolation(spell: NSNumber(value: value), locale: identifier)
 	}
 	
-	// MARK: Debug Encode
+	@inlinable mutating func appendInterpolation(spell value: UInt, locale: Locale = .autoupdatingCurrent) {
+		appendInterpolation(spell: NSNumber(value: value), locale: locale)
+	}
 	
-	mutating func appendInterpolation(json value: some Encodable) {
-		let encoder = JSONEncoder()
-		encoder.outputFormatting = .prettyPrinted
+	@inlinable mutating func appendInterpolation(spell value: UInt, locale identifier: String) {
+		appendInterpolation(spell: NSNumber(value: value), locale: identifier)
+	}
+	
+	// MARK: Encode JSON
+	
+	mutating func appendInterpolation(
+		json value: some Encodable,
+		encoder providedEncoder: JSONEncoder? = .none
+	) {
+		let encoder: JSONEncoder = providedEncoder ?? .prettyPrinted
 		
 		do {
-			let encoded = try encoder.encode(value)
-			let string = String(decoding: encoded, as: UTF8.self)
-			appendLiteral(string)
+			let jsonData = try encoder.encode(value)
+			if let jsonString = String(data: jsonData, encoding: .utf8) {
+				appendLiteral(jsonString)
+			} else {
+				let jsonString = String(decoding: jsonData, as: UTF8.self)
+				appendLiteral(jsonString)
+			}
 		} catch {
 			appendLiteral(error.localizedDescription)
 		}
 	}
 	
-	mutating func appendInterpolation(json value: Any?) {
-		let encoder = JSONEncoder()
-		encoder.outputFormatting = .prettyPrinted
-		
+	mutating func appendInterpolation(
+		json value: (any Sendable)?,
+		encoder providedEncoder: JSONEncoder? = .none
+	) {
+		let encoder: JSONEncoder = providedEncoder ?? .prettyPrinted
+
 		do {
-			let encoded = try encoder.encode(AnyEncodable(value))
-			let string = String(decoding: encoded, as: UTF8.self)
-			appendLiteral(string)
+			let jsonData = try encoder.encode(AnyEncodable(value))
+			if let jsonString = String(data: jsonData, encoding: .utf8) {
+				appendLiteral(jsonString)
+			} else {
+				let jsonString = String(decoding: jsonData, as: UTF8.self)
+				appendLiteral(jsonString)
+			}
 		} catch {
 			appendLiteral(error.localizedDescription)
 		}
@@ -201,7 +199,7 @@ public extension DefaultStringInterpolation {
 	}
 	
 	@available(*, deprecated, renamed: "appendInterpolation(json:)", message: "Renamed debug to json")
-	@inlinable mutating func appendInterpolation(debug value: Any?) {
+	@inlinable mutating func appendInterpolation(debug value: (any Sendable)?) {
 		appendInterpolation(json: value)
 	}
 }

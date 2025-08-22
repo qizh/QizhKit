@@ -35,7 +35,7 @@
 import Foundation
 
 public class Pluralize {
-    static let sharedInstance = Pluralize()
+	class var sharedInstance: Pluralize { Pluralize() }
     
     var uncountables:[String] = []
     var rules:[(rule: String, template: String)] = []

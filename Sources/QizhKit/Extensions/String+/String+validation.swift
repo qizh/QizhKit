@@ -27,12 +27,12 @@ public extension String {
 	@inlinable var isValidEmail: Bool { self.is(valid: .email) }
 	@inlinable var isValidYouTubeCode: Bool { self.is(valid: .youtubeVideoCode) }
 	// @available(iOSApplicationExtension, unavailable)
-	@inlinable var isValidURL: Bool {
-		URL(string: self)
-			.map { url in
-				UIApplication.shared.canOpenURL(url)
-			}
-			?? false
+	@inlinable @MainActor var isValidURL: Bool {
+		if let url = URL(string: self) {
+			UIApplication.shared.canOpenURL(url)
+		} else {
+			false
+		}
 	}
 }
 
@@ -48,6 +48,11 @@ public extension String {
 		rangeOfCharacter(from: set).isSet
 	}
 	
+	@inlinable func containsNo(_ set: CharacterSet) -> Bool {
+		rangeOfCharacter(from: set).isNotSet
+	}
+	
+	@available(*, deprecated, renamed: "containsNo(_:)", message: "Renamed to containsNo(_:) to avoid naming collisions with contains(_:)")
 	@inlinable func contains(no set: CharacterSet) -> Bool {
 		rangeOfCharacter(from: set).isNotSet
 	}
@@ -82,4 +87,21 @@ public extension String {
 	var emojiString: String { emojis.map { String($0) }.reduce("", +) }
 	var emojis: [Character] { filter { $0.isEmoji } }
 	var emojiScalars: [UnicodeScalar] { filter { $0.isEmoji }.flatMap { $0.unicodeScalars } }
+}
+
+// MARK: String + isJson
+
+extension String {
+	/// Returns true if the string can be parsed as JSON or JSON5.
+	public var isJson: Bool {
+		guard let data = self.withLinesNSpacesTrimmed.data(using: .utf8) else {
+			return false
+		}
+		do {
+			_ = try JSONSerialization.jsonObject(with: data, options: [.json5Allowed])
+			return true
+		} catch {
+			return false
+		}
+	}
 }

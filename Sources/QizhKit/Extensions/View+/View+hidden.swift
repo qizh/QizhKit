@@ -44,7 +44,7 @@ public extension View {
 }
 
 public extension View {
-	@inlinable func enabled(_ enabled: Bool) -> some View {
+	@inlinable func enabled(_ enabled: Bool = true) -> some View {
 		disabled(!enabled)
 	}
 }

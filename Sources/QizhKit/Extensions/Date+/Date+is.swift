@@ -82,6 +82,12 @@ public extension Int {
 	@inlinable var   hoursInterval: TimeInterval { TimeInterval.hour * double }
 	@inlinable var    daysInterval: TimeInterval { TimeInterval.day * double }
 	@inlinable var   weeksInterval: TimeInterval { TimeInterval.week * double }
+	/// `30.44` days
+	@inlinable var  monthsInterval: TimeInterval { TimeInterval.month * double }
+	/// `91.31` days
+	@inlinable var quarterInterval: TimeInterval { TimeInterval.quarter * double }
+	/// `365.25` days
+	@inlinable var   yearsInterval: TimeInterval { TimeInterval.year * double }
 }
 
 public extension Set where Element == Calendar.Component {

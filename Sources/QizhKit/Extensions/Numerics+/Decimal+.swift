@@ -38,10 +38,25 @@ public extension Decimal {
 	) -> String {
 		switch formatType {
 		case .string:
+			self.formatted(
+				.number
+					.precision(.fractionLength(0...2))
+					.locale(locale)
+			)
+			
+			/*
 			return NumberFormatter.decimal(position: context, for: locale)
 				.string(from: self)
 				.or("\(self)")
+			*/
 		case let .currency(code, alwaysShowFraction):
+			self.formatted(
+				.currency(code: code)
+				.locale(locale)
+				.precision(alwaysShowFraction ? .fractionLength(2) : .fractionLength(...2))
+			)
+			
+			/*
 			return NumberFormatter
 				.currency(
 					code,
@@ -51,10 +66,18 @@ public extension Decimal {
 				)
 				.string(from: self)
 				.or(format(as: .string, position: context, for: locale) + .space + code.uppercased())
+			*/
 		case .percent:
+			(self / 100).formatted(
+				.percent
+				.locale(locale)
+			)
+			
+			/*
 			return NumberFormatter.percent(position: context, for: locale)
 				.string(from: self / 100)
 				.or(format(as: .string, position: context, for: locale) + .percent)
+			*/
 		}
 	}
 	
@@ -67,25 +90,51 @@ public extension Decimal {
 
 // MARK: Round
 
-public extension Decimal {
-	mutating func round(_ scale: Int, _ roundingMode: NSDecimalNumber.RoundingMode) {
-		var localCopy = self
-		NSDecimalRound(&self, &localCopy, scale, roundingMode)
-	}
+extension NSDecimalNumber.RoundingMode: @retroactive CaseIterable {
+	public static let allCases: [Self] = [.plain, .down, .up, .bankers]
+}
 
-	func rounded(_ scale: Int, _ roundingMode: NSDecimalNumber.RoundingMode) -> Decimal {
-		var result = Decimal()
-		var localCopy = self
-		NSDecimalRound(&result, &localCopy, scale, roundingMode)
-		return result
+extension NSDecimalNumber.RoundingMode: @retroactive CustomStringConvertible {
+	public var description: String {
+		switch self {
+		case .plain: 		"Plain"
+		case .down: 		"Down"
+		case .up: 			"Up"
+		case .bankers: 		"Bankers"
+		@unknown default: 	"Unknown: \(self)"
+		}
+	}
+}
+
+extension Decimal {
+	public func rounded(
+		_ scale: Int = 0,
+		_ roundingMode: NSDecimalNumber.RoundingMode
+	) -> Decimal {
+		let roundingBehavior = NSDecimalNumberHandler(
+			roundingMode: roundingMode,
+			scale: Int16(scale),
+			raiseOnExactness: false,
+			raiseOnOverflow: false,
+			raiseOnUnderflow: false,
+			raiseOnDivideByZero: true
+		)
+		let decimalNumber = NSDecimalNumber(decimal: self)
+		let roundedDecimalNumber = decimalNumber.rounding(accordingToBehavior: roundingBehavior)
+		return roundedDecimalNumber.decimalValue
 	}
 	
-	mutating func round(toNearest: Decimal, _ roundingMode: NSDecimalNumber.RoundingMode) {
+	mutating public func round(
+		toNearest: Decimal,
+		_ roundingMode: NSDecimalNumber.RoundingMode
+	) {
 		self = (self / toNearest).rounded(0, roundingMode) * toNearest
 	}
 	
-	@inlinable
-	func rounded(toNearest: Decimal, _ roundingMode: NSDecimalNumber.RoundingMode) -> Decimal {
+	@inlinable public func rounded(
+		toNearest: Decimal,
+		_ roundingMode: NSDecimalNumber.RoundingMode
+	) -> Decimal {
 		(self / toNearest).rounded(0, roundingMode) * toNearest
 	}
 }

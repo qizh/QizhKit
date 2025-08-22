@@ -9,9 +9,29 @@
 import SwiftUI
 import UIKit
 
-public extension Image {
-	init(
+extension Image {
+	/*
+	@_disfavoredOverload
+	@available(*, deprecated, renamed: "init(editingSystemName:pointSize:weight:scale:tint:)", message: "Use `editingSystemName` instead")
+	public init(
 		systemName: String,
+		pointSize: CGFloat = 16,
+		weight: UIImage.SymbolWeight = .unspecified,
+		scale: UIImage.SymbolScale = .default,
+		tint: UIColor? = .none
+	) {
+		self.init(
+			editingSystemName: systemName,
+			pointSize: pointSize,
+			weight: weight,
+			scale: scale,
+			tint: tint
+		)
+	}
+	*/
+	
+	public init(
+		editingSystemName systemName: String,
 		pointSize: CGFloat = 16,
 		weight: UIImage.SymbolWeight = .unspecified,
 		scale: UIImage.SymbolScale = .default,

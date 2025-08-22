@@ -8,17 +8,19 @@
 
 import Foundation
 
-public extension Collection {
-	func next(after element: Element) -> Element? where Element: Equatable {
+public extension Collection where Element: Equatable,
+								  Element: Sendable {
+	
+	func next(after element: Element) -> Element? {
 		if let currentIndex = firstIndex(of: element),
-		   let nextIndex = index(currentIndex, offsetBy: .one, limitedBy: index(endIndex, offsetBy: .minusOne))
-		{
-			return self[nextIndex]
+		   let nextIndex = index(currentIndex, offsetBy: .one, limitedBy: index(endIndex, offsetBy: .minusOne)) {
+			self[nextIndex]
+		} else {
+			.none
 		}
-		return .none
 	}
 	
-	func previous(before element: Element) -> Element? where Element: Equatable {
+	func previous(before element: Element) -> Element? {
 		if let currentIndex = firstIndex(of: element),
 		   currentIndex != startIndex
 		{

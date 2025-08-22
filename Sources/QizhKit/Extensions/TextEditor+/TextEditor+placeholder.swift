@@ -8,11 +8,9 @@
 
 import SwiftUI
 
-@available(iOS 14.0, *)
 extension TextEditor {
 	/// Default `TextEditor` insets
-	@inlinable
-	public static var defaultTextEditorInsets: EdgeInsets {
+	@inlinable public static var defaultTextEditorInsets: EdgeInsets {
 		EdgeInsets(
 				 top: 8,
 			 leading: 4,
@@ -22,7 +20,6 @@ extension TextEditor {
 	}
 }
 
-@available(iOS 14.0, *)
 extension View {
 	/// `TextEditor` placeholder text placed under the editor
 	/// - Parameters:
@@ -34,9 +31,8 @@ extension View {
 	/// `.textEditorClearBackgroundAppearance()` view modifier required
 	/// to make it work on iOS 15 or earlier.
 	/// Add it in you main app view, and in preview provider view.
-	@inlinable
-	public func placeholder <Placeholder: View> (
-		_ placeholder: Placeholder,
+	@inlinable public func placeholder(
+		_ placeholder: some View,
 		alignment: Alignment = .topLeading,
 		editing text: String,
 		compact: Bool
@@ -59,14 +55,17 @@ extension View {
 	/// `.textEditorClearBackgroundAppearance()` view modifier required
 	/// to make it work on iOS 15 or earlier.
 	/// Add it in you main app view, and in preview provider view.
-	@inlinable
-	public func placeholder <Placeholder: View> (
-		_ placeholder: Placeholder,
+	@inlinable public func placeholder(
+		_ placeholder: some View,
 		alignment: Alignment = .topLeading,
 		visible: Bool,
 		compact: Bool
 	) -> some View {
-		self.placeholder(alignment: alignment, visible: visible, compact: compact) {
+		self.placeholder(
+			alignment: alignment,
+			visible: visible,
+			compact: compact
+		) {
 			placeholder
 		}
 	}
@@ -81,53 +80,26 @@ extension View {
 	/// `.textEditorClearBackgroundAppearance()` view modifier required
 	/// to make it work on iOS 15 or earlier.
 	/// Add it in you main app view, and in preview provider view.
-	public func placeholder <Placeholder: View> (
+	public func placeholder(
 		alignment: Alignment = .topLeading,
 		visible: Bool,
 		compact: Bool,
-		placeholder: () -> Placeholder
+		placeholder: () -> some View
 	) -> some View {
 		ZStack(alignment: alignment) {
 			self
-				.apply { editor in
-					if #available(iOS 16.0, *) {
-						editor.scrollContentBackground(.hidden)
-					} else {
-						editor
-					}
-				}
-				.padding(
-					compact
-						? -TextEditor.defaultTextEditorInsets
-						: .zero
-				)
+				.scrollContentBackground(.hidden)
+				.padding(compact ? -TextEditor.defaultTextEditorInsets : .zero)
 				.zIndex(20)
 			
 			if visible {
 				placeholder()
 					.foregroundPlaceholder()
-					.padding(
-						compact
-							? .zero
-							: TextEditor.defaultTextEditorInsets
-					)
+					.padding(compact ? .zero : TextEditor.defaultTextEditorInsets)
 					.zIndex(10)
-					.transition(.offset(x: 16), .opacity)
+					.transition(.offset(x: 16) + .opacity)
 			}
 		}
-		.animation(.spring(), value: visible)
-	}
-}
-
-extension View {
-	/// Modifies the global `UITextView` appearance
-	/// to set its `backgroundColor` to `.clear`
-	@inlinable
-	public func textEditorClearBackgroundAppearance() -> some View {
-		self.onAppear {
-			if #unavailable(iOS 16.0) {
-				UITextView.appearance().backgroundColor = .clear
-			}
-		}
+		.animation(.spring, value: visible)
 	}
 }

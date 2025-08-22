@@ -9,6 +9,10 @@
 import SwiftUI
 
 extension Bool {
+	public var emoji: Character {
+		self ? .checkmarkEmojiChar : .xmarkEmojiChar
+	}
+	
 	public var sign: Character {
 		self ? .boltChar : .xMarkChar
 	}
@@ -17,8 +21,14 @@ extension Bool {
 		self ? .checkMarkChar : .xMarkChar
 	}
 	
+	@MainActor
 	public var imageCircle: some View {
-		Image(systemName: self ? "checkmark.circle" : "xmark.circle")
-			.foregroundColor(self ? .green : .red)
+		if self {
+			Image(systemName: "checkmark.circle")
+				.foregroundStyle(.green)
+		} else {
+			Image(systemName: "xmark.circle")
+				.foregroundStyle(.red)
+		}
 	}
 }

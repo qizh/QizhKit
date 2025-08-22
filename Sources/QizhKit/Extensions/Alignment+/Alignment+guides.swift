@@ -13,6 +13,12 @@ public extension HorizontalAlignment {
 		static func defaultValue(in context: ViewDimensions) -> CGFloat { context[HorizontalAlignment.center] }
 	}
 	
+	private enum Middle: AlignmentID {
+		static func defaultValue(in context: ViewDimensions) -> CGFloat {
+			context[HorizontalAlignment.center]
+		}
+	}
+	
 	private enum LeadingSide: AlignmentID {
 		static func defaultValue(in context: ViewDimensions) -> CGFloat { context[.leading] }
 	}
@@ -22,11 +28,25 @@ public extension HorizontalAlignment {
 	}
 	
 	static let separator = HorizontalAlignment(Separator.self)
+	static let middle = HorizontalAlignment(Middle.self)
+	
 	static let leadingSide = HorizontalAlignment(LeadingSide.self)
 	static let trailingSide = HorizontalAlignment(TrailingSide.self)
 }
 
 public extension VerticalAlignment {
+	/*
+	private enum Separator: AlignmentID {
+		static func defaultValue(in context: ViewDimensions) -> CGFloat { context[VerticalAlignment.center] }
+	}
+	*/
+	
+	private enum Middle: AlignmentID {
+		static func defaultValue(in context: ViewDimensions) -> CGFloat {
+			context[VerticalAlignment.center]
+		}
+	}
+	
 	private enum BottomSide: AlignmentID {
 		static func defaultValue(in context: ViewDimensions) -> CGFloat { context[.bottom] }
 	}
@@ -43,8 +63,12 @@ public extension VerticalAlignment {
 		static func defaultValue(in context: ViewDimensions) -> CGFloat { context[.top] }
 	}
 	
+	// static let separator = VerticalAlignment(Separator.self)
+	static let middle = VerticalAlignment(Middle.self)
+	
 	static let topSide = VerticalAlignment(TopSide.self)
 	static let topEdge = VerticalAlignment(TopEdge.self)
+	
 	static let bottomSide = VerticalAlignment(BottomSide.self)
 	static let bottomEdge = VerticalAlignment(BottomEdge.self)
 }
@@ -56,6 +80,7 @@ public extension Alignment {
 	static let bottomEdge = Alignment(horizontal: .center, vertical: .bottomEdge)
 
 	static let separator = Alignment(horizontal: .separator, vertical: .center)
+	static let middle = Alignment(horizontal: .middle, vertical: .middle)
 	static let leadingSide = Alignment(horizontal: .leadingSide, vertical: .center)
 	static let trailingSide = Alignment(horizontal: .trailingSide, vertical: .center)
 }
@@ -72,4 +97,92 @@ extension View {
 	public func alignmentGuide(_ g: VerticalAlignment, value: CGFloat) -> some View {
 		alignmentGuide(g, computeValue: { _ in value })
 	}
+}
+
+// MARK: + Case Name
+
+extension VerticalAlignment {
+	@inlinable public var caseName: String {
+		switch self {
+		case .top: 					"top"
+		case .bottom: 				"bottom"
+		case .center: 				"center"
+		case .firstTextBaseline: 	"firstTextBaseline"
+		case .lastTextBaseline: 	"lastTextBaseline"
+			
+		case .topSide: 				"topSide"
+		case .topEdge: 				"topEdge"
+		case .bottomSide: 			"bottomSide"
+		case .bottomEdge: 			"bottomEdge"
+			
+		default: 					"unknown"
+		}
+	}
+	
+	@inlinable public var caseNameSimplified: String {
+		switch self {
+		case .top: 					"top"
+		case .bottom: 				"bottom"
+		case .center: 				.empty
+		case .firstTextBaseline: 	"firstTextBaseline"
+		case .lastTextBaseline: 	"lastTextBaseline"
+			
+		case .topSide: 				"topSide"
+		case .topEdge: 				"topEdge"
+		case .bottomSide: 			"bottomSide"
+		case .bottomEdge: 			"bottomEdge"
+			
+		default: 					.empty
+		}
+	}
+}
+
+extension HorizontalAlignment {
+	@inlinable public var caseName: String {
+		switch self {
+		case .leading: 				"leading"
+		case .trailing: 			"trailing"
+		case .center: 				"center"
+		
+		case .leadingSide: 			"leadingSide"
+		case .trailingSide: 		"trailingSide"
+		case .separator: 			"separator"
+			
+		default: 					"unknown"
+		}
+	}
+	
+	@inlinable public var caseNameSimplified: String {
+		switch self {
+		case .leading: 				"leading"
+		case .trailing: 			"trailing"
+		case .center: 				.empty
+		
+		case .leadingSide: 			"leadingSide"
+		case .trailingSide: 		"trailingSide"
+		case .separator: 			"separator"
+			
+		default: 					.empty
+		}
+	}
+}
+
+extension Alignment {
+	public var caseName: String {
+		"\(horizontal.caseNameSimplified)\(vertical.caseNameSimplified)".toCamelCase
+	}
+}
+
+// MARK: + Description
+
+extension VerticalAlignment: @retroactive CustomStringConvertible {
+	@inlinable public var description: String { "vertical.\(caseName)" }
+}
+
+extension HorizontalAlignment: @retroactive CustomStringConvertible {
+	@inlinable public var description: String { "horizontal.\(caseName)" }
+}
+
+extension Alignment: @retroactive CustomStringConvertible {
+	@inlinable public var description: String { "alignment.\(caseName)" }
 }

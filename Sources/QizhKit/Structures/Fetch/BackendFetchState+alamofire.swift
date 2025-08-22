@@ -70,14 +70,14 @@ extension DataResponse: FetchResponse {
 }
 
 public protocol DebugDetailsProvidingError {
-	var debugDetails: [String: Any] { get }
+	var debugDetails: [String: any Sendable] { get }
 }
 
-public struct FetchErrorDebugDetails: Codable {
+public struct FetchErrorDebugDetails: Codable, Sendable {
 	public private(set) var type: String? = .none
 	public private(set) var description: String = "No description"
-	@CodableAnyDictionary public private(set) var details: [String: Any] = .empty
-	@CodableAnyDictionary public private(set) var underlying: [String: Any] = .empty
+	@CodableAnyDictionary public private(set) var details: [String: any Sendable] = .empty
+	@CodableAnyDictionary public private(set) var underlying: [String: any Sendable] = .empty
 	public private(set) var af: AFResponseDebugDetails? = .none
 	
 	public init(of error: Error) {
@@ -117,7 +117,7 @@ public struct FetchErrorDebugDetails: Codable {
 		case .verboseError(let title, let description):
 			self.details = [
 				"title": title,
-				"description": description as Any
+				"description": description
 			]
 		case .api(let code, let message):
 			self.details = [
@@ -128,14 +128,24 @@ public struct FetchErrorDebugDetails: Codable {
 			self.details = [
 				"statement": statement,
 				"reason": reason,
-				"function": function as Any,
-				"file": file as Any,
-				"line": line as Any
+				"function": function,
+				"file": file,
+				"line": line
 			]
 		case .preconditionValidation(.illegalCharacters(let value)):
 			self.details = [
 				"type": "illegalCharacters",
 				"value": value
+			]
+		case let .preconditionValidation(.missingInput(input, details)):
+			self.details = [
+				"type": "missingInput",
+				"input": input,
+				"details": details,
+			]
+		case .preconditionValidation(.missingAuthentication):
+			self.details = [
+				"type": "missingAuthentication"
 			]
 		case .sign(let reason):
 			self.details = [
@@ -158,10 +168,34 @@ public struct FetchErrorDebugDetails: Codable {
 		case .unknown: ()
 		case .passwordResetTokenExpired: ()
 		case .notImplemented: ()
+		case let .doubleErrors(le as FetchError, re as FetchError):
+			self.underlying = [
+				"1": FetchErrorDebugDetails(of: le).description,
+				"2": FetchErrorDebugDetails(of: re).description,
+			]
+		case let .doubleErrors(le as DebugDetailsProvidingError, re as DebugDetailsProvidingError):
+			self.underlying = [
+				"1": le.debugDetails,
+				"2": re.debugDetails,
+			]
+		case .doubleErrors(_, let e as FetchError),
+			 .doubleErrors(let e as FetchError, _):
+			self.underlying = FetchErrorDebugDetails(of: e).asDictionary()
+		case .doubleErrors(_, let e as DebugDetailsProvidingError),
+			 .doubleErrors(let e as DebugDetailsProvidingError, _):
+			self.underlying = e.debugDetails
+		case .doubleErrors(let le, let re):
+			self.underlying = [
+				"description": [
+					"1": le.localizedDescription,
+					"2": re.localizedDescription,
+				]
+			]
+
 		}
 	}
 	
-	public struct AFResponseDebugDetails: Codable {
+	public struct AFResponseDebugDetails: Codable, Sendable {
 		public let request: String
 		public let requestBody: String
 		public let responseCode: Int?
@@ -171,7 +205,7 @@ public struct FetchErrorDebugDetails: Codable {
 //		public let networkDuration: String
 //		public let serializationDuration: String
 		public let result: String?
-		@CodableAnyDictionary public var underlying: [String: Any]
+		@CodableAnyDictionary public var underlying: [String: any Sendable]
 		public let error: String?
 
 		init(of response: FetchResponse) {

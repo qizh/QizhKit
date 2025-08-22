@@ -10,6 +10,7 @@ import SwiftUI
 import UIKit
 import SafariServices
 import BetterSafariView
+import QizhMacroKit
 
 // MARK: VC
 
@@ -69,19 +70,23 @@ public final class CooktourSafariViewController: UIViewController {
 
 public struct SafariButton<Content>: View where Content: View {
 	private let url: URL
-	private let tint: UIColor?
+	private let tint: Color?
 	private let content: Content
+	private let openStyle: SafariButtonOpenStyle
+	private let dismissButton: SFSafariViewController.DismissButtonStyle
 	private let isActive: Binding<Bool>?
 	private let onOpen: (() -> Void)?
 	private let onDismiss: (() -> Void)?
 	
 	@State private var isPresented = false
 	
-	@Environment(\.colorScheme) private var colorScheme: ColorScheme
+	@Environment(\.colorScheme) private var colorScheme
 	
 	public init(
 		opening url: URL,
-		tint: UIColor? = .none,
+		tintColor tint: Color?,
+		openStyle: SafariButtonOpenStyle = .push,
+		dismissButton: SFSafariViewController.DismissButtonStyle = .done,
 		isActive: Binding<Bool>? = .none,
 		onOpen: (() -> Void)? = .none,
 		onDismiss: (() -> Void)? = .none,
@@ -89,76 +94,75 @@ public struct SafariButton<Content>: View where Content: View {
 	) {
 		self.url = url
 		self.tint = tint
+		self.openStyle = openStyle
+		self.dismissButton = dismissButton
 		self.isActive = isActive
 		self.onOpen = onOpen
 		self.onDismiss = onDismiss
 		self.content = content()
 	}
 	
-	public init <S> (
-		_ title: S,
+	@inlinable public init(
+		title: Text,
 		opening url: URL,
-		tint: UIColor? = .none,
+		tintColor tint: Color?,
+		openStyle: SafariButtonOpenStyle = .push,
+		dismissButton: SFSafariViewController.DismissButtonStyle = .done,
 		isActive: Binding<Bool>? = .none,
 		onOpen: (() -> Void)? = .none,
 		onDismiss: (() -> Void)? = .none
-	) where S: StringProtocol, Content == Text {
-		self.url = url
-		self.tint = tint
-		self.isActive = isActive
-		self.onOpen = onOpen
-		self.onDismiss = onDismiss
-		self.content = Text(title)
+	) where Content == Text {
+		self.init(
+			opening: url,
+			tintColor: tint,
+			openStyle: openStyle,
+			dismissButton: dismissButton,
+			isActive: isActive,
+			onOpen: onOpen,
+			onDismiss: onDismiss,
+			content: {
+				title
+			}
+		)
 	}
 	
 	public var body: some View {
 		content
 			.button(action: openURL)
-			.safariView(
-				isPresented: isActive ?? $isPresented,
-				onDismiss: onDismiss
-			) {
-				BetterSafariView.SafariView(url: url)
-					.preferredControlAccentColor(tint.map(Color.init(uiColor:)))
-				/*
-				if let tint = tint, #available(iOS 14.0, *) {
-					return BetterSafariView.SafariView(url: url)
-						.preferredControlTintColor(tint)
-				} else {
-					return BetterSafariView.SafariView(url: url)
+			.apply { button in
+				switch openStyle {
+				case .push:
+					button
+						.safariView(
+							isPresented: isActive ?? $isPresented,
+							onDismiss: onDismiss
+						) {
+							BetterSafariView.SafariView(url: url)
+								.preferredControlAccentColor(tint)
+								.dismissButtonStyle(.close)
+						}
+				case .sheet:
+					button
+						.sheet(
+							isPresented: isActive ?? $isPresented,
+							onDismiss: onDismiss
+						) {
+							BetterSafariView.SafariView(url: url)
+								.preferredControlAccentColor(tint)
+						}
+				case .fullscreenCover:
+					button
+						.fullScreenCover(
+							isPresented: isActive ?? $isPresented,
+							onDismiss: onDismiss
+						) {
+							BetterSafariView.SafariView(url: url)
+								.preferredControlAccentColor(tint)
+						}
 				}
-				*/
 			}
 	}
 	
-	/*
-	public var body: some View {
-		if fullScreen, #available(iOS 14.0, *) {
-			content
-				.button(action: openURL)
-				.fullScreenCover(isPresented: isActive ?? $isPresented, content: safariView)
-		} else {
-			content
-				.button(action: openURL)
-				.sheet(isPresented: isActive ?? $isPresented, content: safariView)
-		}
-	}
-	
-	@ViewBuilder
-	private func safariView() -> some View {
-		if #available(iOS 14.0, *) {
-			SafariView(showing: url, title: title)
-				// .ignoresSafeArea(.container, edges: .top)
-				.environment(\.colorScheme, self.colorScheme)
-		} else {
-			SafariView(showing: url, title: title)
-				.edgesIgnoringSafeArea(.top)
-				.environment(\.colorScheme, self.colorScheme)
-		}
-	}
-	*/
-	
-	// @available(iOSApplicationExtension, unavailable)
 	private func openURL() {
 		UIApplication.shared
 			.open(
@@ -174,6 +178,21 @@ public struct SafariButton<Content>: View where Content: View {
 				}
 			}
 	}
+}
+
+@CaseName
+public enum SafariButtonOpenStyle: Hashable, Sendable, CaseIterable {
+	case push
+	case sheet
+	case fullscreenCover
+}
+
+extension SafariButtonOpenStyle: CustomStringConvertible {
+	@inlinable public var description: String { caseName }
+}
+
+extension SafariButtonOpenStyle: Identifiable {
+	@inlinable public var id: Self { self }
 }
 
 // MARK: View
@@ -231,21 +250,25 @@ extension URL {
 	}
 }
 
-public extension View {
+extension View {
 	@ViewBuilder
-	func asSafariButton(
+	public func asSafariButton(
 		opening url: URL?,
-		       tint: UIColor? = .none,
-		   isActive: Binding<Bool>? = .none,
-		     onOpen: (() -> Void)? = .none,
-		  onDismiss: (() -> Void)? = .none
+		tintColor tint: Color? = .none,
+		openStyle: SafariButtonOpenStyle = .push,
+		dismissButton: BetterSafariView.SafariView.DismissButtonStyle = .done,
+		isActive: Binding<Bool>? = .none,
+		onOpen: (() -> Void)? = .none,
+		onDismiss: (() -> Void)? = .none
 	) -> some View {
 		if let url = url?.withSupportedSafariScheme {
 			SafariButton(
-				  opening: url,
-				     tint: tint,
-				 isActive: isActive,
-				   onOpen: onOpen,
+				opening: url,
+				tintColor: tint,
+				openStyle: openStyle,
+				dismissButton: dismissButton,
+				isActive: isActive,
+				onOpen: onOpen,
 				onDismiss: onDismiss
 			) {
 				self
@@ -255,37 +278,9 @@ public extension View {
 		}
 	}
 	
-	/*
 	@ViewBuilder
-	func asSafariButton(
-		opening url: URL?,
-			  title: String? = .none,
-		   isActive: Binding<Bool>? = .none,
-		  onDismiss: (() -> Void)? = .none
-	) -> some View {
-		if let url = url?.withSupportedSafariScheme {
-			self.safariView(
-				isPresented: <#T##Binding<Bool>#>,
-				onDismiss: <#T##(() -> Void)?##(() -> Void)?##() -> Void#>,
-				content: <#T##() -> SafariView#>
-			)
-			SafariButton(
-				 opening: url,
-				   title: title,
-				isActive: isActive
-			) {
-				self
-			}
-		} else {
-			self
-		}
-	}
-	*/
-
-	@available(iOS 14.0, *)
-	@ViewBuilder
-	func asLink(opening url: URL?) -> some View {
-		if let url = url {
+	public func asLink(opening url: URL?) -> some View {
+		if let url {
 			Link(destination: url) {
 				self
 			}

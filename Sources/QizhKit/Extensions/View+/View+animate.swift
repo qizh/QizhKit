@@ -8,13 +8,14 @@
 
 import SwiftUI
 
-public extension View {
-	@inlinable
-	func animate <Value: Equatable> (
+extension View {
+	// @inlinable
+	public func animate <Value> (
 		using anim: Animation = .easeInOut(duration: 0.3),
 		updating value: Value,
-		_ action: @escaping () -> Void
-	) -> some View {
+		_ action: @escaping @Sendable () -> Void
+	) -> some View where Value: Equatable,
+						 Value: Sendable {
 		animation(anim, value: value)
 		.onAppear {
 			execute {
@@ -30,8 +31,9 @@ public extension View {
 		*/
     }
 	
+	#if swift(<6.0)
 	@inlinable
-	func animate <Value: Equatable, Root>(
+	public func animate <Value: Equatable, Root>(
 //		assigning value: @escaping @autoclosure () -> Value,
 		assigning value: Value,
 		to keyPath: ReferenceWritableKeyPath<Root, Value>,
@@ -50,7 +52,7 @@ public extension View {
     }
 	
 	@inlinable
-	func animateForever <Value: Equatable> (
+	public func animateForever <Value: Equatable> (
 		using anim: Animation = Animation.easeInOut(duration: 0.3),
 		autoreverses: Bool = false,
 		updating value: Value,
@@ -78,7 +80,7 @@ public extension View {
     }
 	
 	@inlinable
-	func animateForever <Value: Equatable, Root> (
+	public func animateForever <Value: Equatable, Root> (
 //		assigning value: @escaping @autoclosure () -> Value,
 		assigning value: Value,
 		to keyPath: ReferenceWritableKeyPath<Root, Value>,
@@ -96,20 +98,34 @@ public extension View {
 			}
 		}
 	}
+	#endif
 	
-	@inlinable
-	func animateForever <Value: Equatable> (
+	/// Adds `repeatForever(autoreverses:)` for any provided animation
+	// @inlinable
+	public func animateForever <Value> (
 		assigning value: Value,
 		to binding: Binding<Value>,
 		using anim: Animation = .linear(duration: 1),
 		autoreverses: Bool = false
-	) -> some View {
+	) -> some View where Value: Equatable {
 		animation(
 			anim.repeatForever(autoreverses: autoreverses),
 			value: value
 		)
 		.onAppear {
 			binding.wrappedValue = value
+		}
+	}
+	
+	/// You should manually add `repeatForever(autoreverses:)` on your own
+	public func animate <Value> (
+		assigning value: @escaping @autoclosure @Sendable @MainActor () -> Value,
+		to binding: Binding<Value>,
+		using anim: Animation = .linear(duration: 1),
+	) -> some View where Value: Equatable, Value: Sendable {
+		 animation(anim, value: value())
+		.onAppear {
+			binding.wrappedValue = value()
 		}
 	}
 }
@@ -140,18 +156,18 @@ extension View {
 	}
 }
 
-public extension AnyTransition {
-	static func + (l: AnyTransition, r: AnyTransition) -> AnyTransition {
-		l.combined(with: r)
+extension AnyTransition {
+	public static func + (lhs: AnyTransition, rhs: AnyTransition) -> AnyTransition {
+		lhs.combined(with: rhs)
 	}
 }
 
-public extension RangeReplaceableCollection where Element == AnyTransition {
-	func combined() -> AnyTransition? {
+extension RangeReplaceableCollection where Element == AnyTransition {
+	public func combined() -> AnyTransition? {
 		if let base = first {
-			return self.dropFirst().reduce(base, +)
+			self.dropFirst().reduce(base, +)
 		} else {
-			return .none
+			.none
 		}
 	}
 }

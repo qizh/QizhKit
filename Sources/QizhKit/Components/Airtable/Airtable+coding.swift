@@ -8,6 +8,8 @@
 
 import Foundation
 
+// MARK: Date Formatter
+
 public extension DateFormatter {
 	static let airtable: DateFormatter = {
 		let formatter = DateFormatter()
@@ -28,6 +30,8 @@ public extension DateFormatter {
 	}()
 }
 
+// MARK: Encoder
+
 public extension JSONEncoder {
 	static let airtable: JSONEncoder = {
 		let encoder = JSONEncoder()
@@ -42,33 +46,35 @@ public extension JSONEncoder {
 		encoder.dateEncodingStrategy = .formatted(.airtable)
 		return encoder
 	}()
+	
+	static let prettyPrinted: JSONEncoder = {
+		let encoder = JSONEncoder()
+		encoder.outputFormatting = .prettyPrinted
+		return encoder
+	}()
 }
+
+// MARK: Decoder
 
 public extension JSONDecoder {
 	static let airtable: JSONDecoder = {
 		let decoder = JSONDecoder()
 		decoder.dateDecodingStrategy = .formatted(.airtable)
-		if #available(iOS 15.0, *) {
-			decoder.allowsJSON5 = true
-		}
+		decoder.allowsJSON5 = true
 		return decoder
 	}()
 	
 	static let rails: JSONDecoder = {
 		let decoder = JSONDecoder()
 		decoder.dateDecodingStrategy = .formatted(.airtable)
-		if #available(iOS 15.0, *) {
-			decoder.allowsJSON5 = true
-		}
+		decoder.allowsJSON5 = true
 		return decoder
 	}()
 	
 	static let graphQL: JSONDecoder = {
 		let decoder = JSONDecoder()
 		decoder.dateDecodingStrategy = .formatted(.graphQL)
-		if #available(iOS 15.0, *) {
-			decoder.allowsJSON5 = true
-		}
+		decoder.allowsJSON5 = true
 		return decoder
 	}()
 }

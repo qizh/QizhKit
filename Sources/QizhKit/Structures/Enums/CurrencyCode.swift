@@ -27,6 +27,34 @@ public enum CurrencyCode:
 	case uah = "UAH"
 	case thb = "THB"
 	
+	public static func symbol(for currencyCode: String, locale: Locale = .current) -> String? {
+		let style = FloatingPointFormatStyle<Double>.Currency(code: currencyCode)
+			.locale(locale)
+		
+		// Format "0.00" (depending on the locale) to reveal symbol patterns
+		let formattedZero = 0.0.formatted(style)
+		
+		// Identify locale separators so we can strip them out
+		let decimalSeparator = locale.decimalSeparator ?? "."
+		let groupingSeparator = locale.groupingSeparator ?? ","
+		
+		// Build a character set that includes digits, decimal/grouping separators, and whitespace
+		var charsToRemove = CharacterSet.decimalDigits
+		charsToRemove.insert(charactersIn: decimalSeparator)
+		charsToRemove.insert(charactersIn: groupingSeparator)
+		charsToRemove.formUnion(.whitespacesAndNewlines)
+		
+		// Filter out everything in that set, leaving the symbol or symbol-like text
+		let symbolScalars = formattedZero.unicodeScalars.filter { scalar in
+			!charsToRemove.contains(scalar)
+		}
+		
+		// Clean up leading or trailing whitespace
+		let symbol = String(symbolScalars).trimmingCharacters(in: .whitespacesAndNewlines)
+		return symbol.isEmpty ? nil : symbol
+	}
+	
+	/*
 	private static var symbols: [String: String] = .empty
 	public static func symbol(for code: String) -> String? {
 		guard code.count == 3 else { return nil }
@@ -56,7 +84,7 @@ public enum CurrencyCode:
 		by code: String
 	) -> String? {
 		let locale = Locale(identifier: id)
-		return code == locale.currencyCode
+		return code == locale.currency?.identifier
 			? locale.currencySymbol
 			: nil
 	}
@@ -64,7 +92,9 @@ public enum CurrencyCode:
 	public var symbol: String? {
 		CurrencyCode.symbol(for: rawValue)
 	}
+	*/
 	
+	/*
 	@inlinable public func formatter(
 		position context: Formatter.Context,
 		for locale: Locale,
@@ -77,8 +107,11 @@ public enum CurrencyCode:
 			alwaysShowFraction: alwaysShowFraction
 		)
 	}
+	*/
 	
+	/*
 	fileprivate static var formatters = [String: NumberFormatter]()
+	
 	public static func formatter(
 		currency code: String,
 		position context: Formatter.Context,
@@ -100,9 +133,10 @@ public enum CurrencyCode:
 			return formatter
 		}
 	}
+	*/
 	
-	fileprivate static var roundingScales: [String: Int] = .empty
-	public static var isoFormatter: NumberFormatter = {
+	// fileprivate static var roundingScales: [String: Int] = .empty
+	public static let isoFormatter: NumberFormatter = {
 		let formatter = NumberFormatter()
 		formatter.numberStyle = .currencyISOCode
 		return formatter
@@ -122,6 +156,8 @@ public extension AnyCurrencyCode {
 	static let thb = Self(.thb)
 	
 	@inlinable var code: String { rawValue.uppercased() }
+	
+	/*
 	func formatter(
 		position context: Formatter.Context,
 		for locale: Locale,
@@ -134,7 +170,9 @@ public extension AnyCurrencyCode {
 			alwaysShowFraction: alwaysShowFraction
 		)
 	}
+	*/
 	
+	/*
 	@inlinable func string(
 		for price: NSNumber,
 		position context: Formatter.Context,
@@ -149,6 +187,7 @@ public extension AnyCurrencyCode {
 		.string(from: price)
 		.or("\(price) \(code)")
 	}
+	*/
 	
 	@inlinable func string(
 		for price: Decimal,
@@ -156,14 +195,28 @@ public extension AnyCurrencyCode {
 		in locale: Locale,
 		alwaysShowFraction: Bool
 	) -> String {
+		price
+			.formatted(
+				.currency(code: code)
+				.locale(locale)
+				.precision(
+					alwaysShowFraction
+					? .fractionLength(roundingScale)
+					: .fractionLength(0...roundingScale)
+				)
+			)
+		
+		/*
 		string(
 			for: price.number,
 			position: context,
 			in: locale,
 			alwaysShowFraction: alwaysShowFraction
 		)
+		*/
 	}
 	
+	/*
 	@inlinable func string(
 		for price: Double,
 		position context: Formatter.Context,
@@ -177,20 +230,15 @@ public extension AnyCurrencyCode {
 			alwaysShowFraction: alwaysShowFraction
 		)
 	}
+	*/
 	
 	@inlinable var symbol: String? {
 		CurrencyCode.symbol(for: rawValue)
 	}
 	
 	var roundingScale: Int {
-		let code = self.code.uppercased()
-		if let scale = CurrencyCode.roundingScales[code] {
-			return scale
-		}
 		let formatter = CurrencyCode.isoFormatter
-		formatter.currencyCode = code
-		let scale = formatter.maximumFractionDigits
-		CurrencyCode.roundingScales[code] = scale
-		return scale
+		formatter.currencyCode = code.uppercased()
+		return formatter.maximumFractionDigits
 	}
 }

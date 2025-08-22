@@ -9,10 +9,11 @@
 import SwiftUI
 import Combine
 
+/*
 // MARK: onChange
 
-@available(iOS 14.0, *)
 extension View {
+	@_disfavoredOverload
 	@inlinable public func onChange <Value: Equatable> (
 		of value: Value,
 		perform action: @escaping () -> Void
@@ -22,12 +23,24 @@ extension View {
 			perform: { _ in action() }
 		)
 	}
+	
+	@_disfavoredOverload
+	@available(iOS, introduced: 17, message: "Backward compatibility for iOS 17 of iOS 16 implementation")
+	@inlinable public func onChange <Value: Equatable> (
+		of value: Value,
+		perform action: @escaping (Value) -> Void
+	) -> some View {
+		onChange(of: value, initial: false) { oldValue, newValue in
+			action(newValue)
+		}
+	}
 }
+*/
 
 // MARK: onReceive
 
-public extension View {
-	@inlinable func onReceive<P>(
+extension View {
+	@inlinable public func onReceive<P>(
 		_ publisher: P,
 		perform action: @escaping () -> Void
 	) -> some View
@@ -43,15 +56,14 @@ public extension View {
 		)
 	}
 	
-	@inlinable func onReceiveDefined<OptionalValuePublisher, Value>(
+	@inlinable public func onReceiveDefined<OptionalValuePublisher, Value>(
 		_ publisher: OptionalValuePublisher,
-		perform action: @escaping (Value) -> Void,
+		perform action: @escaping @Sendable (Value) -> Void,
 		flow: ExecutionFlow = .current
-	) -> some View
-		where
-			OptionalValuePublisher: Publisher,
-			OptionalValuePublisher.Output == Value?,
-			OptionalValuePublisher.Failure == Never
+	) -> some View where OptionalValuePublisher: Publisher,
+						 OptionalValuePublisher.Output == Value?,
+						 OptionalValuePublisher.Failure == Never,
+						 Value: Sendable
 	{
 		onReceive(publisher) { optionalValue in
 			optionalValue.map { value in
@@ -60,15 +72,13 @@ public extension View {
 		}
 	}
 	
-	@inlinable func onReceiveDefined<OptionalValuePublisher, Value>(
+	@inlinable public func onReceiveDefined<OptionalValuePublisher, Value>(
 		_ publisher: OptionalValuePublisher,
-		perform action: @escaping () -> Void,
+		perform action: @escaping @Sendable () -> Void,
 		flow: ExecutionFlow = .current
-	) -> some View
-		where
-			OptionalValuePublisher: Publisher,
-			OptionalValuePublisher.Output == Value?,
-			OptionalValuePublisher.Failure == Never
+	) -> some View where OptionalValuePublisher: Publisher,
+						 OptionalValuePublisher.Output == Value?,
+						 OptionalValuePublisher.Failure == Never
 	{
 		onReceive(publisher) { optionalValue in
 			optionalValue.map { _ in
@@ -77,15 +87,14 @@ public extension View {
 		}
 	}
 	
-	@inlinable func onReceiveValue<StatePublisher, Value>(
+	@inlinable public func onReceiveValue<StatePublisher, Value>(
 		_ publisher: StatePublisher,
-		perform action: @escaping (Value) -> Void,
+		perform action: @escaping @Sendable (Value) -> Void,
 		flow: ExecutionFlow = .current
-	) -> some View
-		where
-			StatePublisher: Publisher,
-			StatePublisher.Output == BackendFetchState<Value>,
-			StatePublisher.Failure == Never
+	) -> some View where StatePublisher: Publisher,
+						 StatePublisher.Output == BackendFetchState<Value>,
+						 StatePublisher.Failure == Never,
+						 Value: Sendable
 	{
 		onReceive(publisher) { state in
 			state.value.map { value in
@@ -94,16 +103,15 @@ public extension View {
 		}
 	}
 	
-	func onReceiveFirstValue<StatePublisher, Value>(
+	public func onReceiveFirstValue<StatePublisher, Value>(
 		_ publisher: StatePublisher,
-		perform action: @escaping (Value.Element) -> Void,
+		perform action: @escaping @Sendable (Value.Element) -> Void,
 		_ flow: ExecutionFlow = .current
-	) -> some View
-		where
-		Value: Collection,
-		StatePublisher: Publisher,
-		StatePublisher.Output == BackendFetchState<Value>,
-		StatePublisher.Failure == Never
+	) -> some View where Value: Collection,
+						 Value.Element: Sendable,
+						 StatePublisher: Publisher,
+						 StatePublisher.Output == BackendFetchState<Value>,
+						 StatePublisher.Failure == Never
 	{
 		onReceive(publisher) { state in
 			state.first.map { first in
@@ -112,9 +120,9 @@ public extension View {
 		}
 	}
 	
-	func onReceiveFirstValue<StatePublisher, Value>(
+	public func onReceiveFirstValue<StatePublisher, Value>(
 		_ publisher: StatePublisher,
-		perform action: @escaping () -> Void,
+		perform action: @escaping @Sendable () -> Void,
 		_ flow: ExecutionFlow = .current
 	) -> some View
 		where
@@ -132,8 +140,9 @@ public extension View {
 	
 	// MARK: Assign
 	
+	#if swift(<6.0)
 //	@inlinable
-	func assign<NonFailingPublisher, Root, Value>(
+	public func assign<NonFailingPublisher, Root, Value>(
 		   _ publisher: NonFailingPublisher,
 		    to keyPath: ReferenceWritableKeyPath<Root, Value>,
 		     on object: Root,
@@ -157,7 +166,7 @@ public extension View {
 	}
 	
 //	@inlinable
-	func assign<NonFailingPublisher, Root, Value>(
+	public func assign<NonFailingPublisher, Root, Value>(
 		   _ publisher: NonFailingPublisher,
 		    to keyPath: ReferenceWritableKeyPath<Root, Value?>,
 		     on object: Root,
@@ -180,7 +189,7 @@ public extension View {
 	}
 	
 //	@inlinable
-	func assignValue<StatePublisher, Value, Root>(
+	public func assignValue<StatePublisher, Value, Root>(
 		_ publisher: StatePublisher,
 		to keyPath: ReferenceWritableKeyPath<Root, Value>,
 		on object: Root,
@@ -205,7 +214,7 @@ public extension View {
 	}
 	
 //	@inlinable
-	func assignValue<StatePublisher, Value, Root>(
+	public func assignValue<StatePublisher, Value, Root>(
 		_ publisher: StatePublisher,
 		to keyPath: ReferenceWritableKeyPath<Root, Value?>,
 		on object: Root,
@@ -230,7 +239,7 @@ public extension View {
 	}
 	
 //	@inlinable
-	func assignFirstValue<StatePublisher, Value, Root>(
+	public func assignFirstValue<StatePublisher, Value, Root>(
 		_ publisher: StatePublisher,
 		to keyPath: ReferenceWritableKeyPath<Root, Value.Element>,
 		on object: Root,
@@ -256,7 +265,7 @@ public extension View {
 	}
 	
 //	@inlinable
-	func assignFirstValue<StatePublisher, Value, Root>(
+	public func assignFirstValue<StatePublisher, Value, Root>(
 		_ publisher: StatePublisher,
 		to keyPath: ReferenceWritableKeyPath<Root, Value.Element?>,
 		on object: Root,
@@ -280,53 +289,74 @@ public extension View {
 			}
 		}
 	}
+	#endif
 	
 	// MARK: Assign Binding
 	
-	func assign <P, Value> (
+	public func assign <P, Value> (
 		   _ publisher: P,
 			to binding: Binding<Value>,
 		when condition: Bool = true,
 		with animation: Animation? = .none,
 				  flow: ExecutionFlow = .current
-	) -> some View
-		where
-		P: Publisher,
-		P.Output == Value,
-		P.Failure == Never
+	) -> some View where P: Publisher,
+						 P.Output == Value,
+						 P.Failure == Never,
+						 Value: Sendable
 	{
 		onReceive(publisher) { value in
 			guard condition else { return }
-			var closure: () -> Void = { binding.wrappedValue = value }
-			if let animation = animation { closure = { withAnimation(animation, closure) } }
-			flow.proceed(with: closure)
+			
+			let closure: @Sendable () -> Void = {
+				binding.wrappedValue = value
+			}
+			
+			flow.proceed {
+				if let animation {
+					withAnimation(animation) {
+						closure()
+					}
+				} else {
+					closure()
+				}
+			}
 		}
 	}
 	
-	func assign <P, Value> (
+	public func assign <P, Value> (
 		   _ publisher: P,
 			to binding: Binding<Value?>,
 		when condition: Bool = true,
 		with animation: Animation? = .none,
 				  flow: ExecutionFlow = .current
-	) -> some View
-		where
-		P: Publisher,
-		P.Output == Value,
-		P.Failure == Never
+	) -> some View where P: Publisher,
+						 P.Output == Value,
+						 P.Failure == Never,
+						 Value: Sendable
 	{
 		onReceive(publisher) { value in
 			guard condition else { return }
-			var closure: () -> Void = { binding.wrappedValue = value }
-			if let animation = animation { closure = { withAnimation(animation, closure) } }
-			flow.proceed(with: closure)
+			
+			let closure: @Sendable () -> Void = {
+				binding.wrappedValue = value
+			}
+			
+			flow.proceed {
+				if let animation {
+					withAnimation(animation) {
+						closure()
+					}
+				} else {
+					closure()
+				}
+			}
 		}
 	}
 
 	// MARK: on (Dis) Appear
 	
 	@ViewBuilder
-	func whenAppear(
+	public func whenAppear(
 		perform action: (() -> Void)? = nil
 	) -> some View {
 		switch action {
@@ -336,7 +366,7 @@ public extension View {
 	}
 	
 	@ViewBuilder
-	func whenAppear(
+	public func whenAppear(
 		if condition: Bool,
 		perform action: (() -> Void)? = nil
 	) -> some View {
@@ -347,25 +377,35 @@ public extension View {
 		}
 	}
 	
-	@inlinable func whenAppear(perform action: @escaping () -> Void, in ms: Int) -> some View {
+	@inlinable public func whenAppear(
+		perform action: @escaping @Sendable @MainActor () -> Void,
+		in ms: Int
+	) -> some View {
 		onAppear {
 			execute(in: ms, action)
 		}
 	}
 	
-	@inlinable func whenAppear(in ms: Int, _ action: @escaping () -> Void) -> some View {
+	@inlinable public func whenAppear(
+		in ms: Int,
+		_ action: @escaping @Sendable @MainActor () -> Void
+	) -> some View {
 		onAppear {
 			execute(in: ms, action)
 		}
 	}
 	
-	@inlinable func onDisappear(in ms: Int, _ action: @escaping () -> Void) -> some View {
+	@inlinable public func onDisappear(
+		in ms: Int,
+		_ action: @escaping @Sendable @MainActor () -> Void
+	) -> some View {
 		onDisappear {
 			execute(in: ms, action)
 		}
 	}
 	
-	@inlinable func whenAppear <Value, Root> (
+	#if swift(<6.0)
+	@inlinable public func whenAppear <Value, Root> (
 		when cond: Bool = true,
 	  assign  val: @autoclosure @escaping () -> Value,
 		  to  key: ReferenceWritableKeyPath<Root, Value>,
@@ -403,45 +443,71 @@ public extension View {
 			*/
 		}
 	}
+	#endif
 	
-	func whenAppear <Value> (
+	public func whenAppear <Value> (
 		when condition: Bool = true,
-	  assign     value: @autoclosure @escaping () -> Value,
+		assign   value: @autoclosure @escaping @Sendable () -> Value,
 		  to    target: Binding<Value>,
 		with animation: Animation? = .none,
 				  flow: ExecutionFlow = .current
-	) -> some View {
+	) -> some View where Value: Sendable {
 		onAppear {
 			guard condition else { return }
-			var command: () -> Void = { target.wrappedValue = value() }
-			if let animation = animation { command = { withAnimation(animation, command) } }
-			flow.proceed(with: command)
+			
+			let closure: @Sendable () -> Void = {
+				target.wrappedValue = value()
+			}
+			
+			flow.proceed {
+				if let animation {
+					withAnimation(animation) {
+						closure()
+					}
+				} else {
+					closure()
+				}
+			}
 		}
 	}
 	
-	func onAppear <Value> (
+	public func onAppear <Value> (
 		when condition: Bool = true,
-	  assign     value: @autoclosure @escaping () -> Value?,
+	  assign     value: @autoclosure @escaping @Sendable () -> Value?,
 		  to    target: Binding<Value>,
 		with animation: Animation? = .none,
 				  flow: ExecutionFlow = .current
-	) -> some View {
+	) -> some View where Value: Sendable {
 		onAppear {
 			guard condition else { return }
-			var command: () -> Void = { if let value = value() { target.wrappedValue = value } }
-			if let animation = animation { command = { withAnimation(animation, command) } }
-			flow.proceed(with: command)
+			
+			let closure: @Sendable () -> Void = {
+				if let value = value() {
+					target.wrappedValue = value
+				}
+			}
+			
+			flow.proceed {
+				if let animation {
+					withAnimation(animation) {
+						closure()
+					}
+				} else {
+					closure()
+				}
+			}
 		}
 	}
 	
-	func onDisappear <Value, Root> (
+	#if swift(<6.0)
+	public func onDisappear <Value, Root> (
 		  when cond: Bool = true,
-		assign  val: @autoclosure @escaping () -> Value,
+		assign  val: @autoclosure @escaping @Sendable () -> Value,
 			to  key: ReferenceWritableKeyPath<Root, Value>,
 		    on root: Root,
 		  with anim: Animation? = .none,
 		       flow: ExecutionFlow = .current
-	) -> some View {
+	) -> some View where Value: Sendable {
 		onDisappear {
 			guard cond else { return }
 			var exe: () -> Void = { root[keyPath: key] = val() }
@@ -449,72 +515,117 @@ public extension View {
 			flow.proceed(with: exe)
 		}
 	}
+	#endif
 	
 	// MARK: > Assign Binding
 	
-	func onAppear <Value> (
+	public func onAppear <Value> (
 		  when cond: Bool = true,
-		assign  val: @autoclosure @escaping () -> Value,
+		assign  val: @autoclosure @escaping @Sendable () -> Value,
 		 to binding: Binding<Value>,
 		  with anim: Animation? = .none,
 			   flow: ExecutionFlow = .current
-	) -> some View {
+	) -> some View where Value: Sendable {
 		onAppear {
 			guard cond else { return }
-			var exe: () -> Void = { binding.wrappedValue = val() }
-			if let ani = anim { exe = { withAnimation(ani, exe) } }
-			flow.proceed(with: exe)
+			
+			let closure: @Sendable () -> Void = {
+				binding.wrappedValue = val()
+			}
+			
+			flow.proceed {
+				if let anim {
+					withAnimation(anim) {
+						closure()
+					}
+				} else {
+					closure()
+				}
+			}
 		}
 	}
 	
-	func onDisappear <Value> (
+	public func onDisappear <Value> (
 		  when cond: Bool = true,
-		assign  val: @autoclosure @escaping () -> Value,
+		assign  val: @autoclosure @escaping @Sendable () -> Value,
 		 to binding: Binding<Value>,
 		  with anim: Animation? = .none,
 			   flow: ExecutionFlow = .current
-	) -> some View {
+	) -> some View where Value: Sendable {
 		onDisappear {
 			guard cond else { return }
-			var exe: () -> Void = { binding.wrappedValue = val() }
-			if let ani = anim { exe = { withAnimation(ani, exe) } }
-			flow.proceed(with: exe)
+			
+			let closure: @Sendable () -> Void = {
+				binding.wrappedValue = val()
+			}
+			
+			flow.proceed {
+				if let anim {
+					withAnimation(anim) {
+						closure()
+					}
+				} else {
+					closure()
+				}
+			}
 		}
 	}
 	
 	// MARK: > Reset Binding<Optional>
 	
-	func onAppear <Value> (
+	public func onAppear <Value> (
 			when cond: Bool = true,
 		reset binding: Binding<Value?>,
 			with anim: Animation? = .none,
 				 flow: ExecutionFlow = .current
-	) -> some View {
+	) -> some View where Value: Sendable {
 		onAppear {
 			guard cond else { return }
-			var exe: () -> Void = { binding.wrappedValue = .none }
-			if let ani = anim { exe = { withAnimation(ani, exe) } }
-			flow.proceed(with: exe)
+			
+			let closure: @Sendable () -> Void = {
+				binding.wrappedValue = .none
+			}
+			
+			flow.proceed {
+				if let anim {
+					withAnimation(anim) {
+						closure()
+					}
+				} else {
+					closure()
+				}
+			}
 		}
 	}
 	
-	func onDisappear <Value> (
+	public func onDisappear <Value> (
 		    when cond: Bool = true,
 		reset binding: Binding<Value?>,
 		    with anim: Animation? = .none,
 			     flow: ExecutionFlow = .current
-	) -> some View {
+	) -> some View where Value: Sendable {
 		onDisappear {
 			guard cond else { return }
-			var exe: () -> Void = { binding.wrappedValue = .none }
-			if let ani = anim { exe = { withAnimation(ani, exe) } }
-			flow.proceed(with: exe)
+			
+			let closure: @Sendable () -> Void = {
+				binding.wrappedValue = .none
+			}
+			
+			flow.proceed {
+				if let anim {
+					withAnimation(anim) {
+						closure()
+					}
+				} else {
+					closure()
+				}
+			}
 		}
 	}
 	
 	// MARK: > Toggle Binding<Bool>
 	
-	func onAppear(
+	public func onAppear(
 			 when cond: Bool = true,
 		toggle binding: Binding<Bool>,
 			 with anim: Animation? = .none,
@@ -522,13 +633,24 @@ public extension View {
 	) -> some View {
 		onAppear {
 			guard cond else { return }
-			var exe: () -> Void = { binding.toggle() }
-			if let ani = anim { exe = { withAnimation(ani, exe) } }
-			flow.proceed(with: exe)
+			
+			let closure: @Sendable () -> Void = {
+				binding.toggle()
+			}
+			
+			flow.proceed {
+				if let anim {
+					withAnimation(anim) {
+						closure()
+					}
+				} else {
+					closure()
+				}
+			}
 		}
 	}
 	
-	func onDisappear(
+	public func onDisappear(
 			 when cond: Bool = true,
 		toggle binding: Binding<Bool>,
 			 with anim: Animation? = .none,
@@ -536,21 +658,32 @@ public extension View {
 	) -> some View {
 		onDisappear {
 			guard cond else { return }
-			var exe: () -> Void = { binding.toggle() }
-			if let ani = anim { exe = { withAnimation(ani, exe) } }
-			flow.proceed(with: exe)
+			
+			let closure: @Sendable () -> Void = {
+				binding.toggle()
+			}
+			
+			flow.proceed {
+				if let anim {
+					withAnimation(anim) {
+						closure()
+					}
+				} else {
+					closure()
+				}
+			}
 		}
 	}
 	
 	// MARK: Print
 	
-	func onAppear(print message: String) -> some View {
+	public func onAppear(print message: String) -> some View {
 		onAppear(perform: {
 			print(message)
 		})
 	}
 	
-	func onDisappear(print message: String) -> some View {
+	public func onDisappear(print message: String) -> some View {
 		onDisappear(perform: {
 			print(message)
 		})

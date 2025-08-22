@@ -11,7 +11,7 @@ import Foundation
 // MARK: Hex
 
 extension Data {
-	public struct HexEncodingOptions: OptionSet {
+	public struct HexEncodingOptions: OptionSet, Sendable {
 		public let rawValue: Int
 		public init(rawValue: Int) {
 			self.rawValue = rawValue
@@ -58,7 +58,7 @@ extension Data {
 // MARK: String
 
 extension Data {
-	public func asString(encoding: String.Encoding) -> String? {
+	@inlinable public func asString(encoding: String.Encoding) -> String? {
 		String(data: self, encoding: encoding)
 	}
 }

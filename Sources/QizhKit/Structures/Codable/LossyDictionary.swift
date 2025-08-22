@@ -9,11 +9,6 @@
 import Foundation
 import os.log
 
-fileprivate let logger = Logger(
-	subsystem: "Coding",
-	category: "Lossy Dictionary"
-)
-
 /// Decodes Dictionaries filtering invalid key-value pairs if applicable.
 /// `@LossyDictionary` decodes Dictionaries and filters invalid key-value pairs
 /// if the Decoder is unable to decode the value.
@@ -34,6 +29,28 @@ public struct LossyDictionary <Key, Value>: Sendable
 	}
 }
 
+fileprivate final actor LossyDictionaryLogger {
+	fileprivate static let shared = LossyDictionaryLogger()
+	
+	fileprivate var level: DebugDepth = .minimum
+	fileprivate let logger = Logger(
+		subsystem: "Coding",
+		category: "Lossy Dictionary"
+	)
+	
+	fileprivate func setLogLevel(_ level: DebugDepth) {
+		self.level = level
+	}
+	
+	fileprivate func logger(when debug: DebugDepth) -> Logger? {
+		if self.level >= debug {
+			logger
+		} else {
+			.none
+		}
+	}
+}
+
 extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
 	private struct AnyDecodableValue: Decodable {}
 	private struct LossyDecodableValue<Wrapped: Decodable>: Decodable {
@@ -51,19 +68,25 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
 			if Key.self == String.self {
 				let container = try decoder.container(keyedBy: JSONCodingKeys.self)
 				let keys = try Self.extractKeys(from: decoder, container: container)
-				
+
 				for (key, stringKey) in keys {
 					do {
 						let value = try container.decode(LossyDecodableValue<Value>.self, forKey: key).value
 						elements[stringKey as! Key] = value
 					} catch let error as DecodingError {
-						logger.warning("""
-							Skipping \(Value.self) element while decoding
-							┗ \(error.humanReadableDescription)
-							""")
+						Task {
+							await LossyDictionaryLogger.shared.logger(when: .default)?
+								.warning("""
+									Skipping \(Value.self) element while decoding
+									┗ \(error.humanReadableDescription)
+									""")
+						}
 						_ = try? container.decode(AnyDecodableValue.self, forKey: key)
 					} catch {
-						logger.warning("Skipping \(Value.self) element while decoding. \(error)")
+						Task {
+							await LossyDictionaryLogger.shared.logger(when: .default)?
+								.warning("Skipping \(Value.self) element while decoding. \(error)")
+						}
 						_ = try? container.decode(AnyDecodableValue.self, forKey: key)
 					}
 				}
@@ -87,13 +110,19 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
 						let value = try container.decode(LossyDecodableValue<Value>.self, forKey: key).value
 						elements[key.intValue! as! Key] = value
 					} catch let error as DecodingError {
-						logger.warning("""
-							Skipping \(Value.self) element while decoding
-							┗ \(error.humanReadableDescription)
-							""")
+						Task {
+							await LossyDictionaryLogger.shared.logger(when: .default)?
+								.warning("""
+									Skipping \(Value.self) element while decoding
+									┗ \(error.humanReadableDescription)
+									""")
+						}
 						_ = try? container.decode(AnyDecodableValue.self, forKey: key)
 					} catch {
-						logger.warning("Skipping \(Value.self) element while decoding. \(error)")
+						Task {
+							await LossyDictionaryLogger.shared.logger(when: .default)?
+								.warning("Skipping \(Value.self) element while decoding. \(error)")
+						}
 						_ = try? container.decode(AnyDecodableValue.self, forKey: key)
 					}
 				}
@@ -106,12 +135,18 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
 				 )
 			}
 		} catch let error as DecodingError {
-			logger.warning("""
-				Skipping the whole non-dictionary
-				┗ \(error.humanReadableDescription)
-				""")
+			Task {
+				await LossyDictionaryLogger.shared.logger(when: .default)?
+					.warning("""
+						Skipping the whole non-dictionary
+						┗ \(error.humanReadableDescription)
+						""")
+			}
 		} catch {
-			logger.error("Non-dictionary skipped. \(error)")
+			Task {
+				await LossyDictionaryLogger.shared.logger(when: .default)?
+					.error("Non-dictionary skipped. \(error)")
+			}
 		}
 		
 		self.wrappedValue = elements
@@ -140,4 +175,5 @@ extension LossyDictionary: Encodable where Key: Encodable, Value: Encodable {
 }
 
 extension LossyDictionary: Equatable where Value: Equatable { }
+
 extension LossyDictionary: Hashable where Value: Hashable { }

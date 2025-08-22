@@ -8,9 +8,16 @@
 
 import Foundation
 
-public extension String {
-	@inlinable var inOneLine: String { joinedIntoOneLine() }
-	@inlinable func joinedIntoOneLine(separator: String = .space) -> String {
-		components(separatedBy: .newlines).joined(separator: separator)
+extension StringProtocol {
+	@inlinable public var asLines: [String] {
+		components(separatedBy: .newlines)
+	}
+	
+	@inlinable public var inOneLine: String {
+		joinedIntoOneLine()
+	}
+	
+	@inlinable public func joinedIntoOneLine(separator: String = .space) -> String {
+		asLines.joined(separator: separator)
 	}
 }

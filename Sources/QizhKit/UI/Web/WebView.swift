@@ -8,6 +8,7 @@
 
 import SwiftUI
 import WebKit
+import QizhMacroKit
 
 public struct WebView: UIViewControllerRepresentable {
 	private let source: Source
@@ -17,19 +18,31 @@ public struct WebView: UIViewControllerRepresentable {
 	private let configuration: WKWebViewConfiguration?
 	private let contentOffset: Binding<CGPoint>?
 	
-	public enum Source {
+	@CaseName
+	public enum Source: Hashable, Sendable, CustomStringConvertible {
 		case none
 		case embed(_ code: String)
 		case debug(
 			_ code: String,
 			_ type: SourceType = .unknown,
-			_ name: String = Self.defaultDebugName
+			_ name: String = Self.defaultDebugName,
+			_ wrap: Bool = false
 		)
 		case  html(_ code: String)
 		case  file(_ url: URL)
 		case   url(_ url: URL)
 		
-		public enum SourceType: WithUnknown, EasyCaseComparable {
+		public static func debug(
+			code: String,
+			type: SourceType = .unknown,
+			name: String = Self.defaultDebugName,
+			wrap: Bool = false
+		) -> Self {
+			.debug(code, type, name, wrap)
+		}
+		
+		@CaseName
+		public enum SourceType: Hashable, Sendable, WithUnknown, EasyCaseComparable {
 			case unknown
 			case json
 			case csv
@@ -40,33 +53,33 @@ public struct WebView: UIViewControllerRepresentable {
 		
 		public var isDebug: Bool {
 			switch self {
-			case .debug: return true
-			    default: return false
+			case .debug: 	true
+			default: 		false
 			}
 		}
 		
 		public var type: SourceType {
 			switch self {
-			case .debug(_, let type, _): return type
-			default: return .unknown
+			case .debug(_, let type, _, _): type
+			default: 						.unknown
 			}
 		}
 		
 		public var debugName: String {
 			switch self {
-			case .debug(_, _, let name): 	return name
-			default: 						return Self.defaultDebugName
+			case .debug(_, _, let name, _): name
+			default: 						Self.defaultDebugName
 			}
 		}
 		
 		public var string: String {
 			switch self {
-			case .none:               		return .empty
-			case .embed(let code):    		return code
-			case .debug(let code, _, _): 	return code
-			case  .html(let code):    		return code
-			case  .file(let url):     		return url.absoluteString
-			case   .url(let url):     		return url.absoluteString
+			case .none:               		""
+			case .embed(let code):    		code
+			case .debug(let code, _, _, _): code
+			case  .html(let code):    		code
+			case  .file(let url):     		url.absoluteString
+			case   .url(let url):     		url.absoluteString
 			}
 		}
 		
@@ -75,10 +88,15 @@ public struct WebView: UIViewControllerRepresentable {
 			case .embed,
 				 .debug,
 				 .html,
-				 .none: 	      	return .none
-			case .file(let url): 	return url
-			case .url(let url): 	return url
+				 .none: 	      	nil
+			case .file(let url): 	url
+			case .url(let url): 	url
 			}
+		}
+		
+		public var description: String {
+			let typeName = type.known?.caseName.prepending(.underscoreChar) ?? .empty
+			return "\(caseName)\(typeName)(\(string))"
 		}
 	}
 	
@@ -96,8 +114,8 @@ public struct WebView: UIViewControllerRepresentable {
 	) {
 		if case .embed(let code) = source {
 			self.source = .html(WebView.emptyPage(withEmbedded: code))
-		} else if case .debug(let code, _, _) = source {
-			self.source = .html(WebView.debugPage(for: code))
+		} else if case let .debug(code, _, _, wrapLines) = source {
+			self.source = .html(WebView.debugPage(for: code, wrapLines: wrapLines))
 		} else {
 			self.source = source
 		}
@@ -122,7 +140,7 @@ public struct WebView: UIViewControllerRepresentable {
 	}
 	
 	private static func emptyPage(withEmbedded code: String) -> String {
-		" " + """
+		"""
 		<!doctype html>
 		<head>
 		  <meta charset="utf-8">
@@ -168,8 +186,13 @@ public struct WebView: UIViewControllerRepresentable {
 		"""
 	}
 	
-	private static func debugPage(for code: String) -> String {
-		" " + """
+	private static func debugPage(for code: String, wrapLines: Bool) -> String {
+		// Determine the appropriate CSS settings based on wrapLines.
+		let whiteSpaceSetting = wrapLines ? "pre-wrap" : "pre"
+		// Optionally adjust word-break if wrapping is enabled.
+		let wordBreakSetting = wrapLines ? "break-word" : "normal"
+		
+		return """
 		<!doctype html>
 		<head>
 		  <meta charset="utf-8">
@@ -181,30 +204,27 @@ public struct WebView: UIViewControllerRepresentable {
 		  <style>
 			pre {
 			  vertical-align: middle;
-			  font-family: Menlo,monospace;
+			  font-family: Menlo, monospace;
 			  font-size: small;
-			  white-space: pre;
+			  white-space: \(whiteSpaceSetting);
 			  tab-size: 2;
-			  /*
-			  white-space: pre-wrap;
-			  word-break: keep-all;
-			  */
+			  word-break: \(wordBreakSetting);
 			}
 			@media (prefers-color-scheme: dark) {
-			  background-color: hsl(0, 0%, 0%)
+			  background-color: hsl(0, 0%, 0%);
 			  .white {
-			    background-color: hsl(0, 0%, 100%)
+				background-color: hsl(0, 0%, 100%);
 			  }
 			}
 		  </style>
 		</head>
 		<body>
-			<pre>\(code)</pre>
+		  <pre>\(code)</pre>
 		</body>
 		</html>
 		"""
 	}
-
+	
 	public func makeCoordinator() -> WebViewDelegate {
 		WebViewDelegate()
 	}

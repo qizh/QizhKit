@@ -22,6 +22,15 @@ extension EnvironmentValues {
 }
 
 extension View {
+	/// Sets a maximum character limit (`50` dy default)
+	/// for all `LabeledValueView` instances in this view hierarchy.
+	///
+	/// Use this modifier to override the default limit of 50 characters when displaying
+	/// value labels, truncating any text that exceeds the specified length.
+	///
+	/// - Parameter length: The maximum number of characters to display for value labels.
+	/// - Returns: A view that applies the specified length limit
+	/// 	to the `labeledViewLengthLimit` environment key.
 	public func labeledViewLengthLimit(_ length: Int) -> some View {
 		environment(\.labeledViewLengthLimit, length)
 	}
@@ -35,9 +44,9 @@ public extension VStack {
 	}
 }
 
+/*
 // MARK: Library Content
 
-@available(iOS 14.0, *)
 public struct LabeledValueLibraryContent: LibraryContentProvider {
 	@LibraryContentBuilder
 	public var views: [LibraryItem] {
@@ -52,6 +61,7 @@ public struct LabeledValueLibraryContent: LibraryContentProvider {
 		)
 	}
 }
+*/
 
 // MARK: View
 
@@ -119,6 +129,16 @@ public struct LabeledValueView: View {
 		}
 	}
 	
+	public init <F: BinaryInteger> (
+		 _ value: F?,
+		   label: String? = .none
+	) {
+		switch value {
+		case .none: self.init(valueView: Self.bool(value: false).asAnyView(), label: label)
+		case .some(let wrapped): self.init("\(wrapped)", label: label)
+		}
+	}
+	
 	public init <F: BinaryFloatingPoint & CVarArg> (
 		 _ value: F?,
 		   label: String? = .none,
@@ -142,19 +162,19 @@ public struct LabeledValueView: View {
 			self.init(
 				valueView: AnyView(
 					(
-						Text("(").foregroundColor(Color(uiColor: .secondaryLabel)) +
+						Text("(").foregroundStyle(.secondaryLabel) +
 						Text(String(format: "%.\(fractionDigits)f", wrapped.origin.x)) +
-						Text(", ").foregroundColor(Color(uiColor: .secondaryLabel)) +
+						Text(", ").foregroundStyle(.secondaryLabel) +
 						Text(String(format: "%.\(fractionDigits)f", wrapped.origin.y)) +
-						Text("), (").foregroundColor(Color(uiColor: .secondaryLabel)) +
+						Text("), (").foregroundStyle(.secondaryLabel) +
 						Text(String(format: "%.\(fractionDigits)f", wrapped.size.width)) +
-						Text(" x ").foregroundColor(Color(uiColor: .secondaryLabel)) +
+						Text(" x ").foregroundStyle(.secondaryLabel) +
 						Text(String(format: "%.\(fractionDigits)f", wrapped.size.height)) +
-						Text(")").foregroundColor(Color(uiColor: .secondaryLabel))
+						Text(")").foregroundStyle(.secondaryLabel)
 					)
 					.font(.system(size: 8, weight: .semibold))
 					.padding(EdgeInsets(top: 3, leading: 5, bottom: 2, trailing: 5))
-					.foregroundColor(Color(uiColor: .label))
+					.foregroundStyle(Color(uiColor: .label))
 				),
 				label: label
 			)
@@ -174,12 +194,12 @@ public struct LabeledValueView: View {
 				valueView: AnyView(
 					(
 						Text(String(format: "%.\(fractionDigits)f", wrapped.x)) +
-						Text(", ").foregroundColor(Color(uiColor: .secondaryLabel)) +
+						Text(", ").foregroundStyle(.secondaryLabel) +
 						Text(String(format: "%.\(fractionDigits)f", wrapped.y))
 					)
 					.font(.system(size: 8, weight: .semibold))
 					.padding(EdgeInsets(top: 3, leading: 5, bottom: 2, trailing: 5))
-					.foregroundColor(Color(uiColor: .label))
+					.foregroundStyle(Color(uiColor: .label))
 				),
 				label: label
 			)
@@ -199,12 +219,12 @@ public struct LabeledValueView: View {
 				valueView: AnyView(
 					(
 						Text(String(format: "%.\(fractionDigits)f", wrapped.dx)) +
-						Text(", ").foregroundColor(Color(uiColor: .secondaryLabel)) +
+						Text(", ").foregroundStyle(.secondaryLabel) +
 						Text(String(format: "%.\(fractionDigits)f", wrapped.dy))
 					)
 					.font(.system(size: 8, weight: .semibold))
 					.padding(EdgeInsets(top: 3, leading: 5, bottom: 2, trailing: 5))
-					.foregroundColor(Color(uiColor: .label))
+					.foregroundStyle(.label)
 				),
 				label: label
 			)
@@ -225,14 +245,14 @@ public struct LabeledValueView: View {
 					HStack(alignment: .firstTextBaseline, spacing: 2) {
 						Text(String(format: "%.\(fractionDigits)f", wrapped.width))
 						Image(systemName: "multiply")
-							.foregroundColor(Color(uiColor: .secondaryLabel))
+							.foregroundStyle(.secondaryLabel)
 							.font(.system(size: 6, weight: .semibold))
 							.padding(.bottom, 1)
 						Text(String(format: "%.\(fractionDigits)f", wrapped.height))
 					}
 					.font(.system(size: 8, weight: .semibold))
 					.padding(EdgeInsets(top: 3, leading: 5, bottom: 2, trailing: 5))
-					.foregroundColor(Color(uiColor: .label))
+					.foregroundStyle(.label)
 				),
 				label: label
 			)
@@ -252,21 +272,21 @@ public struct LabeledValueView: View {
 				valueView: AnyView(
 					HStack(alignment: .firstTextBaseline, spacing: 2) {
 						Text("top:")
-							.foregroundColor(Color(uiColor: .secondaryLabel))
+							.foregroundStyle(.secondaryLabel)
 						Text(String(format: "%.\(fractionDigits)f", wrapped.top))
 						Text("bottom:")
-							.foregroundColor(Color(uiColor: .secondaryLabel))
+							.foregroundStyle(.secondaryLabel)
 						Text(String(format: "%.\(fractionDigits)f", wrapped.bottom))
 						Text("left:")
-							.foregroundColor(Color(uiColor: .secondaryLabel))
+							.foregroundStyle(.secondaryLabel)
 						Text(String(format: "%.\(fractionDigits)f", wrapped.left))
 						Text("right:")
-							.foregroundColor(Color(uiColor: .secondaryLabel))
+							.foregroundStyle(.secondaryLabel)
 						Text(String(format: "%.\(fractionDigits)f", wrapped.right))
 					}
 					.font(.system(size: 8, weight: .semibold))
 					.padding(EdgeInsets(top: 3, leading: 5, bottom: 2, trailing: 5))
-					.foregroundColor(Color(uiColor: .label))
+					.foregroundStyle(Color(uiColor: .label))
 				),
 				label: label
 			)
@@ -286,21 +306,21 @@ public struct LabeledValueView: View {
 				valueView: AnyView(
 					HStack(alignment: .firstTextBaseline, spacing: 2) {
 						Text("top:")
-							.foregroundColor(Color(uiColor: .secondaryLabel))
+							.foregroundStyle(.secondaryLabel)
 						Text(String(format: "%.\(fractionDigits)f", wrapped.top))
 						Text("bot:")
-							.foregroundColor(Color(uiColor: .secondaryLabel))
+							.foregroundStyle(.secondaryLabel)
 						Text(String(format: "%.\(fractionDigits)f", wrapped.bottom))
 						Text("lead:")
-							.foregroundColor(Color(uiColor: .secondaryLabel))
+							.foregroundStyle(.secondaryLabel)
 						Text(String(format: "%.\(fractionDigits)f", wrapped.leading))
 						Text("trail:")
-							.foregroundColor(Color(uiColor: .secondaryLabel))
+							.foregroundStyle(.secondaryLabel)
 						Text(String(format: "%.\(fractionDigits)f", wrapped.trailing))
 					}
 					.font(.system(size: 8, weight: .semibold))
 					.padding(EdgeInsets(top: 3, leading: 5, bottom: 2, trailing: 5))
-					.foregroundColor(Color(uiColor: .label))
+					.foregroundStyle(Color(uiColor: .label))
 				),
 				label: label
 			)
@@ -406,7 +426,7 @@ public struct LabeledValueView: View {
 				label.mapText()
 					.font(Font.system(size: 10, weight: .semibold).smallCaps())
 					.padding(EdgeInsets(top: 1, leading: 5, bottom: 2, trailing: 5))
-					.foregroundColor(Color(uiColor: .secondaryLabel))
+					.foregroundStyle(Color(uiColor: .secondaryLabel))
 				
 				valueView
 					.alignmentGuide(.separator) { $0[.leading] }
@@ -442,80 +462,92 @@ public struct LabeledValueView: View {
 }
 
 public extension String {
-	@inlinable func labeledView(label: String? = nil) -> LabeledValueView {
+	@inlinable @MainActor func labeledView(label: String? = nil) -> LabeledValueView {
 		LabeledValueView(self, label: label)
 	}
 }
 public extension Optional where Wrapped == String {
-	@inlinable func labeledView(label: String? = nil) -> LabeledValueView {
+	@inlinable @MainActor func labeledView(label: String? = nil) -> LabeledValueView {
 		LabeledValueView(self, label: label)
 	}
 }
 public extension Binding where Value == String {
-	@inlinable func labeledView(label: String? = nil) -> LabeledValueView {
+	@inlinable @MainActor func labeledView(label: String? = nil) -> LabeledValueView {
 		LabeledValueView(wrappedValue, label: label)
 	}
 }
 
 public extension CGFloat {
-	@inlinable func labeledView(label: String? = nil, f digits: UInt) -> LabeledValueView {
+	@inlinable @MainActor func labeledView(label: String? = nil, f digits: UInt) -> LabeledValueView {
 		LabeledValueView(self, label: label, fractionDigits: digits)
 	}
-	@inlinable func labeledView(label: String? = nil, fractionDigits: UInt = 0) -> LabeledValueView {
+	@inlinable @MainActor func labeledView(label: String? = nil, fractionDigits: UInt = 0) -> LabeledValueView {
 		LabeledValueView(self, label: label, fractionDigits: fractionDigits)
 	}
 }
 public extension Optional where Wrapped == CGFloat {
-	@inlinable func labeledView(label: String? = nil, f digits: UInt) -> LabeledValueView {
+	@inlinable @MainActor func labeledView(label: String? = nil, f digits: UInt) -> LabeledValueView {
 		LabeledValueView(self, label: label, fractionDigits: digits)
 	}
-	@inlinable func labeledView(label: String? = nil, fractionDigits: UInt = 0) -> LabeledValueView {
+	@inlinable @MainActor func labeledView(label: String? = nil, fractionDigits: UInt = 0) -> LabeledValueView {
 		LabeledValueView(self, label: label, fractionDigits: fractionDigits)
 	}
 }
 
+public extension BinaryInteger {
+	@inlinable @MainActor func labeledView(label: String? = .none) -> LabeledValueView {
+		LabeledValueView(self, label: label)
+	}
+}
+
+public extension Optional where Wrapped: BinaryInteger {
+	@inlinable @MainActor func labeledView(label: String? = .none) -> LabeledValueView {
+		LabeledValueView(self, label: label)
+	}
+}
+
 public extension BinaryFloatingPoint where Self: CVarArg {
-	@inlinable func labeledView(label: String? = .none, f digits: Int) -> LabeledValueView {
+	@inlinable @MainActor func labeledView(label: String? = .none, f digits: Int) -> LabeledValueView {
 		LabeledValueView(self, label: label, fraction: digits)
 	}
 }
 
 public extension Optional where Wrapped: BinaryFloatingPoint, Wrapped: CVarArg {
-	@inlinable func labeledView(label: String? = .none, f digits: Int) -> LabeledValueView {
+	@inlinable @MainActor func labeledView(label: String? = .none, f digits: Int) -> LabeledValueView {
 		LabeledValueView(self, label: label, fraction: digits)
 	}
 }
 
 public extension CGSize {
-	@inlinable func labeledView(label: String? = nil, f digits: UInt) -> LabeledValueView {
+	@inlinable @MainActor func labeledView(label: String? = nil, f digits: UInt) -> LabeledValueView {
 		LabeledValueView(self, label: label, fractionDigits: digits)
 	}
-	@inlinable func labeledView(label: String? = nil, fractionDigits: UInt = 0) -> LabeledValueView {
+	@inlinable @MainActor func labeledView(label: String? = nil, fractionDigits: UInt = 0) -> LabeledValueView {
 		LabeledValueView(self, label: label, fractionDigits: fractionDigits)
 	}
 }
 public extension Optional where Wrapped == CGSize {
-	@inlinable func labeledView(label: String? = nil, f digits: UInt) -> LabeledValueView {
+	@inlinable @MainActor func labeledView(label: String? = nil, f digits: UInt) -> LabeledValueView {
 		LabeledValueView(self, label: label, fractionDigits: digits)
 	}
-	@inlinable func labeledView(label: String? = nil, fractionDigits: UInt = 0) -> LabeledValueView {
+	@inlinable @MainActor func labeledView(label: String? = nil, fractionDigits: UInt = 0) -> LabeledValueView {
 		LabeledValueView(self, label: label, fractionDigits: fractionDigits)
 	}
 }
 
 public extension CGPoint {
-	@inlinable func labeledView(label: String? = nil, f digits: UInt) -> LabeledValueView {
+	@inlinable @MainActor func labeledView(label: String? = nil, f digits: UInt) -> LabeledValueView {
 		LabeledValueView(self, label: label, fractionDigits: digits)
 	}
-	@inlinable func labeledView(label: String? = nil, fractionDigits: UInt = 0) -> LabeledValueView {
+	@inlinable @MainActor func labeledView(label: String? = nil, fractionDigits: UInt = 0) -> LabeledValueView {
 		LabeledValueView(self, label: label, fractionDigits: fractionDigits)
 	}
 }
 public extension Optional where Wrapped == CGPoint {
-	@inlinable func labeledView(label: String? = nil, f digits: UInt) -> LabeledValueView {
+	@inlinable @MainActor func labeledView(label: String? = nil, f digits: UInt) -> LabeledValueView {
 		LabeledValueView(self, label: label, fractionDigits: digits)
 	}
-	@inlinable func labeledView(label: String? = nil, fractionDigits: UInt = 0) -> LabeledValueView {
+	@inlinable @MainActor func labeledView(label: String? = nil, fractionDigits: UInt = 0) -> LabeledValueView {
 		LabeledValueView(self, label: label, fractionDigits: fractionDigits)
 	}
 }
@@ -523,12 +555,12 @@ public extension Optional where Wrapped == CGPoint {
 // MARK: ┣ CGVector
 
 public extension CGVector {
-	@inlinable func labeledView(label: String? = nil, f digits: UInt) -> LabeledValueView {
+	@inlinable @MainActor func labeledView(label: String? = nil, f digits: UInt) -> LabeledValueView {
 		LabeledValueView(self, label: label, fractionDigits: digits)
 	}
 }
 public extension Optional<CGVector> {
-	@inlinable func labeledView(label: String? = nil, f digits: UInt) -> LabeledValueView {
+	@inlinable @MainActor func labeledView(label: String? = nil, f digits: UInt) -> LabeledValueView {
 		LabeledValueView(self, label: label, fractionDigits: digits)
 	}
 }
@@ -536,58 +568,58 @@ public extension Optional<CGVector> {
 // MARK: ┣ CGRect
 
 public extension CGRect {
-	@inlinable func labeledView(label: String? = nil, f digits: UInt) -> LabeledValueView {
+	@inlinable @MainActor func labeledView(label: String? = nil, f digits: UInt) -> LabeledValueView {
 		LabeledValueView(self, label: label, fractionDigits: digits)
 	}
-	@inlinable func labeledView(label: String? = nil, fractionDigits: UInt = 0) -> LabeledValueView {
+	@inlinable @MainActor func labeledView(label: String? = nil, fractionDigits: UInt = 0) -> LabeledValueView {
 		LabeledValueView(self, label: label, fractionDigits: fractionDigits)
 	}
 }
 public extension Optional where Wrapped == CGRect {
-	@inlinable func labeledView(label: String? = nil, f digits: UInt) -> LabeledValueView {
+	@inlinable @MainActor func labeledView(label: String? = nil, f digits: UInt) -> LabeledValueView {
 		LabeledValueView(self, label: label, fractionDigits: digits)
 	}
-	@inlinable func labeledView(label: String? = nil, fractionDigits: UInt = 0) -> LabeledValueView {
+	@inlinable @MainActor func labeledView(label: String? = nil, fractionDigits: UInt = 0) -> LabeledValueView {
 		LabeledValueView(self, label: label, fractionDigits: fractionDigits)
 	}
 }
 
 public extension UIEdgeInsets {
-	@inlinable func labeledView(label: String? = nil, f digits: UInt) -> LabeledValueView {
+	@inlinable @MainActor func labeledView(label: String? = nil, f digits: UInt) -> LabeledValueView {
 		LabeledValueView(self, label: label, fractionDigits: digits)
 	}
-	@inlinable func labeledView(label: String? = nil, fractionDigits: UInt = 0) -> LabeledValueView {
+	@inlinable @MainActor func labeledView(label: String? = nil, fractionDigits: UInt = 0) -> LabeledValueView {
 		LabeledValueView(self, label: label, fractionDigits: fractionDigits)
 	}
 }
 public extension Optional where Wrapped == UIEdgeInsets {
-	@inlinable func labeledView(label: String? = nil, f digits: UInt) -> LabeledValueView {
+	@inlinable @MainActor func labeledView(label: String? = nil, f digits: UInt) -> LabeledValueView {
 		LabeledValueView(self, label: label, fractionDigits: digits)
 	}
-	@inlinable func labeledView(label: String? = nil, fractionDigits: UInt = 0) -> LabeledValueView {
+	@inlinable @MainActor func labeledView(label: String? = nil, fractionDigits: UInt = 0) -> LabeledValueView {
 		LabeledValueView(self, label: label, fractionDigits: fractionDigits)
 	}
 }
 
 public extension EdgeInsets {
-	@inlinable func labeledView(label: String? = nil, f digits: UInt) -> LabeledValueView {
+	@inlinable @MainActor func labeledView(label: String? = nil, f digits: UInt) -> LabeledValueView {
 		LabeledValueView(self, label: label, fractionDigits: digits)
 	}
-	@inlinable func labeledView(label: String? = nil, fractionDigits: UInt = 0) -> LabeledValueView {
+	@inlinable @MainActor func labeledView(label: String? = nil, fractionDigits: UInt = 0) -> LabeledValueView {
 		LabeledValueView(self, label: label, fractionDigits: fractionDigits)
 	}
 }
 public extension Optional where Wrapped == EdgeInsets {
-	@inlinable func labeledView(label: String? = nil, f digits: UInt) -> LabeledValueView {
+	@inlinable @MainActor func labeledView(label: String? = nil, f digits: UInt) -> LabeledValueView {
 		LabeledValueView(self, label: label, fractionDigits: digits)
 	}
-	@inlinable func labeledView(label: String? = nil, fractionDigits: UInt = 0) -> LabeledValueView {
+	@inlinable @MainActor func labeledView(label: String? = nil, fractionDigits: UInt = 0) -> LabeledValueView {
 		LabeledValueView(self, label: label, fractionDigits: fractionDigits)
 	}
 }
 
 public extension Date {
-	@inlinable func labeledView(
+	@inlinable @MainActor func labeledView(
 		label: String? = nil,
 		dateStyle: DateFormatter.Style = .short,
 		timeStyle: DateFormatter.Style = .short,
@@ -605,7 +637,7 @@ public extension Date {
 	}
 }
 public extension Optional where Wrapped == Date {
-	@inlinable func labeledView(
+	@inlinable @MainActor func labeledView(
 		label: String? = nil,
 		dateStyle: DateFormatter.Style = .short,
 		timeStyle: DateFormatter.Style = .short,
@@ -624,7 +656,7 @@ public extension Optional where Wrapped == Date {
 }
 
 public extension Bool {
-	@inlinable func labeledView(
+	@inlinable @MainActor func labeledView(
 		label: String? = nil,
 		boolDisplayStyle: LabeledValueView.BoolDisplayStyle = .default
 	) -> LabeledValueView {
@@ -636,7 +668,7 @@ public extension Bool {
 	}
 }
 public extension Optional where Wrapped == Bool {
-	@inlinable func labeledView(
+	@inlinable @MainActor func labeledView(
 		label: String? = nil,
 		boolDisplayStyle: LabeledValueView.BoolDisplayStyle = .default
 	) -> LabeledValueView {
@@ -648,7 +680,7 @@ public extension Optional where Wrapped == Bool {
 	}
 }
 public extension Binding where Value == Bool {
-	@inlinable func labeledView(
+	@inlinable @MainActor func labeledView(
 		label: String? = nil,
 		boolDisplayStyle: LabeledValueView.BoolDisplayStyle = .default
 	) -> LabeledValueView {
@@ -663,37 +695,43 @@ public extension Binding where Value == Bool {
 // MARK: Case View
 
 public extension EasySelfComparable {
-	@inlinable func caseView(label: String? = nil) -> LabeledValueView {
+	@inlinable @MainActor func caseView(label: String? = nil) -> LabeledValueView {
 		LabeledValueView(self, label: label)
 	}
 	
-	@inlinable func labeledView(label: String? = nil) -> LabeledValueView {
+	/*
+	@inlinable @MainActor func labeledView(label: String? = nil) -> LabeledValueView {
 		LabeledValueView(self, label: label)
 	}
+	*/
 }
 public extension Optional where Wrapped: EasySelfComparable {
-	@inlinable func caseView(label: String? = nil) -> LabeledValueView {
+	@inlinable @MainActor func caseView(label: String? = nil) -> LabeledValueView {
 		LabeledValueView(self, label: label)
 	}
 	
-	@inlinable func labeledView(label: String? = nil) -> LabeledValueView {
+	/*
+	@inlinable @MainActor func labeledView(label: String? = nil) -> LabeledValueView {
 		LabeledValueView(self, label: label)
 	}
+	*/
 }
 public extension Binding where Value: EasySelfComparable {
-	@inlinable func caseView(label: String? = nil) -> LabeledValueView {
+	@inlinable @MainActor func caseView(label: String? = nil) -> LabeledValueView {
 		LabeledValueView(self.wrappedValue, label: label)
 	}
 	
+	/*
 	@inlinable func labeledView(label: String? = nil) -> LabeledValueView {
 		LabeledValueView(self.wrappedValue, label: label)
 	}
+	*/
 }
 
 // MARK: Collection
 
-extension Collection {
-	@ViewBuilder public func labeledViews(label: String? = nil) -> some View {
+extension Collection where Element: Sendable {
+	@ViewBuilder @MainActor public func labeledViews(label: String? = nil) -> some View {
 		if isEmpty {
 			NilReplacement.emptySet.labeledView(label: label)
 		} else {
@@ -720,8 +758,8 @@ extension Collection {
 
 // MARK: Dictionary
 
-extension Dictionary {
-	@ViewBuilder public func labeledViews(label: String? = nil) -> some View {
+extension Dictionary where Key: Sendable, Value: Sendable {
+	@ViewBuilder @MainActor public func labeledViews(label: String? = nil) -> some View {
 		if isEmpty {
 			NilReplacement.emptySet.labeledView(label: label)
 		} else {
@@ -737,8 +775,8 @@ extension Dictionary {
 
 // MARK: Set
 
-extension Set {
-	@ViewBuilder public func labeledViews(label: String? = .none) -> some View {
+extension Set where Element: Sendable {
+	@ViewBuilder @MainActor public func labeledViews(label: String? = .none) -> some View {
 		if isEmpty {
 			NilReplacement.emptySet.labeledView(label: label)
 		} else {
@@ -759,7 +797,7 @@ import OrderedCollections
 // MARK: OrderedDictionary
 
 extension OrderedDictionary {
-	@ViewBuilder public func labeledViews(label: String? = .none) -> some View {
+	@ViewBuilder @MainActor public func labeledViews(label: String? = .none) -> some View {
 		if isEmpty {
 			NilReplacement.emptySet.labeledView(label: label)
 		} else {
@@ -775,8 +813,8 @@ extension OrderedDictionary {
 
 // MARK: - Optional Collection
 
-extension Optional where Wrapped: Collection { //, Wrapped: Hashable, Wrapped.Element: Hashable {
-	@ViewBuilder public func labeledViews(label: String? = .none) -> some View {
+extension Optional where Wrapped: Collection, Wrapped.Element: Sendable { //, Wrapped: Hashable, Wrapped.Element: Hashable {
+	@ViewBuilder @MainActor public func labeledViews(label: String? = .none) -> some View {
 		switch self {
 		case .none:
 			LabeledValueView(String?.none, label: label)
@@ -789,12 +827,12 @@ extension Optional where Wrapped: Collection { //, Wrapped: Hashable, Wrapped.El
 // MARK: String Convertable
 
 public extension CustomStringConvertible {
-	@inlinable func labeledView(label: String? = nil) -> LabeledValueView {
+	@inlinable @MainActor func labeledView(label: String? = nil) -> LabeledValueView {
 		LabeledValueView(describing: self, label: label)
 	}
 }
 public extension Optional where Wrapped: CustomStringConvertible {
-	@inlinable func labeledView(label: String? = nil) -> LabeledValueView {
+	@inlinable @MainActor func labeledView(label: String? = nil) -> LabeledValueView {
 		LabeledValueView(describing: self, label: label)
 	}
 }
@@ -867,7 +905,7 @@ struct ShowSizeBlurryVibrantView: View {
 			Text(size.height.wholeValueString)
 		}
 		.font(.system(size: 8, weight: .semibold))
-		.foregroundColor(.accentColor)
+		.foregroundStyle(.accentColor)
 		.fixedSize()
 		.containerSize($size)
 		.vibrantOnBlurredBackground()
@@ -887,6 +925,7 @@ public extension View {
 	}
 }
 
+/*
 // MARK: Previews
 
 #if DEBUG
@@ -961,3 +1000,4 @@ public struct LabeledValueView_Previews: PreviewProvider {
 	}
 }
 #endif
+*/

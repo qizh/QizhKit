@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension RangeReplaceableCollection {
+extension RangeReplaceableCollection where Element: Sendable {
 	
 	// MARK: prepend
 	
@@ -100,7 +100,7 @@ extension RangeReplaceableCollection {
 
 // MARK: Removing First / Last
 
-extension RangeReplaceableCollection {
+extension RangeReplaceableCollection where Element: Sendable {
 	/// Calling `removeFirst(_:)` on `self` copy and returns it
 	public func removingFirst(_ k: Int) -> Self {
 		var copy = self
@@ -109,7 +109,10 @@ extension RangeReplaceableCollection {
 	}
 }
 
-extension RangeReplaceableCollection where Self: BidirectionalCollection {
+extension RangeReplaceableCollection
+	where Self: BidirectionalCollection,
+		  Element: Sendable
+{
 	/// Calling `removeLast(_:)` on `self` copy and returns it
 	public func removingLast(_ k: Int) -> Self {
 		var copy = self
@@ -134,7 +137,10 @@ public extension RangeReplaceableCollection where Self: EmptyTestable {
 
 // MARK: Option Set
 
-extension OptionSet where Self == Self.Element {
+extension OptionSet
+	where Self == Self.Element,
+		  Element: Sendable
+{
 	public func inserting(_ newMembers: Self.Element...) -> Self {
 		var copy = self
 		for newMember in newMembers {
@@ -154,7 +160,10 @@ extension OptionSet where Self == Self.Element {
 
 // MARK: Dictionary + add / rem
 
-extension Dictionary {
+extension Dictionary
+	where Key: Sendable,
+		  Value: Sendable
+{
 	/// Alias for ``updatingValue(_:forKey:)``
 	@inlinable public func addingValue(_ value: Value, forKey key: Key) -> Self {
 		updatingValue(value, forKey: key)

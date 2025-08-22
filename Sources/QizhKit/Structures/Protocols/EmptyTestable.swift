@@ -28,9 +28,32 @@ public protocol EmptyTestable {
 	var isEmpty: Bool { get }
 }
 
-public extension EmptyTestable {
-	@inlinable var isNotEmpty: Bool { !isEmpty }
-	@inlinable var nonEmpty: Self? { isEmpty ? Self?.none : self }
+extension EmptyTestable {
+	@inlinable public var isNotEmpty: Bool { not(isEmpty) }
+	public var nonEmpty: Self? {
+		if isEmpty {
+			nil
+		} else {
+			self
+		}
+	}
+}
+
+extension Optional: EmptyTestable where Wrapped: EmptyTestable {
+	@inlinable public var isEmpty: Bool {
+		self?.isEmpty == true
+	}
+	
+	@inlinable public var isNotEmpty: Bool {
+		self?.isNotEmpty == true
+	}
+	
+	@inlinable public var nonEmpty: Self? {
+		switch self {
+		case .none: 				nil
+		case .some(let wrapped): 	wrapped.nonEmpty
+		}
+	}
 }
 
 // MARK: Default Test

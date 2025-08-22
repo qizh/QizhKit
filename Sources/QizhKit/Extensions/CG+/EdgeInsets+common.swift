@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+extension UIEdgeInsets: @unchecked @retroactive Sendable {}
+
 extension EdgeInsets {
 	public static let zero = EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
 	@inlinable public var isZero: Bool { self == .zero }
@@ -75,11 +77,11 @@ extension EdgeInsets {
 		scaled(AxisFactor.both(factor))
 	}
 	
-	@inlinable public func scaled(_ factor: AxisFactor) -> EdgeInsets {
+	public func scaled(_ factor: AxisFactor) -> EdgeInsets {
 		scaled(factor.horizontal, factor.vertical)
 	}
 	
-	@inlinable public func scaled(_ horizontal: Factor, _ vertical: Factor) -> EdgeInsets {
+	public func scaled(_ horizontal: Factor, _ vertical: Factor) -> EdgeInsets {
 		EdgeInsets(
 				 top: top     .scaled(vertical),
 			 leading: leading .scaled(horizontal),
@@ -87,4 +89,73 @@ extension EdgeInsets {
 			trailing: trailing.scaled(horizontal)
 		)
 	}
+}
+
+// MARK: Increased
+
+extension EdgeInsets {
+	public func increased(
+		horizontally horizontalAmount: CGFloat = .zero,
+		vertically verticalAmount: CGFloat = .zero
+	) -> EdgeInsets {
+		EdgeInsets(
+			top: top + verticalAmount.half,
+			leading: leading + horizontalAmount.half,
+			bottom: bottom + verticalAmount.half,
+			trailing: trailing + horizontalAmount.half
+		)
+	}
+}
+
+// MARK: Decreased
+
+extension EdgeInsets {
+	@inlinable public func decreased(
+		horizontally horizontalAmount: CGFloat = .zero,
+		vertically verticalAmount: CGFloat = .zero
+	) -> EdgeInsets {
+		increased(horizontally: -horizontalAmount, vertically: -verticalAmount)
+	}
+}
+
+// MARK: Init Defaults
+
+extension EdgeInsets {
+	@_disfavoredOverload
+	public init(
+		vertical: CGFloat = .zero,
+		horizontal: CGFloat = .zero,
+	) {
+		self.init(
+			top: vertical,
+			leading: horizontal,
+			bottom: vertical,
+			trailing: horizontal
+		)
+	}
+	
+	@inlinable public static func horizontal(_ inset: CGFloat) -> EdgeInsets {
+		.init(horizontal: inset)
+	}
+	
+	@inlinable public static func vertical(_ inset: CGFloat) -> EdgeInsets {
+		.init(vertical: inset)
+	}
+	
+	@inlinable public static func top(_ inset: CGFloat) -> EdgeInsets {
+		.init(top: inset, leading: .zero, bottom: .zero, trailing: .zero)
+	}
+	
+	@inlinable public static func leading(_ inset: CGFloat) -> EdgeInsets {
+		.init(top: .zero, leading: inset, bottom: .zero, trailing: .zero)
+	}
+	
+	@inlinable public static func bottom(_ inset: CGFloat) -> EdgeInsets {
+		.init(top: .zero, leading: .zero, bottom: inset, trailing: .zero)
+	}
+	
+	@inlinable public static func trailing(_ inset: CGFloat) -> EdgeInsets {
+		.init(top: .zero, leading: .zero, bottom: .zero, trailing: inset)
+	}
+
 }

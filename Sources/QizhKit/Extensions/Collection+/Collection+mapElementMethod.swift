@@ -10,10 +10,10 @@ import Foundation
 
 // MARK: Prepare, then map
 
-public extension Collection {
+public extension Collection where Element: Sendable {
 	@inlinable
-	func map <Input, Output> (
-		calling transform: (Element) -> (Input) -> Output,
+	func map <Input: Sendable, Output: Sendable> (
+		calling transform: @Sendable (Element) -> (Input) -> Output,
 		with argument: Input
 	) -> [Output] {
 		map { element in
@@ -22,8 +22,8 @@ public extension Collection {
 	}
 	
 	@inlinable
-	func map <Input1, Input2, Output> (
-		calling transform: (Element) -> (Input1, Input2) -> Output,
+	func map <Input1: Sendable, Input2: Sendable, Output: Sendable> (
+		calling transform: @Sendable (Element) -> (Input1, Input2) -> Output,
 		with    argument1: Input1,
 		and     argument2: Input2
 	) -> [Output] {
@@ -35,10 +35,10 @@ public extension Collection {
 
 // MARK: Map with arguments
 
-public extension Collection {
+public extension Collection where Element: Sendable {
 	@inlinable
-	func map <Argument, Output> (
-		_ transform: (Element, Argument) -> Output,
+	func map <Argument: Sendable, Output: Sendable> (
+		_ transform: @Sendable (Element, Argument) -> Output,
 		_ argument: Argument
 	) -> [Output] {
 		map { element in
@@ -47,9 +47,9 @@ public extension Collection {
 	}
 	
 	@inlinable
-	func map <Argument, Output> (
+	func map <Argument: Sendable, Output: Sendable> (
 		_ argument: Argument,
-		_ transform: (Argument, Element) -> Output
+		_ transform: @Sendable (Argument, Element) -> Output
 	) -> [Output] {
 		map { element in
 			transform(argument, element)
@@ -57,8 +57,8 @@ public extension Collection {
 	}
 	
 	@inlinable
-	func compactMap <Argument, Output> (
-		_ transform: (Element, Argument) -> Output?,
+	func compactMap <Argument: Sendable, Output: Sendable> (
+		_ transform: @Sendable (Element, Argument) -> Output?,
 		_ argument: Argument
 	) -> [Output] {
 		compactMap { element in
@@ -67,9 +67,9 @@ public extension Collection {
 	}
 	
 	@inlinable
-	func compactMap <Argument, Output> (
+	func compactMap <Argument: Sendable, Output: Sendable> (
 		_ argument: Argument,
-		_ transform: (Argument, Element) -> Output?
+		_ transform: @Sendable (Argument, Element) -> Output?
 	) -> [Output] {
 		compactMap { element in
 			transform(argument, element)

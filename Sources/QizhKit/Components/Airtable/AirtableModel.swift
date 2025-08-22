@@ -16,7 +16,7 @@ public protocol InitializableWithJsonString: Decodable, ExpressibleByStringLiter
 
 public extension InitializableWithJsonString {
 	@inlinable init(stringLiteral value: String) {
-		(try? self.init(decoding: value, with: .airtable))!
+		(try? self.init(decoding: value, with: .airtable, debug: .default))!
 	}
 }
 
@@ -37,16 +37,36 @@ public protocol InitializableWithJsonString: Decodable { }
 fileprivate let backendModelCodingLogger = Logger(subsystem: "Coding", category: "String Literal Decoding")
 
 extension InitializableWithJsonString {
-	public init(decoding value: String, with decoder: JSONDecoder = .init()) throws {
+	public init(
+		decoding value: String,
+		with decoder: JSONDecoder = .init(),
+		debug: DebugDepth = .minimum
+	) throws {
 		do {
 			self = try decoder.decode(Self.self, from: Data(value.utf8))
+		} catch let error as DecodingError {
+			if debug >= .default {
+				backendModelCodingLogger.error("""
+					Failed to decode string when initializing \(Self.self)
+					┗ \(error.humanReadableDescription)
+					""")
+				printInPreview("""
+					Failed to decode string when initializing \(Self.self)
+					┗ \(error.humanReadableDescription)
+					""")
+			}
+			throw error
 		} catch {
-			let message = """
-				Failed to decode string when initializing \(Self.self)
-				┗ \(error)
-				"""
-			backendModelCodingLogger.error("\(message)")
-			print(message)
+			if debug >= .default {
+				backendModelCodingLogger.error("""
+					Failed to decode string when initializing \(Self.self)
+					┗ \(error)
+					""")
+				printInPreview("""
+					Failed to decode string when initializing \(Self.self)
+					┗ \(error)
+					""")
+			}
 			throw error
 		}
 	}

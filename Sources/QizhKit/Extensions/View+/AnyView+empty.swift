@@ -8,6 +8,6 @@
 
 import SwiftUI
 
-public extension AnyView {
-	static let empty = AnyView(EmptyView())
+extension AnyView {
+	@MainActor public static let empty = AnyView(EmptyView())
 }

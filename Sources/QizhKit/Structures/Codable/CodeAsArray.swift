@@ -75,7 +75,10 @@ extension CodeAsArray: CustomStringConvertible {
 }
 
 public extension KeyedEncodingContainer {
-	mutating func encode<Item: OptionalConvertible>(_ value: CodeAsArray<Item>, forKey key: KeyedEncodingContainer<K>.Key) throws {
+	mutating func encode<Item: OptionalConvertible>(
+		_ value: CodeAsArray<Item>,
+		forKey key: KeyedEncodingContainer<K>.Key
+	) throws {
 		if value.wrappedValue.isSet {
 			try encode([value.wrappedValue], forKey: key)
 		}
@@ -113,10 +116,12 @@ extension CodeAsArray: Sendable where Item: Sendable {}
 
 @propertyWrapper
 public struct CodeOptionalAsArray <Item: Codable>: Codable {
+	public var encodeArrayWithNull: Bool = false
 	public var wrappedValue: Item?
 	
-	public init(wrappedValue: Item? = .none) {
+	public init(encodeArrayWithNull: Bool = false, wrappedValue: Item? = .none) {
 		self.wrappedValue = wrappedValue
+		self.encodeArrayWithNull = encodeArrayWithNull
 	}
 	
 	public init(from decoder: Decoder) throws {
@@ -126,7 +131,9 @@ public struct CodeOptionalAsArray <Item: Codable>: Codable {
 	}
 	
 	public func encode(to encoder: Encoder) throws {
-		try [wrappedValue].encode(to: encoder)
+		if wrappedValue.isSet || encodeArrayWithNull {
+			try [wrappedValue].encode(to: encoder)
+		}
 	}
 	
 	public static var none: Self {
@@ -142,9 +149,23 @@ extension CodeOptionalAsArray: CustomStringConvertible {
 	@inlinable public var description: String { "\(wrappedValue.orNilString)" }
 }
 
-public extension KeyedDecodingContainer {
-	func decode<Item>(_: CodeOptionalAsArray<Item>.Type, forKey key: Key) throws -> CodeOptionalAsArray<Item> {
+extension KeyedDecodingContainer {
+	public func decode<Item>(
+		_: CodeOptionalAsArray<Item>.Type,
+		forKey key: Key
+	) throws -> CodeOptionalAsArray<Item> {
 		(try? decodeIfPresent(CodeOptionalAsArray<Item>.self, forKey: key))
 			?? .none
+	}
+}
+
+public extension KeyedEncodingContainer {
+	mutating func encode<Item>(
+		_ value: CodeOptionalAsArray<Item>,
+		forKey key: KeyedEncodingContainer<K>.Key
+	) throws {
+		if value.wrappedValue.isSet {
+			try encode([value.wrappedValue], forKey: key)
+		}
 	}
 }
