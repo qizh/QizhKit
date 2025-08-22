@@ -9,7 +9,7 @@
 import Foundation
 import RegexBuilder
 
-fileprivate struct Regexes {
+public struct RegexesForWords {
 	/*
 	let beforeLargeCharacterRef = Reference(Substring.self)
 	let largeCharacterRef = Reference(Character.self)
@@ -30,7 +30,7 @@ fileprivate struct Regexes {
 		}
 	*/
 	
-	static var words: Regex<Substring> {
+	public static var words: Regex<Substring> {
 		Regex {
 			ChoiceOf {
 				Regex {
@@ -79,7 +79,7 @@ extension String {
 	
 	/// `toCamelCase`
 	public var toCamelCase: String {
-		self.matches(of: Regexes.words)
+		self.matches(of: RegexesForWords.words)
 			.enumerated()
 			.map { index, part in
 				if index == 0 {
@@ -93,7 +93,7 @@ extension String {
 	
 	/// `ToPascalCase`
 	public var toPascalCase: String {
-		self.matches(of: Regexes.words)
+		self.matches(of: RegexesForWords.words)
 			.map(\.localizedCapitalized)
 			.joined()
 	}
@@ -103,9 +103,24 @@ extension String {
 	/// - Parameter separator: String to join the words with
 	/// - Returns: Lowercased words joined with the separator
 	public func toLocalizedLowercasedWords(joinedBy separator: String) -> String {
-		self.matches(of: Regexes.words)
-			.map(\.localizedLowercase)
+		self.toWordsArray()
 			.joined(separator: separator)
+	}
+	
+	/// Splits the string into an array of lowercase words
+	/// detected by a Unicode-aware word regex.
+	/// Handles words in any language and case,
+	/// breaking on transitions between character classes.
+	///
+	/// - Example:
+	/// 	```swift
+	///     "someCamelCase123".toWordsArray() // ["some", "camel", "case", "123"]
+	///     ```
+	///
+	/// - Returns: An array of localized lowercased words extracted from the string.
+	@inlinable public func toWordsArray() -> [String] {
+		self.matches(of: RegexesForWords.words)
+			.map(\.localizedLowercase)
 	}
 	
 	/// `to_snake_case`
