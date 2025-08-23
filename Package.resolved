@@ -1,5 +1,5 @@
 {
-  "originHash" : "0d64729731d0c1340ce2bf82f2390e9e2b74a1bb499f5568e5d36bfec39a435b",
+  "originHash" : "8dde55e6a75219e3fb3c3e67164bd9392a74aede7da3be3f8596ce6df8ad77a0",
   "pins" : [
     {
       "identity" : "alamofire",
@@ -33,8 +33,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/qizh/QizhMacroKit",
       "state" : {
-        "revision" : "b52d6c57a72ffd375a7ab7e103b9784991035bda",
-        "version" : "1.1.1"
+        "revision" : "974cabb8e32c52844902c453e339d830e374970e",
+        "version" : "1.1.4"
       }
     },
     {
