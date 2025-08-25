@@ -8,6 +8,10 @@
 
 import SwiftUI
 
+#if canImport(AppKit)
+import AppKit
+#endif
+
 // MARK: Almost Clear
 
 extension Color {
@@ -76,6 +80,25 @@ public extension Color {
 	@inlinable static func accentColor(_ opacity: Double) -> Color {
 		Color.accentColor.opacity(opacity)
 	}
+	#elseif canImport(AppKit)
+	static let systemBackground         = Color(nsColor: .windowBackgroundColor)
+	
+	static let label                    = Color(nsColor: .labelColor)
+	static let secondaryLabel           = Color(nsColor: .secondaryLabelColor)
+	static let tertiaryLabel            = Color(nsColor: .tertiaryLabelColor)
+	static let quaternaryLabel          = Color(nsColor: .quaternaryLabelColor)
+	
+	static let systemFill               = Color(nsColor: .systemFill)
+	static let secondarySystemFill      = Color(nsColor: .secondarySystemFill)
+	static let tertiarySystemFill       = Color(nsColor: .tertiarySystemFill)
+	static let quaternarySystemFill     = Color(nsColor: .quaternarySystemFill)
+	
+	static let link 					= Color(nsColor: .link)
+	static let placeholderText 			= Color(nsColor: .placeholderText)
+	static let separator 				= Color(nsColor: .separator)
+	static let opaqueSeparator 			= Color(nsColor: .opaqueSeparator)
+	static let lightText 				= Color(nsColor: .lightText)
+	static let darkText 				= Color(nsColor: .darkText)
 	#endif
 
 	// MARK: B&W
