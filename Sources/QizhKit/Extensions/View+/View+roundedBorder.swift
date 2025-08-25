@@ -9,6 +9,7 @@
 import SwiftUI
 
 public extension View {
+	#if canImport(UIKit)
 	/// Using custom made ``RoundedCornersRectangle`` shape
 	@_disfavoredOverload
 	@inlinable
@@ -57,6 +58,7 @@ public extension View {
 				rounded.contentShape(shape)
 			}
 	}
+	#endif
 	
 	/// Using custom made ``RoundedCornersRectangle`` shape
 	@_disfavoredOverload
@@ -123,6 +125,7 @@ public extension View {
 			}
 	}
 	
+	#if canImport(UIKit)
 	/// Using custom made ``RoundedCornersRectangle`` shape
 	@inlinable
 	func round(
@@ -138,6 +141,7 @@ public extension View {
 				rounded.contentShape(shape)
 			}
 	}
+	#endif
 	
 	/// Using custom made ``RoundedCornersRectangle`` shape
 	@inlinable
@@ -341,6 +345,7 @@ extension View {
 			.contentShape(contentShapeKind, shape)
 	}
 	
+	#if canImport(UIKit)
 	/// Using custom made ``RoundedCornersRectangle`` shape
 	@_disfavoredOverload
 	@inlinable public func roundButton(
@@ -390,7 +395,7 @@ extension View {
 			.clipShape(shape)
 			.contentShape(shape)
 	}
-	
+	#endif
 }
 
 extension RoundedRectangle {

@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+#if canImport(UIKit)
 @available(*, deprecated, message: "Use the new `RoundedCornersRectangle` instead", renamed: "RoundedCornersRectangle")
 public struct RoundedRect: Shape {
 	private var radius: CGFloat
@@ -54,6 +55,7 @@ public extension UIRectCorner {
 	@inlinable static var right: UIRectCorner  { [.topRight, 	.bottomRight] }
 	@inlinable static var none: UIRectCorner   { [] }
 }
+#endif
 
 public struct RoundedCornersRectangle: InsettableShape, Sendable {
 	public var topLeft: CGFloat
@@ -103,6 +105,7 @@ public struct RoundedCornersRectangle: InsettableShape, Sendable {
 		self.insetAmount = .zero
 	}
 	
+	#if canImport(UIKit)
 	public init(
 		_ radius: CGFloat,
 		_ corners: UIRectCorner...
@@ -122,6 +125,7 @@ public struct RoundedCornersRectangle: InsettableShape, Sendable {
 			bottomRight: combinedCorners.contains(.bottomRight) ? radius : .zero
 		)
 	}
+	#endif
 	
 	public func path(in rect: CGRect) -> Path {
 		var path = Path()

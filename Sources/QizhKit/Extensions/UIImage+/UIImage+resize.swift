@@ -6,6 +6,7 @@
 //  Copyright © 2021 Serhii Shevchenko. All rights reserved.
 //
 
+#if canImport(UIKit)
 import SwiftUI
 import UIKit
 
@@ -176,4 +177,5 @@ public extension UIImage {
 		)
 	}
 }
+#endif
 

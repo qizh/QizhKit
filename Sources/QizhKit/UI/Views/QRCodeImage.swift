@@ -6,6 +6,7 @@
 //  Copyright © 2020 Serhii Shevchenko. All rights reserved.
 //
 
+#if canImport(UIKit)
 import SwiftUI
 import CoreImage
 import CoreImage.CIFilterBuiltins
@@ -70,4 +71,5 @@ struct QRCodeImage_Previews: PreviewProvider {
 		)
     }
 }
+#endif
 #endif

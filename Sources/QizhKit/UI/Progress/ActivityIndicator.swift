@@ -6,7 +6,7 @@
 //  Copyright © 2019 Serhii Shevchenko. All rights reserved.
 //
 
-import Swift
+#if canImport(UIKit)
 import SwiftUI
 import UIKit
 
@@ -39,3 +39,4 @@ public struct ActivityIndicator: UIViewRepresentable {
 		return result
 	}
 }
+#endif

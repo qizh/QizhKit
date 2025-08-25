@@ -112,7 +112,7 @@ public struct LabeledValueView: View {
 			Text(value.prefix(lengthLimit))
 				.semibold(8)
 				.padding(EdgeInsets(top: 3, leading: 5, bottom: 2, trailing: 5))
-				.foregroundLabel()
+				.foregroundStyle(.primary)
 		}
 	}
 	
@@ -162,19 +162,19 @@ public struct LabeledValueView: View {
 			self.init(
 				valueView: AnyView(
 					(
-						Text("(").foregroundStyle(.secondaryLabel) +
+						Text("(").foregroundStyle(.secondary) +
 						Text(String(format: "%.\(fractionDigits)f", wrapped.origin.x)) +
-						Text(", ").foregroundStyle(.secondaryLabel) +
+						Text(", ").foregroundStyle(.secondary) +
 						Text(String(format: "%.\(fractionDigits)f", wrapped.origin.y)) +
-						Text("), (").foregroundStyle(.secondaryLabel) +
+						Text("), (").foregroundStyle(.secondary) +
 						Text(String(format: "%.\(fractionDigits)f", wrapped.size.width)) +
-						Text(" x ").foregroundStyle(.secondaryLabel) +
+						Text(" x ").foregroundStyle(.secondary) +
 						Text(String(format: "%.\(fractionDigits)f", wrapped.size.height)) +
-						Text(")").foregroundStyle(.secondaryLabel)
+						Text(")").foregroundStyle(.secondary)
 					)
 					.font(.system(size: 8, weight: .semibold))
 					.padding(EdgeInsets(top: 3, leading: 5, bottom: 2, trailing: 5))
-					.foregroundStyle(Color(uiColor: .label))
+					.foregroundStyle(.primary)
 				),
 				label: label
 			)
@@ -194,12 +194,12 @@ public struct LabeledValueView: View {
 				valueView: AnyView(
 					(
 						Text(String(format: "%.\(fractionDigits)f", wrapped.x)) +
-						Text(", ").foregroundStyle(.secondaryLabel) +
+						Text(", ").foregroundStyle(.secondary) +
 						Text(String(format: "%.\(fractionDigits)f", wrapped.y))
 					)
 					.font(.system(size: 8, weight: .semibold))
 					.padding(EdgeInsets(top: 3, leading: 5, bottom: 2, trailing: 5))
-					.foregroundStyle(Color(uiColor: .label))
+					.foregroundStyle(.primary)
 				),
 				label: label
 			)
@@ -219,12 +219,12 @@ public struct LabeledValueView: View {
 				valueView: AnyView(
 					(
 						Text(String(format: "%.\(fractionDigits)f", wrapped.dx)) +
-						Text(", ").foregroundStyle(.secondaryLabel) +
+						Text(", ").foregroundStyle(.secondary) +
 						Text(String(format: "%.\(fractionDigits)f", wrapped.dy))
 					)
 					.font(.system(size: 8, weight: .semibold))
 					.padding(EdgeInsets(top: 3, leading: 5, bottom: 2, trailing: 5))
-					.foregroundStyle(.label)
+					.foregroundStyle(.primary)
 				),
 				label: label
 			)
@@ -245,20 +245,21 @@ public struct LabeledValueView: View {
 					HStack(alignment: .firstTextBaseline, spacing: 2) {
 						Text(String(format: "%.\(fractionDigits)f", wrapped.width))
 						Image(systemName: "multiply")
-							.foregroundStyle(.secondaryLabel)
+							.foregroundStyle(.secondary)
 							.font(.system(size: 6, weight: .semibold))
 							.padding(.bottom, 1)
 						Text(String(format: "%.\(fractionDigits)f", wrapped.height))
 					}
 					.font(.system(size: 8, weight: .semibold))
 					.padding(EdgeInsets(top: 3, leading: 5, bottom: 2, trailing: 5))
-					.foregroundStyle(.label)
+					.foregroundStyle(.primary)
 				),
 				label: label
 			)
 		}
 	}
 	
+	#if canImport(UIKit)
 	public init(
 		_ value: UIEdgeInsets?,
 		label: String? = nil,
@@ -292,6 +293,7 @@ public struct LabeledValueView: View {
 			)
 		}
 	}
+	#endif
 	
 	public init(
 		_ value: EdgeInsets?,
@@ -306,21 +308,21 @@ public struct LabeledValueView: View {
 				valueView: AnyView(
 					HStack(alignment: .firstTextBaseline, spacing: 2) {
 						Text("top:")
-							.foregroundStyle(.secondaryLabel)
+							.foregroundStyle(.secondary)
 						Text(String(format: "%.\(fractionDigits)f", wrapped.top))
 						Text("bot:")
-							.foregroundStyle(.secondaryLabel)
+							.foregroundStyle(.secondary)
 						Text(String(format: "%.\(fractionDigits)f", wrapped.bottom))
 						Text("lead:")
-							.foregroundStyle(.secondaryLabel)
+							.foregroundStyle(.secondary)
 						Text(String(format: "%.\(fractionDigits)f", wrapped.leading))
 						Text("trail:")
-							.foregroundStyle(.secondaryLabel)
+							.foregroundStyle(.secondary)
 						Text(String(format: "%.\(fractionDigits)f", wrapped.trailing))
 					}
 					.font(.system(size: 8, weight: .semibold))
 					.padding(EdgeInsets(top: 3, leading: 5, bottom: 2, trailing: 5))
-					.foregroundStyle(Color(uiColor: .label))
+					.foregroundStyle(.primary)
 				),
 				label: label
 			)
@@ -378,7 +380,7 @@ public struct LabeledValueView: View {
 		Image.bool(value)
 			.semibold(8)
 			.padding(.horizontal, 5)
-			.foregroundLabel()
+			.foregroundStyle(.primary)
 			.maxHeight(.center)
 	}
 	
@@ -426,15 +428,15 @@ public struct LabeledValueView: View {
 				label.mapText()
 					.font(Font.system(size: 10, weight: .semibold).smallCaps())
 					.padding(EdgeInsets(top: 1, leading: 5, bottom: 2, trailing: 5))
-					.foregroundStyle(Color(uiColor: .secondaryLabel))
+					.foregroundStyle(.secondary)
 				
 				valueView
 					.alignmentGuide(.separator) { $0[.leading] }
 			}
 			.lineLimit(1)
-			.background(Color(uiColor: .systemBackground).opacity(0.8))
+			.background((colorScheme.isDark ? Color.white : Color.black).opacity(0.8))
 			.roundedBorder(
-				Color(.label).opacity(0.6),
+				Color.primary.opacity(0.6),
 				radius: 2,
 				weight: colorScheme.isDark ? 1/3 : 0
 			)
@@ -448,7 +450,7 @@ public struct LabeledValueView: View {
 		if colorScheme.isDark {
 			EmptyView()
 		} else {
-			Color.label.opacity(0.4)
+			Color.primary.opacity(0.4)
 				.blur(radius: 2)
 		}
 	}
@@ -584,6 +586,7 @@ public extension Optional where Wrapped == CGRect {
 	}
 }
 
+#if canImport(UIKit)
 public extension UIEdgeInsets {
 	@inlinable @MainActor func labeledView(label: String? = nil, f digits: UInt) -> LabeledValueView {
 		LabeledValueView(self, label: label, fractionDigits: digits)
@@ -600,6 +603,7 @@ public extension Optional where Wrapped == UIEdgeInsets {
 		LabeledValueView(self, label: label, fractionDigits: fractionDigits)
 	}
 }
+#endif
 
 public extension EdgeInsets {
 	@inlinable @MainActor func labeledView(label: String? = nil, f digits: UInt) -> LabeledValueView {
@@ -854,11 +858,13 @@ public struct DebugGeometryViewModifier: ViewModifier {
 	
 	public func body(content: Content) -> some View {
 		content
-			.apply(when: blurred) { v in v
-				.overlay(
+			.apply(when: blurred) { v in
+				#if canImport(UIKit)
+				v.overlay(
 					BlurredBackgroundView(style: .auto(colorScheme))
 						.border.cL.wh3()
 				)
+				#endif
 			}
 			.overlay(
 				GeometryReader {

@@ -6,6 +6,7 @@
 //  Copyright © 2020 Serhii Shevchenko. All rights reserved.
 //
 
+#if canImport(UIKit)
 import SwiftUI
 
 public struct ProgressView: View {
@@ -773,6 +774,7 @@ public struct ProgressView: View {
 
 // MARK: .secondaryColor
 
+#if canImport(UIKit)
 public struct SecondaryColorKey: EnvironmentKey {
 	public static let defaultValue: Color = Color(uiColor: .systemGray3)
 }
@@ -789,6 +791,7 @@ public extension View {
 		environment(\.secondaryColor, color ?? SecondaryColorKey.defaultValue)
 	}
 }
+#endif
 
 // MARK: Previews
 
@@ -959,4 +962,5 @@ struct ProgressView_Previews: PreviewProvider {
 	*/
 }
 */
+#endif
 #endif

@@ -56,6 +56,7 @@ public extension View {
 
 // MARK: Library Content
 
+#if canImport(UIKit)
 public struct BackgroundAndOverlaySugarLibraryContent: LibraryContentProvider {
 	@LibraryContentBuilder @MainActor
 	public func modifiers <Base: View> (base: Base) -> [LibraryItem] {
@@ -91,6 +92,7 @@ public struct BackgroundAndOverlaySugarLibraryContent: LibraryContentProvider {
 		]
 	}
 }
+#endif
 
 // MARK: Deprecated
 
@@ -136,6 +138,7 @@ public extension View {
 		background(color)
 	}
 	
+	#if canImport(UIKit)
 	@inlinable
 	func backgroundColor(_ key: BorderCrafterValues.UIColors.Key) -> some View {
 		background(Color(uiColor: BorderCrafterValues.UIColors.value(for: key)))
@@ -168,6 +171,7 @@ public extension View {
 	func backgroundSecondaryLabelColor() -> some View {
 		background(Color(uiColor: .secondaryLabel))
 	}
+	#endif
 	
 	// MARK: > Accent
 	
@@ -180,6 +184,7 @@ public extension View {
 		background(.tint)
 	}
 	
+	#if canImport(UIKit)
 	// MARK: > Deprecated
 	
 	@available(*, deprecated, renamed: "backgroundLabelColor", message: "Use `backgroundLabelColor` instead")
@@ -193,6 +198,7 @@ public extension View {
 	func secondaryLabelBackground() -> some View {
 		background(Color(uiColor: .secondaryLabel))
 	}
+	#endif
 	
 	@available(*, deprecated, renamed: "backgroundAccentColor", message: "Use `backgroundAccentColor` instead")
 	@inlinable
@@ -210,6 +216,7 @@ public extension View {
 	}
 	*/
 	
+	#if canImport(UIKit)
 	// MARK: > Regular
 	
 	/// Black for default ColorScheme
@@ -233,6 +240,7 @@ public extension View {
 	@inlinable func foregroundSecondarySystemBackground() -> some View {
 		foregroundStyle(.secondarySystemBackground)
 	}
+	#endif
 	
 	// MARK: > Accent
 	
@@ -267,7 +275,9 @@ public extension View {
 	
 	@inlinable func foregroundWhite() -> some View { foregroundStyle(.white) }
 	@inlinable func foregroundBlack() -> some View { foregroundStyle(.black) }
+	#if canImport(UIKit)
 	@inlinable func foregroundPlaceholder() -> some View { foregroundStyle(.placeholderText) }
+	#endif
 	
 	/*
 	// MARK: > Deprecated
@@ -293,6 +303,7 @@ public extension View {
 }
 
 public extension Text {
+	#if canImport(UIKit)
 	@available(*, deprecated, renamed: "foregroundStyle(_:)", message: "There's no need to use KeyPath anymore. Just use the style directly.")
 	@inlinable func foregroundColor(_ key: BorderCrafterValues.UIColors.Key) -> Text {
 		foregroundColor(Color(uiColor: BorderCrafterValues.UIColors.value(for: key)))
@@ -325,12 +336,13 @@ public extension Text {
 	// MARK: > Accent
 	
 	@inlinable func foregroundAccent() -> Text { foregroundStyle(.tint) }
+	@inlinable func foregroundPlaceholder() -> Text { foregroundStyle(.placeholderText) }
+	#endif
 	
 	// MARK: > Common
 	
 	@inlinable func foregroundWhite() -> Text { foregroundStyle(.white) }
 	@inlinable func foregroundBlack() -> Text { foregroundStyle(.black) }
-	@inlinable func foregroundPlaceholder() -> Text { foregroundStyle(.placeholderText) }
 }
 
 // MARK: Max

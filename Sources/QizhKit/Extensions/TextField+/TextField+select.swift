@@ -9,6 +9,7 @@
 import SwiftUI
 import Combine
 
+#if canImport(UIKit)
 extension View {
 	@available(*, deprecated, renamed: "selectAllOnTextEditingBegin", message: "This modifier only affects TextField, use another one that affects both TextField and TextEditor")
 	public func selectAllOnTextFieldFocus() -> some View {
@@ -39,3 +40,4 @@ extension View {
 		}
 	}
 }
+#endif

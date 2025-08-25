@@ -39,7 +39,7 @@ extension View {
 
 // MARK: Simulate
 
-#if DEBUG
+#if DEBUG && canImport(UIKit)
 import DeviceKit
 
 extension View {

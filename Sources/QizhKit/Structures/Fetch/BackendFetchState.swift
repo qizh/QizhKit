@@ -560,6 +560,8 @@ public extension GeneralBackendFetchState {
 		isInProgress.then(produce: view)
 			?? (success && isSuccess).then(view: view)
 	}
+	
+	#if canImport(UIKit)
 	@inlinable @MainActor var inProgressDefaultView: ProgressView? { inProgressDefaultView() }
 	@MainActor func inProgressDefaultView(
 		size: ProgressView.Size = .visual,
@@ -595,6 +597,7 @@ public extension GeneralBackendFetchState {
 			nil
 		}
 	}
+	#endif
 }
 
 // MARK: > Most important State

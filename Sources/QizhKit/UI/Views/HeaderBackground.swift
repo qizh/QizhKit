@@ -6,6 +6,7 @@
 //  Copyright © 2020 Serhii Shevchenko. All rights reserved.
 //
 
+#if canImport(UIKit)
 import SwiftUI
 import Combine
 import DeviceKit
@@ -265,3 +266,4 @@ public extension View {
 		)
 	}
 }
+#endif

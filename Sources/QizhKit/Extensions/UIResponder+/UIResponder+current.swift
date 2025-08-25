@@ -6,6 +6,7 @@
 //  Copyright © 2020 Serhii Shevchenko. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 // @available(iOSApplicationExtension, unavailable)
@@ -26,3 +27,4 @@ public extension UIResponder {
 		UIResponder._currentFirstResponder = self
 	}
 }
+#endif

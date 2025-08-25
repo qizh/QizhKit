@@ -8,8 +8,6 @@
 
 import SwiftUI
 
-extension UIEdgeInsets: @unchecked @retroactive Sendable {}
-
 extension EdgeInsets {
 	public static let zero = EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
 	@inlinable public var isZero: Bool { self == .zero }
@@ -23,6 +21,8 @@ extension Optional where Wrapped == EdgeInsets {
 	public var trailing: CGFloat { self?.trailing ?? .zero }
 }
 
+#if canImport(UIKit)
+extension UIEdgeInsets: @unchecked @retroactive Sendable {}
 extension UIEdgeInsets {
 	public func asEdgeInsets() -> EdgeInsets {
 		EdgeInsets(
@@ -33,6 +33,7 @@ extension UIEdgeInsets {
 		)
 	}
 }
+#endif
 
 extension DefaultStringInterpolation {
 	mutating public func appendInterpolation(

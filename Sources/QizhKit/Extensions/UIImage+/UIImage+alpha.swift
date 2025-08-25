@@ -6,6 +6,7 @@
 //  Copyright © 2021 Serhii Shevchenko. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 extension UIImage {
@@ -17,3 +18,4 @@ extension UIImage {
 			|| alpha == .premultipliedLast
 	}
 }
+#endif

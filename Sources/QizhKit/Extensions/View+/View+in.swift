@@ -5,6 +5,7 @@
 //  Created by Serhii Shevchenko on 27.09.2020.
 //
 
+#if canImport(UIKit)
 import SwiftUI
 
 @available(iOS 14.0, *)
@@ -38,3 +39,4 @@ struct View_in_Previews: PreviewProvider {
 		}
 	}
 }
+#endif

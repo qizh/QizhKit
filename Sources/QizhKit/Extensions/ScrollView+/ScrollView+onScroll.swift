@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-#if canImport(SwiftUIIntrospect)
+#if canImport(UIKit) && canImport(SwiftUIIntrospect)
 import UIKit
 import SwiftUIIntrospect
 

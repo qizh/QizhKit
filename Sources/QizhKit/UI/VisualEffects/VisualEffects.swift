@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+#if canImport(UIKit)
 // MARK: Default Styles
 
 extension UIBlurEffect.Style: WithDefault {
@@ -233,4 +234,5 @@ struct VisualEffects_Previews: PreviewProvider {
         EmptyView()
     }
 }
+#endif
 #endif

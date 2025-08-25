@@ -7,10 +7,12 @@
 //
 
 import SwiftUI
-import UIKit
 import SafariServices
 import BetterSafariView
 import QizhMacroKit
+
+#if canImport(UIKit)
+import UIKit
 
 // MARK: VC
 
@@ -299,4 +301,5 @@ struct SafariView_Previews: PreviewProvider {
 			.edgesIgnoringSafeArea(.all)
     }
 }
+#endif
 #endif

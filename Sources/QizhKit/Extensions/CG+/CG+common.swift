@@ -376,6 +376,7 @@ public extension CGRect {
 	@inlinable func height(scaled factor: Factor) -> CGFloat { height.scaled(factor) }
 }
 
+#if canImport(UIKit)
 public extension CGRect {
 	@inlinable func inset(
 		_      top: CGFloat,
@@ -407,6 +408,7 @@ public extension CGRect {
 	@inlinable func inset(vertical   value: CGFloat) -> CGRect { inset(value, .zero, value, .zero) }
 	@inlinable func inset(_          value: CGFloat) -> CGRect { inset(value, value, value, value) }
 }
+#endif
 
 public extension CGRect {
 	@inlinable func offset(anchor: UnitPoint) -> CGRect {

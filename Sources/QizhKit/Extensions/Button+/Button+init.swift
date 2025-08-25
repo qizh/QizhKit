@@ -31,6 +31,7 @@ extension View {
 	}
 }
 
+#if canImport(UIKit)
 // MARK: Opening URL
 
 extension View {
@@ -68,6 +69,7 @@ extension View {
 		}
 	}
 }
+#endif
 
 // MARK: > URL Open Target
 
@@ -165,6 +167,7 @@ extension View {
 	}
 }
 
+#if canImport(UIKit)
 // MARK: View + Special Button
 
 extension View {
@@ -179,7 +182,7 @@ extension View {
 		)
 	}
 }
-
+#endif
 
 #if swift(>=5.9)
 

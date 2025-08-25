@@ -6,6 +6,7 @@
 //  Copyright © 2020 Serhii Shevchenko. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 public extension UIFont {
@@ -23,3 +24,4 @@ public extension UIFont {
 	static func      heavy(_ size: CGFloat) -> UIFont { systemFont(ofSize: size, weight: .heavy) }
 	static func      black(_ size: CGFloat) -> UIFont { systemFont(ofSize: size, weight: .black) }
 }
+#endif

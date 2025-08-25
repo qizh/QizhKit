@@ -6,6 +6,7 @@
 //  Copyright © 2019 Serhii Shevchenko. All rights reserved.
 //
 
+#if canImport(UIKit)
 import SwiftUI
 
 extension Color {
@@ -29,3 +30,4 @@ extension Color {
         return (r, g, b, a)
     }
 }
+#endif
