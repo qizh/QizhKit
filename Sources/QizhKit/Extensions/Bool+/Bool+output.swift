@@ -31,4 +31,8 @@ extension Bool {
 				.foregroundStyle(.red)
 		}
 	}
+	
+	@inlinable public var asInt: Int8 {
+		self ? 1 : 0
+	}
 }
