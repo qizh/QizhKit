@@ -434,7 +434,7 @@ public struct LabeledValueView: View {
 					.alignmentGuide(.separator) { $0[.leading] }
 			}
 			.lineLimit(1)
-			.background((colorScheme.isDark ? Color.white : Color.black).opacity(0.8))
+			.background(Color.systemBackground)
 			.roundedBorder(
 				Color.primary.opacity(0.6),
 				radius: 2,
