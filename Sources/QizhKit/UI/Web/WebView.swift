@@ -6,6 +6,7 @@
 //  Copyright © 2020 Serhii Shevchenko. All rights reserved.
 //
 
+#if canImport(UIKit)
 import SwiftUI
 import WebKit
 import QizhMacroKit
@@ -355,4 +356,5 @@ struct WebView_Previews: PreviewProvider {
 //		.previewAllColorSchemes()
     }
 }
+#endif
 #endif

@@ -11,9 +11,10 @@ import SwiftUI
 // MARK: Almost Clear
 
 extension Color {
-	public static let almostClear = Color(uiColor: .systemBackground).opacity(0.001)
+	public static let almostClear = Color(white: 1, opacity: 0.001)
 }
 
+#if canImport(UIKit)
 extension UIColor {
 	public static let almostClear = UIColor.systemBackground.withAlphaComponent(0.001)
 }
@@ -21,10 +22,12 @@ extension UIColor {
 extension ShapeStyle where Self == Color {
 	@inlinable public static var almostClear: Self { .almostClear }
 }
+#endif
 
 // MARK: From UIColor
 
 public extension Color {
+	#if canImport(UIKit)
 	static let systemBackground          = Color(uiColor: .systemBackground)
 	static let secondarySystemBackground = Color(uiColor: .secondarySystemBackground)
 	static let tertiarySystemBackground  = Color(uiColor: .tertiarySystemBackground)
@@ -73,7 +76,8 @@ public extension Color {
 	@inlinable static func accentColor(_ opacity: Double) -> Color {
 		Color.accentColor.opacity(opacity)
 	}
-	
+	#endif
+
 	// MARK: B&W
 	
 	@inlinable static func white(_ opacity: Double) -> Color { Color.white.opacity(opacity) }
@@ -102,12 +106,14 @@ public extension Color {
 	
 	// MARK: System Grayscale
 	
+	#if canImport(UIKit)
 	static let systemGray = Color(uiColor: .systemGray)
 	static let systemGray2 = Color(uiColor: .systemGray2)
 	static let systemGray3 = Color(uiColor: .systemGray3)
 	static let systemGray4 = Color(uiColor: .systemGray4)
 	static let systemGray5 = Color(uiColor: .systemGray5)
 	static let systemGray6 = Color(uiColor: .systemGray6)
+	#endif
 }
 
 // MARK: White
@@ -119,6 +125,8 @@ public extension Color {
 // MARK: Shape Style
 
 public extension ShapeStyle where Self == Color {
+	#if canImport(UIKit)
+
 	// MARK: System
 	
 	@inlinable static var systemBackground: Color 			{ Color(uiColor: .systemBackground) }
@@ -154,6 +162,7 @@ public extension ShapeStyle where Self == Color {
 	@inlinable static func systemBackground(_ opacity: Double) -> Color {
 		Color(uiColor: .systemBackground).opacity(opacity)
 	}
+	#endif
 	
 	// MARK: B&W
 	
@@ -183,12 +192,14 @@ public extension ShapeStyle where Self == Color {
 	
 	// MARK: System Grayscale
 	
+	#if canImport(UIKit)
 	@inlinable static var systemGray: Color { Color(uiColor: .systemGray) }
 	@inlinable static var systemGray2: Color { Color(uiColor: .systemGray2) }
 	@inlinable static var systemGray3: Color { Color(uiColor: .systemGray3) }
 	@inlinable static var systemGray4: Color { Color(uiColor: .systemGray4) }
 	@inlinable static var systemGray5: Color { Color(uiColor: .systemGray5) }
 	@inlinable static var systemGray6: Color { Color(uiColor: .systemGray6) }
+	#endif
 }
 
 // MARK: Shape Style

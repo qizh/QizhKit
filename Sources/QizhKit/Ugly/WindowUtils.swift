@@ -6,6 +6,7 @@
 //  Copyright © 2019 Serhii Shevchenko. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 public struct WindowUtils {
@@ -82,3 +83,4 @@ public struct SafeFrame {
 		WindowUtils.currentWindow?.safeAreaInsets ?? .zero
 	}
 }
+#endif

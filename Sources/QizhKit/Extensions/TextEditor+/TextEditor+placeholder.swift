@@ -6,6 +6,7 @@
 //  Copyright © 2021 Serhii Shevchenko. All rights reserved.
 //
 
+#if canImport(UIKit)
 import SwiftUI
 
 extension TextEditor {
@@ -103,3 +104,4 @@ extension View {
 		.animation(.spring, value: visible)
 	}
 }
+#endif

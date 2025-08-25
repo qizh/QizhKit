@@ -183,6 +183,8 @@ public struct BorderCrafterValues {
 		
 		/// Color(uiColor: .systemGray)
 		public let cg  : Value = Value(.systemGray)
+		
+		#if canImport(UIKit)
 		/// Color(uiColor: .systemGray2)
 		public let cg2 : Value = Value(.systemGray2)
 		/// Color(uiColor: .systemGray3)
@@ -202,8 +204,10 @@ public struct BorderCrafterValues {
 		public let cB  : Value = Value(.systemBackground)
 		/// Color(uiColor: .secondarySystemBackground)
 		public let cSB : Value = Value(.secondarySystemBackground)
+		#endif
 	}
 	
+	#if canImport(UIKit)
 	public struct UIColors: Sendable {
 		public typealias Value = UIColor
 		public typealias Key = KeyPath<Self, Value>
@@ -264,6 +268,7 @@ public struct BorderCrafterValues {
 		public let brown                            : Value = .brown
 		public let clear                            : Value = .clear
 	}
+	#endif
 }
 
 // MARK: Crafter
@@ -271,7 +276,9 @@ public struct BorderCrafterValues {
 @dynamicMemberLookup
 public struct BorderCrafter <Source : View> : Updatable {
 	public typealias Colors    = BorderCrafterValues.Colors
+	#if canImport(UIKit)
 	public typealias UIColors  = BorderCrafterValues.UIColors
+	#endif
 	public typealias Opacities = BorderCrafterValues.Opacities
 	public typealias Weights   = BorderCrafterValues.Weights
 
@@ -299,10 +306,12 @@ public struct BorderCrafter <Source : View> : Updatable {
 			.with(Colors.value(for: key))
 	}
 	
+	#if canImport(UIKit)
 	public subscript(dynamicMember key: UIColors.Key) -> Self {
 		updating(\.color)
 			.with(Color(uiColor: UIColors.value(for: key)))
 	}
+	#endif
 	
 	public subscript(dynamicMember key: Opacities.Key) -> Self {
 		updating(\.opacity)
@@ -321,10 +330,12 @@ public struct BorderCrafter <Source : View> : Updatable {
 			.with(value)
 	}
 	
+	#if canImport(UIKit)
 	public func uiColor(_ value: UIColors.Value) -> Self {
 		updating(\.color)
 			.with(Color(uiColor: value))
 	}
+	#endif
 	
 	public func opacity(_ value: Opacities.Value) -> Self {
 		updating(\.opacity)

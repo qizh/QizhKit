@@ -8,13 +8,12 @@
 
 import SwiftUI
 
-#if os(iOS)
+#if canImport(UIKit)
 public extension UIScreen {
 	@inlinable static var width  : CGFloat { main.bounds.width }
 	@inlinable static var height : CGFloat { main.bounds.height }
 	@inlinable static var size   : CGSize  { main.bounds.size }
 }
-#endif
 
 public extension UIApplication {
 	@inlinable
@@ -22,3 +21,4 @@ public extension UIApplication {
 		sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
 	}
 }
+#endif

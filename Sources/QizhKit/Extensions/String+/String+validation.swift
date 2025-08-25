@@ -23,6 +23,7 @@ public struct StringValidationExpression:
 	public static let youtubeVideoCode: Self = #"^[0-9A-Za-z_-]{10}[048AEIMQUYcgkosw]$"#
 }
 
+#if canImport(UIKit)
 public extension String {
 	@inlinable var isValidEmail: Bool { self.is(valid: .email) }
 	@inlinable var isValidYouTubeCode: Bool { self.is(valid: .youtubeVideoCode) }
@@ -35,6 +36,7 @@ public extension String {
 		}
 	}
 }
+#endif
 
 public extension String {
 	typealias ValidationExpression = StringValidationExpression

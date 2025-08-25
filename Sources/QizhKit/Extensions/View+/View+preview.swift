@@ -6,6 +6,7 @@
 //  Copyright © 2020 Serhii Shevchenko. All rights reserved.
 //
 
+#if canImport(UIKit)
 import SwiftUI
 import DeviceKit
 
@@ -128,6 +129,7 @@ public extension View {
 		}
 	}
 	
+	#if canImport(UIKit)
 	@inlinable func previewVertically() -> some View {
 		ScrollView(.vertical) {
 			VStack(alignment: .leading, spacing: 2) {
@@ -148,6 +150,7 @@ public extension View {
 		.fixedSize(horizontal: fit, vertical: false)
 		.previewFitting(padding: fit ? .vertical : [])
 	}
+	#endif
 	
 	/// `en_US`, `ru_UA`, `th_TH`, `en_UA`
 	@inlinable func previewDemoLocales() -> some View {
@@ -165,6 +168,7 @@ public extension View {
 		}
 	}
 	
+	#if canImport(UIKit)
 	@inlinable func previewFitting(
 		padding edges: Edge.Set = .all,
 		color: Color = Color(uiColor: .systemBackground)
@@ -181,4 +185,6 @@ public extension View {
 			.background(Color(uiColor: .systemBackground))
 			.previewLayout(.fixed(width: 600, height: 900))
 	}
+	#endif
 }
+#endif

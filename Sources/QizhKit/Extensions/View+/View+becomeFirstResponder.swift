@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-#if canImport(SwiftUIIntrospect)
+#if canImport(SwiftUIIntrospect) && canImport(UIKit)
 import SwiftUIIntrospect
 
 @available(*, deprecated, message: "Use focused(_:) SwiftUI modifier in combination with @FocusState variable instead")

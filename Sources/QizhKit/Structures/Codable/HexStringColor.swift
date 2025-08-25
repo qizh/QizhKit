@@ -68,6 +68,7 @@ public struct HexStringColor: Codable,
 		)
 	}
 	
+	#if canImport(UIKit)
 	public func combinedColor(dark: HexStringColor) -> UIColor {
 		if dark.isDefault, self.isDefault {
 			return .label
@@ -109,6 +110,7 @@ public struct HexStringColor: Codable,
 			alpha: alpha
 		)
 	}
+	#endif
 
 	public init(from decoder: Decoder) throws {
 		let rawValue = try decoder.singleValueContainer().decode(String.self)

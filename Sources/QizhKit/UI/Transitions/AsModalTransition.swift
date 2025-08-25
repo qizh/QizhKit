@@ -6,6 +6,7 @@
 //  Copyright © 2020 Serhii Shevchenko. All rights reserved.
 //
 
+#if canImport(UIKit)
 import SwiftUI
 
 public struct HalfModalStyleModifier: ViewModifier {
@@ -96,4 +97,5 @@ struct AsModalTransition_Previews: PreviewProvider {
 		.previewLayout(.fixed(width: 200, height: 200))
 	}
 }
+#endif
 #endif

@@ -6,6 +6,7 @@
 //  Copyright © 2023 Serhii Shevchenko. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 extension Notification {
@@ -19,3 +20,4 @@ extension Notification {
 		#endif
 	}
 }
+#endif
