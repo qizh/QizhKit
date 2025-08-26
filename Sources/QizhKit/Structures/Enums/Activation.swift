@@ -15,9 +15,11 @@ public import enum os.OSLogBoolFormat
 /// Represents a binary activation state,
 /// typically used to indicate `on` or `off` conditions.
 @CaseName @IsCase
-public enum Activation: Hashable, Sendable {
+public enum Activation: Hashable, Sendable, CaseIterable {
 	case on
 	case off
+	public static let yes: Activation = .on
+	public static let no: Activation = .off
 }
 
 // MARK: Activation Convenience Initializer
@@ -256,6 +258,21 @@ extension Activation: ExpressibleByBooleanLiteral {
 	/// - Parameter value: The boolean literal value.
 	@inlinable public init(booleanLiteral value: Bool) {
 		self.init(value)
+	}
+}
+
+extension Activation: ExpressibleByIntegerLiteral {
+	/// Initializes an `Activation` instance from an integer literal.
+	///
+	/// - Parameter value: The integer literal value.
+	///   - If the value is zero, the activation state is set to `.off`.
+	///   - If the value is non-zero, the activation state is set to `.on`.
+	@inlinable public init(integerLiteral value: Int) {
+		if value.isZero {
+			self = .off
+		} else {
+			self = .on
+		}
 	}
 }
 
