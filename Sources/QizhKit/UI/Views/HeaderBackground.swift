@@ -117,7 +117,7 @@ public struct ShowHeaderBackgroundViewModifier: ViewModifier {
 				.overlay(LinearGradient.vertical(from: .blue, to: .orange).opacity(0.3))
 				.debugFrame(blurred: false, alignment: .bottom)
 				.overlay(.bottom) {
-					VStack.LabeledViews {
+					LabeledViews {
 						self.safeFrameInsets.top.labeledView(label: "device")
 						geometry.safeAreaInsets.top.labeledView(label: "screen")
 						self.topSafeInset.labeledView(label: "measured", fractionDigits: 0)

@@ -65,7 +65,7 @@ public struct WebpageScreen: View {
     }
 	
 	private var debugColorScheme: some View {
-		VStack.LabeledViews {
+		LabeledViews {
 			colorScheme.caseView(label: "color scheme")
 		}
 	}

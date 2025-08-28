@@ -12,6 +12,7 @@ import SwiftUI
 
 extension EnvironmentValues {
 	@Entry public var labeledViewLengthLimit: Int = 50
+	@Entry public var labeledViewMaxValueWidth: CGFloat? = 256
 	@Entry public var labeledViewAllowMultiline: Bool = false
 }
 
@@ -37,14 +38,44 @@ extension View {
 	public func setLabeledView(allowMultiline: Bool) -> some View {
 		environment(\.labeledViewAllowMultiline, allowMultiline)
 	}
+	
+	public func setLabeledView(maxValueWidth: CGFloat?) -> some View {
+		environment(\.labeledViewMaxValueWidth, maxValueWidth)
+	}
 }
 
 // MARK: Stack
 
+public struct LabeledViews<Views: View>: View {
+	public let views: Views
+	
+	public init(@ViewBuilder _ views: () -> Views) {
+		self.views = views()
+	}
+	
+	public var body: some View {
+		VStack(alignment: .separator, spacing: 2) {
+			views
+		}
+		.containerRelativeFrame(.horizontal)
+	}
+}
+
+/*
 extension VStack {
 	@MainActor
 	public static func LabeledViews(@ViewBuilder _ content: () -> Content) -> some View {
 		VStack(alignment: .separator, spacing: 2, content: content)
+			.containerRelativeFrame(.horizontal)
+			/*
+			.containerRelativeFrame(
+				.horizontal,
+				count: <#T##Int#>,
+				span: <#T##Int#>,
+				spacing: <#T##CGFloat#>,
+				alignment: <#T##Alignment#>
+			)
+			*/
 		/*
 		LazyVStack(alignment: .separator, spacing: 2) {
 			content()
@@ -59,8 +90,10 @@ extension LazyVStack {
 	@MainActor
 	public static func LabeledViews(@ViewBuilder _ content: () -> Content) -> some View {
 		LazyVStack(alignment: .separator, spacing: 2, content: content)
+			.containerRelativeFrame(.horizontal)
 	}
 }
+*/
 
 /*
 // MARK: Library Content
@@ -69,7 +102,7 @@ public struct LabeledValueLibraryContent: LibraryContentProvider {
 	@LibraryContentBuilder
 	public var views: [LibraryItem] {
 		LibraryItem(
-			VStack.LabeledViews {
+			LabeledViews {
 				"Value".labeledView(label: "Label")
 			},
 			visible: true,
@@ -88,8 +121,9 @@ public struct LabeledValueView: View {
 	fileprivate var label: String?
 	
 	@Environment(\.colorScheme) fileprivate var colorScheme
-	@Environment(\.labeledViewAllowMultiline) fileprivate var allowMultiline
 	@Environment(\.pixelLength) fileprivate var pixelLength
+	@Environment(\.labeledViewAllowMultiline) fileprivate var allowMultiline
+	@Environment(\.labeledViewMaxValueWidth) fileprivate var maxValueWidth
 	
 	private init(
 		valueView: AnyView,
@@ -130,16 +164,10 @@ public struct LabeledValueView: View {
 		}
 		
 		var body: some View {
-			Group {
-				if lengthLimit >= value.count {
-					Text(value)
-				} else {
-					Text(value.prefix(lengthLimit))
-				}
-			}
-			.semibold(8)
-			.padding(EdgeInsets(top: 3, leading: 5, bottom: 2, trailing: 5))
-			.foregroundStyle(.primary)
+			Text(value)
+				.semibold(8)
+				.padding(EdgeInsets(top: 3, leading: 5, bottom: 2, trailing: 5))
+				.foregroundStyle(.primary)
 		}
 	}
 	
@@ -450,10 +478,17 @@ public struct LabeledValueView: View {
 	}
 	
 	public var body: some View {
-		HStack(alignment: .top, spacing: 1) {
+		// let maxValueWidth = maxValueWidth ?? 300
+		let labelRatio: CGFloat = 0.28
+		let valueRatio: CGFloat = 1 - labelRatio
+		let spacing: CGFloat = 1
+		
+		HStack(alignment: .top, spacing: spacing) {
+			
 			label?
 				.asText()
-				.lineLimit(1)
+				// .lineLimit(1)
+				.multilineTextAlignment(.trailing)
 				.font(Font.system(size: 10, weight: .semibold).smallCaps())
 				.padding(EdgeInsets(top: 1, leading: 5, bottom: 2, trailing: 5))
 				.foregroundStyle(.secondary)
@@ -464,37 +499,83 @@ public struct LabeledValueView: View {
 					radius: 2,
 					weight: colorScheme.isDark ? pixelLength : 0
 				)
-				.fixedSize()
+				.fixedHeight()
+				.apply { view in
+					ViewThatFits(in: .horizontal) {
+						view.lineLimit(1)
+						view
+					}
+				}
+				// .containerRelativeFrame(.horizontal, count: 10, span: 3, spacing: spacing, alignment: .trailing)
+				.containerRelativeFrame(
+					.horizontal,
+					alignment: .trailing
+				) { length, axis in
+					switch axis {
+					case .horizontal: (length - spacing) * labelRatio
+					case .vertical where allowMultiline: length
+					case .vertical: 15
+					}
+				}
 				// .alignmentGuide(.separator) { $0.width }
 			
 			valueView
-				.lineLimit(allowMultiline ? .none : 1)
 				.multilineTextAlignment(.leading)
 				.frame(minHeight: 15, alignment: .topLeading)
 				// .alignmentGuide(.separator, value: .zero)
-				.alignmentGuide(.separator) { $0[.leading] }
 				.background(Color.systemBackground)
 				.roundedBorder(
 					Color.primary.opacity(0.6),
 					radius: 2,
 					weight: colorScheme.isDark ? pixelLength : 0
 				)
-				.fixedHeight(allowMultiline)
+				.asMultilineSwitcher()
+				// .containerRelativeFrame(.horizontal, count: 10, span: 7, spacing: spacing, alignment: .leading)
+				.containerRelativeFrame(
+					.horizontal,
+					alignment: .leading
+				) { length, axis in
+					switch axis {
+					case .horizontal: (length - spacing) * valueRatio
+					case .vertical where allowMultiline: length
+					case .vertical: 15
+					}
+				}
 		}
+		// .containerValue(<#T##keyPath: WritableKeyPath<ContainerValues, V>##WritableKeyPath<ContainerValues, V>#>, <#T##value: V##V#>)
 		.compositingGroup()
 		.shadow(
 			color: colorScheme.isDark ? .clear : .black.opacity(0.4),
 			radius: 2
 		)
+		// .containerRelativeFrame(.horizontal)
+		/*
 		.apply { view in
-			let range = 0 ... 100
 			ViewThatFits(in: .horizontal) {
 				view
-				ForEach(range, id: \.self) { offset in
-					view.alignmentGuide(.separator, value: offset.cg)
+				view.setLabeledView(maxValueWidth: maxValueWidth - 20)
+				view.setLabeledView(maxValueWidth: maxValueWidth - 40)
+				view.setLabeledView(maxValueWidth: maxValueWidth - 60)
+				view.setLabeledView(maxValueWidth: maxValueWidth - 80)
+				view.setLabeledView(maxValueWidth: maxValueWidth - 100)
+				/*
+				if allowMultiline {
+					view.alignmentGuide(.separator, value: 0)
+				}
+				*/
+			}
+		}
+		*/
+		/*
+		.apply { view in
+			ViewThatFits(in: .horizontal) {
+				view
+				if allowMultiline {
+					view.alignmentGuide(.separator, value: 0)
 				}
 			}
 		}
+		*/
 	}
 	
 	public enum BoolDisplayStyle: DefaultCaseFirst, EasyCaseComparable {
@@ -502,6 +583,50 @@ public struct LabeledValueView: View {
 		case string
 		case int
 		case emoji
+	}
+}
+
+public struct LabeledViewMultilineSwitcher<Content: View>: View {
+	public let content: Content
+	
+	@State private var isSwitched: Bool = false
+	
+	@Environment(\.labeledViewLengthLimit) fileprivate var lengthLimit
+	@Environment(\.labeledViewMaxValueWidth) fileprivate var maxValueWidth
+	@Environment(\.labeledViewAllowMultiline) fileprivate var allowMultiline
+	
+	public init(@ViewBuilder _ content: () -> Content) {
+		self.content = content()
+	}
+	
+	public var body: some View {
+		let isMultiline: Bool = isSwitched ? not(allowMultiline) : allowMultiline
+		// let newlengthLimit: Int = isMultiline ? .max : (lengthLimit == .max ? 40 : lengthLimit)
+		
+		content
+			// .setLabeledView(lengthLimit: newlengthLimit)
+			.setLabeledView(allowMultiline: isMultiline)
+			// .maxWidth(maxValueWidth, .leading)
+			/*
+			.fixedWidth()
+			.clipped()
+			*/
+
+			.lineLimit(isMultiline ? nil : 1)
+			.fixedHeight(isMultiline)
+			.alignmentGuide(.separator) { $0[.leading] }
+			.button {
+				withAnimation(.bouncy) {
+					isSwitched.toggle()
+				}
+			}
+			.buttonStyle(.plain)
+	}
+}
+
+extension View {
+	@inlinable public func asMultilineSwitcher() -> some View {
+		LabeledViewMultilineSwitcher { self }
 	}
 }
 
@@ -781,8 +906,10 @@ extension Collection where Element: Sendable {
 		if isEmpty {
 			NilReplacement.emptySet.labeledView(label: label)
 		} else {
-			VStack.LabeledViews {
-				"[\(Element.self)]".labeledView(label: label)
+			LabeledViews {
+				if let label {
+					"[\(Element.self)]".labeledView(label: label)
+				}
 				ForEach(enumerating: self) { offset, element in
 					switch element {
 					case let item as CGRect:
@@ -809,8 +936,10 @@ extension Dictionary where Key: Sendable, Value: Sendable {
 		if isEmpty {
 			NilReplacement.emptySet.labeledView(label: label)
 		} else {
-			VStack.LabeledViews {
-				"[\(Key.self): \(Value.self)]".labeledView(label: label)
+			LabeledViews {
+				if let label {
+					"[\(Key.self): \(Value.self)]".labeledView(label: label)
+				}
 				ForEach(enumerating: self) { offset, element in
 					"\(element.value)".labeledView(label: "\(element.key)")
 				}
@@ -826,8 +955,10 @@ extension Set where Element: Sendable {
 		if isEmpty {
 			NilReplacement.emptySet.labeledView(label: label)
 		} else {
-			VStack.LabeledViews {
-				"[\(Element.self)]".labeledView(label: label)
+			LabeledViews {
+				if let label {
+					"[\(Element.self)]".labeledView(label: label)
+				}
 				ForEach(enumerating: self) { offset, element in
 					"\(element)".labeledView(label: "\(offset)")
 				}
@@ -847,8 +978,10 @@ extension OrderedDictionary {
 		if isEmpty {
 			NilReplacement.emptySet.labeledView(label: label)
 		} else {
-			VStack.LabeledViews {
-				"[\(Key.self): \(Value.self)]".labeledView(label: label)
+			LabeledViews {
+				if let label {
+					"[\(Key.self): \(Value.self)]".labeledView(label: label)
+				}
 				ForEach(self.keys.asArray(), id: \.self) { key in
 					"\(self[key].orNilString)".labeledView(label: "\(key)")
 					/*
