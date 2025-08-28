@@ -14,11 +14,20 @@ public extension String {
 	static let uppercasedLetters = lowercasedLetters.uppercased()
 	static let letters = lowercasedLetters + uppercasedLetters
 	static let alphanumerics = numerics + letters
+	static let alphanumericsWithSpaces = alphanumerics + .space
 	static let uppercasedAlphanumerics = numerics + uppercasedLetters
 	static let lowercasedAlphanumerics = numerics + lowercasedLetters
 
-	static func random(_ amount: UInt = .one, charactersFrom set: String) -> String {
-		String((.zero ..< amount).map { _ in set.randomElement().or(.spaceChar) })
+	static func random(
+		_ amount: UInt = .one,
+		charactersFrom set: String,
+		seed: UInt64 = .random(in: UInt64.min...UInt64.max)
+	) -> String {
+		(.zero ..< amount)
+			.map { offset in
+				set.randomElement(seed: seed + UInt64(offset)) ?? .spaceChar
+			}
+			.asString()
 	}
 	
 	static func randomID(_ length: UInt = .eight) -> String {
