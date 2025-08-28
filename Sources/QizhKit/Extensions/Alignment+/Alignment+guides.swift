@@ -10,7 +10,9 @@ import SwiftUI
 
 public extension HorizontalAlignment {
 	private enum Separator: AlignmentID {
+		// static func defaultValue(in context: ViewDimensions) -> CGFloat { .zero }
 		static func defaultValue(in context: ViewDimensions) -> CGFloat { context[HorizontalAlignment.center] }
+		// static func defaultValue(in context: ViewDimensions) -> CGFloat { context[.leading] }
 	}
 	
 	private enum Middle: AlignmentID {
