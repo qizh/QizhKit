@@ -15,21 +15,21 @@ public extension Int {
 	}
 }
 
-public extension Int {
-	var s: String {
+extension FixedWidthInteger {
+	public var s: String {
 		switch self {
-		case .max: 	return ".max"
-		case .min: 	return ".min"
-		default: 	return "\(self)"
+		case .max: 	".max"
+		case .min : ".min"
+		default: 	String(self)
 		}
 	}
 }
 
-public extension UInt {
-	var s: String {
+extension FixedWidthInteger where Self: UnsignedInteger {
+	public var s: String {
 		switch self {
-		case .max: 	return ".max"
-		default: 	return String(self)
+		case .max: 	".max"
+		default: 	String(self)
 		}
 	}
 }
