@@ -546,6 +546,14 @@ public struct LabeledValueView: View {
 					.button {
 						UIPasteboard.general.string = valueView.string
 					}
+
+					ShareLink(item: valueView.string) {
+						Label {
+							Text("Share", tableName: "Debug", comment: "Share labeled view value string")
+						} icon: {
+							Image(systemName: "square.and.arrow.up")
+						}
+					}
 				}
 				.draggable(valueView.transferableText)
 				.containerRelativeFrame(
