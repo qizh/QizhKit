@@ -73,6 +73,7 @@ extension TimeInterval {
 	/// - Note: This format style is `Sendable` and can be safely used in concurrent code.
 	/// - SeeAlso: `Measurement<UnitDuration>.FormatStyle`, `FormatStyle`
 	public struct SecondsMeasurementFormatStyle: FormatStyle, Sendable {
+		public let unitSymbol: String
 		public let width: Measurement<UnitDuration>.FormatStyle.UnitWidth
 		public let usage: MeasurementFormatUnitUsage<UnitDuration>
 		public let numberFormatStyle: FloatingPointFormatStyle<Double>?
@@ -102,11 +103,13 @@ extension TimeInterval {
 		/// This supports display of time durations tailored to your application's needs
 		/// and the user's preferences.
 		public init(
+			in unit: UnitDuration,
 			width: Measurement<UnitDuration>.FormatStyle.UnitWidth,
 			usage: MeasurementFormatUnitUsage<UnitDuration> = .general,
 			numberFormatStyle: FloatingPointFormatStyle<Double>? = nil,
 			locale: Locale = .autoupdatingCurrent
 		) {
+			self.unitSymbol = unit.symbol
 			self.width = width
 			self.usage = usage
 			self.numberFormatStyle = numberFormatStyle
@@ -115,7 +118,9 @@ extension TimeInterval {
 		
 		/// Creates a `FormatOutput` instance from `value`.
 		public func format(_ value: TimeInterval) -> String {
+			// Measurement(value: value, unit: .seconds)
 			value.asMeasurement
+				.converted(to: .unit(by: unitSymbol))
 				.formatted(
 					.measurement(
 						width: width,
@@ -125,16 +130,31 @@ extension TimeInterval {
 					.locale(locale)
 				)
 		}
-
+		
 		/// If the format allows selecting a locale, returns a copy of this format
 		/// with the new locale set. Default implementation returns an unmodified self.
 		public func locale(_ locale: Locale) -> Self {
 			.init(
+				in: .unit(by: unitSymbol),
 				width: width,
 				usage: usage,
 				numberFormatStyle: numberFormatStyle,
 				locale: locale
 			)
+		}
+	}
+}
+
+extension UnitDuration {
+	fileprivate static func unit(by symbol: String) -> UnitDuration {
+		switch symbol {
+		case UnitDuration.hours.symbol: 		.hours
+		case UnitDuration.minutes.symbol: 		.minutes
+		case UnitDuration.seconds.symbol: 		.seconds
+		case UnitDuration.nanoseconds.symbol: 	.nanoseconds
+		case UnitDuration.picoseconds.symbol: 	.picoseconds
+		case UnitDuration.microseconds.symbol: 	.microseconds
+		default: 								.seconds
 		}
 	}
 }
@@ -154,17 +174,23 @@ extension FormatStyle where Self == TimeInterval.SecondsMeasurementFormatStyle {
 	/// - Returns: A measurement format style that can be used to format a `TimeInterval`
 	/// 			as a localized string representation of duration.
 	@inlinable public static func timeIntervalMeasurement(
-		width: Measurement<UnitDuration>.FormatStyle.UnitWidth,
+		in unit: UnitDuration = .seconds,
+		width: Measurement<UnitDuration>.FormatStyle.UnitWidth = .wide,
 		usage: MeasurementFormatUnitUsage<UnitDuration> = .general,
-		numberFormatStyle: FloatingPointFormatStyle<Double>? = .number.precision(.significantDigits(3)),
+		numberFormatStyle: FloatingPointFormatStyle<Double>? = .number.precision(.significantDigits(0...2)),
 		locale: Locale = .autoupdatingCurrent
 	) -> Self {
 		.init(
+			in: unit,
 			width: width,
 			usage: usage,
 			numberFormatStyle: numberFormatStyle,
 			locale: locale
 		)
+	}
+	
+	@inlinable public static var timeIntervalMeasurement: Self {
+		timeIntervalMeasurement()
 	}
 }
 
@@ -182,4 +208,5 @@ extension FormatStyle where Self == TimeInterval.SecondsMeasurementFormatStyle {
 /// Реализация такого подхода описана в:
 /// https://msicc.net/crafting-a-swift-timespan-type-with-a-little-prompt-engineering-magic/?utm_source=chatgpt.com
 /// https://www.swiftbysundell.com/articles/exploring-some-of-the-lesser-known-formatter-types?utm_source=chatgpt.com
+
 
