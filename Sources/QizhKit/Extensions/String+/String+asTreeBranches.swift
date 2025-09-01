@@ -44,14 +44,26 @@ extension Collection<String> {
 	/// ```
 	public var asTreeBranches: String {
 		if isEmpty { return .empty }
-		if let justOne { return justOne.prefixedAsLastTreeBranch }
+		// if let justOne { return justOne.prefixedAsLastTreeBranch }
 		
 		var output: String = .empty
 		for (index, string) in self.enumerated() {
-			if index == count - 1 {
-				output += string.prefixedAsLastTreeBranch
+			let isLast: Bool = index == count - 1
+			
+			let offsettedString: String =
+				if string.withLinesNSpacesTrimmed.contains(.newlines) {
+					string.offsetting(
+						by: isLast ? .spaces(2) : .treeLine,
+						first: false
+					)
+				} else {
+					string
+				}
+			
+			if isLast {
+				output += offsettedString.prefixedAsLastTreeBranch
 			} else {
-				output += string.prefixedAsTreeBranch + .newLine
+				output += offsettedString.prefixedAsTreeBranch + .newLine
 			}
 		}
 		return output
@@ -167,14 +179,26 @@ extension Dictionary where Key: Hashable, Value == String {
 	/// ```
 	public var asTreeBranches: String {
 		if isEmpty { return .empty }
-		if let justOne { return justOne.value.asTreeLastBranch(named: "\(justOne.key)") }
+		// if let justOne { return justOne.value.asTreeLastBranch(named: "\(justOne.key)") }
 		
 		var outputs: [String] = .empty
-		for (index, (key, value)) in self.enumerated() {
-			if index == count - 1 {
-				outputs.append(value.asTreeLastBranch(named: "\(key)"))
+		for (index, (key, string)) in self.enumerated() {
+			let isLast: Bool = index == count - 1
+			
+			let offsettedString: String =
+				if string.withLinesNSpacesTrimmed.contains(.newlines) {
+					string.offsetting(
+						by: isLast ? .spaces(2) : .treeLine,
+						first: false
+					)
+				} else {
+					string
+				}
+			
+			if isLast {
+				outputs.append(offsettedString.asTreeLastBranch(named: "\(key)"))
 			} else {
-				outputs.append(value.asTreeBranch(named: "\(key)"))
+				outputs.append(offsettedString.asTreeBranch(named: "\(key)"))
 			}
 		}
 		return outputs.joined(separator: .newLine)
@@ -241,16 +265,30 @@ extension OrderedDictionary where Key: Hashable, Value == String {
 	/// ```
 	public var asTreeBranches: String {
 		if isEmpty { return .empty }
+		/*
 		if let justOne = self.elements.justOne {
 			return justOne.value.asTreeLastBranch(named: "\(justOne.key)")
 		}
+		*/
 		
 		var outputs: [String] = .empty
-		for (index, (key, value)) in self.enumerated() {
+		for (index, (key, string)) in self.enumerated() {
+			let isLast: Bool = index == count - 1
+			
+			let offsettedString: String =
+				if string.withLinesNSpacesTrimmed.contains(.newlines) {
+					string.offsetting(
+						by: isLast ? .spaces(2) : .treeLine,
+						first: false
+					)
+				} else {
+					string
+				}
+			
 			if index == count - 1 {
-				outputs.append(value.asTreeLastBranch(named: "\(key)"))
+				outputs.append(offsettedString.asTreeLastBranch(named: "\(key)"))
 			} else {
-				outputs.append(value.asTreeBranch(named: "\(key)"))
+				outputs.append(offsettedString.asTreeBranch(named: "\(key)"))
 			}
 		}
 		return outputs.joined(separator: .newLine)
