@@ -8,7 +8,7 @@
 
 import Foundation
 
-public extension Collection where Element: Sendable {
+public extension Collection { // } where Element: Sendable {
 	subscript (cycle index: Index) -> Element {
 		/// Old approach
 		// self[self.index(startIndex, offsetBy: distance(from: startIndex, to: index) % count)]
@@ -24,8 +24,8 @@ public extension Collection where Element: Sendable {
 	}
 }
 
-public extension Collection where Index == Int,
-								  Element: Sendable {
+public extension Collection where Index == Int {
+								  // Element: Sendable {
 	subscript (cycle index: Index) -> Element {
 		/// Old approach
 		// self[index % count]
