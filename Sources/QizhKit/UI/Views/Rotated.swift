@@ -16,8 +16,11 @@ public struct Rotated <Wrapped: View>: View {
 
 	@State private var size: CGSize = .zero
 	
-	public init(_ view: Wrapped, angle: Angle = .degrees(-90)) {
-		self.wrapped = view
+	public init(
+		by angle: Angle = .degrees(-90),
+		@ViewBuilder _ view: () -> Wrapped
+	) {
+		self.wrapped = view()
 		self.angle = angle
 	}
 	
@@ -30,8 +33,11 @@ public struct Rotated <Wrapped: View>: View {
 					return Color.clear
 				}
 			}
-			.rotationEffect(angle)
+			/// Debug rotated frame
+			// .overlay(.topLeading) { rotatedFrame.labeledView(label: "frame", f: 0) }
+			.rotationEffect(angle, anchor: .center)
 			.size(rotatedFrame.size)
+			// .border.c7()
 	}
 	
 	private var rotatedFrame: CGRect {
@@ -52,7 +58,9 @@ public struct Rotated <Wrapped: View>: View {
 public extension View {
 	@inlinable
 	func rotated(_ angle: Angle) -> some View {
-		Rotated(self, angle: angle)
+		Rotated(by: angle) {
+			self
+		}
 	}
 }
 
