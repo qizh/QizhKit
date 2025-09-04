@@ -664,6 +664,36 @@ public enum FetchError: Error, EasyCaseComparable, Sendable {
 	case notImplemented
 	case unknown
 	
+	public static func multipleErrors(_ errors: [any Error]) -> Self {
+		var errors: [FetchError] = errors
+			.enumerated()
+			.map { offset, error in
+				if let fetchError = error as? FetchError {
+					fetchError
+				} else {
+					.providerError(offset.s, error)
+				}
+			}
+		
+		while errors.count > 2 {
+			errors = errors
+				.chunked(into: 2)
+				.compactMap { chunk in
+					if chunk.isPair {
+						.doubleErrors(chunk[0], chunk[1])
+					} else {
+						chunk.first
+					}
+				}
+		}
+		
+		return errors.first ?? .unknown
+	}
+	
+	@inlinable public static func multipleErrors(_ errors: (any Error)...) -> Self {
+		multipleErrors(errors)
+	}
+	
 	public enum PreconditionValidationReason: Equatable, Sendable {
 		case illegalCharacters(_ value: String)
 		case missingInput(_ input: String, details: String? = .none)
