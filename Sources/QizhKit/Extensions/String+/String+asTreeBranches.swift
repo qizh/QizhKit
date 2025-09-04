@@ -129,6 +129,7 @@ extension Collection where Element: CustomStringConvertible {
 	/// ┣ value2
 	/// ┗ value3
 	/// ```
+	@_disfavoredOverload
 	@inlinable public var asTreeBranches: String {
 		descriptions.asTreeBranches
 	}
@@ -141,6 +142,7 @@ extension Collection where Element: CustomStringConvertible {
 	/// ┗ value3
 	/// ```
 	/// or `name: <empty>` in case of empty collection
+	@_disfavoredOverload
 	public func asTreeBranches(named name: String) -> String {
 		descriptions.asTreeBranches(named: name)
 	}
@@ -151,6 +153,7 @@ extension Collection where Element: CustomStringConvertible {
 	/// ┣ 1: value2
 	/// ┗ 2: value3
 	/// ```
+	@_disfavoredOverload
 	@inlinable public var asNumberedTreeBranches: String {
 		descriptions.asEnumeratedOrderedDictionary.asTreeBranches
 	}
@@ -163,6 +166,7 @@ extension Collection where Element: CustomStringConvertible {
 	/// ┗ 2: value3
 	/// ```
 	/// or `name: <empty>` in case of empty Dictionary
+	@_disfavoredOverload
 	@inlinable public func asNumberedTreeBranches(named name: String) -> String {
 		descriptions.asEnumeratedOrderedDictionary.asTreeBranches(named: name)
 	}
