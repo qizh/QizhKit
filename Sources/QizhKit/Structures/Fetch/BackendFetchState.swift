@@ -632,6 +632,7 @@ public protocol FetchResponse {
 	var underlying: Error? { get }
 }
 
+@CaseName @IsCase
 public enum FetchError: Error, EasyCaseComparable, Sendable {
 	case doubleErrors(Error, Error)
 	case error(String)
@@ -893,37 +894,7 @@ public enum FetchError: Error, EasyCaseComparable, Sendable {
 		case .doubleErrors(_, _): 			return false
 		}
 	}
-	
-	@inlinable public var isProviderError: Bool {
-		switch self {
-		case .providerError: return true
-		default: return false
-		}
-	}
-	
-	@inlinable public var isContentError: Bool {
-		switch self {
-		case .contentError: return true
-		default: return false
-		}
-	}
-	
-	@inlinable public var isEmptyContentError: Bool {
-		switch self {
-		case .emptyContentError: return true
-		default: return false
-		}
-	}
-	
-	@inlinable public var isVerboseError: Bool {
-		switch self {
-		case .verboseError: return true
-		default: return false
-		}
-	}
-	
-	@inlinable public var isCancelled: Bool { self.is(.cancelled) }
-	
+		
 	@inlinable public var verboseErrorDetails: (title: String, description: String?)? {
 		switch self {
 		case .verboseError(let t, let d): return (title: t, description: d)
