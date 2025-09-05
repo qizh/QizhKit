@@ -894,7 +894,7 @@ public enum FetchError: Error, EasyCaseComparable, Sendable {
 		case .doubleErrors(_, _): 			return false
 		}
 	}
-		
+	
 	@inlinable public var verboseErrorDetails: (title: String, description: String?)? {
 		switch self {
 		case .verboseError(let t, let d): return (title: t, description: d)
