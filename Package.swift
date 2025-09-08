@@ -20,7 +20,7 @@ let package = Package(
     ],
 	dependencies: [
 		/// Introspect
-		.package(url: "https://github.com/siteline/swiftui-introspect", from: "1.3.0"),
+		.package(url: "https://github.com/siteline/swiftui-introspect", "1.3.0" ..< "2.0.0"),
 		
 		/// Networking
 		.package(url: "https://github.com/Alamofire/Alamofire", from: "5.10.2"),
