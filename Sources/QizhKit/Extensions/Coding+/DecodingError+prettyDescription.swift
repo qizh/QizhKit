@@ -35,10 +35,11 @@ fileprivate struct DecodingErrorPrettyPrinter: Sendable,
 	
 	private func additionalComponents(for _: DecodingError) -> [String] {
 		switch decodingError {
-		case let .valueNotFound(_, context):
+		case let .valueNotFound(type, context):
 			[
 				codingPathDescription(context.codingPath),
 				context.debugDescription,
+				"Value not found. Expected: \(type).",
 			]
 		case let .keyNotFound(key, context):
 			[
@@ -48,12 +49,13 @@ fileprivate struct DecodingErrorPrettyPrinter: Sendable,
 		case let .typeMismatch(type, context):
 			[
 				codingPathDescription(context.codingPath),
-				"Type mismatch. Expected: \(type)",
+				"Type mismatch. Expected: \(type).",
 			]
 		case let .dataCorrupted(context):
 			[
 				codingPathDescription(context.codingPath),
 				context.debugDescription,
+				"Data corrupted.",
 			]
 		@unknown default:
 			.just(decodingError.localizedDescription)
