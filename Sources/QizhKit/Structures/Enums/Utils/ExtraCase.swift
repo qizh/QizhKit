@@ -337,15 +337,22 @@ extension ExtraCase {
 		.known(member)
 	}
 	
+	/// Resolves a dynamic member into a known or unknown case.
+	///
+	/// - Returns: `.unknown` when `Known.RawValue` is `String` and the member
+	///   doesn't match any known case; otherwise triggers a precondition failure.
 	public static subscript<T>(dynamicMember member: T) -> Self {
-		if let knownMember = member as? Known {
-			self[dynamicMember: knownMember]
-		} else if let rawValue = member as? Known.RawValue {
-			self.init(rawValue: rawValue)
-		} else {
-			preconditionFailure("\(member) is not a valid \(Known.self) case.")
-		}
-	}
+                if let knownMember = member as? Known {
+                        return self[dynamicMember: knownMember]
+                } else if let rawValue = member as? Known.RawValue {
+                        return Self.init(rawValue: rawValue)
+                } else if let string = member as? String,
+                          Known.RawValue.self == String.self {
+                        return Self.init(rawValue: unsafeBitCast(string, to: Known.RawValue.self))
+                } else {
+                        preconditionFailure("\(member) is not a valid \(Known.self) case.")
+                }
+        }
 }
 
 /*

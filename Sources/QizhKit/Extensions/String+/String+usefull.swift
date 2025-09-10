@@ -31,7 +31,8 @@ public extension Character {
 }
 
 extension String {
-	public init(_ staticString: StaticString) {
+	/// Creates a regular string from a `StaticString`.
+	@inlinable public init(_ staticString: StaticString) {
 		self = staticString.withUTF8Buffer {
 			String(decoding: $0, as: UTF8.self)
 		}
@@ -39,6 +40,7 @@ extension String {
 }
 
 extension StaticString {
+	/// A plain `String` representation of this static string.
 	@inlinable public var asString: String {
 		String(self)
 	}
