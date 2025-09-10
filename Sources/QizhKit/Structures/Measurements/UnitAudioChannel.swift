@@ -110,28 +110,51 @@ public enum UnitAudioChannelLocalization: String, AcceptingOtherValues, CasesBri
 	case surround_narrow    = "5.1 ch"
 }
 
+
+/// Convenience helpers for localization keys and comments.
 extension UnitAudioChannelLocalization {
+	/// The key used to look up a localized unit name.
 	public var localizationKey: StaticString {
 		switch self {
-		case .channel_wide: 	"UnitAudioChannel.channel_wide"
-		case .channel_abbrev: 	"UnitAudioChannel.channel_abbrev"
-		case .channel_narrow: 	"UnitAudioChannel.channel_narrow"
-		case .mono_wide: 		"UnitAudioChannel.mono_wide"
-		case .mono_abbrev: 		"UnitAudioChannel.mono_abbrev"
-		case .mono_narrow: 		"UnitAudioChannel.mono_narrow"
-		case .stereo_wide: 		"UnitAudioChannel.stereo_wide"
-		case .stereo_abbrev: 	"UnitAudioChannel.stereo_abbrev"
-		case .stereo_narrow: 	"UnitAudioChannel.stereo_narrow"
-		case .quad_wide: 		"UnitAudioChannel.quad_wide"
-		case .quad_abbrev: 		"UnitAudioChannel.quad_abbrev"
-		case .quad_narrow: 		"UnitAudioChannel.quad_narrow"
-		case .surround_wide: 	"UnitAudioChannel.surround_wide"
-		case .surround_abbrev: 	"UnitAudioChannel.surround_abbrev"
-		case .surround_narrow: 	"UnitAudioChannel.surround_narrow"
+		case .channel_wide:	"UnitAudioChannel.channel_wide"
+		case .channel_abbrev:	"UnitAudioChannel.channel_abbrev"
+		case .channel_narrow:	"UnitAudioChannel.channel_narrow"
+		case .mono_wide:		"UnitAudioChannel.mono_wide"
+		case .mono_abbrev:		"UnitAudioChannel.mono_abbrev"
+		case .mono_narrow:		"UnitAudioChannel.mono_narrow"
+		case .stereo_wide:		"UnitAudioChannel.stereo_wide"
+		case .stereo_abbrev:	"UnitAudioChannel.stereo_abbrev"
+		case .stereo_narrow:	"UnitAudioChannel.stereo_narrow"
+		case .quad_wide:		"UnitAudioChannel.quad_wide"
+		case .quad_abbrev:		"UnitAudioChannel.quad_abbrev"
+		case .quad_narrow:		"UnitAudioChannel.quad_narrow"
+		case .surround_wide:	"UnitAudioChannel.surround_wide"
+		case .surround_abbrev:	"UnitAudioChannel.surround_abbrev"
+		case .surround_narrow:	"UnitAudioChannel.surround_narrow"
+		}
+	}
+
+	/// A localized-comment describing the unit name.
+	public var comment: StaticString {
+		switch self {
+		case .channel_wide:	"Wide Audio Channel unit name"
+		case .channel_abbrev:	"Abbreviated Audio Channel unit name"
+		case .channel_narrow:	"Narrow Audio Channel unit name"
+		case .mono_wide:		"Wide mono Audio Channel unit name"
+		case .mono_abbrev:		"Abbreviated mono Audio Channel unit name"
+		case .mono_narrow:		"Narrow mono Audio Channel unit name"
+		case .stereo_wide:		"Wide stereo Audio Channel unit name"
+		case .stereo_abbrev:	"Abbreviated stereo Audio Channel unit name"
+		case .stereo_narrow:	"Narrow stereo Audio Channel unit name"
+		case .quad_wide:		"Wide quad Audio Channel unit name"
+		case .quad_abbrev:		"Abbreviated quad Audio Channel unit name"
+		case .quad_narrow:		"Narrow quad Audio Channel unit name"
+		case .surround_wide:	"Wide surround Audio Channel unit name"
+		case .surround_abbrev:	"Abbreviated surround Audio Channel unit name"
+		case .surround_narrow:	"Narrow surround Audio Channel unit name"
 		}
 	}
 }
-
 // MARK: ┣ Format Style
 
 public struct UnitAudioChannelFormatStyle: FormatStyle {
@@ -143,279 +166,18 @@ public struct UnitAudioChannelFormatStyle: FormatStyle {
 	/// customize digits, grouping, etc.
 	public var number: FloatingPointFormatStyle<Double> = .number
 	
+	
 	public func format(_ value: Measurement<UnitAudioChannel>) -> FormatOutput {
-		/// 1) Format the numeric part using the requested `number` style & `locale`
 		let formattedNumber = number.locale(locale).format(value.value)
-
-		/*
-		/// 2) Choose the localized unit name by `unit` + `width`
-		typealias Loc = ExtraCase<UnitAudioChannelLocalization>
-		let unitLoc: Loc =
-			switch (value.unit, width) {
-			case (.channel, .wide): 		Loc.channel_wide
-			case (.channel, .abbreviated): 	Loc.channel_abbrev
-			case (.channel, .narrow): 		Loc.channel_narrow
-			case (.channel, _): 			Loc.channel_abbrev
-			case (.mono, .wide): 			Loc.mono_wide
-			case (.mono, .abbreviated): 	Loc.mono_abbrev
-			case (.mono, .narrow): 			Loc.mono_narrow
-			case (.mono, _): 				Loc.mono_abbrev
-			case (.stereo, .wide): 			Loc.stereo_wide
-			case (.stereo, .abbreviated): 	Loc.stereo_abbrev
-			case (.stereo, .narrow): 		Loc.stereo_narrow
-			case (.stereo, _): 				Loc.stereo_abbrev
-			case (.quad, .wide): 			Loc.quad_wide
-			case (.quad, .abbreviated): 	Loc.quad_abbrev
-			case (.quad, .narrow): 			Loc.quad_narrow
-			case (.quad, _): 				Loc.quad_abbrev
-			case (.surround, .wide): 		Loc.surround_wide
-			case (.surround, .abbreviated): Loc.surround_abbrev
-			case (.surround, .narrow): 		Loc.surround_narrow
-			case (.surround, _): 			Loc.surround_abbrev
-			default: 						.unknown(value.unit.symbol)
-			}
-		
-		/// 3) Localization comment
-		let unitLocComment: StaticString =
-			switch (value.unit, width) {
-			case (.channel, .wide): 		"Wide Audio Channel unit name"
-			case (.channel, .abbreviated): 	"Abbreviated Audio Channel unit name"
-			case (.channel, .narrow): 		"Narrow Audio Channel unit name"
-			case (.channel, _): 			"Default Audio Channel unit name"
-			case (.mono, .wide): 			"Wide mono Audio Channel unit name"
-			case (.mono, .abbreviated): 	"Abbreviated mono Audio Channel unit name"
-			case (.mono, .narrow): 			"Narrow mono Audio Channel unit name"
-			case (.mono, _): 				"Default mono Audio Channel unit name"
-			case (.stereo, .wide): 			"Wide stereo Audio Channel unit name"
-			case (.stereo, .abbreviated): 	"Abbreviated stereo Audio Channel unit name"
-			case (.stereo, .narrow): 		"Narrow stereo Audio Channel unit name"
-			case (.stereo, _): 				"Default stereo Audio Channel unit name"
-			case (.quad, .wide): 			"Wide quad Audio Channel unit name"
-			case (.quad, .abbreviated): 	"Abbreviated quad Audio Channel unit name"
-			case (.quad, .narrow): 			"Narrow quad Audio Channel unit name"
-			case (.quad, _): 				"Default quad Audio Channel unit name"
-			case (.surround, .wide): 		"Wide surround Audio Channel unit name"
-			case (.surround, .abbreviated): "Abbreviated surround Audio Channel unit name"
-			case (.surround, .narrow): 		"Narrow surround Audio Channel unit name"
-			case (.surround, _): 			"Default surround Audio Channel unit name"
-			default: 						"Default unknown Audio Channel unit name"
-			}
-		*/
-		
-		let localizedUnit: String =
-			switch (value.unit, width) {
-			case (.channel, .wide): 		
-				String(
-					localized: "UnitAudioChannel.channel_wide",
-					defaultValue: "channels",
-					table: "Units",
-					bundle: .module,
-					locale: locale,
-					comment: "Wide Audio Channel unit name"
-				)
-			case (.channel, .abbreviated):
-				String(
-					localized: "UnitAudioChannel.channel_abbrev",
-					defaultValue: "ch",
-					table: "Units",
-					bundle: .module,
-					locale: locale,
-					comment: "Abbreviated Audio Channel unit name"
-				)
-			case (.channel, .narrow):
-				String(
-					localized: "UnitAudioChannel.channel_narrow",
-					defaultValue: "chnl",
-					table: "Units",
-					bundle: .module,
-					locale: locale,
-					comment: "Narrow Audio Channel unit name"
-				)
-			case (.channel, _):
-				String(
-					localized: "UnitAudioChannel.mono_wide",
-					defaultValue: "ch",
-					table: "Units",
-					bundle: .module,
-					locale: locale,
-					comment: "Default Audio Channel unit name"
-				)
-			case (.mono, .wide):
-				String(
-					localized: "UnitAudioChannel.mono_abbrev",
-					defaultValue: "mono channels",
-					table: "Units",
-					bundle: .module,
-					locale: locale,
-					comment: "Wide mono Audio Channel unit name"
-				)
-			case (.mono, .abbreviated):
-				String(
-					localized: "UnitAudioChannel.mono_narrow",
-					defaultValue: "mn ch",
-					table: "Units",
-					bundle: .module,
-					locale: locale,
-					comment: "Abbreviated mono Audio Channel unit name"
-				)
-			case (.mono, .narrow):
-				String(
-					localized: "UnitAudioChannel.stereo_wide",
-					defaultValue: "mono ch",
-					table: "Units",
-					bundle: .module,
-					locale: locale,
-					comment: "Narrow mono Audio Channel unit name"
-				)
-			case (.mono, _):
-				String(
-					localized: "UnitAudioChannel.stereo_abbrev",
-					defaultValue: "mn ch",
-					table: "Units",
-					bundle: .module,
-					locale: locale,
-					comment: "Default mono Audio Channel unit name"
-				)
-			case (.stereo, .wide):
-				String(
-					localized: "UnitAudioChannel.stereo_narrow",
-					defaultValue: "stereo channels",
-					table: "Units",
-					bundle: .module,
-					locale: locale,
-					comment: "Wide stereo Audio Channel unit name"
-				)
-			case (.stereo, .abbreviated):
-				String(
-					localized: "UnitAudioChannel.quad_wide",
-					defaultValue: "st ch",
-					table: "Units",
-					bundle: .module,
-					locale: locale,
-					comment: "Abbreviated stereo Audio Channel unit name"
-				)
-			case (.stereo, .narrow):
-				String(
-					localized: "UnitAudioChannel.quad_abbrev",
-					defaultValue: "stereo ch",
-					table: "Units",
-					bundle: .module,
-					locale: locale,
-					comment: "Narrow stereo Audio Channel unit name"
-				)
-			case (.stereo, _):
-				String(
-					localized: "UnitAudioChannel.quad_narrow",
-					defaultValue: "st ch",
-					table: "Units",
-					bundle: .module,
-					locale: locale,
-					comment: "Default stereo Audio Channel unit name"
-				)
-			case (.quad, .wide):
-				String(
-					localized: "UnitAudioChannel.surround_wide",
-					defaultValue: "quad channels",
-					table: "Units",
-					bundle: .module,
-					locale: locale,
-					comment: "Wide quad Audio Channel unit name"
-				)
-			case (.quad, .abbreviated):
-				String(
-					localized: "UnitAudioChannel.surround_abbrev",
-					defaultValue: "qd ch",
-					table: "Units",
-					bundle: .module,
-					locale: locale,
-					comment: "Abbreviated quad Audio Channel unit name"
-				)
-			case (.quad, .narrow):
-				String(
-					localized: "UnitAudioChannel.surround_narrow",
-					defaultValue: "quad ch",
-					table: "Units",
-					bundle: .module,
-					locale: locale,
-					comment: "Narrow quad Audio Channel unit name"
-				)
-			case (.quad, _):
-				String(
-					localized: "UnitAudioChannel.channel_wide",
-					defaultValue: "qd ch",
-					table: "Units",
-					bundle: .module,
-					locale: locale,
-					comment: "Default quad Audio Channel unit name"
-				)
-			case (.surround, .wide):
-				String(
-					localized: "UnitAudioChannel.channel_abbrev",
-					defaultValue: "surround channels",
-					table: "Units",
-					bundle: .module,
-					locale: locale,
-					comment: "Wide surround Audio Channel unit name"
-				)
-			case (.surround, .abbreviated):
-				String(
-					localized: "UnitAudioChannel.channel_narrow",
-					defaultValue: "ch5.1",
-					table: "Units",
-					bundle: .module,
-					locale: locale,
-					comment: "Abbreviated surround Audio Channel unit name"
-				)
-			case (.surround, .narrow):
-				String(
-					localized: "UnitAudioChannel.mono_wide",
-					defaultValue: "5.1 ch",
-					table: "Units",
-					bundle: .module,
-					locale: locale,
-					comment: "Narrow surround Audio Channel unit name"
-				)
-			case (.surround, _):
-				String(
-					localized: "UnitAudioChannel.mono_abbrev",
-					defaultValue: "ch5.1",
-					table: "Units",
-					bundle: .module,
-					locale: locale,
-					comment: "Default surround Audio Channel unit name"
-				)
-			default:
-				String(
-					localized: "UnitAudioChannel.unknown",
-					defaultValue: "unknwn",
-					table: "Units",
-					bundle: .module,
-					locale: locale,
-					comment: "Default unknown Audio Channel unit name"
-				)
-			}
-		
-		/*
-		if let knownUnitLoc = unitLoc.known {
-			String(
-				localized: knownUnitLoc.localizationKey,
-				defaultValue: "\(unitLoc.rawValue)",
-				table: "Units",
-				bundle: .module,
-				locale: locale,
-				comment: unitLocComment
-			)
-		} else {
-			String(
-				localized: "\(unitLoc.rawValue)",
-				table: "Units",
-				bundle: .module,
-				locale: locale,
-				comment: unitLocComment
-			)
-		}
-		*/
-		
+		let loc = localization(for: value.unit, width: width)
+		let localizedUnit = String(
+			localized: loc.localizationKey,
+			defaultValue: loc.rawValue,
+			table: "Units",
+			bundle: .module,
+			locale: locale,
+			comment: loc.comment
+		)
 		return String(
 			localized: "UnitAudioChannel.Measurement",
 			defaultValue: "\(formattedNumber) \(localizedUnit)",
@@ -424,51 +186,31 @@ public struct UnitAudioChannelFormatStyle: FormatStyle {
 			locale: locale,
 			comment: "Amount of a specific Audio Channel unit"
 		)
-		
-		
-		
-		
-		/*
-		if let knownUnitLoc = unitLoc.known {
-			return String(
-				localized: knownUnitLoc.localizationKey,
-				defaultValue: String.LocalizationValue(unitLoc.rawValue),
-				table: "Units",
-				bundle: .module,
-				locale: locale,
-				comment: unitLocComment
-			)
-			/*
-			return LocalizedStringResource(
-				knownUnitLoc.localizationKey,
-				defaultValue: unitLoc.rawValue,
-				table: "Audio Channel Units",
-				locale: locale,
-				bundle: .module,
-				comment: unitLocComment
-			)
-			*/
-		} else {
-			return String(
-				localized: String.LocalizationValue(unitLoc.rawValue),
-				table: "Units",
-				bundle: .module,
-				locale: locale,
-				comment: unitLocComment
-			)
-			/*
-			return LocalizedStringResource(
-				"\(unitLoc.rawValue)",
-				table: "Units",
-				locale: locale,
-				bundle: .module,
-				comment: unitLocComment
-			)
-			*/
-		}
-		*/
 	}
-	
+
+	private func localization(
+		for unit: UnitAudioChannel,
+		width: Measurement<UnitAudioChannel>.FormatStyle.UnitWidth
+	) -> UnitAudioChannelLocalization {
+		switch (unit, width) {
+		case (.channel, .wide):	.channel_wide
+		case (.channel, .narrow):	.channel_narrow
+		case (.channel, _):	.channel_abbrev
+		case (.mono, .wide):	.mono_wide
+		case (.mono, .narrow):	.mono_narrow
+		case (.mono, _):	.mono_abbrev
+		case (.stereo, .wide):	.stereo_wide
+		case (.stereo, .narrow):	.stereo_narrow
+		case (.stereo, _):	.stereo_abbrev
+		case (.quad, .wide):	.quad_wide
+		case (.quad, .narrow):	.quad_narrow
+		case (.quad, _):	.quad_abbrev
+		case (.surround, .wide):	.surround_wide
+		case (.surround, .narrow):	.surround_narrow
+		case (.surround, _):	.surround_abbrev
+		default:	.channel_abbrev
+		}
+	}
 	fileprivate var humanReadableWidth: String {
 		switch width {
 		case .wide: 		"wide"

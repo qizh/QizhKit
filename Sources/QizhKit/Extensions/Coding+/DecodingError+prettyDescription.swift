@@ -34,46 +34,49 @@ fileprivate struct DecodingErrorPrettyPrinter: Sendable,
 	}
 	
 	private func additionalComponents(for _: DecodingError) -> [String] {
-		switch decodingError {
-		case let .valueNotFound(type, context):
-			[
-				codingPathDescription(context.codingPath),
-				context.debugDescription,
-				"Value not found. Expected: \(type).",
-			]
-		case let .keyNotFound(key, context):
-			[
-				codingPathDescription(context.codingPath),
-				"Key not found: \(codingKeyDescription(key))",
-			]
-		case let .typeMismatch(type, context):
-			[
-				codingPathDescription(context.codingPath),
-				"Type mismatch. Expected: \(type).",
-			]
-		case let .dataCorrupted(context):
-			[
-				codingPathDescription(context.codingPath),
-				context.debugDescription,
-				"Data corrupted.",
-			]
-		@unknown default:
-			.just(decodingError.localizedDescription)
-		}
+	switch decodingError {
+	case let .valueNotFound(type, context):
+	[
+	codingPathDescription(context.codingPath),
+	"Value not found. Expected \(type).",
+	context.debugDescription,
+	]
+	case let .keyNotFound(key, context):
+	[
+	codingPathDescription(context.codingPath),
+	"Key not found: \(codingKeyDescription(key)).",
+	context.debugDescription,
+	]
+	case let .typeMismatch(type, context):
+	[
+	codingPathDescription(context.codingPath),
+	"Type mismatch. Expected \(type).",
+	context.debugDescription,
+	]
+	case let .dataCorrupted(context):
+	[
+	codingPathDescription(context.codingPath),
+	"Data corrupted.",
+	context.debugDescription,
+	]
+	@unknown default:
+	.just(decodingError.localizedDescription)
 	}
-	
-	var description: String {
-		additionalComponents(for: decodingError)
-			.prepending(prefix)
-			.joined(separator: .colon)
 	}
-	
-	var debugDescription: String {
-		description
+		
+		var description: String {
+				additionalComponents(for: decodingError)
+				.prepending(prefix)
+				.joined(separator: .colon)
 	}
+
+		var debugDescription: String {
+			description
+			}
 }
 
 extension DecodingError {
+	/// A human-readable description built from the coding path, message, and debug context.
 	public var prettyDescription: String {
 		DecodingErrorPrettyPrinter(decodingError: self).description
 	}
