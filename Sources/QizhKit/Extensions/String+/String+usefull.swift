@@ -29,3 +29,17 @@ public extension Character {
 		String(self)
 	}
 }
+
+extension String {
+	public init(_ staticString: StaticString) {
+		self = staticString.withUTF8Buffer {
+			String(decoding: $0, as: UTF8.self)
+		}
+	}
+}
+
+extension StaticString {
+	@inlinable public var asString: String {
+		String(self)
+	}
+}
