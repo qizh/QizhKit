@@ -185,18 +185,54 @@
         }
       }
     },
-    "UnitAudioChannel.Measurement" : {
-      "comment" : "Amount of a specific Audio Channel unit",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ %2$@"
-          }
-        }
-      }
-    },
+	"UnitAudioChannel.Measurement" : {
+	  "comment" : "Amount of a specific Audio Channel unit",
+	  "extractionState" : "extracted_with_value",
+	  "localizations" : {
+		"en" : {
+		  "stringUnit" : {
+			"state" : "new",
+			"value" : "%1$@ %2$@"
+		  }
+		},
+		"de" : {
+		  "stringUnit" : {
+			"state" : "translated",
+			"value" : "%1$@ %2$@"
+		  }
+		},
+		"es" : {
+		  "stringUnit" : {
+			"state" : "translated",
+			"value" : "%1$@ %2$@"
+		  }
+		},
+		"fr" : {
+		  "stringUnit" : {
+			"state" : "translated",
+			"value" : "%1$@ %2$@"
+		  }
+		},
+		"it" : {
+		  "stringUnit" : {
+			"state" : "translated",
+			"value" : "%1$@ %2$@"
+		  }
+		},
+		"ru" : {
+		  "stringUnit" : {
+			"state" : "translated",
+			"value" : "%1$@ %2$@"
+		  }
+		},
+		"uk" : {
+		  "stringUnit" : {
+			"state" : "translated",
+			"value" : "%1$@ %2$@"
+		  }
+		}
+	  }
+	},
     "UnitAudioChannel.mono_abbrev" : {
       "comment" : "Default surround Audio Channel unit name\nWide mono Audio Channel unit name",
       "extractionState" : "extracted_with_value",
