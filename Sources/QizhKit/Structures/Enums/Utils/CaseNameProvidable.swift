@@ -10,9 +10,32 @@ import Foundation
 
 // MARK: Case Name Providable
 
-public protocol CaseNameProvidable {
+public protocol CaseNameProvider {
 	var caseName: String { get }
 }
+
+public protocol CasesBridgeProvider: CaseNameProvider, CaseIterable {
+	associatedtype Cases: Equatable & CaseIterable
+		where Self.Cases.AllCases.Index == Self.AllCases.Index
+	
+	func isAmong(_ cases: [Cases]) -> Bool
+	func isAmong(_ cases: Cases...) -> Bool
+	
+	var parametersErasedCase: Cases { get }
+	static func from(_ c: Cases) -> Self
+}
+
+extension CasesBridgeProvider {
+	public static func from(_ c: Cases) -> Self {
+		Self.allCases.first { outerCase in
+			outerCase.parametersErasedCase == c
+		}
+		?? Self.allCases[safe: Cases.allCases.firstIndex(of: c) ?? Self.allCases.startIndex]
+			.forceUnwrap(because: "`Self.allCases.count` suppose to be equal to `Self.Cases.allCases.count`.")
+	}
+}
+
+public protocol CaseNameProvidable: CaseNameProvider { }
 
 public extension CaseNameProvidable {
 	/// Raw, use to compare
