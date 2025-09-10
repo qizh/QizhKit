@@ -67,6 +67,7 @@ public extension CaseIterable where Self: StringIterable {
 
 // MARK: Main
 
+@dynamicMemberLookup
 public enum ExtraCase<Known>: Codable
 	where Known: RawRepresentable,
 		  Known.RawValue: Equatable,
@@ -238,6 +239,136 @@ extension ExtraCase: ExpressibleByIntegerLiteral where IntegerLiteralType == Kno
 		self.init(rawValue: value)
 	}
 }
+
+// MARK: Static dynamic member: .idle → .known(.idle)
+
+extension ExtraCase where Known: CaseNameProvider, Known: CaseIterable {
+	/// Allows `.someCase` in `.known(Known.someCase)` by case name.
+	public static subscript(dynamicMember member: String) -> Self {
+		/// We are looking for a Known case with the same `caseName`
+		if let match = Known.allCases.first(where: \.caseName, equals: member) {
+			.known(match)
+		} else {
+			/// Without direct matching, fallback is impossible without `String` `RawValue`;
+			/// let the developer see an understandable build/runtime error:
+			preconditionFailure(
+				"No Known case with caseName == \(member). " +
+				"Provide a mapping or make Known.RawValue == String to allow unknown."
+			)
+		}
+	}
+	
+	public static subscript<T>(
+		dynamicMember member: T
+	) -> Self where T: CaseNameProvider, T: CaseIterable {
+		if let match = Known.allCases.first(where: \.caseName, equals: member.caseName) {
+			.known(match)
+		} else {
+			preconditionFailure("\(member) is not a valid \(Known.self) case.")
+		}
+	}
+}
+
+// MARK: Fallback in .unknown(...) at RawValue == String
+
+extension ExtraCase where Known: CaseNameProvider & CaseIterable, Known.RawValue == String {
+	/// The same idea, but if there is no case, we use `.unknown(member)`.
+	public static subscript(dynamicMember member: String) -> Self {
+		if let match = Known.allCases.first(where: \.caseName, equals: member) {
+			.known(match)
+		} else {
+			.unknown(member)
+		}
+	}
+}
+
+/// Option for any RawValue: only exact match by case name.
+/// If the name is not found, we throw an understandable error (or change to your strategy).
+public extension ExtraCase where Known: CasesBridgeProvider {
+	static subscript(dynamicMember keyPath: KeyPath<Known.Type, Self>) -> Self where Known.RawValue == String {
+		if let known = Known.self[keyPath: keyPath] as? Known {
+			.known(known)
+		} else {
+			.unknown("\(Known.self[keyPath: keyPath])")
+		}
+	}
+	
+	static subscript(dynamicMember keyPath: KeyPath<Known.Type, Self>) -> Self {
+		if let known = Known.self[keyPath: keyPath] as? Known {
+			.known(known)
+		} else {
+			preconditionFailure("\(Known.self[keyPath: keyPath]) is not a valid \(Known.self) case.")
+		}
+	}
+	
+	static subscript(dynamicMember member: String) -> Self {
+		if let m = Known.allCases.first(where: \.caseName, equals: member) {
+			.known(m)
+		} else {
+			preconditionFailure(
+				"No case named '\(member)' for \(Known.self). " +
+				"Ensure your macro provides Cases + caseName mapping."
+			)
+		}
+	}
+}
+
+/// Convenient fallback: if `RawValue == String`, enter unknown names in `.unknown`
+public extension ExtraCase where Known: CasesBridgeProvider, Known.RawValue == String {
+	static subscript(dynamicMember member: String) -> Self {
+		if let k = Known.allCases.first(where: \.caseName, equals: member) {
+			.known(k)
+		} else if let v = Known.allCases.first(where: \.rawValue, equals: member) {
+			.known(v)
+		} else {
+			.unknown(member)
+		}
+	}
+}
+
+extension ExtraCase {
+	public static subscript<T>(
+		dynamicMember member: T
+	) -> Self where T: RawRepresentable, T.RawValue == Known.RawValue {
+		self.init(rawValue: member.rawValue)
+	}
+	
+	public static subscript(dynamicMember member: Known) -> Self {
+		.known(member)
+	}
+	
+	public static subscript<T>(dynamicMember member: T) -> Self {
+		if let knownMember = member as? Known {
+			self[dynamicMember: knownMember]
+		} else if let rawValue = member as? Known.RawValue {
+			self.init(rawValue: rawValue)
+		} else {
+			preconditionFailure("\(member) is not a valid \(Known.self) case.")
+		}
+	}
+}
+
+/*
+extension ExtraCase where Known: CaseNameProvider {
+	/*
+	public subscript(dynamicMember: (Known) -> Self) -> Self {
+		guard let knownValue = Known(rawValue: dynamicMember) else {
+			
+		}
+	}
+	*/
+}
+
+/*
+extension AttributeDynamicLookup {
+	public subscript<T: AttributedStringKey>(
+		dynamicMember keyPath: KeyPath<AttributeScopes.MyFrameworkAttributes, T>
+	) -> T {
+		return self[T.self]
+	}
+}
+*/
+*/
 
 // MARK: Compare
 
