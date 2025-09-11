@@ -11,6 +11,16 @@ import AVFAudio
 import SwiftUI
 import QizhMacroKit
 
+extension Measurement<UnitFrequency>: @retroactive Strideable {
+	public func distance(to other: Measurement<UnitFrequency>) -> Double {
+		other.converted(to: unit).value - value
+	}
+	
+	public func advanced(by n: Double) -> Self {
+		self + .init(value: value + n, unit: unit)
+	}
+}
+
 // MARK: - Unit Count
 
 /// Count of items (base = piece)
@@ -73,10 +83,14 @@ public final class UnitAudioChannel: Dimension, @unchecked Sendable {
 	/// 1 surround = 5 mono + 1 mono
 	public static let surround = UnitAudioChannel(
 		symbol: "surround",
-		converter: UnitConverterLinear(coefficient: 5)
+		converter: UnitConverterLinear(coefficient: 6)
 	)
 	
 	public override class func baseUnit() -> UnitAudioChannel { .channel }
+}
+
+extension Measurement<UnitAudioChannel> {
+	@inlinable public var amount: Int { value.int }
 }
 
 // MARK: ┣ Localized unit names
@@ -146,62 +160,8 @@ public struct UnitAudioChannelFormatStyle: FormatStyle {
 	public func format(_ value: Measurement<UnitAudioChannel>) -> FormatOutput {
 		/// 1) Format the numeric part using the requested `number` style & `locale`
 		let formattedNumber = number.locale(locale).format(value.value)
-
-		/*
-		/// 2) Choose the localized unit name by `unit` + `width`
-		typealias Loc = ExtraCase<UnitAudioChannelLocalization>
-		let unitLoc: Loc =
-			switch (value.unit, width) {
-			case (.channel, .wide): 		Loc.channel_wide
-			case (.channel, .abbreviated): 	Loc.channel_abbrev
-			case (.channel, .narrow): 		Loc.channel_narrow
-			case (.channel, _): 			Loc.channel_abbrev
-			case (.mono, .wide): 			Loc.mono_wide
-			case (.mono, .abbreviated): 	Loc.mono_abbrev
-			case (.mono, .narrow): 			Loc.mono_narrow
-			case (.mono, _): 				Loc.mono_abbrev
-			case (.stereo, .wide): 			Loc.stereo_wide
-			case (.stereo, .abbreviated): 	Loc.stereo_abbrev
-			case (.stereo, .narrow): 		Loc.stereo_narrow
-			case (.stereo, _): 				Loc.stereo_abbrev
-			case (.quad, .wide): 			Loc.quad_wide
-			case (.quad, .abbreviated): 	Loc.quad_abbrev
-			case (.quad, .narrow): 			Loc.quad_narrow
-			case (.quad, _): 				Loc.quad_abbrev
-			case (.surround, .wide): 		Loc.surround_wide
-			case (.surround, .abbreviated): Loc.surround_abbrev
-			case (.surround, .narrow): 		Loc.surround_narrow
-			case (.surround, _): 			Loc.surround_abbrev
-			default: 						.unknown(value.unit.symbol)
-			}
 		
-		/// 3) Localization comment
-		let unitLocComment: StaticString =
-			switch (value.unit, width) {
-			case (.channel, .wide): 		"Wide Audio Channel unit name"
-			case (.channel, .abbreviated): 	"Abbreviated Audio Channel unit name"
-			case (.channel, .narrow): 		"Narrow Audio Channel unit name"
-			case (.channel, _): 			"Default Audio Channel unit name"
-			case (.mono, .wide): 			"Wide mono Audio Channel unit name"
-			case (.mono, .abbreviated): 	"Abbreviated mono Audio Channel unit name"
-			case (.mono, .narrow): 			"Narrow mono Audio Channel unit name"
-			case (.mono, _): 				"Default mono Audio Channel unit name"
-			case (.stereo, .wide): 			"Wide stereo Audio Channel unit name"
-			case (.stereo, .abbreviated): 	"Abbreviated stereo Audio Channel unit name"
-			case (.stereo, .narrow): 		"Narrow stereo Audio Channel unit name"
-			case (.stereo, _): 				"Default stereo Audio Channel unit name"
-			case (.quad, .wide): 			"Wide quad Audio Channel unit name"
-			case (.quad, .abbreviated): 	"Abbreviated quad Audio Channel unit name"
-			case (.quad, .narrow): 			"Narrow quad Audio Channel unit name"
-			case (.quad, _): 				"Default quad Audio Channel unit name"
-			case (.surround, .wide): 		"Wide surround Audio Channel unit name"
-			case (.surround, .abbreviated): "Abbreviated surround Audio Channel unit name"
-			case (.surround, .narrow): 		"Narrow surround Audio Channel unit name"
-			case (.surround, _): 			"Default surround Audio Channel unit name"
-			default: 						"Default unknown Audio Channel unit name"
-			}
-		*/
-		
+		/// 2) Create a localized String for `unit`
 		let localizedUnit: String =
 			switch (value.unit, width) {
 			case (.channel, .wide): 		
@@ -395,27 +355,6 @@ public struct UnitAudioChannelFormatStyle: FormatStyle {
 				)
 			}
 		
-		/*
-		if let knownUnitLoc = unitLoc.known {
-			String(
-				localized: knownUnitLoc.localizationKey,
-				defaultValue: "\(unitLoc.rawValue)",
-				table: "Units",
-				bundle: .module,
-				locale: locale,
-				comment: unitLocComment
-			)
-		} else {
-			String(
-				localized: "\(unitLoc.rawValue)",
-				table: "Units",
-				bundle: .module,
-				locale: locale,
-				comment: unitLocComment
-			)
-		}
-		*/
-		
 		return String(
 			localized: "UnitAudioChannel.Measurement",
 			defaultValue: "\(formattedNumber) \(localizedUnit)",
@@ -424,49 +363,6 @@ public struct UnitAudioChannelFormatStyle: FormatStyle {
 			locale: locale,
 			comment: "Amount of a specific Audio Channel unit"
 		)
-		
-		
-		
-		
-		/*
-		if let knownUnitLoc = unitLoc.known {
-			return String(
-				localized: knownUnitLoc.localizationKey,
-				defaultValue: String.LocalizationValue(unitLoc.rawValue),
-				table: "Units",
-				bundle: .module,
-				locale: locale,
-				comment: unitLocComment
-			)
-			/*
-			return LocalizedStringResource(
-				knownUnitLoc.localizationKey,
-				defaultValue: unitLoc.rawValue,
-				table: "Audio Channel Units",
-				locale: locale,
-				bundle: .module,
-				comment: unitLocComment
-			)
-			*/
-		} else {
-			return String(
-				localized: String.LocalizationValue(unitLoc.rawValue),
-				table: "Units",
-				bundle: .module,
-				locale: locale,
-				comment: unitLocComment
-			)
-			/*
-			return LocalizedStringResource(
-				"\(unitLoc.rawValue)",
-				table: "Units",
-				locale: locale,
-				bundle: .module,
-				comment: unitLocComment
-			)
-			*/
-		}
-		*/
 	}
 	
 	fileprivate var humanReadableWidth: String {
@@ -489,79 +385,27 @@ extension FormatStyle where Self == UnitAudioChannelFormatStyle {
 	}
 }
 
-
-
-/*
-extension MeasurementFormatUnitUsage<UnitAudioChannel> {
-	public st
-}
-*/
-
-/*
-extension UnitCount {
-	public convenience init(forLocale: Locale, usage: MeasurementFormatUnitUsage<UnitCount> = .general) {
-		self.ini
-		
-	}
-}
-*/
-
 extension Measurement<UnitAudioChannel> {
-	@inlinable public init(value: UInt32, unit: UnitAudioChannel) {
-		self.init(value: Double(value), unit: unit)
-	}
-	
-	/*
-	@_disfavoredOverload
 	@inlinable public init(value: Int, unit: UnitAudioChannel) {
 		self.init(value: Double(value), unit: unit)
 	}
-	*/
 }
-
-/*
-public class AudioChannelUnit: Dimension, @unchecked Sendable {
-	public static let audioChannel = AudioChannelUnit(
-		symbol: "ch",
-		converter: UnitConverterLinear(coefficient: 1.0)
-	)
-	
-	public static let baseUnit = audioChannel
-}
-
-public final class UnitAmount: Unit, @unchecked Sendable {
-	public override var symbol: String { "amount" }
-}
-
-public final class UnitAudioChannelsAmount: Unit, @unchecked Sendable {
-	public override var symbol: String { "ch" }
-	
-	public static let audioChannelsAmount = UnitAudioChannelsAmount(symbol: "ch")
-	
-	public static let mono: Measurement<UnitAudioChannelsAmount> =
-		Measurement(value: 1, unit: .audioChannelsAmount)
-	public static let stereo: Measurement<UnitAudioChannelsAmount> =
-		Measurement(value: 2, unit: .audioChannelsAmount)
-	public static let quad: Measurement<UnitAudioChannelsAmount> =
-		Measurement(value: 4, unit: .audioChannelsAmount)
-	/// 5.1 ≈ 6 discrete channels
-	public static let fiveOne: Measurement<UnitAudioChannelsAmount> =
-		Measurement(value: 6, unit: .audioChannelsAmount)
-}
-*/
 
 extension AVAudioFormat {
 	public var humanReadableDescription: String {
-		let channels = Measurement(value: self.channelCount, unit: UnitAudioChannel.channel)
-		let sampleRate = Measurement(value: self.sampleRate, unit: UnitFrequency.hertz)
-		return "\(sampleRate.formatted(Self.sampleRateFormatStyle)), \(channels.formatted(Self.channelsAmountFormatStyle))"
+		let channels = Measurement<UnitAudioChannel>(value: channelCount.double, unit: .channel)
+		let sampleRate = Measurement<UnitFrequency>(value: sampleRate, unit: .hertz)
+		return """
+			\(sampleRate.formatted(Self.sampleRateFormatStyle)), \
+			\(channels.formatted(Self.channelsAmountFormatStyle))
+			"""
 	}
 	
 	public static var sampleRateFormatStyle: Measurement<UnitFrequency>.FormatStyle {
 		.measurement(
 			width: .narrow,
 			usage: .general,
-			numberFormatStyle: .number.precision(.fractionLength(0))
+			numberFormatStyle: .number.precision(.fractionLength(0...3))
 		)
 	}
 	
