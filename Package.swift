@@ -9,7 +9,7 @@ let package = Package(
 	platforms: [
 		.iOS(.v17),
 		.macOS(.v14),
-		.macCatalyst(.v14),
+		.macCatalyst(.v17),
 		.visionOS(.v1),
 	],
     products: [
@@ -38,7 +38,7 @@ let package = Package(
 		.package(url: "https://github.com/apple/swift-collections", from: "1.1.4"),
 		
 		/// Macros
-		.package(url: "https://github.com/qizh/QizhMacroKit", exact: "1.1.6"),
+		.package(url: "https://github.com/qizh/QizhMacroKit", exact: "1.1.10"),
 	],
     targets: [
         .target(

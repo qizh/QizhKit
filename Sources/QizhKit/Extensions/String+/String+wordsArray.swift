@@ -1,5 +1,5 @@
 //
-//  String+camelSnakeConvert.swift
+//  String+wordsArray.swift
 //  QizhKit
 //
 //  Created by Serhii Shevchenko on 30.12.2024.
