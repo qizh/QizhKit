@@ -1,0 +1,74 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        
+
+        {
+            "args": [
+                "--extensionDevelopmentPath=${workspaceFolder}"
+            ],
+            "name": "Launch Extension",
+            "outFiles": [
+                "${workspaceFolder}/out/**/*.js"
+            ],
+            "preLaunchTask": "npm",
+            "request": "launch",
+            "type": "extensionHost"
+        },
+        {
+            "type": "lldb-dap",
+            "request": "attach",
+            "name": "Core",
+            "program": "<your program>",
+            "coreFile": "<your program>.core"
+        },
+        {
+            "type": "lldb-dap",
+            "request": "attach",
+            "name": "Attach",
+            "program": "<your program>",
+            "waitFor": true
+        },
+        {
+            "type": "lldb-dap",
+            "request": "attach",
+            "name": "Attach",
+            "program": "<your program>",
+            "waitFor": true
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "name": "Launch Swift Executable",
+            "program": "${workspaceRoot}/.build/debug/<program>",
+            "args": [],
+            "env": {},
+            "cwd": "${workspaceRoot}"
+        },
+        {
+            "type": "swift",
+            "request": "attach",
+            "name": "Attach to Swift Executable",
+            "pid": "${command:pickProcess}"
+        },
+        {
+            "type": "swift",
+            "request": "attach",
+            "name": "Attach to Swift Executable",
+            "program": "${workspaceRoot}/.build/debug/<program>"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "name": "Launch Swift Executable",
+            "program": "${workspaceRoot}/.build/debug/<program>",
+            "args": [],
+            "env": {},
+            "cwd": "${workspaceRoot}"
+        }
+
+    ]
+}
