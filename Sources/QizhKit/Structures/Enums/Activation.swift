@@ -36,6 +36,13 @@ extension Activation {
 			self = .off
 		}
 	}
+	
+	@inlinable public static func to(_ value: Bool) -> Self {
+		switch value {
+		case  true: .on
+		case false: .off
+		}
+	}
 }
 
 // MARK: Activation Boolean and Logical Operators
