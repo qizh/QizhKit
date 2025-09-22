@@ -172,6 +172,24 @@ extension UserDefaults {
 		let data = try encoder.encode(model)
 		set(data, forKey: key)
 	}
+	
+	public func saveEncoded<Model: Encodable>(
+		model: Model,
+		forKey key: String,
+		encoder: JSON5Encoder
+	) throws {
+		let string = try encoder.encode(model)
+		guard let data = string.data(using: .utf8, allowLossyConversion: true) else {
+			throw EncodingError.invalidValue(
+				string,
+				EncodingError.Context(
+					codingPath: [],
+					debugDescription: "Failed to encode \(Model.self) to Data"
+				)
+			)
+		}
+		set(data, forKey: key)
+	}
 }
 
 // MARK: - Thread Safe Cancellables
