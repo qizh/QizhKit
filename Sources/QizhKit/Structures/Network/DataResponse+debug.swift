@@ -8,6 +8,8 @@
 
 import Foundation
 import os.log
+import QizhMacroKit
+import OrderedCollections
 
 #if canImport(Alamofire)
 import Alamofire
@@ -330,5 +332,39 @@ extension HTTPURLResponse {
 			description = "[Response]:" + .newLine + description
 		}
 		return description
+	}
+}
+
+// MARK: URLResponse
+
+extension URLResponse {
+	public func urlResponseDebugDescription(
+		named name: String = "",
+		debug debugDepth: DebugDepth
+	) -> String {
+		let _expectedContentLength = expectedContentLength
+			.formatted(
+				.number
+				.precision(.fractionLength(0...2))
+			)
+		let _url = url?.absoluteString
+		
+		return OrderedDictionary<String, String>(
+			uniqueKeysWithValues: [
+				#dictionarify(_expectedContentLength),
+				#dictionarify(textEncodingName),
+				#dictionarify(suggestedFilename),
+				#dictionarify(mimeType),
+				#dictionarify(_url),
+			]
+			.compactMap { element in
+				if let value = element.value?.withLinesNSpacesTrimmed.nonEmpty {
+					(element.key, value)
+				} else {
+					nil
+				}
+			}
+		)
+		.asTreeBranches(named: name)
 	}
 }
