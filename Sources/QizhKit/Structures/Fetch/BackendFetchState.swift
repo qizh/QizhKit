@@ -923,6 +923,37 @@ extension FetchError: Identifiable {
 	}
 }
 
+extension FetchError: CustomStringConvertible {
+	public var description: String {
+		switch self {
+		case let .doubleErrors(e1, e2): 	".doubleErrors(error1: \(e1), error2: \(e2))"
+		case let .error(string): 			".error(string: \(string))"
+		case let .providerError(s, e): 		".providerError(string: \(s), error: \(e))"
+		case let .multipleProvidersError(m): ".multipleProvidersError(messages: \(m))"
+		case let .afError(s, r): 			".afError(string: \(s), response: \(r))"
+		case let .deleteError(string): 		".deleteError(string: \(string))"
+		case let .contentError(string): 	".contentError(string: \(string))"
+		case let .verboseError(t, m): 		".verboseError(title: \(t), message: \(m.orNilString))"
+		case let .api(code, message): 		".api(code: \(code), message: \(message))"
+		case let .appLogicError(st, rsn, fn, fl, ln):
+			".appLogicError(statement: \(st), reason: \(rsn), func: \(fn.orNilString), file: \(fl.orNilString), line: \(ln.orNilString))"
+		case let .sign(reason): 			".sign(reason: \(reason))"
+		case let .preconditionValidation(r): ".preconditionValidation(reason: \(r))"
+		case let .priceMismatch(message): 	".priceMismatch(message: \(message))"
+		case .passwordResetTokenExpired: 	".passwordResetTokenExpired"
+		case .cancelled: 					".cancelled"
+		case .paymentFailed: 				".paymentFailed"
+		case .notFound: 					".notFound"
+		case .unauthorized: 				".unauthorized"
+		case .unauthorizedCallPrevented: 	".unauthorizedCallPrevented"
+		case .accessForbidden: 				".accessForbidden"
+		case .emptyContentError: 			".emptyContentError"
+		case .notImplemented: 				".notImplemented"
+		case .unknown: 						".unknown"
+		}
+	}
+}
+
 public extension Collection where Element == FetchError {
 	func combined() -> FetchError {
 		.multipleProvidersError(map(\.localizedDescription))
