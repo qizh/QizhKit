@@ -72,6 +72,44 @@ public struct RawJson: Sendable, Hashable {
 		let wrappedDictionary = try decoder.decode(CodableAnyArray.self, from: wrappedValue)
 		return wrappedDictionary
 	}
+	
+	public func asJsonString(encoder: JSON5Encoder) throws -> String {
+		/// 1) Determine the actual JSON bytes: either the raw `wrappedValue`
+		/// 	or a Base64‑decoded form of it
+		let candidateData: Data
+		if (try? JSONSerialization.jsonObject(with: wrappedValue, options: [.fragmentsAllowed])).isSet
+		{
+			candidateData = wrappedValue
+		} else if
+			let base64 = String(data: wrappedValue, encoding: .utf8)?
+				.trimmingCharacters(in: .whitespacesAndNewlines),
+			let decoded = Data(base64Encoded: base64, options: [.ignoreUnknownCharacters]),
+			(try? JSONSerialization.jsonObject(with: decoded, options: [.fragmentsAllowed])).isSet
+		{
+			candidateData = decoded
+		} else {
+			throw DecodingError.dataCorrupted(.init(codingPath: [], debugDescription: "RawJson contains neither JSON nor Base64‑encoded JSON"))
+		}
+		
+		/// 2) Prefer encoding through the existing Codable wrappers
+		/// 	(so callers control formatting via JSON5Encoder)
+		let decoder = JSONDecoder()
+		if let dict = try? decoder.decode(CodableAnyDictionary.self, from: candidateData) {
+			/// Encode using the provided JSON5Encoder
+			if let string = try? encoder.encode(dict) {
+				return string
+			}
+		} else if let array = try? decoder.decode(CodableAnyArray.self, from: candidateData) {
+			if let string = try? encoder.encode(array) {
+				return string
+			}
+		}
+		
+		/// 3) Fallback: Minify via JSONSerialization (no whitespace) and return UTF‑8 string
+		let any = try JSONSerialization.jsonObject(with: candidateData, options: [.fragmentsAllowed])
+		let minData = try JSONSerialization.data(withJSONObject: any, options: [])
+		return String(decoding: minData, as: UTF8.self)
+	}
 }
 
 // Explicit Equatable to avoid synthesized-equality linker issues.
