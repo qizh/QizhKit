@@ -36,6 +36,53 @@ extension String {
 	}
 }
 
+#if canImport(os.log)
+import os.log
+
+extension DefaultStringInterpolation {
+	public mutating func appendInterpolation(_ value: Bool, format: OSLogBoolFormat) {
+		switch (value, format) {
+		case ( true, .truth ): 	appendInterpolation("true")
+		case (false, .truth ): 	appendInterpolation("false")
+		case ( true, .answer): 	appendInterpolation("Yes")
+		case (false, .answer): 	appendInterpolation("No")
+		case (_, _): 			appendInterpolation(value)
+		}
+	}
+	
+	public mutating func appendInterpolation(_ value: some BinaryInteger, format: OSLogIntegerFormatting) {
+		// TODO: Apply formatting
+		appendInterpolation(value)
+	}
+	
+	public mutating func appendInterpolation(_ value: some BinaryFloatingPoint, format: OSLogFloatFormatting) {
+		// TODO: Apply formatting
+		appendInterpolation(value)
+	}
+	
+	public mutating func appendInterpolation<T>(_ value: T, privacy: OSLogPrivacy) {
+		appendInterpolation(value)
+	}
+	
+	public mutating func appendInterpolation<T>(_ value: T, attributes: String) {
+		appendInterpolation("\(value) ❨\(attributes)❩")
+	}
+	
+	public mutating func appendInterpolation<T>(_ value: T, align: OSLogStringAlignment) {
+		appendInterpolation(value)
+	}
+}
+#endif
+
+extension DefaultStringInterpolation {
+	public mutating func appendInterpolation<T>(_ optional: T?) {
+		switch optional {
+		case .none: 			appendInterpolation("✕⃣")
+		case .some(let value): 	appendInterpolation(value)
+		}
+	}
+}
+
 public extension DefaultStringInterpolation {
 	// MARK: Optional
 	
