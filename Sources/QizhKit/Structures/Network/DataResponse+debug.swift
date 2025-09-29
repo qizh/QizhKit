@@ -282,7 +282,7 @@ extension Logger {
 	///   - debug: Debug level
 	///   - format: Set if you need to format the json output,
 	///   			in other case will format when `debug > .minimum`
-	@inlinable public func logDebugDescriptionIfNeeded <Success, Failure: Error> (
+	public func logDebugDescriptionIfNeeded <Success, Failure: Error> (
 		of response: DataResponse<Success, Failure>,
 		debug: DebugDepth,
 		format: Bool? = .none
