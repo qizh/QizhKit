@@ -8,12 +8,13 @@
 
 import SwiftUI
 
-// MARK: Environment Value
+// MARK: - Environment Values
 
 extension EnvironmentValues {
 	@Entry public var labeledViewLengthLimit: Int = 50
 	@Entry public var labeledViewMaxValueWidth: CGFloat? = 256
 	@Entry public var labeledViewAllowMultiline: Bool = false
+	@Entry public var labeledViewIsInLabeledColumnsLayout: Bool = false
 }
 
 extension View {
@@ -35,86 +36,147 @@ extension View {
 		environment(\.labeledViewLengthLimit, length)
 	}
 	
-	public func setLabeledView(allowMultiline: Bool) -> some View {
-		environment(\.labeledViewAllowMultiline, allowMultiline)
+	public func setLabeledView(allowMultiline value: Bool) -> some View {
+		environment(\.labeledViewAllowMultiline, value)
 	}
 	
-	public func setLabeledView(maxValueWidth: CGFloat?) -> some View {
-		environment(\.labeledViewMaxValueWidth, maxValueWidth)
+	public func setLabeledView(maxValueWidth value: CGFloat?) -> some View {
+		environment(\.labeledViewMaxValueWidth, value)
+	}
+	
+	public func setLabeledView(isInColumnLayout value: Bool) -> some View {
+		environment(\.labeledViewIsInLabeledColumnsLayout, value)
 	}
 }
 
-// MARK: Stack
+// MARK: - Layout
+/// (two columns)
+
+fileprivate enum LabeledRole: Hashable, Sendable, CaseIterable {
+	case label
+	case value
+}
+
+fileprivate struct LabeledRoleKey: LayoutValueKey {
+	static let defaultValue: LabeledRole = .value
+}
+
+/// A layout that expects children in pairs: label, value, label, value, ...
+/// It computes a common label column width and aligns labels trailing and values leading.
+public struct LabeledColumnsLayout: Layout {
+	public var spacing: CGFloat = 2
+	
+	public init(spacing: CGFloat = 2) {
+		self.spacing = spacing
+	}
+
+	public struct Cache {
+		var labelWidth: CGFloat = .zero
+		var rowHeights: [CGFloat] = .empty
+	}
+	
+	public func makeCache(subviews: Subviews) -> Cache { .init() }
+	public func updateCache(_ cache: inout Cache, subviews: Subviews) {}
+
+	public func sizeThatFits(
+		proposal: ProposedViewSize,
+		subviews: Subviews,
+		cache: inout Cache
+	) -> CGSize {
+		let availW = proposal.width ?? .infinity
+		guard !subviews.isEmpty else { return .zero }
+
+		/// 1) widest label
+		var maxLabel: CGFloat = 0
+		for s in subviews where s[LabeledRoleKey.self] == .label {
+			let sz = s.sizeThatFits(.init(width: availW, height: .infinity))
+			maxLabel = max(maxLabel, sz.width)
+		}
+		/// cap so label can't eat all width
+		maxLabel = min(maxLabel, max(0, availW * 0.45))
+
+		/// 2) per-row heights using actual column widths
+		var heights: [CGFloat] = []
+		var i = 0
+		while i < subviews.count {
+			let label = subviews[i]
+			let value = i + 1 < subviews.count ? subviews[i + 1] : subviews[i]
+			let hLabel = label.sizeThatFits(.init(width: maxLabel, height: .infinity)).height
+			let valueW = max(0, availW - maxLabel - spacing)
+			let hValue = value.sizeThatFits(.init(width: valueW, height: .infinity)).height
+			heights.append(max(hLabel, hValue))
+			i += 2
+		}
+
+		cache.labelWidth = maxLabel
+		cache.rowHeights = heights
+		let totalH = heights.reduce(0, +) + CGFloat(max(0, heights.count - 1)) * spacing
+		return CGSize(width: availW, height: totalH)
+	}
+
+	public func placeSubviews(
+		in bounds: CGRect,
+		proposal: ProposedViewSize,
+		subviews: Subviews,
+		cache: inout Cache
+	) {
+		/// Recompute widths & heights every placement
+		/// to avoid stale cache when content toggles line limits.
+		
+		var maxLabel: CGFloat = 0
+		for s in subviews where s[LabeledRoleKey.self] == .label {
+			let sz = s.sizeThatFits(.init(width: bounds.width, height: .infinity))
+			maxLabel = max(maxLabel, sz.width)
+		}
+		let labelW = min(maxLabel, max(0, bounds.width * 0.45))
+		let valueW = max(0, bounds.width - labelW - spacing)
+
+		var y = bounds.minY
+		var i = 0
+		while i < subviews.count {
+			let label = subviews[i]
+			let value = i + 1 < subviews.count ? subviews[i + 1] : subviews[i]
+			let hLabel = label.sizeThatFits(.init(width: labelW, height: .infinity)).height
+			let hValue = value.sizeThatFits(.init(width: valueW, height: .infinity)).height
+			let h = max(hLabel, hValue)
+
+			label.place(
+				at: CGPoint(x: bounds.minX + labelW, y: y),
+				anchor: .topTrailing,
+				proposal: .init(width: labelW, height: h)
+			)
+			value.place(
+				at: CGPoint(x: bounds.minX + labelW + spacing, y: y),
+				anchor: .topLeading,
+				proposal: .init(width: valueW, height: h)
+			)
+
+			y += h + spacing
+			i += 2
+		}
+	}
+}
+
+// MARK: - Stack
 
 public struct LabeledViews<Views: View>: View {
+	public let spacing: CGFloat
 	public let views: Views
 	
-	public init(@ViewBuilder _ views: () -> Views) {
+	public init(spacing: CGFloat = 2, @ViewBuilder _ views: () -> Views) {
+		self.spacing = spacing
 		self.views = views()
 	}
 	
 	public var body: some View {
-		VStack(alignment: .separator, spacing: 2) {
+		LabeledColumnsLayout(spacing: spacing) {
 			views
 		}
-		.containerRelativeFrame(.horizontal)
+		.setLabeledView(isInColumnLayout: true)
 	}
 }
 
-/*
-extension VStack {
-	@MainActor
-	public static func LabeledViews(@ViewBuilder _ content: () -> Content) -> some View {
-		VStack(alignment: .separator, spacing: 2, content: content)
-			.containerRelativeFrame(.horizontal)
-			/*
-			.containerRelativeFrame(
-				.horizontal,
-				count: <#T##Int#>,
-				span: <#T##Int#>,
-				spacing: <#T##CGFloat#>,
-				alignment: <#T##Alignment#>
-			)
-			*/
-		/*
-		LazyVStack(alignment: .separator, spacing: 2) {
-			content()
-		}
-		*/
-			// .fixedSize()
-		// .alignmentGuide(.separator, computeValue: \.width.half) // { $0[.center] }
-	}
-}
-
-extension LazyVStack {
-	@MainActor
-	public static func LabeledViews(@ViewBuilder _ content: () -> Content) -> some View {
-		LazyVStack(alignment: .separator, spacing: 2, content: content)
-			.containerRelativeFrame(.horizontal)
-	}
-}
-*/
-
-/*
-// MARK: Library Content
-
-public struct LabeledValueLibraryContent: LibraryContentProvider {
-	@LibraryContentBuilder
-	public var views: [LibraryItem] {
-		LibraryItem(
-			LabeledViews {
-				"Value".labeledView(label: "Label")
-			},
-			visible: true,
-			title: "Stack of labeled views",
-			category: .layout,
-			matchingSignature: "VStack.LabeledViews"
-		)
-	}
-}
-*/
-
-// MARK: View
+// MARK: - View
 
 public struct LabeledValueView: View {
 	fileprivate var valueView: ValueView
@@ -124,6 +186,7 @@ public struct LabeledValueView: View {
 	@Environment(\.pixelLength) fileprivate var pixelLength
 	@Environment(\.labeledViewAllowMultiline) fileprivate var allowMultiline
 	@Environment(\.labeledViewMaxValueWidth) fileprivate var maxValueWidth
+	@Environment(\.labeledViewIsInLabeledColumnsLayout) fileprivate var inLayout
 	
 	private init(
 		valueView: ValueView,
@@ -153,25 +216,6 @@ public struct LabeledValueView: View {
 			)
 		}
 	}
-	
-	/*
-	fileprivate struct ValueView: View {
-		fileprivate let value: String
-		@Environment(\.labeledViewLengthLimit) fileprivate var lengthLimit
-		@Environment(\.labeledViewAllowMultiline) fileprivate var allowMultiline
-		
-		internal init <S: StringProtocol> (for value: S) {
-			self.value = String(value)
-		}
-		
-		var body: some View {
-			Text(value)
-				.semibold(8)
-				.padding(EdgeInsets(top: 3, leading: 5, bottom: 2, trailing: 5))
-				.foregroundStyle(.primary)
-		}
-	}
-	*/
 	
 	public init(
 		_ value: CGFloat?,
@@ -223,27 +267,6 @@ public struct LabeledValueView: View {
 		switch value {
 		case .none: 			 self.init(valueView: .undefined(.x), label: label)
 		case .some(let wrapped): self.init(valueView: .cgRect(wrapped, fraction: fractionDigits), label: label)
-			/*
-			self.init(
-				valueView: AnyView(
-					(
-						Text("(").foregroundStyle(.secondary) +
-						Text(String(format: "%.\(fractionDigits)f", wrapped.origin.x)) +
-						Text(", ").foregroundStyle(.secondary) +
-						Text(String(format: "%.\(fractionDigits)f", wrapped.origin.y)) +
-						Text("), (").foregroundStyle(.secondary) +
-						Text(String(format: "%.\(fractionDigits)f", wrapped.size.width)) +
-						Text(" x ").foregroundStyle(.secondary) +
-						Text(String(format: "%.\(fractionDigits)f", wrapped.size.height)) +
-						Text(")").foregroundStyle(.secondary)
-					)
-					.font(.system(size: 8, weight: .semibold))
-					.padding(EdgeInsets(top: 3, leading: 5, bottom: 2, trailing: 5))
-					.foregroundStyle(.primary)
-				),
-				label: label
-			)
-			*/
 		}
 	}
 	
@@ -255,21 +278,6 @@ public struct LabeledValueView: View {
 		switch value {
 		case .none: 			 self.init(valueView: .undefined(.x), label: label)
 		case .some(let wrapped): self.init(valueView: .cgPoint(wrapped, fraction: fractionDigits), label: label)
-			/*
-			self.init(
-				valueView: AnyView(
-					(
-						Text(String(format: "%.\(fractionDigits)f", wrapped.x)) +
-						Text(", ").foregroundStyle(.secondary) +
-						Text(String(format: "%.\(fractionDigits)f", wrapped.y))
-					)
-					.font(.system(size: 8, weight: .semibold))
-					.padding(EdgeInsets(top: 3, leading: 5, bottom: 2, trailing: 5))
-					.foregroundStyle(.primary)
-				),
-				label: label
-			)
-			*/
 		}
 	}
 	
@@ -281,21 +289,6 @@ public struct LabeledValueView: View {
 		switch value {
 		case .none: 			 self.init(valueView: .undefined(.x), label: label)
 		case .some(let wrapped): self.init(valueView: .cgVector(wrapped, fraction: fractionDigits), label: label)
-			/*
-			self.init(
-				valueView: AnyView(
-					(
-						Text(String(format: "%.\(fractionDigits)f", wrapped.dx)) +
-						Text(", ").foregroundStyle(.secondary) +
-						Text(String(format: "%.\(fractionDigits)f", wrapped.dy))
-					)
-					.font(.system(size: 8, weight: .semibold))
-					.padding(EdgeInsets(top: 3, leading: 5, bottom: 2, trailing: 5))
-					.foregroundStyle(.primary)
-				),
-				label: label
-			)
-			*/
 		}
 	}
 	
@@ -307,24 +300,6 @@ public struct LabeledValueView: View {
 		switch value {
 		case .none: 			 self.init(valueView: .undefined(.x), label: label)
 		case .some(let wrapped): self.init(valueView: .cgSize(wrapped, fraction: fractionDigits), label: label)
-			/*
-			self.init(
-				valueView: AnyView(
-					HStack(alignment: .firstTextBaseline, spacing: 2) {
-						Text(String(format: "%.\(fractionDigits)f", wrapped.width))
-						Image(systemName: "multiply")
-							.foregroundStyle(.secondary)
-							.font(.system(size: 6, weight: .semibold))
-							.padding(.bottom, 1)
-						Text(String(format: "%.\(fractionDigits)f", wrapped.height))
-					}
-					.font(.system(size: 8, weight: .semibold))
-					.padding(EdgeInsets(top: 3, leading: 5, bottom: 2, trailing: 5))
-					.foregroundStyle(.primary)
-				),
-				label: label
-			)
-			*/
 		}
 	}
 	
@@ -337,30 +312,6 @@ public struct LabeledValueView: View {
 		switch value {
 		case .none: 			 self.init(valueView: .undefined(.x), label: label)
 		case .some(let wrapped): self.init(valueView: .edgeInsets(wrapped.asEdgeInsets(), fraction: fractionDigits), label: label)
-			/*
-			self.init(
-				valueView: AnyView(
-					HStack(alignment: .firstTextBaseline, spacing: 2) {
-						Text("top:")
-							.foregroundStyle(.secondaryLabel)
-						Text(String(format: "%.\(fractionDigits)f", wrapped.top))
-						Text("bottom:")
-							.foregroundStyle(.secondaryLabel)
-						Text(String(format: "%.\(fractionDigits)f", wrapped.bottom))
-						Text("left:")
-							.foregroundStyle(.secondaryLabel)
-						Text(String(format: "%.\(fractionDigits)f", wrapped.left))
-						Text("right:")
-							.foregroundStyle(.secondaryLabel)
-						Text(String(format: "%.\(fractionDigits)f", wrapped.right))
-					}
-					.font(.system(size: 8, weight: .semibold))
-					.padding(EdgeInsets(top: 3, leading: 5, bottom: 2, trailing: 5))
-					.foregroundStyle(Color(uiColor: .label))
-				),
-				label: label
-			)
-			*/
 		}
 	}
 	#endif
@@ -373,26 +324,6 @@ public struct LabeledValueView: View {
 		switch value {
 		case .none: 			 self.init(valueView: .undefined(.x), label: label)
 		case .some(let wrapped): self.init(valueView: .edgeInsets(wrapped, fraction: fractionDigits), label: label)
-			/*
-			self.init(
-				valueView: AnyView(
-					HStack(alignment: .firstTextBaseline, spacing: 2) {
-						Text("top:").foregroundStyle(.secondary)
-						Text(String(format: "%.\(fractionDigits)f", wrapped.top))
-						Text("bot:").foregroundStyle(.secondary)
-						Text(String(format: "%.\(fractionDigits)f", wrapped.bottom))
-						Text("lead:").foregroundStyle(.secondary)
-						Text(String(format: "%.\(fractionDigits)f", wrapped.leading))
-						Text("trail:").foregroundStyle(.secondary)
-						Text(String(format: "%.\(fractionDigits)f", wrapped.trailing))
-					}
-					.font(.system(size: 8, weight: .semibold))
-					.padding(EdgeInsets(top: 3, leading: 5, bottom: 2, trailing: 5))
-					.foregroundStyle(.primary)
-				),
-				label: label
-			)
-			*/
 		}
 	}
 	
@@ -427,20 +358,6 @@ public struct LabeledValueView: View {
 			.maxHeight(.center)
 	}
 	
-	/*
-	public init<EnumValue: CaseNameProvidable>(
-		_ value: EnumValue?,
-		label: String? = nil
-	) {
-		switch value {
-		case .none:
-			self.init("nil", label: label)
-		case .some(let wrapped):
-			self.init(".\(wrapped.caseName)", label: label)
-		}
-	}
-	*/
-	
 	public init<EnumValue: EasySelfComparable>(
 		_ value: EnumValue?,
 		label: String? = nil
@@ -463,6 +380,154 @@ public struct LabeledValueView: View {
 	
 	fileprivate let shape = RoundedRectangle(cornerRadius: 2, style: .continuous)
 	
+	// MARK: Body (new)
+	
+	public var body: some View {
+		if inLayout {
+			
+			/// Emit two siblings for the layout (`label`, `value`)
+			
+			labelView()
+			valueViewBody()
+			
+		} else {
+			
+			/// Backward-compatible single-row presentation
+			
+			let labelRatio: CGFloat = 0.28
+			let valueRatio: CGFloat = 1 - labelRatio
+			let spacing: CGFloat = 1
+			
+			HStack(alignment: .top, spacing: spacing) {
+				labelView()
+					.containerRelativeFrame(
+						[.horizontal, .vertical],
+						alignment: .topTrailing
+					) { length, axis in
+						switch axis {
+						case .horizontal: (length - spacing) * labelRatio
+						case .vertical where allowMultiline: length
+						case .vertical: 15
+						}
+					}
+				valueViewBody()
+					.containerRelativeFrame(
+						[.horizontal, .vertical],
+						alignment: .topLeading
+					) { length, axis in
+						switch axis {
+						case .horizontal: (length - spacing) * valueRatio
+						case .vertical where allowMultiline: length
+						case .vertical: 15
+						}
+					}
+			}
+			.compositingGroup()
+			.shadow(color: colorScheme.isDark ? .clear : .black.opacity(0.4), radius: 2)
+			.containerRelativeFrame(
+				[.horizontal, .vertical],
+				alignment: .topLeading
+			) { length, axis in
+				switch axis {
+				case .horizontal: length
+				case .vertical where allowMultiline: length
+				case .vertical: 15
+				}
+			}
+		}
+	}
+	
+	// MARK: ┣ Label
+	
+	@ViewBuilder
+	fileprivate func labelView() -> some View {
+		if let label {
+			label
+				.asText()
+				.multilineTextAlignment(.trailing)
+				.font(.system(size: 10, weight: .semibold).smallCaps())
+				.padding(EdgeInsets(top: 1, leading: 5, bottom: 2, trailing: 5))
+				.foregroundStyle(.secondary)
+				.frame(minHeight: 15, alignment: .topTrailing)
+				.background(.regularMaterial, in: shape)
+				.clipShape(shape)
+				.overlay {
+					if colorScheme.isDark {
+						shape.inset(by: LinePosition.inner.inset(for: pixelLength))
+							.strokeBorder(.tertiary, lineWidth: pixelLength)
+					}
+				}
+				.contentShape([.contextMenuPreview, .hoverEffect, .interaction, .dragPreview], shape)
+				.hoverEffect(.highlight)
+				.fixedHeight()
+				.apply { view in
+					ViewThatFits(in: .horizontal) {
+						view.lineLimit(1)
+						view
+					}
+				}
+				.apply(when: inLayout) { v in
+					v.compositingGroup()
+						.shadow(
+							color: colorScheme.isDark ? .clear : .black.opacity(0.4),
+							radius: 2
+						)
+				}
+				.layoutValue(key: LabeledRoleKey.self, value: .label)
+		}
+	}
+	
+	// MARK: ┗ Value
+	
+	@ViewBuilder
+	fileprivate func valueViewBody() -> some View {
+		valueView
+			.multilineTextAlignment(.leading)
+			.frame(minHeight: 15, alignment: .topLeading)
+			.background(.systemBackground, in: shape)
+			.clipShape(shape)
+			.overlay {
+				if colorScheme.isDark {
+					shape.inset(by: LinePosition.inner.inset(for: pixelLength))
+						.strokeBorder(.tertiary, lineWidth: pixelLength)
+				}
+			}
+			.contentShape([.contextMenuPreview, .hoverEffect, .interaction, .dragPreview], shape)
+			.hoverEffect(.highlight)
+			.asMultilineSwitcher()
+			.contextMenu {
+				Label {
+					Text("Copy", tableName: "Debug", comment: "Copy labeled view value string to clipboard")
+				} icon: {
+					Image(systemName: "doc.on.doc")
+				}
+				.button {
+					UIPasteboard.general.string = valueView.string
+				}
+				
+				ShareLink(item: valueView.string) {
+					Label {
+						Text("Share", tableName: "Debug", comment: "Share labeled view value string")
+					} icon: {
+						Image(systemName: "square.and.arrow.up")
+					}
+				}
+			}
+			.apply(when: inLayout) { v in
+				v.compositingGroup()
+					.shadow(
+						color: colorScheme.isDark ? .clear : .black.opacity(0.4),
+						radius: 2
+					)
+			}
+			.draggable(valueView.transferableText)
+			.layoutValue(key: LabeledRoleKey.self, value: .value)
+	}
+
+	
+	// MARK: Body (old)
+	
+	/*
 	public var body: some View {
 		// let maxValueWidth = maxValueWidth ?? 300
 		let labelRatio: CGFloat = 0.28
@@ -500,8 +565,8 @@ public struct LabeledValueView: View {
 				}
 				// .containerRelativeFrame(.horizontal, count: 10, span: 3, spacing: spacing, alignment: .trailing)
 				.containerRelativeFrame(
-					.horizontal,
-					alignment: .trailing
+					[.horizontal, .vertical],
+					alignment: .topTrailing
 				) { length, axis in
 					switch axis {
 					case .horizontal: (length - spacing) * labelRatio
@@ -557,8 +622,8 @@ public struct LabeledValueView: View {
 				}
 				.draggable(valueView.transferableText)
 				.containerRelativeFrame(
-					.horizontal,
-					alignment: .leading
+					[.horizontal, .vertical],
+					alignment: .topLeading
 				) { length, axis in
 					switch axis {
 					case .horizontal: (length - spacing) * valueRatio
@@ -567,12 +632,21 @@ public struct LabeledValueView: View {
 					}
 				}
 		}
-		// .containerValue(<#T##keyPath: WritableKeyPath<ContainerValues, V>##WritableKeyPath<ContainerValues, V>#>, <#T##value: V##V#>)
 		.compositingGroup()
 		.shadow(
 			color: colorScheme.isDark ? .clear : .black.opacity(0.4),
 			radius: 2
 		)
+		.containerRelativeFrame(
+			[.horizontal, .vertical],
+			alignment: .topLeading
+		) { length, axis in
+			switch axis {
+			case .horizontal: length
+			case .vertical where allowMultiline: length
+			case .vertical: 15
+			}
+		}
 		// .containerRelativeFrame(.horizontal)
 		/*
 		.apply { view in
@@ -602,14 +676,21 @@ public struct LabeledValueView: View {
 		}
 		*/
 	}
-	
-	public enum BoolDisplayStyle: DefaultCaseFirst, EasyCaseComparable {
+	*/
+}
+
+// MARK: - Bool Display Style
+
+extension LabeledValueView {
+	public enum BoolDisplayStyle: Hashable, Sendable, DefaultCaseFirst {
 		case icon
 		case string
 		case int
 		case emoji
 	}
 }
+
+// MARK: - Multiline Switcher
 
 public struct LabeledViewMultilineSwitcher<Content: View>: View {
 	public let content: Content
@@ -638,14 +719,15 @@ public struct LabeledViewMultilineSwitcher<Content: View>: View {
 			*/
 
 			.lineLimit(isMultiline ? nil : 1)
-			.fixedHeight(isMultiline)
-			.alignmentGuide(.separator) { $0[.leading] }
+			// .fixedHeight(isMultiline)
+			// .alignmentGuide(.separator) { $0[.leading] }
 			.button {
 				withAnimation(.bouncy) {
 					isSwitched.toggle()
 				}
 			}
 			.buttonStyle(.plain)
+			.id(isMultiline)
 	}
 }
 
