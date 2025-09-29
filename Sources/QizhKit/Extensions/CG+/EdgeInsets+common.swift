@@ -135,12 +135,27 @@ extension EdgeInsets {
 		)
 	}
 	
+	@inlinable public init(
+		all value: CGFloat
+	) {
+		self.init(
+			top: value,
+			leading: value,
+			bottom: value,
+			trailing: value
+		)
+	}
+	
 	@inlinable public static func horizontal(_ inset: CGFloat) -> EdgeInsets {
 		.init(horizontal: inset)
 	}
 	
 	@inlinable public static func vertical(_ inset: CGFloat) -> EdgeInsets {
 		.init(vertical: inset)
+	}
+	
+	@inlinable public static func all(_ inset: CGFloat) -> EdgeInsets {
+		.init(all: inset)
 	}
 	
 	@inlinable public static func top(_ inset: CGFloat) -> EdgeInsets {
