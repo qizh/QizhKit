@@ -135,7 +135,7 @@ extension EdgeInsets {
 		)
 	}
 	
-	@inlinable public init(
+	public init(
 		all value: CGFloat
 	) {
 		self.init(
