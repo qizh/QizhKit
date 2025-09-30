@@ -163,16 +163,22 @@ public struct LabeledViews<Views: View>: View {
 	public let spacing: CGFloat
 	public let views: Views
 	
+	@Environment(\.labeledViewIsInLabeledColumnsLayout) fileprivate var inLayout
+	
 	public init(spacing: CGFloat = 2, @ViewBuilder _ views: () -> Views) {
 		self.spacing = spacing
 		self.views = views()
 	}
 	
 	public var body: some View {
-		LabeledColumnsLayout(spacing: spacing) {
+		if inLayout {
 			views
+		} else {
+			LabeledColumnsLayout(spacing: spacing) {
+				views
+			}
+			.setLabeledView(isInColumnLayout: true)
 		}
-		.setLabeledView(isInColumnLayout: true)
 	}
 }
 
