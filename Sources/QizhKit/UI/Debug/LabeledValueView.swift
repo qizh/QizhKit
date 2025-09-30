@@ -1012,12 +1012,26 @@ public extension Binding where Value: EasySelfComparable {
 
 // MARK: Collection
 
+/// A view that renders a collection of elements as a series of labeled rows.
+///
+/// Each element is displayed using `LabeledValueView`, with the element's index
+/// used as the label by default. When placed inside `LabeledViews`/`LabeledColumnsLayout`,
+/// the view emits individual label/value pairs so it composes into the two-column layout.
+/// When used outside the layout, it wraps content in `LabeledViews` automatically.
+///
+/// If the collection is empty, the view shows a localized representation of an empty set
+/// via `NilReplacement.emptySet.labeledView(label:)`.
 public struct LabeledCollectionView<C: Collection>: View where C.Element: Sendable {
 	public let collection: C
 	public let label: String?
 	
 	@Environment(\.labeledViewIsInLabeledColumnsLayout) fileprivate var inLayout
 	
+	/// Creates a labeled view for a collection.
+	///
+	/// - Parameters:
+	///   - collection: The collection to present. Elements are rendered using `LabeledValueView`.
+	///   - label: An optional label shown as a header row. If `nil`, only items are shown.
 	public init(for collection: C, label: String?) {
 		self.collection = collection
 		self.label = label
@@ -1073,6 +1087,14 @@ public struct LabeledCollectionView<C: Collection>: View where C.Element: Sendab
 }
 
 extension Collection where Element: Sendable {
+	/// Presents this collection as a stack of labeled rows.
+	///
+	/// When called outside a `LabeledColumnsLayout`, the result is wrapped in `LabeledViews`
+	/// to participate in a two-column layout. When already inside the layout, this produces
+	/// label/value pairs directly. Empty collections render a localized "empty set" row.
+	///
+	/// - Parameter label: An optional header label describing the collection.
+	/// - Returns: A view that displays the collection using `LabeledValueView` rows.
 	@MainActor @inlinable public func labeledViews(label: String? = nil) -> some View {
 		LabeledCollectionView(for: self, label: label)
 	}
@@ -1080,12 +1102,22 @@ extension Collection where Element: Sendable {
 
 // MARK: Dictionary
 
+/// A view that renders a dictionary as labeled rows.
+///
+/// Keys are used as labels and values are converted to strings and shown as values.
+/// Behavior adapts to whether the view is already inside a `LabeledColumnsLayout`.
+/// Empty dictionaries render a localized "empty set" row.
 public struct LabeledDictionaryView<Key: Sendable & Hashable, Value: Sendable>: View {
 	public let dictionary: [Key: Value]
 	public let label: String?
 
 	@Environment(\.labeledViewIsInLabeledColumnsLayout) fileprivate var inLayout
 
+	/// Creates a labeled view for a dictionary.
+	///
+	/// - Parameters:
+	///   - dictionary: The dictionary to present. Each key becomes a row label.
+	///   - label: An optional header label describing the dictionary.
 	public init(for dictionary: [Key: Value], label: String?) {
 		self.dictionary = dictionary
 		self.label = label
@@ -1119,6 +1151,11 @@ public struct LabeledDictionaryView<Key: Sendable & Hashable, Value: Sendable>: 
 }
 
 extension Dictionary where Key: Sendable, Value: Sendable {
+	/// Presents this dictionary as labeled rows.
+	///
+	/// Keys are displayed as labels and values are stringified into `LabeledValueView`.
+	/// - Parameter label: An optional header label describing the dictionary.
+	/// - Returns: A view that displays the dictionary using `LabeledValueView` rows.
 	@MainActor @inlinable public func labeledViews(label: String? = nil) -> some View {
 		LabeledDictionaryView(for: self, label: label)
 	}
@@ -1126,12 +1163,22 @@ extension Dictionary where Key: Sendable, Value: Sendable {
 
 // MARK: Set
 
+/// A view that renders a set as labeled rows.
+///
+/// Elements are displayed using their string representation, with the row label being
+/// the element's index in the iteration order. Behavior adapts to whether the view is
+/// already inside a `LabeledColumnsLayout`. Empty sets render a localized "empty set" row.
 public struct LabeledSetView<Element: Sendable & Hashable>: View {
 	public let set: Set<Element>
 	public let label: String?
 	
 	@Environment(\.labeledViewIsInLabeledColumnsLayout) fileprivate var inLayout
 	
+	/// Creates a labeled view for a set.
+	///
+	/// - Parameters:
+	///   - set: The set to present. Elements are rendered as `LabeledValueView` rows.
+	///   - label: An optional header label describing the set.
 	public init(for set: Set<Element>, label: String?) {
 		self.set = set
 		self.label = label
@@ -1165,6 +1212,10 @@ public struct LabeledSetView<Element: Sendable & Hashable>: View {
 }
 
 extension Set where Element: Sendable {
+	/// Presents this set as labeled rows.
+	///
+	/// - Parameter label: An optional header label describing the set.
+	/// - Returns: A view that displays the set using `LabeledValueView` rows.
 	@MainActor @inlinable public func labeledViews(label: String? = .none) -> some View {
 		LabeledSetView(for: self, label: label)
 	}
@@ -1176,12 +1227,22 @@ import OrderedCollections
 
 // MARK: OrderedDictionary
 
+/// A view that renders an `OrderedDictionary` as labeled rows, preserving key order.
+///
+/// Keys are used as labels and values are converted to strings and shown as values.
+/// Behavior adapts to whether the view is already inside a `LabeledColumnsLayout`.
+/// Empty collections render a localized "empty set" row.
 public struct LabeledOrderedDictionaryView<Key: Sendable & Hashable, Value: Sendable>: View {
 	public let ordered: OrderedDictionary<Key, Value>
 	public let label: String?
 
 	@Environment(\.labeledViewIsInLabeledColumnsLayout) fileprivate var inLayout
 
+	/// Creates a labeled view for an ordered dictionary.
+	///
+	/// - Parameters:
+	///   - ordered: The ordered dictionary to present. Each key becomes a row label.
+	///   - label: An optional header label describing the dictionary.
 	public init(for ordered: OrderedDictionary<Key, Value>, label: String?) {
 		self.ordered = ordered
 		self.label = label
@@ -1217,6 +1278,10 @@ public struct LabeledOrderedDictionaryView<Key: Sendable & Hashable, Value: Send
 extension OrderedDictionary where Key: Sendable,
 								  Key: Hashable,
 								  Value: Sendable {
+	/// Presents this ordered dictionary as labeled rows, preserving key order.
+	///
+	/// - Parameter label: An optional header label describing the dictionary.
+	/// - Returns: A view that displays the ordered dictionary using `LabeledValueView` rows.
 	@MainActor @inlinable public func labeledViews(label: String? = .none) -> some View {
 		LabeledOrderedDictionaryView(for: self, label: label)
 	}
@@ -1414,3 +1479,4 @@ public struct LabeledValueView_Previews: PreviewProvider {
 }
 #endif
 */
+
