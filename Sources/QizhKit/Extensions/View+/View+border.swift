@@ -184,6 +184,25 @@ public struct BorderCrafterValues {
 		/// Color(uiColor: .systemGray)
 		public let cg  : Value = Value(.systemGray)
 		
+		public let red: Value = 		.red
+		public let orange: Value = 		.orange
+		public let yellow: Value = 		.yellow
+		public let green: Value = 		.green
+		public let mint: Value = 		.mint
+		public let teal: Value = 		.teal
+		public let cyan: Value = 		.cyan
+		public let blue: Value = 		.blue
+		public let indigo: Value = 		.indigo
+		public let purple: Value = 		.purple
+		public let pink: Value = 		.pink
+		public let brown: Value = 		.brown
+		public let white: Value = 		.white
+		public let gray: Value = 		.gray
+		public let black: Value = 		.black
+		public let clear: Value = 		.clear
+		public let primary: Value = 	.primary
+		public let secondary: Value = 	.secondary
+		
 		#if canImport(UIKit)
 		/// Color(uiColor: .systemGray2)
 		public let cg2 : Value = Value(.systemGray2)
@@ -250,11 +269,15 @@ public struct BorderCrafterValues {
 		public let secondarySystemFill              : Value = .secondarySystemFill
 		public let tertiarySystemFill               : Value = .tertiarySystemFill
 		public let quaternarySystemFill             : Value = .quaternarySystemFill
-		public let lightText                        : Value = .lightText
+		
 		public let darkText                         : Value = .darkText
-		public let black                            : Value = .black
+		public let lightText                        : Value = .lightText
+		
 		public let darkGray                         : Value = .darkGray
 		public let lightGray                        : Value = .lightGray
+		
+		#if !canImport(SwiftUI)
+		public let black                            : Value = .black
 		public let white                            : Value = .white
 		public let gray                             : Value = .gray
 		public let red                              : Value = .red
@@ -267,6 +290,7 @@ public struct BorderCrafterValues {
 		public let purple                           : Value = .purple
 		public let brown                            : Value = .brown
 		public let clear                            : Value = .clear
+		#endif
 	}
 	#endif
 }
