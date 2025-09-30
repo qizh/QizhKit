@@ -1012,16 +1012,27 @@ public extension Binding where Value: EasySelfComparable {
 
 // MARK: Collection
 
-extension Collection where Element: Sendable {
-	@ViewBuilder @MainActor public func labeledViews(label: String? = nil) -> some View {
-		if isEmpty {
+public struct LabeledCollectionView<C: Collection>: View where C.Element: Sendable {
+	public let collection: C
+	public let label: String?
+	
+	@Environment(\.labeledViewIsInLabeledColumnsLayout) fileprivate var inLayout
+	
+	public init(for collection: C, label: String?) {
+		self.collection = collection
+		self.label = label
+	}
+	
+	public var body: some View {
+		if collection.isEmpty {
 			NilReplacement.emptySet.labeledView(label: label)
 		} else {
-			LabeledViews {
+			if inLayout {
+				/// Already inside the column layout - we do not put another Layout.
 				if let label {
-					"[\(Element.self)]".labeledView(label: label)
+					"[\(C.Element.self)]".labeledView(label: label)
 				}
-				ForEach(enumerating: self) { offset, element in
+				ForEach(enumerating: collection) { offset, element in
 					switch element {
 					case let item as CGRect:
 						item.labeledView(label: "\(offset)", f: 2)
@@ -1035,46 +1046,127 @@ extension Collection where Element: Sendable {
 						"\(element)".labeledView(label: "\(offset)")
 					}
 				}
+			} else {
+				/// The usual (external) situation - we use ``LabeledViews`` layout.
+				LabeledViews {
+					if let label {
+						"[\(C.Element.self)]".labeledView(label: label)
+					}
+					ForEach(enumerating: collection) { offset, element in
+						switch element {
+						case let item as CGRect:
+							item.labeledView(label: "\(offset)", f: 2)
+						case let item as CGSize:
+							item.labeledView(label: "\(offset)", f: 2)
+						case let item as CGPoint:
+							item.labeledView(label: "\(offset)", f: 2)
+						case let item as CGFloat:
+							item.labeledView(label: "\(offset)", f: 2)
+						default:
+							"\(element)".labeledView(label: "\(offset)")
+						}
+					}
+				}
 			}
 		}
+	}
+}
+
+extension Collection where Element: Sendable {
+	@MainActor @inlinable public func labeledViews(label: String? = nil) -> some View {
+		LabeledCollectionView(for: self, label: label)
 	}
 }
 
 // MARK: Dictionary
 
-extension Dictionary where Key: Sendable, Value: Sendable {
-	@ViewBuilder @MainActor public func labeledViews(label: String? = nil) -> some View {
-		if isEmpty {
+public struct LabeledDictionaryView<Key: Sendable & Hashable, Value: Sendable>: View {
+	public let dictionary: [Key: Value]
+	public let label: String?
+
+	@Environment(\.labeledViewIsInLabeledColumnsLayout) fileprivate var inLayout
+
+	public init(for dictionary: [Key: Value], label: String?) {
+		self.dictionary = dictionary
+		self.label = label
+	}
+
+	public var body: some View {
+		if dictionary.isEmpty {
 			NilReplacement.emptySet.labeledView(label: label)
 		} else {
-			LabeledViews {
+			if inLayout {
+				/// Already inside the column layout - we do not put another Layout.
 				if let label {
 					"[\(Key.self): \(Value.self)]".labeledView(label: label)
 				}
-				ForEach(enumerating: self) { offset, element in
+				ForEach(enumerating: dictionary) { offset, element in
 					"\(element.value)".labeledView(label: "\(element.key)")
+				}
+			} else {
+				/// The usual (external) situation - we use ``LabeledViews`` layout.
+				LabeledViews {
+					if let label {
+						"ꖴ[\(Key.self): \(Value.self)]".labeledView(label: label)
+					}
+					ForEach(enumerating: dictionary) { offset, element in
+						"ꖴ\(element.value)".labeledView(label: "\(element.key)")
+					}
 				}
 			}
 		}
 	}
 }
 
+extension Dictionary where Key: Sendable, Value: Sendable {
+	@MainActor @inlinable public func labeledViews(label: String? = nil) -> some View {
+		LabeledDictionaryView(for: self, label: label)
+	}
+}
+
 // MARK: Set
 
-extension Set where Element: Sendable {
-	@ViewBuilder @MainActor public func labeledViews(label: String? = .none) -> some View {
-		if isEmpty {
+public struct LabeledSetView<Element: Sendable & Hashable>: View {
+	public let set: Set<Element>
+	public let label: String?
+	
+	@Environment(\.labeledViewIsInLabeledColumnsLayout) fileprivate var inLayout
+	
+	public init(for set: Set<Element>, label: String?) {
+		self.set = set
+		self.label = label
+	}
+	
+	public var body: some View {
+		if set.isEmpty {
 			NilReplacement.emptySet.labeledView(label: label)
 		} else {
-			LabeledViews {
+			if inLayout {
+				/// Already inside the column layout - we do not put another Layout.
 				if let label {
 					"[\(Element.self)]".labeledView(label: label)
 				}
-				ForEach(enumerating: self) { offset, element in
+				ForEach(enumerating: set) { offset, element in
 					"\(element)".labeledView(label: "\(offset)")
+				}
+			} else {
+				/// The usual (external) situation - we use ``LabeledViews`` layout.
+				LabeledViews {
+					if let label {
+						"[\(Element.self)]".labeledView(label: label)
+					}
+					ForEach(enumerating: set) { offset, element in
+						"\(element)".labeledView(label: "\(offset)")
+					}
 				}
 			}
 		}
+	}
+}
+
+extension Set where Element: Sendable {
+	@MainActor @inlinable public func labeledViews(label: String? = .none) -> some View {
+		LabeledSetView(for: self, label: label)
 	}
 }
 
@@ -1084,26 +1176,49 @@ import OrderedCollections
 
 // MARK: OrderedDictionary
 
-extension OrderedDictionary {
-	@ViewBuilder @MainActor public func labeledViews(label: String? = .none) -> some View {
-		if isEmpty {
+public struct LabeledOrderedDictionaryView<Key: Sendable & Hashable, Value: Sendable>: View {
+	public let ordered: OrderedDictionary<Key, Value>
+	public let label: String?
+
+	@Environment(\.labeledViewIsInLabeledColumnsLayout) fileprivate var inLayout
+
+	public init(for ordered: OrderedDictionary<Key, Value>, label: String?) {
+		self.ordered = ordered
+		self.label = label
+	}
+
+	public var body: some View {
+		if ordered.isEmpty {
 			NilReplacement.emptySet.labeledView(label: label)
 		} else {
-			LabeledViews {
+			if inLayout {
+				/// Already inside the column layout - we do not put another Layout.
 				if let label {
 					"[\(Key.self): \(Value.self)]".labeledView(label: label)
 				}
-				ForEach(self.keys.asArray(), id: \.self) { key in
-					"\(self[key].orNilString)".labeledView(label: "\(key)")
-					/*
-					let value = "\(self[key].orNilString)"
-					value
-						.labeledView(label: "\(key)")
-						.layoutPriority(value.count.double)
-					*/
+				ForEach(ordered.keys.asArray(), id: \.self) { key in
+					"\(ordered[key].orNilString)".labeledView(label: "\(key)")
+				}
+			} else {
+				/// The usual (external) situation - we use ``LabeledViews`` layout.
+				LabeledViews {
+					if let label {
+						"[\(Key.self): \(Value.self)]".labeledView(label: label)
+					}
+					ForEach(ordered.keys.asArray(), id: \.self) { key in
+						"\(ordered[key].orNilString)".labeledView(label: "\(key)")
+					}
 				}
 			}
 		}
+	}
+}
+
+extension OrderedDictionary where Key: Sendable,
+								  Key: Hashable,
+								  Value: Sendable {
+	@MainActor @inlinable public func labeledViews(label: String? = .none) -> some View {
+		LabeledOrderedDictionaryView(for: self, label: label)
 	}
 }
 
