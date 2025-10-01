@@ -15,6 +15,7 @@ extension EnvironmentValues {
 	@Entry public var labeledViewMaxValueWidth: CGFloat? = 256
 	@Entry public var labeledViewAllowMultiline: Bool = false
 	@Entry public var labeledViewIsInLabeledColumnsLayout: Bool = false
+	@Entry public var labeledViewMaxLabelFraction: CGFloat = 0.45
 }
 
 extension View {
@@ -47,6 +48,10 @@ extension View {
 	public func setLabeledView(isInColumnLayout value: Bool) -> some View {
 		environment(\.labeledViewIsInLabeledColumnsLayout, value)
 	}
+
+	public func setLabeledView(maxLabelFraction fraction: CGFloat) -> some View {
+		environment(\.labeledViewMaxLabelFraction, fraction)
+	}
 }
 
 // MARK: - Layout
@@ -65,9 +70,11 @@ fileprivate struct LabeledRoleKey: LayoutValueKey {
 /// It computes a common label column width and aligns labels trailing and values leading.
 public struct LabeledColumnsLayout: Layout {
 	public var spacing: CGFloat = 2
+	public var maxLabelFraction: CGFloat = 0.45
 	
-	public init(spacing: CGFloat = 2) {
+	public init(spacing: CGFloat = 2, maxLabelFraction: CGFloat = 0.45) {
 		self.spacing = spacing
+		self.maxLabelFraction = maxLabelFraction
 	}
 
 	public struct Cache {
@@ -93,7 +100,7 @@ public struct LabeledColumnsLayout: Layout {
 			maxLabel = max(maxLabel, sz.width)
 		}
 		/// cap so label can't eat all width
-		maxLabel = min(maxLabel, max(0, availW * 0.45))
+		maxLabel = min(maxLabel, max(0, availW * maxLabelFraction))
 
 		/// 2) per-row heights using actual column widths
 		var heights: [CGFloat] = []
@@ -128,7 +135,7 @@ public struct LabeledColumnsLayout: Layout {
 			let sz = s.sizeThatFits(.init(width: bounds.width, height: .infinity))
 			maxLabel = max(maxLabel, sz.width)
 		}
-		let labelW = min(maxLabel, max(0, bounds.width * 0.45))
+		let labelW = min(maxLabel, max(0, bounds.width * maxLabelFraction))
 		let valueW = max(0, bounds.width - labelW - spacing)
 
 		var y = bounds.minY
@@ -164,6 +171,7 @@ public struct LabeledViews<Views: View>: View {
 	public let views: Views
 	
 	@Environment(\.labeledViewIsInLabeledColumnsLayout) fileprivate var inLayout
+	@Environment(\.labeledViewMaxLabelFraction) fileprivate var maxLabelFraction
 	
 	public init(spacing: CGFloat = 2, @ViewBuilder _ views: () -> Views) {
 		self.spacing = spacing
@@ -174,7 +182,7 @@ public struct LabeledViews<Views: View>: View {
 		if inLayout {
 			views
 		} else {
-			LabeledColumnsLayout(spacing: spacing) {
+			LabeledColumnsLayout(spacing: spacing, maxLabelFraction: maxLabelFraction) {
 				views
 			}
 			.setLabeledView(isInColumnLayout: true)
@@ -1295,8 +1303,28 @@ extension OrderedDictionary where Key: Sendable,
 
 // MARK: - Optional Collection
 
-extension Optional where Wrapped: Collection, Wrapped.Element: Sendable { //, Wrapped: Hashable, Wrapped.Element: Hashable {
+extension Optional where Wrapped: Collection, Wrapped.Element: Sendable {
 	@ViewBuilder @MainActor public func labeledViews(label: String? = .none) -> some View {
+		switch self {
+		case .none:
+			LabeledValueView(String?.none, label: label)
+		case .some(let wrapped):
+			wrapped.labeledViews(label: label)
+		}
+	}
+}
+
+// MARK: - Optional Ordered
+
+extension Optional {
+	@ViewBuilder
+	@MainActor public func labeledViews<K, V>(
+		label: String? = .none
+	) -> some View where Wrapped == OrderedDictionary<K, V>,
+						 K: Hashable,
+						 K: Sendable,
+						 V: Sendable
+	{
 		switch self {
 		case .none:
 			LabeledValueView(String?.none, label: label)
