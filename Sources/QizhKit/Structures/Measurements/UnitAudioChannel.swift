@@ -363,7 +363,7 @@ public struct UnitAudioChannelFormatStyle: FormatStyle {
 			table: "Units",
 			bundle: .module,
 			locale: locale,
-			comment: "Amount of a specific Audio Channel unit"
+			comment: "Amount of a specific Audio Channel unit. First argument is the number, the second is the name of the unit."
 		)
 	}
 	

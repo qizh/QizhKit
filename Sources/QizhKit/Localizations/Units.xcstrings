@@ -42,13 +42,13 @@
       }
     },
     "UnitAudioChannel.channel_abbrev" : {
-      "comment" : "Abbreviated Audio Channel unit name\nWide surround Audio Channel unit name",
+      "comment" : "Abbreviated Audio Channel unit name",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kanäle"
+            "value" : "kan"
           }
         },
         "en" : {
@@ -78,67 +78,115 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "кан"
+            "value" : "к"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "кан"
+            "value" : "к"
           }
         }
       }
     },
     "UnitAudioChannel.channel_narrow" : {
-      "comment" : "Abbreviated surround Audio Channel unit name\nNarrow Audio Channel unit name",
+      "comment" : "Narrow Audio Channel unit name",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "5.1-Kanäle"
+            "value" : "kanl"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "ch5.1"
+            "value" : "chnl"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "can5.1"
+            "value" : "canl"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "can5.1"
+            "value" : "canl"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "can5.1"
+            "value" : "canl"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "кан5.1"
+            "value" : "кнл"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "кан5.1"
+            "value" : "кнл"
+          }
+        }
+      }
+    },
+    "UnitAudioChannel.channel_unknown" : {
+      "comment" : "Default Audio Channel unit name",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kanal"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "ch"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "canal"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "canal"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "canale"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "канал"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "канал"
           }
         }
       }
     },
     "UnitAudioChannel.channel_wide" : {
-      "comment" : "Default quad Audio Channel unit name\nWide Audio Channel unit name",
+      "comment" : "Wide Audio Channel unit name",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
@@ -149,7 +197,7 @@
         },
         "en" : {
           "stringUnit" : {
-            "state" : "new",
+            "state" : "translated",
             "value" : "channels"
           }
         },
@@ -185,110 +233,62 @@
         }
       }
     },
-	"UnitAudioChannel.Measurement" : {
-	  "comment" : "Amount of a specific Audio Channel unit",
-	  "extractionState" : "extracted_with_value",
-	  "localizations" : {
-		"en" : {
-		  "stringUnit" : {
-			"state" : "new",
-			"value" : "%1$@ %2$@"
-		  }
-		},
-		"de" : {
-		  "stringUnit" : {
-			"state" : "translated",
-			"value" : "%1$@ %2$@"
-		  }
-		},
-		"es" : {
-		  "stringUnit" : {
-			"state" : "translated",
-			"value" : "%1$@ %2$@"
-		  }
-		},
-		"fr" : {
-		  "stringUnit" : {
-			"state" : "translated",
-			"value" : "%1$@ %2$@"
-		  }
-		},
-		"it" : {
-		  "stringUnit" : {
-			"state" : "translated",
-			"value" : "%1$@ %2$@"
-		  }
-		},
-		"ru" : {
-		  "stringUnit" : {
-			"state" : "translated",
-			"value" : "%1$@ %2$@"
-		  }
-		},
-		"uk" : {
-		  "stringUnit" : {
-			"state" : "translated",
-			"value" : "%1$@ %2$@"
-		  }
-		}
-	  }
-	},
-    "UnitAudioChannel.mono_abbrev" : {
-      "comment" : "Default surround Audio Channel unit name\nWide mono Audio Channel unit name",
+    "UnitAudioChannel.Measurement" : {
+      "comment" : "Amount of a specific Audio Channel unit. First argument is the number, the second is the name of the unit.",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "5.1-Kanäle"
+            "value" : "%1$@ %2$@"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "ch5.1"
+            "value" : "%1$@ %2$@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "can5.1"
+            "value" : "%1$@ %2$@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "can5.1"
+            "value" : "%1$@ %2$@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "can5.1"
+            "value" : "%1$@ %2$@"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "кан5.1"
+            "value" : "%1$@ %2$@"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "кан5.1"
+            "value" : "%1$@ %2$@"
           }
         }
       }
     },
-    "UnitAudioChannel.mono_narrow" : {
+    "UnitAudioChannel.mono_abbrev" : {
       "comment" : "Abbreviated mono Audio Channel unit name",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mono-Kanäle"
+            "value" : "mn Ka"
           }
         },
         "en" : {
@@ -300,91 +300,427 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "can mono"
+            "value" : "mn ca"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "can mono"
+            "value" : "mn ca"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "can mono"
+            "value" : "mn ca"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "моно кан"
+            "value" : "мк"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "моно кан"
+            "value" : "м к"
           }
         }
       }
     },
-    "UnitAudioChannel.mono_wide" : {
-      "comment" : "Default Audio Channel unit name\nNarrow surround Audio Channel unit name",
+    "UnitAudioChannel.mono_narrow" : {
+      "comment" : "Narrow mono Audio Channel unit name",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "5.1 Kanäle"
+            "value" : "Mono-Kanal"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "5.1 ch"
+            "value" : "mono ch"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "can 5.1"
+            "value" : "canal mono"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "can 5.1"
+            "value" : "canal mono"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "can 5.1"
+            "value" : "canale mono"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "5.1 кан"
+            "value" : "мн кнл"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "5.1 кан"
+            "value" : "мн кнл"
+          }
+        }
+      }
+    },
+    "UnitAudioChannel.mono_unknown" : {
+      "comment" : "Default mono Audio Channel unit name",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mono-Kanal"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "mn ch"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "canal mono"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "canal mono"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "canale mono"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "моно канал"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "моно канал"
+          }
+        }
+      }
+    },
+    "UnitAudioChannel.mono_wide" : {
+      "comment" : "Wide mono Audio Channel unit name",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mono-Kanäle"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "mono channels"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "canales mono"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "canaux mono"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "canali mono"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "моно каналы"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "моно канали"
           }
         }
       }
     },
     "UnitAudioChannel.quad_abbrev" : {
+      "comment" : "Abbreviated quad Audio Channel unit name",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "qd Ka"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "qd ch"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "qd ca"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "qd ca"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "qd ca"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "кд к"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "кв к"
+          }
+        }
+      }
+    },
+    "UnitAudioChannel.quad_narrow" : {
+      "comment" : "Narrow quad Audio Channel unit name",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quad-Kanal"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "quad ch"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "canal cuádruple"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "canal quad"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "canale quad"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "квдр кнл"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "квдр кнл"
+          }
+        }
+      }
+    },
+    "UnitAudioChannel.quad_unknown" : {
+      "comment" : "Default quad Audio Channel unit name",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quad-Kanal"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "qd ch"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "canal cuádruple"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "canal quad"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "canale quad"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "квадро канал"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "квадро канал"
+          }
+        }
+      }
+    },
+    "UnitAudioChannel.quad_wide" : {
+      "comment" : "Wide quad Audio Channel unit name",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quad-Kanäle"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "quad channels"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "canales cuádruples"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "canaux quad"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "canali quad"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "квадро каналы"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "квадро канали"
+          }
+        }
+      }
+    },
+    "UnitAudioChannel.stereo_abbrev" : {
+      "comment" : "Abbreviated stereo Audio Channel unit name",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "st Ka"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "st ch"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "st ca"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "st ca"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "st ca"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ст к"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "с к"
+          }
+        }
+      }
+    },
+    "UnitAudioChannel.stereo_narrow" : {
       "comment" : "Narrow stereo Audio Channel unit name",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stereo-Kanäle"
+            "value" : "Stereo-Kanal"
           }
         },
         "en" : {
@@ -396,43 +732,43 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "can estéreo"
+            "value" : "canal estéreo"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "can stéréo"
+            "value" : "canal stéréo"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "can stereo"
+            "value" : "canale stereo"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "стерео кан"
+            "value" : "ст кнл"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "стерео кан"
+            "value" : "ст кнл"
           }
         }
       }
     },
-    "UnitAudioChannel.quad_narrow" : {
+    "UnitAudioChannel.stereo_unknown" : {
       "comment" : "Default stereo Audio Channel unit name",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "St-Kanäle"
+            "value" : "Stereo-Kanal"
           }
         },
         "en" : {
@@ -444,132 +780,36 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "can st"
+            "value" : "canal estéreo"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "can st"
+            "value" : "canal stéréo"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "can st"
+            "value" : "canale stereo"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ст кан"
+            "value" : "стерео канал"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ст кан"
+            "value" : "стерео канал"
           }
         }
       }
     },
-    "UnitAudioChannel.quad_wide" : {
-      "comment" : "Abbreviated stereo Audio Channel unit name",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "St-Kanäle"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "st ch"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "can st"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "can st"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "can st"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ст кан"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ст кан"
-          }
-        }
-      }
-    },
-    "UnitAudioChannel.stereo_abbrev" : {
-      "comment" : "Default mono Audio Channel unit name",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mono-Kanäle"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "mn ch"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "can mono"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "can mono"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "can mono"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "моно кан"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "моно кан"
-          }
-        }
-      }
-    },
-    "UnitAudioChannel.stereo_narrow" : {
+    "UnitAudioChannel.stereo_wide" : {
       "comment" : "Wide stereo Audio Channel unit name",
       "extractionState" : "extracted_with_value",
       "localizations" : {
@@ -617,194 +857,194 @@
         }
       }
     },
-    "UnitAudioChannel.stereo_wide" : {
-      "comment" : "Narrow mono Audio Channel unit name",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mono-Kanäle"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "mono ch"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "can mono"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "can mono"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "can mono"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "моно кан"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "моно кан"
-          }
-        }
-      }
-    },
     "UnitAudioChannel.surround_abbrev" : {
-      "comment" : "Abbreviated quad Audio Channel unit name",
+      "comment" : "Abbreviated surround Audio Channel unit name",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quad-Kanäle"
+            "value" : "5.1 Ka"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "qd ch"
+            "value" : "ch5.1"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "can quad"
+            "value" : "5.1 ca"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "can quad"
+            "value" : "5.1 ca"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "can quad"
+            "value" : "5.1 ca"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "квадр кан"
+            "value" : "5.1 к"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "квадр кан"
+            "value" : "к 5.1"
           }
         }
       }
     },
     "UnitAudioChannel.surround_narrow" : {
-      "comment" : "Narrow quad Audio Channel unit name",
+      "comment" : "Narrow surround Audio Channel unit name",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quad-Kanäle"
+            "value" : "5.1-Kanal"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "quad ch"
+            "value" : "5.1 ch"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "can quad"
+            "value" : "canal 5.1"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "can quad"
+            "value" : "canal 5.1"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "can quad"
+            "value" : "canale 5.1"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "квадр кан"
+            "value" : "5.1 кнл"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "квадр кан"
+            "value" : "кнл 5.1"
+          }
+        }
+      }
+    },
+    "UnitAudioChannel.surround_unknown" : {
+      "comment" : "Default surround Audio Channel unit name",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5.1-Kanal"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "ch5.1"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "canal 5.1"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "canal 5.1"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "canale 5.1"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5.1 канал"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "канал 5.1"
           }
         }
       }
     },
     "UnitAudioChannel.surround_wide" : {
-      "comment" : "Wide quad Audio Channel unit name",
+      "comment" : "Wide surround Audio Channel unit name",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quad-Kanäle"
+            "value" : "Surround-Kanäle"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "quad channels"
+            "value" : "surround channels"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "canales quad"
+            "value" : "canales surround"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "canaux quad"
+            "value" : "canaux surround"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "canali quad"
+            "value" : "canali surround"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "квадр каналы"
+            "value" : "объёмные каналы"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "квадр канали"
+            "value" : "об'ємні канали"
           }
         }
       }
@@ -846,13 +1086,13 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "неизвестно"
+            "value" : "неизвестный канал"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "невідомо"
+            "value" : "невідомий канал"
           }
         }
       }
