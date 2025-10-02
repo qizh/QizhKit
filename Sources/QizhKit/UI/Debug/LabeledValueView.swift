@@ -994,34 +994,18 @@ public extension EasySelfComparable {
 	@inlinable @MainActor func caseView(label: String? = nil) -> LabeledValueView {
 		LabeledValueView(self, label: label)
 	}
-	
-	/*
-	@inlinable @MainActor func labeledView(label: String? = nil) -> LabeledValueView {
-		LabeledValueView(self, label: label)
-	}
-	*/
 }
+
 public extension Optional where Wrapped: EasySelfComparable {
 	@inlinable @MainActor func caseView(label: String? = nil) -> LabeledValueView {
 		LabeledValueView(self, label: label)
 	}
-	
-	/*
-	@inlinable @MainActor func labeledView(label: String? = nil) -> LabeledValueView {
-		LabeledValueView(self, label: label)
-	}
-	*/
 }
+
 public extension Binding where Value: EasySelfComparable {
 	@inlinable @MainActor func caseView(label: String? = nil) -> LabeledValueView {
 		LabeledValueView(self.wrappedValue, label: label)
 	}
-	
-	/*
-	@inlinable func labeledView(label: String? = nil) -> LabeledValueView {
-		LabeledValueView(self.wrappedValue, label: label)
-	}
-	*/
 }
 
 // MARK: Collection
@@ -1153,10 +1137,10 @@ public struct LabeledDictionaryView<Key: Sendable & Hashable, Value: Sendable>: 
 				/// The usual (external) situation - we use ``LabeledViews`` layout.
 				LabeledViews {
 					if let label {
-						"ꖴ[\(Key.self): \(Value.self)]".labeledView(label: label)
+						"[\(Key.self): \(Value.self)]".labeledView(label: label)
 					}
 					ForEach(enumerating: dictionary) { offset, element in
-						"ꖴ\(element.value)".labeledView(label: "\(element.key)")
+						"\(element.value)".labeledView(label: "\(element.key)")
 					}
 				}
 			}
