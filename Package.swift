@@ -67,7 +67,8 @@ let package = Package(
 				"Off/",
 			],
 			resources: [
-				.process("PrivacyInfo.xcprivacy")
+				.process("Localizations"),
+				.process("PrivacyInfo.xcprivacy"),
 			],
 			swiftSettings: [
 				// .defaultIsolation(MainActor.self)

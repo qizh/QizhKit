@@ -124,6 +124,7 @@ public enum UnitAudioChannelLocalization: String, AcceptingOtherValues, CasesBri
 	case surround_narrow    = "5.1 ch"
 }
 
+/*
 extension UnitAudioChannelLocalization {
 	public var localizationKey: StaticString {
 		switch self {
@@ -145,6 +146,7 @@ extension UnitAudioChannelLocalization {
 		}
 	}
 }
+*/
 
 // MARK: ┣ Format Style
 
@@ -193,7 +195,7 @@ public struct UnitAudioChannelFormatStyle: FormatStyle {
 				)
 			case (.channel, _):
 				String(
-					localized: "UnitAudioChannel.mono_wide",
+					localized: "UnitAudioChannel.channel_unknown",
 					defaultValue: "ch",
 					table: "Units",
 					bundle: .module,
@@ -202,7 +204,7 @@ public struct UnitAudioChannelFormatStyle: FormatStyle {
 				)
 			case (.mono, .wide):
 				String(
-					localized: "UnitAudioChannel.mono_abbrev",
+					localized: "UnitAudioChannel.mono_wide",
 					defaultValue: "mono channels",
 					table: "Units",
 					bundle: .module,
@@ -211,7 +213,7 @@ public struct UnitAudioChannelFormatStyle: FormatStyle {
 				)
 			case (.mono, .abbreviated):
 				String(
-					localized: "UnitAudioChannel.mono_narrow",
+					localized: "UnitAudioChannel.mono_abbrev",
 					defaultValue: "mn ch",
 					table: "Units",
 					bundle: .module,
@@ -220,7 +222,7 @@ public struct UnitAudioChannelFormatStyle: FormatStyle {
 				)
 			case (.mono, .narrow):
 				String(
-					localized: "UnitAudioChannel.stereo_wide",
+					localized: "UnitAudioChannel.mono_narrow",
 					defaultValue: "mono ch",
 					table: "Units",
 					bundle: .module,
@@ -229,7 +231,7 @@ public struct UnitAudioChannelFormatStyle: FormatStyle {
 				)
 			case (.mono, _):
 				String(
-					localized: "UnitAudioChannel.stereo_abbrev",
+					localized: "UnitAudioChannel.mono_unknown",
 					defaultValue: "mn ch",
 					table: "Units",
 					bundle: .module,
@@ -238,7 +240,7 @@ public struct UnitAudioChannelFormatStyle: FormatStyle {
 				)
 			case (.stereo, .wide):
 				String(
-					localized: "UnitAudioChannel.stereo_narrow",
+					localized: "UnitAudioChannel.stereo_wide",
 					defaultValue: "stereo channels",
 					table: "Units",
 					bundle: .module,
@@ -247,7 +249,7 @@ public struct UnitAudioChannelFormatStyle: FormatStyle {
 				)
 			case (.stereo, .abbreviated):
 				String(
-					localized: "UnitAudioChannel.quad_wide",
+					localized: "UnitAudioChannel.stereo_abbrev",
 					defaultValue: "st ch",
 					table: "Units",
 					bundle: .module,
@@ -256,7 +258,7 @@ public struct UnitAudioChannelFormatStyle: FormatStyle {
 				)
 			case (.stereo, .narrow):
 				String(
-					localized: "UnitAudioChannel.quad_abbrev",
+					localized: "UnitAudioChannel.stereo_narrow",
 					defaultValue: "stereo ch",
 					table: "Units",
 					bundle: .module,
@@ -265,7 +267,7 @@ public struct UnitAudioChannelFormatStyle: FormatStyle {
 				)
 			case (.stereo, _):
 				String(
-					localized: "UnitAudioChannel.quad_narrow",
+					localized: "UnitAudioChannel.stereo_unknown",
 					defaultValue: "st ch",
 					table: "Units",
 					bundle: .module,
@@ -274,7 +276,7 @@ public struct UnitAudioChannelFormatStyle: FormatStyle {
 				)
 			case (.quad, .wide):
 				String(
-					localized: "UnitAudioChannel.surround_wide",
+					localized: "UnitAudioChannel.quad_wide",
 					defaultValue: "quad channels",
 					table: "Units",
 					bundle: .module,
@@ -283,7 +285,7 @@ public struct UnitAudioChannelFormatStyle: FormatStyle {
 				)
 			case (.quad, .abbreviated):
 				String(
-					localized: "UnitAudioChannel.surround_abbrev",
+					localized: "UnitAudioChannel.quad_abbrev",
 					defaultValue: "qd ch",
 					table: "Units",
 					bundle: .module,
@@ -292,7 +294,7 @@ public struct UnitAudioChannelFormatStyle: FormatStyle {
 				)
 			case (.quad, .narrow):
 				String(
-					localized: "UnitAudioChannel.surround_narrow",
+					localized: "UnitAudioChannel.quad_narrow",
 					defaultValue: "quad ch",
 					table: "Units",
 					bundle: .module,
@@ -301,7 +303,7 @@ public struct UnitAudioChannelFormatStyle: FormatStyle {
 				)
 			case (.quad, _):
 				String(
-					localized: "UnitAudioChannel.channel_wide",
+					localized: "UnitAudioChannel.quad_unknown",
 					defaultValue: "qd ch",
 					table: "Units",
 					bundle: .module,
@@ -310,7 +312,7 @@ public struct UnitAudioChannelFormatStyle: FormatStyle {
 				)
 			case (.surround, .wide):
 				String(
-					localized: "UnitAudioChannel.channel_abbrev",
+					localized: "UnitAudioChannel.surround_wide",
 					defaultValue: "surround channels",
 					table: "Units",
 					bundle: .module,
@@ -319,7 +321,7 @@ public struct UnitAudioChannelFormatStyle: FormatStyle {
 				)
 			case (.surround, .abbreviated):
 				String(
-					localized: "UnitAudioChannel.channel_narrow",
+					localized: "UnitAudioChannel.surround_abbrev",
 					defaultValue: "ch5.1",
 					table: "Units",
 					bundle: .module,
@@ -328,7 +330,7 @@ public struct UnitAudioChannelFormatStyle: FormatStyle {
 				)
 			case (.surround, .narrow):
 				String(
-					localized: "UnitAudioChannel.mono_wide",
+					localized: "UnitAudioChannel.surround_narrow",
 					defaultValue: "5.1 ch",
 					table: "Units",
 					bundle: .module,
@@ -337,7 +339,7 @@ public struct UnitAudioChannelFormatStyle: FormatStyle {
 				)
 			case (.surround, _):
 				String(
-					localized: "UnitAudioChannel.mono_abbrev",
+					localized: "UnitAudioChannel.surround_unknown",
 					defaultValue: "ch5.1",
 					table: "Units",
 					bundle: .module,
@@ -365,6 +367,7 @@ public struct UnitAudioChannelFormatStyle: FormatStyle {
 		)
 	}
 	
+	/*
 	fileprivate var humanReadableWidth: String {
 		switch width {
 		case .wide: 		"wide"
@@ -373,6 +376,7 @@ public struct UnitAudioChannelFormatStyle: FormatStyle {
 		default: 			"unknown"
 		}
 	}
+	*/
 }
 
 extension FormatStyle where Self == UnitAudioChannelFormatStyle {
