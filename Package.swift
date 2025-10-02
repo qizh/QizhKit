@@ -26,7 +26,7 @@ let package = Package(
 		.package(url: "https://github.com/Alamofire/Alamofire", from: "5.10.2"),
 		
 		/// Device parameters
-		.package(url: "https://github.com/devicekit/DeviceKit", from: "5.5.0"),
+		.package(url: "https://github.com/devicekit/DeviceKit", from: "5.7.0"),
 		// .package(url: "https://github.com/qizh/DeviceKit", from: "5.2.3"),
 		
 		/// In-app Safari
@@ -35,7 +35,7 @@ let package = Package(
 		// .package(url: "https://github.com/shantanubala/BetterSafariView", branch: "main"),
 		
 		/// Apple's
-		.package(url: "https://github.com/apple/swift-collections", from: "1.1.4"),
+		.package(url: "https://github.com/apple/swift-collections", from: "1.3.0"),
 		
 		/// Macros
 		.package(url: "https://github.com/qizh/QizhMacroKit", exact: "1.1.11"),
