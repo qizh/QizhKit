@@ -187,7 +187,6 @@
     },
     "UnitAudioChannel.channel_wide" : {
       "comment" : "Wide Audio Channel unit name",
-      "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
           "stringUnit" : {
