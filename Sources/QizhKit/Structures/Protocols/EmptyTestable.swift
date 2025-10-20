@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import OrderedCollections
 
 // MARK: Provide
 
@@ -79,6 +80,10 @@ extension String: EmptyTestable { }
 extension Substring: EmptyTestable { }
 
 // MARK: Implement
+
+extension OrderedDictionary: EmptyTestable {
+	public static var empty: Self { [:] }
+}
 
 extension URL: EmptyProvidable {
 	public static let empty: URL = URL(string: "/").forceUnwrap(because: .created)
