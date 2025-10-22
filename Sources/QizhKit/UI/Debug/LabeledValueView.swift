@@ -14,6 +14,7 @@ extension EnvironmentValues {
 	@Entry public var labeledViewLengthLimit: Int = 50
 	@Entry public var labeledViewMaxValueWidth: CGFloat? = 256
 	@Entry public var labeledViewAllowMultiline: Bool = false
+	@Entry public var labeledViewIsInitiallyMultiline: Bool = true
 	@Entry public var labeledViewIsInLabeledColumnsLayout: Bool = false
 	@Entry public var labeledViewMaxLabelFraction: CGFloat = 0.45
 }
@@ -39,6 +40,15 @@ extension View {
 	
 	public func setLabeledView(allowMultiline value: Bool) -> some View {
 		environment(\.labeledViewAllowMultiline, value)
+	}
+	
+	/// Sets whether labeled views start in multiline mode or in single-line mode by default.
+	///
+	/// - Parameter value: Default value is `true`.
+	/// - Returns: A view that applies the initial multiline display setting
+	/// 	to labeled views.
+	public func setLabeledView(isInitiallyMultiline value: Bool) -> some View {
+		environment(\.labeledViewIsInitiallyMultiline, value)
 	}
 	
 	public func setLabeledView(maxValueWidth value: CGFloat?) -> some View {
@@ -199,6 +209,7 @@ public struct LabeledValueView: View {
 	@Environment(\.colorScheme) fileprivate var colorScheme
 	@Environment(\.pixelLength) fileprivate var pixelLength
 	@Environment(\.labeledViewAllowMultiline) fileprivate var allowMultiline
+	@Environment(\.labeledViewIsInitiallyMultiline) fileprivate var isInitiallyMultiline
 	@Environment(\.labeledViewMaxValueWidth) fileprivate var maxValueWidth
 	@Environment(\.labeledViewIsInLabeledColumnsLayout) fileprivate var inLayout
 	
@@ -508,7 +519,7 @@ public struct LabeledValueView: View {
 			}
 			.contentShape([.contextMenuPreview, .hoverEffect, .interaction, .dragPreview], shape)
 			.hoverEffect(.highlight)
-			.asMultilineSwitcher()
+			.asMultilineSwitcher(isInitiallyCollapsed: not(isInitiallyMultiline))
 			.contextMenu {
 				Label {
 					Text("Copy", tableName: "Debug", comment: "Copy labeled view value string to clipboard")
@@ -715,7 +726,11 @@ public struct LabeledViewMultilineSwitcher<Content: View>: View {
 	@Environment(\.labeledViewMaxValueWidth) fileprivate var maxValueWidth
 	@Environment(\.labeledViewAllowMultiline) fileprivate var allowMultiline
 	
-	public init(@ViewBuilder _ content: () -> Content) {
+	public init(
+		isInitiallyCollapsed: Bool = false,
+		@ViewBuilder _ content: () -> Content
+	) {
+		self._isSwitched = .init(initialValue: isInitiallyCollapsed)
 		self.content = content()
 	}
 	
@@ -746,8 +761,14 @@ public struct LabeledViewMultilineSwitcher<Content: View>: View {
 }
 
 extension View {
-	@inlinable public func asMultilineSwitcher() -> some View {
-		LabeledViewMultilineSwitcher { self }
+	@inlinable public func asMultilineSwitcher(
+		isInitiallyCollapsed: Bool = false
+	) -> some View {
+		LabeledViewMultilineSwitcher(
+			isInitiallyCollapsed: isInitiallyCollapsed
+		) {
+			self
+		}
 	}
 }
 
