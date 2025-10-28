@@ -8,13 +8,27 @@
 
 import Foundation
 
-public extension Collection {
-	@inlinable func shuffled(seed: UInt64) -> [Element] {
+extension Collection {
+	public func shuffled(seed: UInt64) -> [Element] {
 		var generator = SeededRandomGenerator(seed: seed)
 		return self.shuffled(using: &generator)
 	}
-	@inlinable func randomElement(seed: UInt64) -> Element? {
+	
+	public func randomElement(seed: UInt64) -> Element? {
 		var generator = SeededRandomGenerator(seed: seed)
 		return self.randomElement(using: &generator)
 	}
 }
+
+/*
+#if canImport(Algorithms)
+import Algorithms
+
+extension Collection {
+	public func randomSample(count: Int, seed: UInt64) -> [Element] {
+		var generator = SeededRandomGenerator(seed: seed)
+		return self.randomSample(count: count, using: &generator)
+	}
+}
+#endif
+*/
