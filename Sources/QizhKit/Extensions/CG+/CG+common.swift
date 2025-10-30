@@ -172,6 +172,7 @@ extension CGPoint: @retroactive AdditiveArithmetic {
 	public static func + (l: CGPoint, r: CGPoint) -> CGPoint { CGPoint(l.x + r.x, l.y + r.y) }
 	public static func - (l: CGPoint, r: CGPoint) -> CGPoint { CGPoint(l.x - r.x, l.y - r.y) }
 	public static prefix func -(value: CGPoint) -> CGPoint { CGPoint(-value.x, -value.y) }
+	public static func * (l: CGPoint, r: CGFloat) -> CGPoint { CGPoint(x: l.x * r, y: l.y * r) }
 }
 
 public extension CGPoint {
