@@ -69,3 +69,13 @@ extension Shape {
 		AnyShape(self)
 	}
 }
+
+// MARK: - Animatable
+
+public typealias AnimatableTrio<T> = AnimatablePair<AnimatablePair<T, T>, T> where T: VectorArithmetic
+
+public typealias AnimatableQuartet<T> = AnimatablePair<AnimatablePair<T, T>, AnimatablePair<T, T>> where T: VectorArithmetic
+
+public typealias AnimatableCGFloatPair = AnimatablePair<CGFloat, CGFloat>
+
+public typealias AnimatableCGFloatQuartet = AnimatableQuartet<CGFloat>
