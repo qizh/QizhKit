@@ -31,6 +31,10 @@ extension TimeInterval {
 	@inlinable public var asDateRangeBeforeNow: Range<Date> {
 		asDateRangeBefore(.now)
 	}
+	
+	@inlinable public var cg: CGFloat {
+		CGFloat(self)
+	}
 }
 
 extension TimeInterval {
