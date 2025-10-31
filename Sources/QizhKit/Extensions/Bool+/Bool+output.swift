@@ -32,7 +32,13 @@ extension Bool {
 		}
 	}
 	
+	/// `1` for `true`, `0` for `false`
 	@inlinable public var asInt: Int8 {
 		self ? 1 : 0
+	}
+	
+	/// `1` for `true`, `-1` for `false`
+	@inlinable public var asIntSign: Int {
+		self ? 1 : -1
 	}
 }
