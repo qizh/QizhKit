@@ -7,7 +7,7 @@
 
 import Foundation
 
-// #if swift(>=6.2)
+#if swift(>=6.2)
 
 @available(iOS 26.0, *)
 extension InlineArray {
@@ -60,4 +60,4 @@ public struct InlineArrayCollection<let N: Int, Element>: RandomAccessCollection
 	public subscript(pos: Int) -> Element { base[pos] }
 }
 
-// #endif
+#endif
