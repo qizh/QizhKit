@@ -17,6 +17,7 @@ extension EnvironmentValues {
 	@Entry public var labeledViewIsInitiallyMultiline: Bool = true
 	@Entry public var labeledViewIsInLabeledColumnsLayout: Bool = false
 	@Entry public var labeledViewMaxLabelFraction: CGFloat = 0.45
+	@Entry public var labeledViewLabelAsSentence: Bool = true
 }
 
 extension View {
@@ -61,6 +62,10 @@ extension View {
 
 	public func setLabeledView(maxLabelFraction fraction: CGFloat) -> some View {
 		environment(\.labeledViewMaxLabelFraction, fraction)
+	}
+	
+	public func setLabeledView(labelAsSentence asSentence: Bool) -> some View {
+		environment(\.labeledViewLabelAsSentence, asSentence)
 	}
 }
 
@@ -212,6 +217,7 @@ public struct LabeledValueView: View {
 	@Environment(\.labeledViewIsInitiallyMultiline) fileprivate var isInitiallyMultiline
 	@Environment(\.labeledViewMaxValueWidth) fileprivate var maxValueWidth
 	@Environment(\.labeledViewIsInLabeledColumnsLayout) fileprivate var inLayout
+	@Environment(\.labeledViewLabelAsSentence) fileprivate var shouldConvertLabelToSentence
 	
 	private init(
 		valueView: ValueView,
@@ -220,7 +226,6 @@ public struct LabeledValueView: View {
 		self.valueView = valueView
 		self.label = label?
 			.withLinesNSpacesTrimmed
-			.toRegularSentenceCase
 			.nonEmpty
 	}
 	
@@ -464,10 +469,21 @@ public struct LabeledValueView: View {
 	
 	// MARK: ┣ Label
 	
+	/// Converts `label` `toRegularSentenceCase`
+	/// in case `labeledViewLabelAsSentence` environment value is set to `true`,
+	/// which is its default value.
+	fileprivate var adjustedLabel: String? {
+		if shouldConvertLabelToSentence {
+			label?.toRegularSentenceCase
+		} else {
+			label
+		}
+	}
+	
 	@ViewBuilder
 	fileprivate func labelView() -> some View {
-		if let label {
-			label
+		if let adjustedLabel {
+			adjustedLabel
 				.asText()
 				.multilineTextAlignment(.trailing)
 				.font(.system(size: 10, weight: .semibold).smallCaps())
