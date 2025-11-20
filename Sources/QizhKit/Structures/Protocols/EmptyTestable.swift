@@ -59,8 +59,8 @@ extension Optional: EmptyTestable where Wrapped: EmptyTestable {
 
 // MARK: Default Test
 
-public protocol EmptyComparable: Equatable, EmptyProvidable, EmptyTestable { }
-public extension EmptyComparable {
+public protocol EmptyComparable: EmptyProvidable, EmptyTestable { }
+public extension EmptyComparable where Self: Equatable {
 	@inlinable var isEmpty: Bool { self == .empty }
 }
 
