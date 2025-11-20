@@ -28,11 +28,12 @@ extension LocalizedStringResource {
 	/// Converts the current value into a SwiftUI `Text` view.
 	///
 	/// - Returns: A `Text` initialized from the current value.
-	/// - Note: This helper is available for several types:
+	/// - Discussion:
+	///   Use this helper to turn different textual values into SwiftUI `Text`:
 	///   - For `String`, it returns `Text(self)`.
 	///   - For `LocalizedStringResource`, it returns `Text(self)`.
-	///   - For `Optional<LocalizedStringResource>`, it returns an optional `Text`,
-	///     yielding `nil` when the optional is `.none`.
+	///   - For `Optional<LocalizedStringResource>`, it returns an optional `Text`
+	///     (`nil` when the optional is `.none`).
 	/// - SeeAlso: `Text` for composing and styling textual content in SwiftUI.
 	@inlinable public func asText() -> Text {
 		Text(self)
