@@ -33,7 +33,7 @@ fileprivate final actor LossyArrayLogger {
 
 /// Decodes Arrays and filters invalid values if the Decoder is unable to decode the value.
 @propertyWrapper
-public struct LossyArray <Item: Codable>: Codable, EmptyProvidable, ExpressibleByArrayLiteral {
+public struct LossyArray <Item: Codable>: Codable, ExpressibleByArrayLiteral {
 	public var wrappedValue: [Item]
 	
 	public init(wrappedValue: [Item] = .empty) {
@@ -103,13 +103,16 @@ public struct LossyArray <Item: Codable>: Codable, EmptyProvidable, ExpressibleB
 		try wrappedValue.encode(to: encoder)
 	}
 	
-	@inlinable public static var empty: Self { .init() }
-	
 	private struct Blancodable: Codable { }
 }
 
 extension LossyArray: WithDefault {
 	@inlinable public static var `default`: Self { .init() }
+}
+
+extension LossyArray: EmptyComparable {
+	@inlinable public static var empty: Self { .init() }
+	@inlinable public var isEmpty: Bool { wrappedValue.isEmpty }
 }
 
 extension LossyArray: Equatable where Item: Equatable { }
