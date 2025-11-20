@@ -9,19 +9,43 @@
 import SwiftUI
 
 extension String {
-	@inlinable
-	public func asText() -> Text {
+	/// Converts the current value into a SwiftUI `Text`.
+	///
+	/// - Returns: A `Text` view initialized from the current value.
+	/// - Discussion:
+	///   Use this helper to turn different textual values into SwiftUI `Text`:
+	///   - For `String`, it returns `Text(self)`.
+	///   - For `LocalizedStringResource`, it returns `Text(self)`.
+	///   - For `Optional<LocalizedStringResource>`, it returns an optional `Text`
+	///     (`nil` when the optional is `.none`).
+	/// - SeeAlso: `Text` for composing and styling textual content in SwiftUI.
+	@inlinable public func asText() -> Text {
 		Text(self)
 	}
 }
 
 extension LocalizedStringResource {
+	/// Converts the current value into a SwiftUI `Text` view.
+	///
+	/// - Returns: A `Text` initialized from the current value.
+	/// - Note: This helper is available for several types:
+	///   - For `String`, it returns `Text(self)`.
+	///   - For `LocalizedStringResource`, it returns `Text(self)`.
+	///   - For `Optional<LocalizedStringResource>`, it returns an optional `Text`,
+	///     yielding `nil` when the optional is `.none`.
+	/// - SeeAlso: `Text` for composing and styling textual content in SwiftUI.
 	@inlinable public func asText() -> Text {
 		Text(self)
 	}
 }
 
 extension Optional<LocalizedStringResource> {
+	/// Converts the string into a SwiftUI `Text`.
+	///
+	/// - Returns: A `Text` view initialized with the string’s contents.
+	/// - Discussion: This is a convenience helper for building SwiftUI views
+	///   where `Text(self)` would otherwise be used, improving readability in
+	///   view composition and string interpolation contexts.
 	public func asText() -> Text? {
 		switch self {
 		case .none: .none
