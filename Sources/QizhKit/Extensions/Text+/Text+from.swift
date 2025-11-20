@@ -41,17 +41,13 @@ extension LocalizedStringResource {
 }
 
 extension Optional<LocalizedStringResource> {
-	/// Converts the current value into an optional SwiftUI `Text` view.
+	/// Converts the optional localized string resource into an optional SwiftUI `Text`.
 	///
-	/// - Returns: An optional `Text` initialized from the current value, or `nil` if the optional is `.none`.
-	/// - Discussion:
-	///   Use this helper to turn different textual values into SwiftUI `Text`:
-	///   - For `String`, it returns `Text(self)`.
-	///   - For `LocalizedStringResource`, it returns `Text(self)`.
-	///   - For `Optional<LocalizedStringResource>`, it returns an optional `Text`
-	///     (`nil` when the optional is `.none`).
-	/// - SeeAlso: `Text` for composing and styling textual content in SwiftUI.
-	public func asText() -> Text? {
+	/// - Returns: An optional `Text` view initialized with the string’s contents, returning `nil` when the optional is `.none`.
+	/// - Discussion: This is a convenience helper for building SwiftUI views
+	///   where `Text(self)` would otherwise be used, improving readability in
+	///   view composition and string interpolation contexts.
+	@inlinable public func asText() -> Text? {
 		switch self {
 		case .none: .none
 		case .some(let wrapped): Text(wrapped)
