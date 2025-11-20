@@ -15,6 +15,21 @@ extension String {
 	}
 }
 
+extension LocalizedStringResource {
+	@inlinable public func asText() -> Text {
+		Text(self)
+	}
+}
+
+extension Optional<LocalizedStringResource> {
+	public func asText() -> Text? {
+		switch self {
+		case .none: .none
+		case .some(let wrapped): Text(wrapped)
+		}
+	}
+}
+
 extension Text {
 	public static func + (lhs: Text, rhs: Text?) -> Text {
 		switch rhs {
