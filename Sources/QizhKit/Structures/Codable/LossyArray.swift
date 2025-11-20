@@ -106,6 +106,10 @@ public struct LossyArray <Item: Codable>: Codable, ExpressibleByArrayLiteral {
 	private struct Blancodable: Codable { }
 }
 
+extension LossyArray {
+	@inlinable public var count: Int { wrappedValue.count }
+}
+
 extension LossyArray: WithDefault {
 	@inlinable public static var `default`: Self { .init() }
 }
