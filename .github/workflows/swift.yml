@@ -16,8 +16,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest, macos-15, ubuntu-24.04]
-        swift-version: ['6.2', '6.2.0', '6.1', '6.1.0']
+        os: [macos-latest, ubuntu-24.04]
+        swift-version: ['6.2', '6.1']
         soft-fail-version-check: [true, false]
     runs-on: ${{ matrix.os }}
     steps:
@@ -34,9 +34,11 @@ jobs:
     name: Swift ${{ matrix.swift }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
-        os: [macos-latest, macos-15, ubuntu-latest, ubuntu-24.04]
-        swift: ['6.1.0', '6.1.1', '6.1.6', '6.2.0', '6.2']
+        os: [macos-latest, ubuntu-24.04]
+        swift: ['6.2', '6.1']
+        # soft-fail-version-check: [true, false]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
