@@ -121,27 +121,13 @@ extension AttributedString {
 
 ### 3. ValueView.swift Fixes
 
-#### 3.1 Add cross-platform "secondary label" color helper
-Added a private static helper property:
-```swift
-private static var secondaryLabelColor: Color {
-    #if canImport(UIKit)
-    Color(uiColor: .secondaryLabel)
-    #elseif canImport(AppKit)
-    Color(nsColor: .secondaryLabelColor)
-    #else
-    .secondary
-    #endif
-}
-```
-
-#### 3.2 Use the new helper in `attributedString`
-Replaced all `.foregroundColor(.secondaryLabel)` calls with `.foregroundColor(Self.secondaryLabelColor)` to use the cross-platform helper.
+#### 3.1 Use the shared cross-platform "secondary label" color
+Switched all `.foregroundColor(.secondaryLabel)` usages to the existing `Color.secondaryLabel` extension to avoid duplicating platform-specific color helpers.
 
 ## Tasks
 
 - [x] Guard `hoverEffect` and `contextMenuPreview` usages in `LabeledValueView` so they are only compiled on iOS and macCatalyst.
-- [x] Replace `.systemBackground` in `LabeledValueView` with a cross-platform background style (`.regularMaterial`).
+- [x] Replace `.systemBackground` in `LabeledValueView` with a cross-platform system background color helper.
 - [x] Make the pasteboard copy behavior in `LabeledValueView` work on both iOS (`UIPasteboard`) and macOS (`NSPasteboard`).
 - [x] Make `AttributedString.foregroundColor` cross-platform (use `Color` and add an optional UIKit overload).
 - [x] Replace `.secondaryLabel` usages in `ValueView.attributedString` with a cross-platform color abstraction.

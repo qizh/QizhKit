@@ -7,6 +7,9 @@
 //
 
 import SwiftUI
+#if canImport(AppKit)
+import AppKit
+#endif
 import QizhMacroKit
 import CoreTransferable
 
@@ -160,30 +163,30 @@ public enum ValueView: View, Sendable {
 			string.asAttributedString()
 		case let .cgPoint(value, fraction):
 				ValueView.cgFloat(value.x, fraction: fraction).attributedString
-			+ 	String.comaspace.asAttributedString().foregroundColor(Self.secondaryLabelColor)
+			+ 	String.comaspace.asAttributedString().foregroundColor(Color.secondaryLabel)
 			+ 	ValueView.cgFloat(value.y, fraction: fraction).attributedString
 		case let .cgSize(value, fraction):
 				ValueView.cgFloat(value.width, fraction: fraction).attributedString
-			+ 	multiplyString.asAttributedString().foregroundColor(Self.secondaryLabelColor)
+			+ 	multiplyString.asAttributedString().foregroundColor(Color.secondaryLabel)
 			+ 	ValueView.cgFloat(value.height, fraction: fraction).attributedString
 		case let .cgRect(value, fraction):
-				String.leftParenthesis.asAttributedString().foregroundColor(Self.secondaryLabelColor)
+				String.leftParenthesis.asAttributedString().foregroundColor(Color.secondaryLabel)
 			+ 	ValueView.cgPoint(value.origin, fraction: fraction).attributedString
-			+ 	String("), (").asAttributedString().foregroundColor(Self.secondaryLabelColor)
+			+ 	String("), (").asAttributedString().foregroundColor(Color.secondaryLabel)
 			+ 	ValueView.cgSize(value.size, fraction: fraction).attributedString
-			+ 	String.rightParenthesis.asAttributedString().foregroundColor(Self.secondaryLabelColor)
+			+ 	String.rightParenthesis.asAttributedString().foregroundColor(Color.secondaryLabel)
 		case let .cgVector(value, fraction):
 				ValueView.cgFloat(value.dx, fraction: fraction).attributedString
-			+ 	String.comaspace.asAttributedString().foregroundColor(Self.secondaryLabelColor)
+			+ 	String.comaspace.asAttributedString().foregroundColor(Color.secondaryLabel)
 			+ 	ValueView.cgFloat(value.dy, fraction: fraction).attributedString
 		case let .edgeInsets(value, fraction):
-				String("top:").asAttributedString().foregroundColor(Self.secondaryLabelColor)
+				String("top:").asAttributedString().foregroundColor(Color.secondaryLabel)
 			+ 	ValueView.cgFloat(value.top, fraction: fraction).attributedString
-			+ 	String("bot:").asAttributedString().foregroundColor(Self.secondaryLabelColor)
+			+ 	String("bot:").asAttributedString().foregroundColor(Color.secondaryLabel)
 			+ 	ValueView.cgFloat(value.bottom, fraction: fraction).attributedString
-			+ 	String("lead:").asAttributedString().foregroundColor(Self.secondaryLabelColor)
+			+ 	String("lead:").asAttributedString().foregroundColor(Color.secondaryLabel)
 			+ 	ValueView.cgFloat(value.leading, fraction: fraction).attributedString
-			+ 	String("trail:").asAttributedString().foregroundColor(Self.secondaryLabelColor)
+			+ 	String("trail:").asAttributedString().foregroundColor(Color.secondaryLabel)
 			+ 	ValueView.cgFloat(value.trailing, fraction: fraction).attributedString
 		}
 	}
@@ -199,15 +202,6 @@ public enum ValueView: View, Sendable {
 			.baselineOffset(1)
 	}
 	
-	private static var secondaryLabelColor: Color {
-		#if canImport(UIKit)
-		Color(uiColor: .secondaryLabel)
-		#elseif canImport(AppKit)
-		Color(nsColor: .secondaryLabelColor)
-		#else
-		.secondary
-		#endif
-	}
 }
 
 extension ValueView: @MainActor RawRepresentable {
