@@ -93,7 +93,7 @@ The following dependencies are used (package name → product name):
 - **DeviceKit** (5.7.0+) → `DeviceKit`: Device information
 - **BetterSafariView** (2.4.4+) → `BetterSafariView`: In-app Safari views
 - **swift-collections** (1.3.0+) → `OrderedCollections`: Apple's ordered collection types
-- **QizhMacroKit** (exactly 1.1.11) → `QizhMacroKit` + `QizhMacroKitClient`: Custom Swift macros
+- **QizhMacroKit** (exactly 1.1.11) → `QizhMacroKit` and `QizhMacroKitClient`: Custom Swift macros
 
 ### Updating Dependencies
 - **DO NOT** update dependencies to versions with breaking changes without explicit permission
