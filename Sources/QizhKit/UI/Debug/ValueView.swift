@@ -200,48 +200,48 @@ public enum ValueView: View, Sendable {
 	}
 }
 
-extension ValueView: @MainActor RawRepresentable {
-	@inlinable public init?(rawValue: String) {
+extension ValueView: RawRepresentable {
+	@inlinable public nonisolated init?(rawValue: String) {
 		self = .string(rawValue)
 	}
 	
-	@inlinable public var rawValue: String {
+	@inlinable public nonisolated var rawValue: String {
 		string
 	}
 }
 
-extension ValueView: @MainActor LosslessStringConvertible {
-	public init?(_ description: String) {
+extension ValueView: LosslessStringConvertible {
+	public nonisolated init?(_ description: String) {
 		self = .string(description)
 	}
 }
 
-extension ValueView: @MainActor CustomStringConvertible {
-	public var description: String {
+extension ValueView: CustomStringConvertible {
+	public nonisolated var description: String {
 		string
 	}
 }
 
-extension ValueView: @MainActor ExpressibleByStringLiteral {
-	public init(stringLiteral value: String) {
+extension ValueView: ExpressibleByStringLiteral {
+	public nonisolated init(stringLiteral value: String) {
 		self = .string(value)
 	}
 }
 
-extension ValueView: @MainActor ExpressibleByBooleanLiteral {
-	public init(booleanLiteral value: Bool) {
+extension ValueView: ExpressibleByBooleanLiteral {
+	public nonisolated init(booleanLiteral value: Bool) {
 		self = .bool(value)
 	}
 }
 
-extension ValueView: @MainActor ExpressibleByIntegerLiteral {
-	public init(integerLiteral value: Int) {
+extension ValueView: ExpressibleByIntegerLiteral {
+	public nonisolated init(integerLiteral value: Int) {
 		self = .integer(value)
 	}
 }
 
-extension ValueView: @MainActor ExpressibleByFloatLiteral {
-	public init(floatLiteral value: Double) {
+extension ValueView: ExpressibleByFloatLiteral {
+	public nonisolated init(floatLiteral value: Double) {
 		self = .floatingPoint(value)
 	}
 }
