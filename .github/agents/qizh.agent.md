@@ -4,11 +4,11 @@
 # To make this agent available, merge this file into the default repository branch.
 # For format details, see: https://gh.io/customagents/config
 
-Name: QizhAgent
-Version: 1.0.0
-Description: "First GitHub agent I've made. Probably the wrong way."
-Author: "@qizh"
-Author Name: Serhii
+name: QizhAgent
+version: 1.0.0
+description: "First GitHub agent I've made. Probably the wrong way."
+author: "@qizh"
+author_name: Serhii
 ---
 
 # QizhAgent
