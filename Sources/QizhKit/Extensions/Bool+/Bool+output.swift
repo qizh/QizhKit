@@ -32,12 +32,19 @@ extension Bool {
 		}
 	}
 	
-	/// `1` for `true`, `0` for `false`
+	///  Returns `1` for `true`, `0` for `false`.
+	///
+	///  - Returns: `1` if `self` is `true`, otherwise `0`.
 	@inlinable public var asInt: Int8 {
 		self ? 1 : 0
 	}
 	
-	/// `1` for `true`, `-1` for `false`
+	///  Returns `1` for `true`, `-1` for `false`.
+	///
+	///  - Returns: `1` if `self` is `true`, otherwise `-1`.
+	///  - Discussion:
+	///    Useful for applying a sign to calculations or animations
+	///    based on a boolean condition.
 	@inlinable public var asIntSign: Int {
 		self ? 1 : -1
 	}

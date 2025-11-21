@@ -172,7 +172,26 @@ extension CGPoint: @retroactive AdditiveArithmetic {
 	public static func + (l: CGPoint, r: CGPoint) -> CGPoint { CGPoint(l.x + r.x, l.y + r.y) }
 	public static func - (l: CGPoint, r: CGPoint) -> CGPoint { CGPoint(l.x - r.x, l.y - r.y) }
 	public static prefix func -(value: CGPoint) -> CGPoint { CGPoint(-value.x, -value.y) }
-	public static func * (l: CGPoint, r: CGFloat) -> CGPoint { CGPoint(x: l.x * r, y: l.y * r) }
+	
+	///  Multiplies a `CGPoint` by a scalar `CGFloat`, scaling both `x` and `y`.
+	///
+	///  - Parameters:
+	///    - l: The point to scale.
+	///    - r: The scalar multiplier.
+	///  - Returns: A new `CGPoint` with both `x` and `y` multiplied by `r`.
+	@inlinable public static func * (l: CGPoint, r: CGFloat) -> CGPoint { 
+		CGPoint(x: l.x * r, y: l.y * r) 
+	}
+	
+	///  Multiplies a scalar `CGFloat` by a `CGPoint`, scaling both `x` and `y`.
+	///
+	///  - Parameters:
+	///    - l: The scalar multiplier.
+	///    - r: The point to scale.
+	///  - Returns: A new `CGPoint` with both `x` and `y` multiplied by `l`.
+	@inlinable public static func * (l: CGFloat, r: CGPoint) -> CGPoint { 
+		CGPoint(x: r.x * l, y: r.y * l) 
+	}
 }
 
 public extension CGPoint {

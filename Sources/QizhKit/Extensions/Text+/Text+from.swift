@@ -9,43 +9,46 @@
 import SwiftUI
 
 extension String {
-	/// Converts the current value into a SwiftUI `Text`.
+	///  Converts the current value into a SwiftUI `Text`.
 	///
-	/// - Returns: A `Text` view initialized from the current value.
-	/// - Discussion:
-	///   Use this helper to turn different textual values into SwiftUI `Text`:
-	///   - For `String`, it returns `Text(self)`.
-	///   - For `LocalizedStringResource`, it returns `Text(self)`.
-	///   - For `Optional<LocalizedStringResource>`, it returns an optional `Text`
-	///     (`nil` when the optional is `.none`).
-	/// - SeeAlso: `Text` for composing and styling textual content in SwiftUI.
+	///  - Returns: A `Text` view initialized from the current value.
+	///  - Discussion:
+	///    Use this helper to turn different textual values into SwiftUI `Text`:
+	///    - For `String`, it returns `Text(self)`.
+	///    - For `LocalizedStringResource`, it returns `Text(self)`.
+	///    - For `Optional<LocalizedStringResource>`, it returns `Text` with
+	///      a fallback (defaulting to an empty `Text`).
+	///  - SeeAlso: `Text` for composing and styling textual content in SwiftUI.
 	@inlinable public func asText() -> Text {
 		Text(self)
 	}
 }
 
 extension LocalizedStringResource {
-	/// Converts the current value into a SwiftUI `Text` view.
+	///  Converts the current value into a SwiftUI `Text` view.
 	///
-	/// - Returns: A `Text` initialized from the current value.
-	/// - Discussion:
-	///   Converts this localized string resource into a SwiftUI `Text` view.
-	/// - SeeAlso: `Text` for composing and styling textual content in SwiftUI.
+	///  - Returns: A `Text` initialized from the current value.
+	///  - Discussion:
+	///    Converts this localized string resource into a SwiftUI `Text` view.
+	///  - SeeAlso: `Text` for composing and styling textual content in SwiftUI.
 	@inlinable public func asText() -> Text {
 		Text(self)
 	}
 }
 
 extension Optional<LocalizedStringResource> {
-	/// Converts the optional localized string resource into an optional SwiftUI `Text`.
+	///  Converts an optional localized string resource into `Text`, with a fallback.
 	///
-	/// - Returns: An optional `Text` view initialized with the string’s contents, returning `nil` when the optional is `.none`.
-	/// - Discussion: This is a convenience helper for building SwiftUI views
-	///   where `Text(self)` would otherwise be used, improving readability in
-	///   view composition and string interpolation contexts.
-	@inlinable public func asText() -> Text? {
+	///  - Parameter fallback: The `Text` to return when this optional is `nil`.
+	///    Defaults to an empty `Text("")`.
+	///  - Returns: A `Text` initialized from the wrapped value if present,
+	///    or the fallback otherwise.
+	///  - Discussion:
+	///    Use this helper when you need a guaranteed `Text` instance,
+	///    not an optional. The fallback ensures you always get a valid view.
+	@inlinable public func asText(fallback: Text = Text("")) -> Text {
 		switch self {
-		case .none: .none
+		case .none: fallback
 		case .some(let wrapped): Text(wrapped)
 		}
 	}

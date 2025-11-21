@@ -72,10 +72,25 @@ extension Shape {
 
 // MARK: - Animatable
 
+///  A type alias for animating three values of type `T` that conforms to `VectorArithmetic`.
+///
+///  Structured as `AnimatablePair<AnimatablePair<T, T>, T>`, allowing SwiftUI
+///  to interpolate three related values (for example, RGB components or x/y/z coordinates).
 public typealias AnimatableTrio<T> = AnimatablePair<AnimatablePair<T, T>, T> where T: VectorArithmetic
 
+///  A type alias for animating four values of type `T` that conforms to `VectorArithmetic`.
+///
+///  Structured as `AnimatablePair<AnimatablePair<T, T>, AnimatablePair<T, T>>`,
+///  suitable for RGBA colors, quaternion-like structures, or any four-component data.
 public typealias AnimatableQuartet<T> = AnimatablePair<AnimatablePair<T, T>, AnimatablePair<T, T>> where T: VectorArithmetic
 
+///  A type alias for animating two `CGFloat` values.
+///
+///  Commonly used for 2D positions, sizes, or offsets in SwiftUI animations.
 public typealias AnimatableCGFloatPair = AnimatablePair<CGFloat, CGFloat>
 
+///  A type alias for animating four `CGFloat` values.
+///
+///  Useful for animating rectangles (origin + size), edge insets, or other
+///  four-component geometric data in SwiftUI.
 public typealias AnimatableCGFloatQuartet = AnimatableQuartet<CGFloat>
