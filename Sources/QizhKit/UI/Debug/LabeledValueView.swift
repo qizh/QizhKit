@@ -6,6 +6,11 @@
 //  Copyright © 2020 Serhii Shevchenko. All rights reserved.
 //
 
+#if os(iOS) || targetEnvironment(macCatalyst)
+import UIKit
+#elseif os(macOS)
+import AppKit
+#endif
 import SwiftUI
 
 // MARK: - Environment Values
@@ -498,8 +503,12 @@ public struct LabeledValueView: View {
 							.strokeBorder(.tertiary, lineWidth: pixelLength)
 					}
 				}
+				#if os(iOS)
 				.contentShape([.contextMenuPreview, .hoverEffect, .interaction, .dragPreview], shape)
 				.hoverEffect(.highlight)
+				#else
+				.contentShape([.interaction, .dragPreview], shape)
+				#endif
 				.fixedHeight()
 				.apply { view in
 					ViewThatFits(in: .horizontal) {
@@ -525,7 +534,11 @@ public struct LabeledValueView: View {
 		valueView
 			.multilineTextAlignment(.leading)
 			.frame(minHeight: 15, alignment: .topLeading)
-			.background(.systemBackground, in: shape)
+			#if os(iOS)
+			.background(Color(.systemBackground), in: shape)
+			#elseif os(macOS)
+			.background(Color(NSColor.windowBackgroundColor), in: shape)
+			#endif
 			.clipShape(shape)
 			.overlay {
 				if colorScheme.isDark {
@@ -533,8 +546,12 @@ public struct LabeledValueView: View {
 						.strokeBorder(.tertiary, lineWidth: pixelLength)
 				}
 			}
+			#if os(iOS)
 			.contentShape([.contextMenuPreview, .hoverEffect, .interaction, .dragPreview], shape)
 			.hoverEffect(.highlight)
+			#else
+			.contentShape([.interaction, .dragPreview], shape)
+			#endif
 			.asMultilineSwitcher(isInitiallyCollapsed: not(isInitiallyMultiline))
 			.contextMenu {
 				Label {
@@ -543,7 +560,13 @@ public struct LabeledValueView: View {
 					Image(systemName: "doc.on.doc")
 				}
 				.button {
+					#if os(iOS) || targetEnvironment(macCatalyst)
 					UIPasteboard.general.string = valueView.string
+					#elseif os(macOS)
+					let pasteboard = NSPasteboard.general
+					pasteboard.clearContents()
+					pasteboard.setString(valueView.string, forType: .string)
+					#endif
 				}
 				
 				ShareLink(item: valueView.string) {
