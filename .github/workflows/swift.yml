@@ -1,0 +1,39 @@
+# This workflow will build a Swift project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-swift
+
+name: Swift setup, build, and run tests
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    name: Using Swift ${{ matrix.swift }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest]
+        swift: ['6.2', '6.1']
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        
+      - name: Setup Swift (via swift-actions)
+        uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: ${{ matrix.swift }}
+          ## Removed because not defined in matrix configuration.
+          # soft-fail-version-check: ${{ matrix.soft-fail-version-check }}
+        
+      - name: Verify Swift version
+        run: swift --version # Swift 6.2
+      
+      - name: Build # (verbose)
+        run: swift build # -v
+        
+      - name: Run tests # (verbose)
+        run: swift test # -v
