@@ -1,7 +1,7 @@
 # This workflow will build a Swift project
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-swift
 
-name: Swift
+name: Setup Swift, build & run tests
 
 on:
   push:
@@ -10,19 +10,85 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
-    name: Swift ${{ matrix.swift }} on ${{ matrix.os }}
+
+  setup-swift:
+    name: Setup Swift
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
-        swift: ["6.1", "6.2"]
+        os: [macos-latest, macos-15, ubuntu-24.04]
+        swift-version: ['6.2', '6.2.0', '6.1', '6.1.0']
+        soft-fail-version-check: [true, false]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: swift-actions/setup-swift@65540b95f51493d65f5e59e97dcef9629ddf11bf
+      - name: Checkout repository
+        uses: actions/checkout@v5
+      
+      - name: Setup Swift (via sonderformat-llc)
+        uses: sonderformat-llc/setup-swift@main
+        with:
+          swift-version: ${{ matrix.swift-version }}
+          soft-fail-version-check: ${{ matrix.soft-fail-version-check }}
+
+  build:
+    name: Swift ${{ matrix.swift }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, macos-15, ubuntu-latest, ubuntu-24.04]
+        swift: ['6.1.0', '6.1.1', '6.1.6', '6.2.0', '6.2']
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        
+      - name: Setup Swift (via swift-actions)
+        uses: swift-actions/setup-swift@v2
         with:
           swift-version: ${{ matrix.swift }}
-      - uses: actions/checkout@v5
-      - name: Build
+          soft-fail-version-check: ${{ matrix.soft-fail-version-check }}
+        
+      - name: Verify Swift version
+        run: swift --version # Swift 6.2
+      
+      - name: Build (verbose)
         run: swift build -v
-      - name: Run tests
+        
+      - name: Run tests (verbose)
         run: swift test -v
+
+
+
+
+
+
+
+
+
+
+
+name: Setup Swift Test
+on:
+  push:
+    branches:
+      - main
+jobs:
+  setup-swift:
+    strategy:
+        fail-fast: false
+        matrix:
+            os: [ubuntu-24.04, ubuntu-22.04, macos-14, macos-15]
+            swift-version: ['6.1.0', '6.1.1', '6.1.6']
+            soft-fail-version-check: [true, false]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Swift
+        uses: sonderformat-llc/setup-swift@main
+        with:
+          swift-version: ${{ matrix.swift-version }}
+          soft-fail-version-check: ${{ matrix.soft-fail-version-check }}
+
+      - name: Verify Swift version
+        run: swift --version
