@@ -202,15 +202,15 @@ Contains third-party code with proper attribution:
 - When adding user-facing strings, consider localization
 
 ### Languages to support
--	en — English
--	de — German
--	es — Spanish
--	fr — French
--	it — Italian
--	pt-BR — Brazilian Portuguese
--	pt-PT — European Portuguese
--	ru — Russian
--	uk — Ukrainian
+- `en` — English
+- `de` — German
+- `es` — Spanish
+- `fr` — French
+- `it` — Italian
+- `pt-BR` — Brazilian Portuguese
+- `pt-PT` — European Portuguese
+- `ru` — Russian
+- `uk` — Ukrainian
 
 ## CI/CD Considerations
 
