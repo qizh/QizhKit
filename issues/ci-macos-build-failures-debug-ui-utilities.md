@@ -107,9 +107,9 @@ extension AttributedString {
 ### 3. ValueView.swift Fixes
 
 #### 3.1 Add cross-platform "secondary label" color helper
-Added a private helper property:
+Added a private static helper property:
 ```swift
-private var debugSecondaryLabelColor: Color {
+private static var secondaryLabelColor: Color {
     #if canImport(UIKit)
     Color(uiColor: .secondaryLabel)
     #elseif canImport(AppKit)
@@ -121,7 +121,7 @@ private var debugSecondaryLabelColor: Color {
 ```
 
 #### 3.2 Use the new helper in `attributedString`
-Replaced all `.foregroundColor(.secondaryLabel)` calls with `.foregroundColor(debugSecondaryLabelColor)` to use the cross-platform helper.
+Replaced all `.foregroundColor(.secondaryLabel)` calls with `.foregroundColor(Self.secondaryLabelColor)` to use the cross-platform helper.
 
 ## Tasks
 
@@ -131,7 +131,7 @@ Replaced all `.foregroundColor(.secondaryLabel)` calls with `.foregroundColor(de
 - [x] Make `AttributedString.foregroundColor` cross-platform (use `Color` and add an optional UIKit overload).
 - [x] Replace `.secondaryLabel` usages in `ValueView.attributedString` with a cross-platform color abstraction.
 - [x] Update compiler conditions to properly account for `targetEnvironment(macCatalyst)`.
-- [ ] Ensure the Swift package builds cleanly on macOS in CI.
+- [x] Ensure the Swift package builds cleanly on macOS in CI.
 
 ## Platform Support
 
