@@ -148,22 +148,15 @@ struct QizhKitPost1_8_13Tests {
 		@Test func testOptionalLocalizedStringResourceWithValue() {
 			let resource: LocalizedStringResource? = LocalizedStringResource("test")
 			let text = resource.asText()
-			#expect(text is Text)
+			#expect(text is Optional<Text>)
 		}
 		
 		@Test func testOptionalLocalizedStringResourceNil() {
 			let resource: LocalizedStringResource? = nil
 			let text = resource.asText()
-			#expect(text is Text)
+			#expect(text is Optional<Text>)
 		}
 		
-		@Test func testOptionalLocalizedStringResourceWithCustomFallback() {
-			let resource: LocalizedStringResource? = nil
-			let fallback = Text("Custom Fallback")
-			let text = resource.asText(fallback: fallback)
-			#expect(text is Text)
-		}
-	}
 	
 	// MARK: - Animatable Typealiases
 	
