@@ -11,8 +11,8 @@ QizhKit is a collection of Swift and SwiftUI tools and extensions targeting iOS,
 - **Language**: Swift 6.1+
 - **Frameworks**: SwiftUI, UIKit, Combine
 - **Package Manager**: Swift Package Manager (SPM)
-- **Platforms**: iOS 17+, macOS 14+, macCatalyst 17+, visionOS 1+
-- **Testing**: XCTest
+- **Platforms**: iOS 17+, macOS 14+, macCatalyst 17+
+- **Testing**: Swift Testing (`@Suite("Tests Group Name")` and `@Test("Test Name")`)
 
 ## Project Structure
 
@@ -67,7 +67,7 @@ swift build -Xswiftc "-sdk" -Xswiftc "`xcrun --sdk macosx --show-sdk-path`"
 - Use declarative syntax
 - Prefer view modifiers over wrapper views
 - Extract complex views into separate components
-- Use `@State`, `@Binding`, `@ObservedObject`, etc. appropriately
+- Use `@State`, `@Binding`, etc. appropriately
 - Follow SwiftUI best practices for performance
 
 ### Documentation
@@ -93,7 +93,7 @@ The following dependencies are used (package name → product name):
 - **DeviceKit** (5.7.0+) → `DeviceKit`: Device information
 - **BetterSafariView** (2.4.4+) → `BetterSafariView`: In-app Safari views
 - **swift-collections** (1.3.0+) → `OrderedCollections`: Apple's ordered collection types
-- **QizhMacroKit** (exactly 1.1.11) → `QizhMacroKit` and `QizhMacroKitClient`: Custom Swift macros
+- **QizhMacroKit** (exactly 1.1.11) → `QizhMacroKit` and `QizhMacroKitClient`: Custom Swift macros made by the same author
 
 ### Updating Dependencies
 - **DO NOT** update dependencies to versions with breaking changes without explicit permission
@@ -111,7 +111,7 @@ The following dependencies are used (package name → product name):
 3. **Update documentation** (DocC comments and markdown files) when adding features
 4. **Build and test** your changes before submitting
 5. **Use existing libraries** when possible instead of reinventing solutions
-6. **Follow the repository's existing code style** and patterns
+6. **Follow the repository's existing code style** and patterns, prefer recently added or updated ones
 7. **Add proper error handling** for edge cases
 8. **Consider performance implications** especially for UI code
 
@@ -170,7 +170,7 @@ As per `.gitignore`:
 This directory is excluded from builds (see `Package.swift`). It contains:
 - Code that is temporarily disabled
 - Experimental features not ready for production
-- Deprecated code kept for reference
+- Deprecated code kept for reference → most common case
 
 **DO NOT** move files into or out of this directory without understanding the implications.
 
@@ -200,7 +200,17 @@ Contains third-party code with proper attribution:
 - Localization resources are in `Sources/QizhKit/Localizations/`
 - Default localization is English (`en`)
 - When adding user-facing strings, consider localization
-- Use `LocalizedStringKey` for SwiftUI views
+
+### Languages to support
+-	en — English
+-	de — German
+-	es — Spanish
+-	fr — French
+-	it — Italian
+-	pt-BR — Brazilian Portuguese
+-	pt-PT — European Portuguese
+-	ru — Russian
+-	uk — Ukrainian
 
 ## CI/CD Considerations
 
@@ -231,4 +241,4 @@ The repository has a custom agent configured in `.github/agents/qizh.agent.md` w
 
 **Last Updated**: 2025-11-21
 **Swift Version**: 6.1+
-**Minimum Platforms**: iOS 17, macOS 14, macCatalyst 17, visionOS 1
+**Minimum Platforms**: iOS 17, macOS 14, macCatalyst 17
