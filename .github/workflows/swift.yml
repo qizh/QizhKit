@@ -10,35 +10,14 @@ on:
     branches: [ "main" ]
 
 jobs:
-
-  setup-swift:
-    name: Setup Swift
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [macos-latest, ubuntu-24.04]
-        swift-version: ['6.2', '6.1']
-        soft-fail-version-check: [true, false]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v5
-      
-      - name: Setup Swift (via sonderformat-llc)
-        uses: sonderformat-llc/setup-swift@main
-        with:
-          swift-version: ${{ matrix.swift-version }}
-          soft-fail-version-check: ${{ matrix.soft-fail-version-check }}
-
   build:
-    name: Swift ${{ matrix.swift }} on ${{ matrix.os }}
+    name: Using Swift ${{ matrix.swift }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest, ubuntu-24.04]
+        os: [macos-latest]
         swift: ['6.2', '6.1']
-        # soft-fail-version-check: [true, false]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -52,8 +31,8 @@ jobs:
       - name: Verify Swift version
         run: swift --version # Swift 6.2
       
-      - name: Build (verbose)
-        run: swift build -v
+      - name: Build # (verbose)
+        run: swift build # -v
         
-      - name: Run tests (verbose)
-        run: swift test -v
+      - name: Run tests # (verbose)
+        run: swift test # -v
