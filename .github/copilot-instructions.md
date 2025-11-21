@@ -47,7 +47,7 @@ swift test
 ### Building for Specific Platform
 ```bash
 # For iOS
-swift build -Xswiftc "-sdk" -Xswiftc "`xcrun --sdk iphoneos --show-sdk-path`" -Xswiftc "-target" -Xswiftc "arm64-apple-ios17.0"
+swift build -Xswiftc "-sdk" -Xswiftc "`xcrun --sdk iphoneos --show-sdk-path`" -Xswiftc "-target" -Xswiftc "arm64-apple-ios17"
 
 # For macOS
 swift build -Xswiftc "-sdk" -Xswiftc "`xcrun --sdk macosx --show-sdk-path`"
@@ -217,7 +217,12 @@ If you encounter issues or need clarification:
 
 ## Agent-Specific Notes
 
-The repository has a custom agent configured in `.github/agents/qizh.agent.md` with specific personality and responsibilities. When that agent is active, defer to its instructions for code generation and review tasks.
+The repository has a custom agent configured in `.github/agents/qizh.agent.md` with specific personality and responsibilities. 
+
+**Instruction Priority**: When the custom agent is active:
+1. The custom agent's instructions in `.github/agents/qizh.agent.md` take precedence for code generation and review tasks
+2. This file (`.github/copilot-instructions.md`) provides general repository context and conventions
+3. Both sets of instructions are complementary - the agent instructions define behavior and personality, while this file documents repository structure and best practices
 
 ---
 
