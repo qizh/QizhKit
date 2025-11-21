@@ -502,10 +502,11 @@ public struct LabeledValueView: View {
 							.strokeBorder(.tertiary, lineWidth: pixelLength)
 					}
 				}
-				.contentShape([.interaction, .dragPreview], shape)
 				#if os(iOS)
 				.contentShape([.contextMenuPreview, .hoverEffect, .interaction, .dragPreview], shape)
 				.hoverEffect(.highlight)
+				#else
+				.contentShape([.interaction, .dragPreview], shape)
 				#endif
 				.fixedHeight()
 				.apply { view in
@@ -540,10 +541,11 @@ public struct LabeledValueView: View {
 						.strokeBorder(.tertiary, lineWidth: pixelLength)
 				}
 			}
-			.contentShape([.interaction, .dragPreview], shape)
 			#if os(iOS)
 			.contentShape([.contextMenuPreview, .hoverEffect, .interaction, .dragPreview], shape)
 			.hoverEffect(.highlight)
+			#else
+			.contentShape([.interaction, .dragPreview], shape)
 			#endif
 			.asMultilineSwitcher(isInitiallyCollapsed: not(isInitiallyMultiline))
 			.contextMenu {
