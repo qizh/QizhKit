@@ -160,30 +160,30 @@ public enum ValueView: View, Sendable {
 			string.asAttributedString()
 		case let .cgPoint(value, fraction):
 				ValueView.cgFloat(value.x, fraction: fraction).attributedString
-			+ 	String.comaspace.asAttributedString().foregroundColor(.secondary)
+			+ 	String.comaspace.asAttributedString().foregroundColor(.secondaryLabel)
 			+ 	ValueView.cgFloat(value.y, fraction: fraction).attributedString
 		case let .cgSize(value, fraction):
 				ValueView.cgFloat(value.width, fraction: fraction).attributedString
-			+ 	multiplyString.asAttributedString().foregroundColor(.secondary)
+			+ 	multiplyString.asAttributedString().foregroundColor(.secondaryLabel)
 			+ 	ValueView.cgFloat(value.height, fraction: fraction).attributedString
 		case let .cgRect(value, fraction):
-				String.leftParenthesis.asAttributedString().foregroundColor(.secondary)
+				String.leftParenthesis.asAttributedString().foregroundColor(.secondaryLabel)
 			+ 	ValueView.cgPoint(value.origin, fraction: fraction).attributedString
-			+ 	String("), (").asAttributedString().foregroundColor(.secondary)
+			+ 	String("), (").asAttributedString().foregroundColor(.secondaryLabel)
 			+ 	ValueView.cgSize(value.size, fraction: fraction).attributedString
-			+ 	String.rightParenthesis.asAttributedString().foregroundColor(.secondary)
+			+ 	String.rightParenthesis.asAttributedString().foregroundColor(.secondaryLabel)
 		case let .cgVector(value, fraction):
 				ValueView.cgFloat(value.dx, fraction: fraction).attributedString
-			+ 	String.comaspace.asAttributedString().foregroundColor(.secondary)
+			+ 	String.comaspace.asAttributedString().foregroundColor(.secondaryLabel)
 			+ 	ValueView.cgFloat(value.dy, fraction: fraction).attributedString
 		case let .edgeInsets(value, fraction):
-				String("top:").asAttributedString().foregroundColor(.secondary)
+				String("top:").asAttributedString().foregroundColor(.secondaryLabel)
 			+ 	ValueView.cgFloat(value.top, fraction: fraction).attributedString
-			+ 	String("bot:").asAttributedString().foregroundColor(.secondary)
+			+ 	String("bot:").asAttributedString().foregroundColor(.secondaryLabel)
 			+ 	ValueView.cgFloat(value.bottom, fraction: fraction).attributedString
-			+ 	String("lead:").asAttributedString().foregroundColor(.secondary)
+			+ 	String("lead:").asAttributedString().foregroundColor(.secondaryLabel)
 			+ 	ValueView.cgFloat(value.leading, fraction: fraction).attributedString
-			+ 	String("trail:").asAttributedString().foregroundColor(.secondary)
+			+ 	String("trail:").asAttributedString().foregroundColor(.secondaryLabel)
 			+ 	ValueView.cgFloat(value.trailing, fraction: fraction).attributedString
 		}
 	}

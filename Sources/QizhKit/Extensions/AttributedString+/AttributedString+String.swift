@@ -23,15 +23,15 @@ extension AttributedString {
 }
 
 extension AttributedString {
-	@inlinable public func foregroundColor(_ color: PlatformColor) -> AttributedString {
-		transformingAttributes(\.foregroundColor) { foregroundColor in
-			foregroundColor.value = Color(color)
-		}
-	}
-	
 	@inlinable public func foregroundColor(_ color: Color) -> AttributedString {
 		transformingAttributes(\.foregroundColor) { foregroundColor in
 			foregroundColor.value = color
+		}
+	}
+	
+	@inlinable public func foregroundColor(_ color: PlatformColor) -> AttributedString {
+		transformingAttributes(\.foregroundColor) { foregroundColor in
+			foregroundColor.value = Color(color)
 		}
 	}
 }
