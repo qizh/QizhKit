@@ -414,6 +414,17 @@ public struct LabeledValueView: View {
 	
 	fileprivate let shape = RoundedRectangle(cornerRadius: 2, style: .continuous)
 	
+	/// Cross-platform system background color
+	private var systemBackgroundColor: Color {
+		#if canImport(UIKit)
+		Color(uiColor: .systemBackground)
+		#elseif canImport(AppKit)
+		Color(nsColor: .windowBackgroundColor)
+		#else
+		colorScheme == .dark ? Color.black : Color.white
+		#endif
+	}
+	
 	// MARK: Body (new)
 	
 	public var body: some View {
@@ -533,7 +544,7 @@ public struct LabeledValueView: View {
 		valueView
 			.multilineTextAlignment(.leading)
 			.frame(minHeight: 15, alignment: .topLeading)
-			.background(.regularMaterial, in: shape)
+			.background(systemBackgroundColor, in: shape)
 			.clipShape(shape)
 			.overlay {
 				if colorScheme.isDark {

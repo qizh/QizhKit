@@ -62,11 +62,26 @@ Updated both `labelView()` and `valueViewBody()` to use base content shapes ever
 
 **Note**: macCatalyst is included with iOS since it supports UIKit and the same interaction patterns.
 
-#### 1.3 Replace `.systemBackground` with cross-platform background
-Replaced with `.regularMaterial` which is available on both platforms:
+#### 1.3 Replace `.systemBackground` with cross-platform system background color
+Created a cross-platform helper property that provides the system background color:
 ```swift
-.background(.regularMaterial, in: shape)
+private var systemBackgroundColor: Color {
+    #if canImport(UIKit)
+    Color(uiColor: .systemBackground)
+    #elseif canImport(AppKit)
+    Color(nsColor: .windowBackgroundColor)
+    #else
+    colorScheme == .dark ? Color.black : Color.white
+    #endif
+}
 ```
+
+Then used it in the background:
+```swift
+.background(systemBackgroundColor, in: shape)
+```
+
+This ensures white background in light mode and black background in dark mode across all platforms.
 
 #### 1.4 Make pasteboard behavior platform-aware
 Updated copy button to work on both platforms:
