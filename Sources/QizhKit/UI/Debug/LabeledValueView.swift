@@ -8,6 +8,10 @@
 
 import SwiftUI
 
+#if canImport(AppKit)
+import AppKit
+#endif
+
 // MARK: - Environment Values
 
 extension EnvironmentValues {
@@ -498,8 +502,11 @@ public struct LabeledValueView: View {
 							.strokeBorder(.tertiary, lineWidth: pixelLength)
 					}
 				}
+				.contentShape([.interaction, .dragPreview], shape)
+				#if os(iOS)
 				.contentShape([.contextMenuPreview, .hoverEffect, .interaction, .dragPreview], shape)
 				.hoverEffect(.highlight)
+				#endif
 				.fixedHeight()
 				.apply { view in
 					ViewThatFits(in: .horizontal) {
@@ -525,7 +532,7 @@ public struct LabeledValueView: View {
 		valueView
 			.multilineTextAlignment(.leading)
 			.frame(minHeight: 15, alignment: .topLeading)
-			.background(.systemBackground, in: shape)
+			.background(.regularMaterial, in: shape)
 			.clipShape(shape)
 			.overlay {
 				if colorScheme.isDark {
@@ -533,8 +540,11 @@ public struct LabeledValueView: View {
 						.strokeBorder(.tertiary, lineWidth: pixelLength)
 				}
 			}
+			.contentShape([.interaction, .dragPreview], shape)
+			#if os(iOS)
 			.contentShape([.contextMenuPreview, .hoverEffect, .interaction, .dragPreview], shape)
 			.hoverEffect(.highlight)
+			#endif
 			.asMultilineSwitcher(isInitiallyCollapsed: not(isInitiallyMultiline))
 			.contextMenu {
 				Label {
@@ -543,7 +553,13 @@ public struct LabeledValueView: View {
 					Image(systemName: "doc.on.doc")
 				}
 				.button {
+					#if canImport(UIKit)
 					UIPasteboard.general.string = valueView.string
+					#elseif canImport(AppKit)
+					let pb = NSPasteboard.general
+					pb.clearContents()
+					pb.setString(valueView.string, forType: .string)
+					#endif
 				}
 				
 				ShareLink(item: valueView.string) {
