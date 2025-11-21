@@ -81,11 +81,12 @@ extension Substring: EmptyTestable { }
 
 // MARK: Implement
 
-/// Conform `OrderedDictionary` to `EmptyProvidable` to provide a static `.empty`.
+/// Conform `OrderedDictionary` to `EmptyComparable`.
 ///
 /// `OrderedDictionary` already has `.isEmpty` via its `Collection` conformance,
 /// so it satisfies `EmptyTestable` automatically.
-extension OrderedDictionary: EmptyProvidable {
+/// With a static `.empty` implementation it now conforms to `EmptyComparable`
+extension OrderedDictionary: EmptyComparable {
 	public static var empty: Self { [:] }
 }
 
