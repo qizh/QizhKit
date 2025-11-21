@@ -617,8 +617,12 @@ public struct LabeledValueView: View {
 							.strokeBorder(.tertiary, lineWidth: pixelLength)
 					}
 				}
+				#if os(iOS)
 				.contentShape([.contextMenuPreview, .hoverEffect, .interaction, .dragPreview], shape)
 				.hoverEffect(.highlight)
+				#else
+				.contentShape([.interaction, .dragPreview], shape)
+				#endif
 				
 				.fixedHeight()
 				.apply { view in
@@ -645,7 +649,11 @@ public struct LabeledValueView: View {
 				.frame(minHeight: 15, alignment: .topLeading)
 				// .alignmentGuide(.separator, value: .zero)
 				
-				.background(.systemBackground, in: shape)
+				#if os(iOS)
+				.background(Color(.systemBackground), in: shape)
+				#elseif os(macOS)
+				.background(Color(NSColor.windowBackgroundColor), in: shape)
+				#endif
 				.clipShape(shape)
 				.overlay {
 					if colorScheme.isDark {
@@ -653,8 +661,12 @@ public struct LabeledValueView: View {
 							.strokeBorder(.tertiary, lineWidth: pixelLength)
 					}
 				}
+				#if os(iOS)
 				.contentShape([.contextMenuPreview, .hoverEffect, .interaction, .dragPreview], shape)
 				.hoverEffect(.highlight)
+				#else
+				.contentShape([.interaction, .dragPreview], shape)
+				#endif
 				
 				/*
 				.background(Color.systemBackground)
@@ -673,7 +685,13 @@ public struct LabeledValueView: View {
 						Image(systemName: "doc.on.doc")
 					}
 					.button {
+						#if os(iOS) || targetEnvironment(macCatalyst)
 						UIPasteboard.general.string = valueView.string
+						#elseif os(macOS)
+						let pasteboard = NSPasteboard.general
+						pasteboard.clearContents()
+						pasteboard.setString(valueView.string, forType: .string)
+						#endif
 					}
 
 					ShareLink(item: valueView.string) {
@@ -1549,7 +1567,11 @@ public struct LabeledValueView_Previews: PreviewProvider {
 				}
 			}
 			.padding()
-			.background(Color(uiColor: .systemBackground))
+			#if os(iOS)
+			.background(Color(.systemBackground))
+			#elseif os(macOS)
+			.background(Color(NSColor.windowBackgroundColor))
+			#endif
 			.previewLayout(.sizeThatFits)
 			.environment(\.colorScheme, colorScheme)
 		}
