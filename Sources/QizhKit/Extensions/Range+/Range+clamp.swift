@@ -22,7 +22,7 @@ extension ClosedRange where Bound: Comparable {
 	/// - Parameter value: The value to clamp within this range.
 	/// - Returns: A value within `self`,
 	/// 			equal to `value` if it already lies inside the range,
-	///            	otherwise the nearest bound (`lowerBound` or `upperBound`).
+	///           	otherwise the nearest bound (`lowerBound` or `upperBound`).
 	public func clamp(_ value: Bound) -> Bound {
 		if value < lowerBound {
 			lowerBound

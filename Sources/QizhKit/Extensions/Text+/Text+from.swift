@@ -13,11 +13,9 @@ extension String {
 	///
 	/// - Returns: A `Text` view initialized from the current value.
 	/// - Discussion:
-	///   Use this helper to turn different textual values into SwiftUI `Text`:
-	///   - For `String`, it returns `Text(self)`.
-	///   - For `LocalizedStringResource`, it returns `Text(self)`.
-	///   - For `Optional<LocalizedStringResource>`, it returns an optional `Text`
-	///     (`nil` when the optional is `.none`).
+	///   Use this helper to create a SwiftUI `Text` view from a `String`.
+	///   Similar helpers exist for `LocalizedStringResource` and
+	///   `Optional<LocalizedStringResource>`.
 	/// - SeeAlso: `Text` for composing and styling textual content in SwiftUI.
 	@inlinable public func asText() -> Text {
 		Text(self)
@@ -54,8 +52,8 @@ extension Optional<LocalizedStringResource> {
 extension Text {
 	public static func + (lhs: Text, rhs: Text?) -> Text {
 		switch rhs {
-		case .some(let text): return lhs + text
-		case .none: return lhs
+		case .some(let text): lhs + text
+		case .none:           lhs
 		}
 	}
 	
@@ -69,12 +67,13 @@ extension Text {
 }
 
 extension Collection where Element == Text {
-	@inlinable
-	public func joined(separator: Text) -> Text {
+	@inlinable public func joined(separator: Text) -> Text {
 		reduce(.empty) { partialResult, nextText in
-			partialResult.isEmpty
-				? nextText
-				: partialResult + separator + nextText
+			if partialResult.isEmpty {
+				nextText
+			} else {
+				partialResult + separator + nextText
+			}
 		}
 	}
 }
