@@ -502,7 +502,7 @@ public struct LabeledValueView: View {
 							.strokeBorder(.tertiary, lineWidth: pixelLength)
 					}
 				}
-				#if os(iOS)
+				#if os(iOS) || targetEnvironment(macCatalyst)
 				.contentShape([.contextMenuPreview, .hoverEffect, .interaction, .dragPreview], shape)
 				.hoverEffect(.highlight)
 				#else
@@ -541,7 +541,7 @@ public struct LabeledValueView: View {
 						.strokeBorder(.tertiary, lineWidth: pixelLength)
 				}
 			}
-			#if os(iOS)
+			#if os(iOS) || targetEnvironment(macCatalyst)
 			.contentShape([.contextMenuPreview, .hoverEffect, .interaction, .dragPreview], shape)
 			.hoverEffect(.highlight)
 			#else

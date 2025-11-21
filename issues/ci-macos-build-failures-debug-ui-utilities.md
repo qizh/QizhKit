@@ -50,14 +50,17 @@ import AppKit
 ```
 
 #### 1.2 Guard iOS-only contentShape kinds and hoverEffect
-Updated both `labelView()` and `valueViewBody()` to use base content shapes everywhere, with iOS-specific enhancements conditionally:
+Updated both `labelView()` and `valueViewBody()` to use base content shapes everywhere, with iOS and macCatalyst-specific enhancements conditionally:
 ```swift
-.contentShape([.interaction, .dragPreview], shape)
-#if os(iOS)
+#if os(iOS) || targetEnvironment(macCatalyst)
 .contentShape([.contextMenuPreview, .hoverEffect, .interaction, .dragPreview], shape)
 .hoverEffect(.highlight)
+#else
+.contentShape([.interaction, .dragPreview], shape)
 #endif
 ```
+
+**Note**: macCatalyst is included with iOS since it supports UIKit and the same interaction patterns.
 
 #### 1.3 Replace `.systemBackground` with cross-platform background
 Replaced with `.regularMaterial` which is available on both platforms:
@@ -122,12 +125,20 @@ Replaced all `.foregroundColor(.secondaryLabel)` calls with `.foregroundColor(de
 
 ## Tasks
 
-- [x] Guard `hoverEffect` and `contextMenuPreview` usages in `LabeledValueView` so they are only compiled on iOS.
+- [x] Guard `hoverEffect` and `contextMenuPreview` usages in `LabeledValueView` so they are only compiled on iOS and macCatalyst.
 - [x] Replace `.systemBackground` in `LabeledValueView` with a cross-platform background style (`.regularMaterial`).
 - [x] Make the pasteboard copy behavior in `LabeledValueView` work on both iOS (`UIPasteboard`) and macOS (`NSPasteboard`).
 - [x] Make `AttributedString.foregroundColor` cross-platform (use `Color` and add an optional UIKit overload).
 - [x] Replace `.secondaryLabel` usages in `ValueView.attributedString` with a cross-platform color abstraction.
+- [x] Update compiler conditions to properly account for `targetEnvironment(macCatalyst)`.
 - [ ] Ensure the Swift package builds cleanly on macOS in CI.
+
+## Platform Support
+
+The fixes ensure proper behavior across:
+- **iOS**: Full support with all iOS-specific features (hoverEffect, contextMenuPreview, UIPasteboard, UIColor)
+- **macCatalyst**: Full support using UIKit APIs and iOS-specific SwiftUI modifiers
+- **macOS**: Native support using AppKit APIs (NSPasteboard, NSColor) and macOS-compatible SwiftUI modifiers
 
 ## Testing
 
