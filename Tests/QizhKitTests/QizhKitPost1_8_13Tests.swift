@@ -5,7 +5,7 @@
 //  Created for post-1.8.13 cleanup, docs, and tests.
 //
 
-#if swift(>=6.2)
+#if swift(>=6.2) && canImport(Testing)
 
 import Testing
 import QizhKit
@@ -202,6 +202,6 @@ struct QizhKitPost1_8_13Tests {
 
 #else
 
-#warning("Post-1.8.13 tests require Swift 6.2 or later and are disabled on older toolchains. Tests for Bool.asIntSign, ClosedRange.clamp, TimeInterval.cg, CGPoint multiplication operators, asText() helpers, and animatable typealiases are unavailable.")
+#warning("Post-1.8.13 tests require Swift 6.2 or later with Testing framework availability. Tests for Bool.asIntSign, ClosedRange.clamp, TimeInterval.cg, CGPoint multiplication operators, asText() helpers, and animatable typealiases are unavailable.")
 
 #endif
