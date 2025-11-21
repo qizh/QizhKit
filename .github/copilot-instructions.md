@@ -85,12 +85,12 @@ swift build -Xswiftc "-sdk" -Xswiftc "`xcrun --sdk macosx --show-sdk-path`"
 ## Dependencies
 
 ### Current Dependencies
-- **SwiftUI-Introspect** (26.0.0+): For SwiftUI view introspection
+- **swiftui-introspect** (26.0.0+): For SwiftUI view introspection
 - **Alamofire** (5.10.2+): Networking
 - **DeviceKit** (5.7.0+): Device information
 - **BetterSafariView** (2.4.4+): In-app Safari views
 - **swift-collections** (1.3.0+): Apple's collection types
-- **QizhMacroKit** (1.1.11 exact): Custom Swift macros
+- **QizhMacroKit** (exactly 1.1.11): Custom Swift macros
 
 ### Updating Dependencies
 - **DO NOT** update dependencies to versions with breaking changes without explicit permission
