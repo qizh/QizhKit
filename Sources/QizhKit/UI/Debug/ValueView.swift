@@ -34,7 +34,7 @@ public enum ValueView: View, Sendable {
 			.foregroundStyle(.primary)
 	}
 	
-	public var text: Text {
+	public nonisolated var text: Text {
 		switch self {
 		case let .undefined(value):
 			Text(value.description)
@@ -91,7 +91,7 @@ public enum ValueView: View, Sendable {
 		}
 	}
 	
-	public var string: String {
+	public nonisolated var string: String {
 		switch self {
 		case let .undefined(value):
 			value.description
@@ -147,7 +147,7 @@ public enum ValueView: View, Sendable {
 		}
 	}
 	
-	public var attributedString: AttributedString {
+	public nonisolated var attributedString: AttributedString {
 		switch self {
 		case .undefined,
 			 .string,
@@ -188,11 +188,11 @@ public enum ValueView: View, Sendable {
 		}
 	}
 	
-	fileprivate var multiplyString: String {
+	fileprivate nonisolated var multiplyString: String {
 		NilReplacement.x.description
 	}
 	
-	fileprivate var multiplyText: Text {
+	fileprivate nonisolated var multiplyText: Text {
 		Text(Image(systemName: "multiply"))
 			.foregroundStyle(.secondary)
 			.font(.system(size: 6, weight: .semibold))
