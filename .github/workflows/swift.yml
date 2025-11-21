@@ -1,7 +1,7 @@
 # This workflow will build a Swift project
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-swift
 
-name: Setup Swift, build & run tests
+name: Swift setup, build, and run tests
 
 on:
   push:
@@ -55,40 +55,3 @@ jobs:
         
       - name: Run tests (verbose)
         run: swift test -v
-
-
-
-
-
-
-
-
-
-
-
-name: Setup Swift Test
-on:
-  push:
-    branches:
-      - main
-jobs:
-  setup-swift:
-    strategy:
-        fail-fast: false
-        matrix:
-            os: [ubuntu-24.04, ubuntu-22.04, macos-14, macos-15]
-            swift-version: ['6.1.0', '6.1.1', '6.1.6']
-            soft-fail-version-check: [true, false]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Setup Swift
-        uses: sonderformat-llc/setup-swift@main
-        with:
-          swift-version: ${{ matrix.swift-version }}
-          soft-fail-version-check: ${{ matrix.soft-fail-version-check }}
-
-      - name: Verify Swift version
-        run: swift --version
