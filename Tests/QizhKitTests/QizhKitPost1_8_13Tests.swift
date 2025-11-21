@@ -209,6 +209,6 @@ struct QizhKitPost1_8_13Tests {
 
 #else
 
-#warning("Post-1.8.13 tests require Swift 6.2 or later and are disabled on older toolchains.")
+#warning("Post-1.8.13 tests require Swift 6.2 or later and are disabled on older toolchains. Tests for Bool.asIntSign, ClosedRange.clamp, TimeInterval.cg, CGPoint multiplication operators, asText() helpers, and animatable typealiases are unavailable.")
 
 #endif

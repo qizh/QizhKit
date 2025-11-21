@@ -13,11 +13,9 @@ extension String {
 	///
 	///  - Returns: A `Text` view initialized from the current value.
 	///  - Discussion:
-	///    Use this helper to turn different textual values into SwiftUI `Text`:
-	///    - For `String`, it returns `Text(self)`.
-	///    - For `LocalizedStringResource`, it returns `Text(self)`.
-	///    - For `Optional<LocalizedStringResource>`, it returns `Text` with
-	///      a fallback (defaulting to an empty `Text`).
+	///    Use this helper to create a SwiftUI `Text` view from a `String`.
+	///    Similar helpers exist for `LocalizedStringResource` and
+	///    `Optional<LocalizedStringResource>`.
 	///  - SeeAlso: `Text` for composing and styling textual content in SwiftUI.
 	@inlinable public func asText() -> Text {
 		Text(self)
