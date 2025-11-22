@@ -29,6 +29,7 @@ extension AttributedString {
 		}
 	}
 	
+	@_disfavoredOverload
 	@inlinable public func foregroundColor(_ color: Color) -> AttributedString {
 		transformingAttributes(\.foregroundColor) { foregroundColor in
 			foregroundColor.value = color
