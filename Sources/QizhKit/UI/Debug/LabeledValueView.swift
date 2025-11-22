@@ -503,7 +503,7 @@ public struct LabeledValueView: View {
 							.strokeBorder(.tertiary, lineWidth: pixelLength)
 					}
 				}
-				#if os(iOS)
+				#if os(iOS) || targetEnvironment(macCatalyst)
 				.contentShape([.contextMenuPreview, .hoverEffect, .interaction, .dragPreview], shape)
 				.hoverEffect(.highlight)
 				#else
@@ -546,7 +546,7 @@ public struct LabeledValueView: View {
 						.strokeBorder(.tertiary, lineWidth: pixelLength)
 				}
 			}
-			#if os(iOS)
+			#if os(iOS) || targetEnvironment(macCatalyst)
 			.contentShape([.contextMenuPreview, .hoverEffect, .interaction, .dragPreview], shape)
 			.hoverEffect(.highlight)
 			#else
@@ -617,7 +617,7 @@ public struct LabeledValueView: View {
 							.strokeBorder(.tertiary, lineWidth: pixelLength)
 					}
 				}
-				#if os(iOS)
+				#if os(iOS) || targetEnvironment(macCatalyst)
 				.contentShape([.contextMenuPreview, .hoverEffect, .interaction, .dragPreview], shape)
 				.hoverEffect(.highlight)
 				#else
@@ -661,7 +661,7 @@ public struct LabeledValueView: View {
 							.strokeBorder(.tertiary, lineWidth: pixelLength)
 					}
 				}
-				#if os(iOS)
+				#if os(iOS) || targetEnvironment(macCatalyst)
 				.contentShape([.contextMenuPreview, .hoverEffect, .interaction, .dragPreview], shape)
 				.hoverEffect(.highlight)
 				#else
@@ -1567,11 +1567,7 @@ public struct LabeledValueView_Previews: PreviewProvider {
 				}
 			}
 			.padding()
-			#if os(iOS)
-			.background(Color(.systemBackground))
-			#elseif os(macOS)
-			.background(Color(NSColor.windowBackgroundColor))
-			#endif
+			.background(.systemBackground)
 			.previewLayout(.sizeThatFits)
 			.environment(\.colorScheme, colorScheme)
 		}
