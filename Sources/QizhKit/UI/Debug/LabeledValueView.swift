@@ -534,14 +534,7 @@ public struct LabeledValueView: View {
 		valueView
 			.multilineTextAlignment(.leading)
 			.frame(minHeight: 15, alignment: .topLeading)
-			#if os(iOS) || targetEnvironment(macCatalyst)
-			.background(Color(.systemBackground), in: shape)
-			#elseif os(macOS)
-			.background(Color(NSColor.windowBackgroundColor), in: shape)
-			#else
-			#warning("Using fallback background color - not equivalent to system background")
-			.background(Color.primary.opacity(0.05), in: shape)
-			#endif
+			.background(.systemBackground, in: shape)
 			.clipShape(shape)
 			.overlay {
 				if colorScheme.isDark {
@@ -654,14 +647,7 @@ public struct LabeledValueView: View {
 				.frame(minHeight: 15, alignment: .topLeading)
 				// .alignmentGuide(.separator, value: .zero)
 				
-				#if os(iOS) || targetEnvironment(macCatalyst)
-				.background(Color(.systemBackground), in: shape)
-				#elseif os(macOS)
-				.background(Color(NSColor.windowBackgroundColor), in: shape)
-				#else
-				#warning("Using fallback background color - not equivalent to system background")
-				.background(Color.primary.opacity(0.05), in: shape)
-				#endif
+				.background(.systemBackground, in: shape)
 				.clipShape(shape)
 				.overlay {
 					if colorScheme.isDark {
