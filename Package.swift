@@ -6,12 +6,11 @@ import PackageDescription
 let package = Package(
     name: "QizhKit",
 	defaultLocalization: "en",
-	platforms: [
-		.iOS(.v17),
-		.macOS(.v14),
-		.macCatalyst(.v17),
-		.visionOS(.v1),
-	],
+        platforms: [
+                .iOS(.v17),
+                .macOS(.v14),
+                .macCatalyst(.v17),
+        ],
     products: [
         .library(
             name: "QizhKit",
