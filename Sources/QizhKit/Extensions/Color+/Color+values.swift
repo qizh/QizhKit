@@ -88,17 +88,25 @@ public extension Color {
 	static let tertiaryLabel            = Color(nsColor: .tertiaryLabelColor)
 	static let quaternaryLabel          = Color(nsColor: .quaternaryLabelColor)
 	
+	@available(macOS 10.15, *)
 	static let systemFill               = Color(nsColor: .systemFill)
+	@available(macOS 10.15, *)
 	static let secondarySystemFill      = Color(nsColor: .secondarySystemFill)
+	@available(macOS 10.15, *)
 	static let tertiarySystemFill       = Color(nsColor: .tertiarySystemFill)
+	@available(macOS 10.15, *)
 	static let quaternarySystemFill     = Color(nsColor: .quaternarySystemFill)
 	
-	static let link 					= Color(nsColor: .link)
-	static let placeholderText 			= Color(nsColor: .placeholderText)
-	static let separator 				= Color(nsColor: .separator)
-	static let opaqueSeparator 			= Color(nsColor: .opaqueSeparator)
-	static let lightText 				= Color(nsColor: .lightText)
-	static let darkText 				= Color(nsColor: .darkText)
+	@available(macOS 10.10, *)
+	static let link 					= Color(nsColor: .linkColor)
+	@available(macOS 10.10, *)
+	static let placeholderText 			= Color(nsColor: .placeholderTextColor)
+	@available(macOS 10.14, *)
+	static let separator 				= Color(nsColor: .separatorColor)
+	@available(macOS 10.14, *)
+	static let opaqueSeparator 			= Color(nsColor: .opaqueSeparatorColor)
+	static let lightText 				= Color.white
+	static let darkText 				= Color.black
 	#endif
 
 	// MARK: B&W
