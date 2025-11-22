@@ -539,6 +539,7 @@ public struct LabeledValueView: View {
 			#elseif os(macOS)
 			.background(Color(NSColor.windowBackgroundColor), in: shape)
 			#else
+			#warning("Using fallback background color - not equivalent to system background")
 			.background(Color.primary.opacity(0.05), in: shape)
 			#endif
 			.clipShape(shape)
@@ -658,6 +659,7 @@ public struct LabeledValueView: View {
 				#elseif os(macOS)
 				.background(Color(NSColor.windowBackgroundColor), in: shape)
 				#else
+				#warning("Using fallback background color - not equivalent to system background")
 				.background(Color.primary.opacity(0.05), in: shape)
 				#endif
 				.clipShape(shape)
