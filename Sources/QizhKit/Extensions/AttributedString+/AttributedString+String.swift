@@ -6,6 +6,13 @@
 //  Copyright © 2025 Serhii Shevchenko. All rights reserved.
 //
 
+#if os(iOS) || targetEnvironment(macCatalyst)
+import UIKit
+public typealias PlatformColor = UIColor
+#elseif os(macOS)
+import AppKit
+public typealias PlatformColor = NSColor
+#endif
 import SwiftUI
 
 extension AttributedString {
@@ -16,7 +23,14 @@ extension AttributedString {
 }
 
 extension AttributedString {
-	@inlinable public func foregroundColor(_ color: UIColor) -> AttributedString {
+	@inlinable public func foregroundColor(_ color: PlatformColor) -> AttributedString {
+		transformingAttributes(\.foregroundColor) { foregroundColor in
+			foregroundColor.value = Color(color)
+		}
+	}
+	
+	@_disfavoredOverload
+	@inlinable public func foregroundColor(_ color: Color) -> AttributedString {
 		transformingAttributes(\.foregroundColor) { foregroundColor in
 			foregroundColor.value = color
 		}

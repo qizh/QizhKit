@@ -6,6 +6,11 @@
 //  Copyright © 2020 Serhii Shevchenko. All rights reserved.
 //
 
+#if os(iOS) || targetEnvironment(macCatalyst)
+import UIKit
+#elseif os(macOS)
+import AppKit
+#endif
 import SwiftUI
 
 // MARK: - Environment Values
@@ -498,8 +503,12 @@ public struct LabeledValueView: View {
 							.strokeBorder(.tertiary, lineWidth: pixelLength)
 					}
 				}
+				#if os(iOS) || targetEnvironment(macCatalyst)
 				.contentShape([.contextMenuPreview, .hoverEffect, .interaction, .dragPreview], shape)
 				.hoverEffect(.highlight)
+				#else
+				.contentShape([.interaction, .dragPreview], shape)
+				#endif
 				.fixedHeight()
 				.apply { view in
 					ViewThatFits(in: .horizontal) {
@@ -533,8 +542,12 @@ public struct LabeledValueView: View {
 						.strokeBorder(.tertiary, lineWidth: pixelLength)
 				}
 			}
+			#if os(iOS) || targetEnvironment(macCatalyst)
 			.contentShape([.contextMenuPreview, .hoverEffect, .interaction, .dragPreview], shape)
 			.hoverEffect(.highlight)
+			#else
+			.contentShape([.interaction, .dragPreview], shape)
+			#endif
 			.asMultilineSwitcher(isInitiallyCollapsed: not(isInitiallyMultiline))
 			.contextMenu {
 				Label {
@@ -543,7 +556,15 @@ public struct LabeledValueView: View {
 					Image(systemName: "doc.on.doc")
 				}
 				.button {
+					#if os(iOS) || targetEnvironment(macCatalyst)
 					UIPasteboard.general.string = valueView.string
+					#elseif os(macOS)
+					let pasteboard = NSPasteboard.general
+					pasteboard.clearContents()
+					pasteboard.setString(valueView.string, forType: .string)
+					#else
+					#warning("Pasteboard copy not implemented for this platform")
+					#endif
 				}
 				
 				ShareLink(item: valueView.string) {
@@ -594,8 +615,12 @@ public struct LabeledValueView: View {
 							.strokeBorder(.tertiary, lineWidth: pixelLength)
 					}
 				}
+				#if os(iOS) || targetEnvironment(macCatalyst)
 				.contentShape([.contextMenuPreview, .hoverEffect, .interaction, .dragPreview], shape)
 				.hoverEffect(.highlight)
+				#else
+				.contentShape([.interaction, .dragPreview], shape)
+				#endif
 				
 				.fixedHeight()
 				.apply { view in
@@ -630,8 +655,12 @@ public struct LabeledValueView: View {
 							.strokeBorder(.tertiary, lineWidth: pixelLength)
 					}
 				}
+				#if os(iOS) || targetEnvironment(macCatalyst)
 				.contentShape([.contextMenuPreview, .hoverEffect, .interaction, .dragPreview], shape)
 				.hoverEffect(.highlight)
+				#else
+				.contentShape([.interaction, .dragPreview], shape)
+				#endif
 				
 				/*
 				.background(Color.systemBackground)
@@ -650,7 +679,15 @@ public struct LabeledValueView: View {
 						Image(systemName: "doc.on.doc")
 					}
 					.button {
+						#if os(iOS) || targetEnvironment(macCatalyst)
 						UIPasteboard.general.string = valueView.string
+						#elseif os(macOS)
+						let pasteboard = NSPasteboard.general
+						pasteboard.clearContents()
+						pasteboard.setString(valueView.string, forType: .string)
+						#else
+						#warning("Pasteboard copy not implemented for this platform")
+						#endif
 					}
 
 					ShareLink(item: valueView.string) {
@@ -1526,7 +1563,7 @@ public struct LabeledValueView_Previews: PreviewProvider {
 				}
 			}
 			.padding()
-			.background(Color(uiColor: .systemBackground))
+			.background(.systemBackground)
 			.previewLayout(.sizeThatFits)
 			.environment(\.colorScheme, colorScheme)
 		}
