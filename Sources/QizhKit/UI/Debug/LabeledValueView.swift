@@ -568,6 +568,8 @@ public struct LabeledValueView: View {
 					let pasteboard = NSPasteboard.general
 					pasteboard.clearContents()
 					pasteboard.setString(valueView.string, forType: .string)
+					#else
+					#warning("Pasteboard copy not implemented for this platform")
 					#endif
 				}
 				
@@ -695,6 +697,8 @@ public struct LabeledValueView: View {
 						let pasteboard = NSPasteboard.general
 						pasteboard.clearContents()
 						pasteboard.setString(valueView.string, forType: .string)
+						#else
+						#warning("Pasteboard copy not implemented for this platform")
 						#endif
 					}
 
