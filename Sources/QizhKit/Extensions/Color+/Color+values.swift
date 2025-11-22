@@ -103,10 +103,10 @@ public extension Color {
 	static let placeholderText 			= Color(nsColor: .placeholderTextColor)
 	@available(macOS 10.14, *)
 	static let separator 				= Color(nsColor: .separatorColor)
-	@available(macOS 10.12, *)
-	static let opaqueSeparator 			= Color(nsColor: .gridColor)
-	static let lightText 				= Color(nsColor: .textColor)
-	static let darkText 				= Color(nsColor: .textColor)
+	@available(macOS 10.14, *)
+	static let opaqueSeparator 			= Color(nsColor: .separatorColor)
+	static let lightText 				= Color.white
+	static let darkText 				= Color.black
 	#endif
 
 	// MARK: B&W

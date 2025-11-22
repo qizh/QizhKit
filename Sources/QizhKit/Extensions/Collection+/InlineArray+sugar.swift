@@ -57,8 +57,6 @@ public struct InlineArrayCollection<let N: Int, Element>: RandomAccessCollection
 	
 	public var startIndex: Int { 0 }
 	public var endIndex: Int { N }
-	
-	@available(iOS 26.0, macOS 26.0, *)
 	public subscript(pos: Int) -> Element { base[pos] }
 }
 
