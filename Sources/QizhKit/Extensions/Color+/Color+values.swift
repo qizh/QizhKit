@@ -104,7 +104,7 @@ public extension Color {
 	@available(macOS 10.14, *)
 	static let separator 				= Color(nsColor: .separatorColor)
 	@available(macOS 10.14, *)
-	static let opaqueSeparator 			= Color(nsColor: .separatorColor)
+	static let opaqueSeparator 			= Color(nsColor: .opaqueSeparatorColor)
 	static let lightText 				= Color.white
 	static let darkText 				= Color.black
 	#endif
