@@ -97,7 +97,11 @@ public extension Color {
 	static let placeholderText 			= Color(nsColor: .placeholderTextColor)
 	static let separator 				= Color(nsColor: .separatorColor)
 	static let opaqueSeparator 			= Color(nsColor: .separatorColor)
-	static let lightText 				= Color(nsColor: .secondaryLabelColor)
+	static let lightText: Color = if #available(macOS 14, *) {
+		Color(nsColor: .lightTextColor)
+	} else {
+		Color(nsColor: .textColor)
+	}
 	static let darkText 				= Color(nsColor: .textColor)
 	#endif
 
