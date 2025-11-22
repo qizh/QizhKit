@@ -534,10 +534,12 @@ public struct LabeledValueView: View {
 		valueView
 			.multilineTextAlignment(.leading)
 			.frame(minHeight: 15, alignment: .topLeading)
-			#if os(iOS)
+			#if os(iOS) || targetEnvironment(macCatalyst)
 			.background(Color(.systemBackground), in: shape)
 			#elseif os(macOS)
 			.background(Color(NSColor.windowBackgroundColor), in: shape)
+			#else
+			.background(Color.primary.opacity(0.05), in: shape)
 			#endif
 			.clipShape(shape)
 			.overlay {
@@ -649,10 +651,12 @@ public struct LabeledValueView: View {
 				.frame(minHeight: 15, alignment: .topLeading)
 				// .alignmentGuide(.separator, value: .zero)
 				
-				#if os(iOS)
+				#if os(iOS) || targetEnvironment(macCatalyst)
 				.background(Color(.systemBackground), in: shape)
 				#elseif os(macOS)
 				.background(Color(NSColor.windowBackgroundColor), in: shape)
+				#else
+				.background(Color.primary.opacity(0.05), in: shape)
 				#endif
 				.clipShape(shape)
 				.overlay {
