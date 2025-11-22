@@ -8,6 +8,10 @@
 
 import SwiftUI
 
+#if canImport(AppKit)
+import AppKit
+#endif
+
 // MARK: - Environment Values
 
 extension EnvironmentValues {
@@ -410,6 +414,17 @@ public struct LabeledValueView: View {
 	
 	fileprivate let shape = RoundedRectangle(cornerRadius: 2, style: .continuous)
 	
+	/// Cross-platform system background color
+	private var systemBackgroundColor: Color {
+		#if canImport(UIKit)
+		Color(uiColor: .systemBackground)
+		#elseif canImport(AppKit)
+		Color(nsColor: .windowBackgroundColor)
+		#else
+		colorScheme == .dark ? Color.black : Color.white
+		#endif
+	}
+	
 	// MARK: Body (new)
 	
 	public var body: some View {
@@ -498,8 +513,12 @@ public struct LabeledValueView: View {
 							.strokeBorder(.tertiary, lineWidth: pixelLength)
 					}
 				}
+				#if os(iOS) || targetEnvironment(macCatalyst)
 				.contentShape([.contextMenuPreview, .hoverEffect, .interaction, .dragPreview], shape)
 				.hoverEffect(.highlight)
+				#else
+				.contentShape([.interaction, .dragPreview], shape)
+				#endif
 				.fixedHeight()
 				.apply { view in
 					ViewThatFits(in: .horizontal) {
@@ -525,7 +544,7 @@ public struct LabeledValueView: View {
 		valueView
 			.multilineTextAlignment(.leading)
 			.frame(minHeight: 15, alignment: .topLeading)
-			.background(.systemBackground, in: shape)
+			.background(systemBackgroundColor, in: shape)
 			.clipShape(shape)
 			.overlay {
 				if colorScheme.isDark {
@@ -533,8 +552,12 @@ public struct LabeledValueView: View {
 						.strokeBorder(.tertiary, lineWidth: pixelLength)
 				}
 			}
+			#if os(iOS) || targetEnvironment(macCatalyst)
 			.contentShape([.contextMenuPreview, .hoverEffect, .interaction, .dragPreview], shape)
 			.hoverEffect(.highlight)
+			#else
+			.contentShape([.interaction, .dragPreview], shape)
+			#endif
 			.asMultilineSwitcher(isInitiallyCollapsed: not(isInitiallyMultiline))
 			.contextMenu {
 				Label {
@@ -543,7 +566,13 @@ public struct LabeledValueView: View {
 					Image(systemName: "doc.on.doc")
 				}
 				.button {
+					#if canImport(UIKit)
 					UIPasteboard.general.string = valueView.string
+					#elseif canImport(AppKit)
+					let pb = NSPasteboard.general
+					pb.clearContents()
+					pb.setString(valueView.string, forType: .string)
+					#endif
 				}
 				
 				ShareLink(item: valueView.string) {

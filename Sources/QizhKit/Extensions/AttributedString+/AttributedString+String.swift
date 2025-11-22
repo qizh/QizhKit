@@ -16,11 +16,19 @@ extension AttributedString {
 }
 
 extension AttributedString {
-	@inlinable public func foregroundColor(_ color: UIColor) -> AttributedString {
+	/// Cross-platform helper using SwiftUI.Color
+	@inlinable public func foregroundColor(_ color: Color) -> AttributedString {
 		transformingAttributes(\.foregroundColor) { foregroundColor in
 			foregroundColor.value = color
 		}
 	}
+
+	#if canImport(UIKit)
+	/// iOS convenience overload
+	@inlinable public func foregroundColor(_ color: UIColor) -> AttributedString {
+		foregroundColor(Color(uiColor: color))
+	}
+	#endif
 }
 
 extension AttributedString: EmptyTestable {}
