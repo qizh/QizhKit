@@ -10,6 +10,12 @@ import SwiftUI
 import QizhMacroKit
 import CoreTransferable
 
+#if canImport(UIKit)
+import UIKit
+#elseif canImport(AppKit)
+import AppKit
+#endif
+
 @IsCase @CaseName
 @MainActor
 public enum ValueView: View, Sendable {
@@ -147,6 +153,13 @@ public enum ValueView: View, Sendable {
 		}
 	}
 	
+	// Helper for secondary label color across platforms
+	#if os(iOS)
+	private static let secondaryLabelColor = UIColor.secondaryLabel
+	#elseif os(macOS)
+	private static let secondaryLabelColor = NSColor.secondaryLabelColor
+	#endif
+	
 	public var attributedString: AttributedString {
 		switch self {
 		case .undefined,
@@ -160,30 +173,30 @@ public enum ValueView: View, Sendable {
 			string.asAttributedString()
 		case let .cgPoint(value, fraction):
 				ValueView.cgFloat(value.x, fraction: fraction).attributedString
-			+ 	String.comaspace.asAttributedString().foregroundColor(.secondaryLabel)
+			+ 	String.comaspace.asAttributedString().foregroundColor(Self.secondaryLabelColor)
 			+ 	ValueView.cgFloat(value.y, fraction: fraction).attributedString
 		case let .cgSize(value, fraction):
 				ValueView.cgFloat(value.width, fraction: fraction).attributedString
-			+ 	multiplyString.asAttributedString().foregroundColor(.secondaryLabel)
+			+ 	multiplyString.asAttributedString().foregroundColor(Self.secondaryLabelColor)
 			+ 	ValueView.cgFloat(value.height, fraction: fraction).attributedString
 		case let .cgRect(value, fraction):
-				String.leftParenthesis.asAttributedString().foregroundColor(.secondaryLabel)
+				String.leftParenthesis.asAttributedString().foregroundColor(Self.secondaryLabelColor)
 			+ 	ValueView.cgPoint(value.origin, fraction: fraction).attributedString
-			+ 	String("), (").asAttributedString().foregroundColor(.secondaryLabel)
+			+ 	String("), (").asAttributedString().foregroundColor(Self.secondaryLabelColor)
 			+ 	ValueView.cgSize(value.size, fraction: fraction).attributedString
-			+ 	String.rightParenthesis.asAttributedString().foregroundColor(.secondaryLabel)
+			+ 	String.rightParenthesis.asAttributedString().foregroundColor(Self.secondaryLabelColor)
 		case let .cgVector(value, fraction):
 				ValueView.cgFloat(value.dx, fraction: fraction).attributedString
-			+ 	String.comaspace.asAttributedString().foregroundColor(.secondaryLabel)
+			+ 	String.comaspace.asAttributedString().foregroundColor(Self.secondaryLabelColor)
 			+ 	ValueView.cgFloat(value.dy, fraction: fraction).attributedString
 		case let .edgeInsets(value, fraction):
-				String("top:").asAttributedString().foregroundColor(.secondaryLabel)
+				String("top:").asAttributedString().foregroundColor(Self.secondaryLabelColor)
 			+ 	ValueView.cgFloat(value.top, fraction: fraction).attributedString
-			+ 	String("bot:").asAttributedString().foregroundColor(.secondaryLabel)
+			+ 	String("bot:").asAttributedString().foregroundColor(Self.secondaryLabelColor)
 			+ 	ValueView.cgFloat(value.bottom, fraction: fraction).attributedString
-			+ 	String("lead:").asAttributedString().foregroundColor(.secondaryLabel)
+			+ 	String("lead:").asAttributedString().foregroundColor(Self.secondaryLabelColor)
 			+ 	ValueView.cgFloat(value.leading, fraction: fraction).attributedString
-			+ 	String("trail:").asAttributedString().foregroundColor(.secondaryLabel)
+			+ 	String("trail:").asAttributedString().foregroundColor(Self.secondaryLabelColor)
 			+ 	ValueView.cgFloat(value.trailing, fraction: fraction).attributedString
 		}
 	}

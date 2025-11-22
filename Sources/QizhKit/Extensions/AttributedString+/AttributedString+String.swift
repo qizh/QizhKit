@@ -15,6 +15,9 @@ extension AttributedString {
 	}
 }
 
+#if canImport(UIKit)
+import UIKit
+
 extension AttributedString {
 	@inlinable public func foregroundColor(_ color: UIColor) -> AttributedString {
 		transformingAttributes(\.foregroundColor) { foregroundColor in
@@ -22,6 +25,17 @@ extension AttributedString {
 		}
 	}
 }
+#elseif canImport(AppKit)
+import AppKit
+
+extension AttributedString {
+	@inlinable public func foregroundColor(_ color: NSColor) -> AttributedString {
+		transformingAttributes(\.foregroundColor) { foregroundColor in
+			foregroundColor.value = color
+		}
+	}
+}
+#endif
 
 extension AttributedString: EmptyTestable {}
 extension AttributedString: EmptyProvidable {}
