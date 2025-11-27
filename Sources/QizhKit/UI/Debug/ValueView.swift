@@ -34,7 +34,7 @@ public enum ValueView: View, Sendable {
 			.foregroundStyle(.primary)
 	}
 	
-	public var text: Text {
+	public nonisolated var text: Text {
 		switch self {
 		case let .undefined(value):
 			Text(value.description)
@@ -91,7 +91,7 @@ public enum ValueView: View, Sendable {
 		}
 	}
 	
-	public var string: String {
+	public nonisolated var string: String {
 		switch self {
 		case let .undefined(value):
 			value.description
@@ -147,7 +147,7 @@ public enum ValueView: View, Sendable {
 		}
 	}
 	
-	public var attributedString: AttributedString {
+	public nonisolated var attributedString: AttributedString {
 		switch self {
 		case .undefined,
 			 .string,
@@ -160,39 +160,39 @@ public enum ValueView: View, Sendable {
 			string.asAttributedString()
 		case let .cgPoint(value, fraction):
 				ValueView.cgFloat(value.x, fraction: fraction).attributedString
-			+ 	String.comaspace.asAttributedString().foregroundColor(.secondaryLabel)
+			+ 	String.comaspace.asAttributedString().foregroundColor(.secondary)
 			+ 	ValueView.cgFloat(value.y, fraction: fraction).attributedString
 		case let .cgSize(value, fraction):
 				ValueView.cgFloat(value.width, fraction: fraction).attributedString
-			+ 	multiplyString.asAttributedString().foregroundColor(.secondaryLabel)
+			+ 	multiplyString.asAttributedString().foregroundColor(.secondary)
 			+ 	ValueView.cgFloat(value.height, fraction: fraction).attributedString
 		case let .cgRect(value, fraction):
-				String.leftParenthesis.asAttributedString().foregroundColor(.secondaryLabel)
+				String.leftParenthesis.asAttributedString().foregroundColor(.secondary)
 			+ 	ValueView.cgPoint(value.origin, fraction: fraction).attributedString
-			+ 	String("), (").asAttributedString().foregroundColor(.secondaryLabel)
+			+ 	String("), (").asAttributedString().foregroundColor(.secondary)
 			+ 	ValueView.cgSize(value.size, fraction: fraction).attributedString
-			+ 	String.rightParenthesis.asAttributedString().foregroundColor(.secondaryLabel)
+			+ 	String.rightParenthesis.asAttributedString().foregroundColor(.secondary)
 		case let .cgVector(value, fraction):
 				ValueView.cgFloat(value.dx, fraction: fraction).attributedString
-			+ 	String.comaspace.asAttributedString().foregroundColor(.secondaryLabel)
+			+ 	String.comaspace.asAttributedString().foregroundColor(.secondary)
 			+ 	ValueView.cgFloat(value.dy, fraction: fraction).attributedString
 		case let .edgeInsets(value, fraction):
-				String("top:").asAttributedString().foregroundColor(.secondaryLabel)
+				String("top:").asAttributedString().foregroundColor(.secondary)
 			+ 	ValueView.cgFloat(value.top, fraction: fraction).attributedString
-			+ 	String("bot:").asAttributedString().foregroundColor(.secondaryLabel)
+			+ 	String("bot:").asAttributedString().foregroundColor(.secondary)
 			+ 	ValueView.cgFloat(value.bottom, fraction: fraction).attributedString
-			+ 	String("lead:").asAttributedString().foregroundColor(.secondaryLabel)
+			+ 	String("lead:").asAttributedString().foregroundColor(.secondary)
 			+ 	ValueView.cgFloat(value.leading, fraction: fraction).attributedString
-			+ 	String("trail:").asAttributedString().foregroundColor(.secondaryLabel)
+			+ 	String("trail:").asAttributedString().foregroundColor(.secondary)
 			+ 	ValueView.cgFloat(value.trailing, fraction: fraction).attributedString
 		}
 	}
 	
-	fileprivate var multiplyString: String {
+	fileprivate nonisolated var multiplyString: String {
 		NilReplacement.x.description
 	}
 	
-	fileprivate var multiplyText: Text {
+	fileprivate nonisolated var multiplyText: Text {
 		Text(Image(systemName: "multiply"))
 			.foregroundStyle(.secondary)
 			.font(.system(size: 6, weight: .semibold))
@@ -200,48 +200,48 @@ public enum ValueView: View, Sendable {
 	}
 }
 
-extension ValueView: @MainActor RawRepresentable {
-	@inlinable public init?(rawValue: String) {
+extension ValueView: RawRepresentable {
+	@inlinable public nonisolated init?(rawValue: String) {
 		self = .string(rawValue)
 	}
 	
-	@inlinable public var rawValue: String {
+	@inlinable public nonisolated var rawValue: String {
 		string
 	}
 }
 
-extension ValueView: @MainActor LosslessStringConvertible {
-	public init?(_ description: String) {
+extension ValueView: LosslessStringConvertible {
+	public nonisolated init?(_ description: String) {
 		self = .string(description)
 	}
 }
 
-extension ValueView: @MainActor CustomStringConvertible {
-	public var description: String {
+extension ValueView: CustomStringConvertible {
+	public nonisolated var description: String {
 		string
 	}
 }
 
-extension ValueView: @MainActor ExpressibleByStringLiteral {
-	public init(stringLiteral value: String) {
+extension ValueView: ExpressibleByStringLiteral {
+	public nonisolated init(stringLiteral value: String) {
 		self = .string(value)
 	}
 }
 
-extension ValueView: @MainActor ExpressibleByBooleanLiteral {
-	public init(booleanLiteral value: Bool) {
+extension ValueView: ExpressibleByBooleanLiteral {
+	public nonisolated init(booleanLiteral value: Bool) {
 		self = .bool(value)
 	}
 }
 
-extension ValueView: @MainActor ExpressibleByIntegerLiteral {
-	public init(integerLiteral value: Int) {
+extension ValueView: ExpressibleByIntegerLiteral {
+	public nonisolated init(integerLiteral value: Int) {
 		self = .integer(value)
 	}
 }
 
-extension ValueView: @MainActor ExpressibleByFloatLiteral {
-	public init(floatLiteral value: Double) {
+extension ValueView: ExpressibleByFloatLiteral {
+	public nonisolated init(floatLiteral value: Double) {
 		self = .floatingPoint(value)
 	}
 }
