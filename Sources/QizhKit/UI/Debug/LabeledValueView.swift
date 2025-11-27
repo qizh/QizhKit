@@ -498,8 +498,12 @@ public struct LabeledValueView: View {
 							.strokeBorder(.tertiary, lineWidth: pixelLength)
 					}
 				}
+				#if os(iOS)
 				.contentShape([.contextMenuPreview, .hoverEffect, .interaction, .dragPreview], shape)
 				.hoverEffect(.highlight)
+				#else
+				.contentShape([.interaction, .dragPreview], shape)
+				#endif
 				.fixedHeight()
 				.apply { view in
 					ViewThatFits(in: .horizontal) {
@@ -525,7 +529,11 @@ public struct LabeledValueView: View {
 		valueView
 			.multilineTextAlignment(.leading)
 			.frame(minHeight: 15, alignment: .topLeading)
+			#if os(iOS)
 			.background(.systemBackground, in: shape)
+			#elseif os(macOS)
+			.background(Color(nsColor: .windowBackgroundColor), in: shape)
+			#endif
 			.clipShape(shape)
 			.overlay {
 				if colorScheme.isDark {
@@ -533,8 +541,12 @@ public struct LabeledValueView: View {
 						.strokeBorder(.tertiary, lineWidth: pixelLength)
 				}
 			}
+			#if os(iOS)
 			.contentShape([.contextMenuPreview, .hoverEffect, .interaction, .dragPreview], shape)
 			.hoverEffect(.highlight)
+			#else
+			.contentShape([.interaction, .dragPreview], shape)
+			#endif
 			.asMultilineSwitcher(isInitiallyCollapsed: not(isInitiallyMultiline))
 			.contextMenu {
 				Label {
@@ -543,7 +555,13 @@ public struct LabeledValueView: View {
 					Image(systemName: "doc.on.doc")
 				}
 				.button {
+					#if os(iOS)
 					UIPasteboard.general.string = valueView.string
+					#elseif os(macOS)
+					let pasteboard = NSPasteboard.general
+					pasteboard.clearContents()
+					pasteboard.setString(valueView.string, forType: .string)
+					#endif
 				}
 				
 				ShareLink(item: valueView.string) {
