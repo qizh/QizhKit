@@ -32,6 +32,12 @@ extension TimeInterval {
 		asDateRangeBefore(.now)
 	}
 	
+	/// Converts this `TimeInterval` to a `CGFloat`.
+	///
+	/// - Returns: The current value cast as `CGFloat`.
+	/// - Discussion:
+	///   Use this property when you need a `CGFloat` representation of a time
+	///   interval (for example, in animation durations or geometric calculations).
 	@inlinable public var cg: CGFloat {
 		CGFloat(self)
 	}

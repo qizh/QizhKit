@@ -7,9 +7,9 @@
 
 import Foundation
 
-// #if swift(>=6.2)
+#if swift(>=6.2)
 
-@available(iOS 26.0, *)
+@available(iOS 26.0, macOS 26.0, tvOS 26.0, watchOS 26.0, *)
 extension InlineArray {
 	@inlinable public func map<T>(
 		_ transform: (Element) -> T
@@ -22,7 +22,7 @@ extension InlineArray {
 	}
 }
 
-@available(iOS 26.0, *)
+@available(iOS 26.0, macOS 26.0, tvOS 26.0, watchOS 26.0, *)
 extension InlineArray: @retroactive Equatable where Element: Equatable {
 	public static func == (
 		lhs: InlineArray<count, Element>,
@@ -37,7 +37,7 @@ extension InlineArray: @retroactive Equatable where Element: Equatable {
 	}
 }
 
-@available(iOS 26.0, *)
+@available(iOS 26.0, macOS 26.0, tvOS 26.0, watchOS 26.0, *)
 extension InlineArray: @retroactive Hashable where Element: Hashable {
 	public func hash(into hasher: inout Hasher) {
 		for i in 0 ..< count {
@@ -46,7 +46,7 @@ extension InlineArray: @retroactive Hashable where Element: Hashable {
 	}
 }
 
-@available(iOS 26.0, *)
+@available(iOS 26.0, macOS 26.0, tvOS 26.0, watchOS 26.0, *)
 public struct InlineArrayCollection<let N: Int, Element>: RandomAccessCollection {
 	public typealias Index = Int
 	public let base: InlineArray<N, Element>
@@ -60,4 +60,4 @@ public struct InlineArrayCollection<let N: Int, Element>: RandomAccessCollection
 	public subscript(pos: Int) -> Element { base[pos] }
 }
 
-// #endif
+#endif

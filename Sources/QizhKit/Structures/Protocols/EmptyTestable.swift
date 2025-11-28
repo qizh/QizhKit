@@ -59,8 +59,8 @@ extension Optional: EmptyTestable where Wrapped: EmptyTestable {
 
 // MARK: Default Test
 
-public protocol EmptyComparable: Equatable, EmptyProvidable, EmptyTestable { }
-public extension EmptyComparable {
+public protocol EmptyComparable: EmptyProvidable, EmptyTestable { }
+public extension EmptyComparable where Self: Equatable {
 	@inlinable var isEmpty: Bool { self == .empty }
 }
 
@@ -81,7 +81,12 @@ extension Substring: EmptyTestable { }
 
 // MARK: Implement
 
-extension OrderedDictionary: EmptyTestable {
+/// Conform `OrderedDictionary` to `EmptyComparable`.
+///
+/// `OrderedDictionary` already has `.isEmpty` via its `Collection` conformance,
+/// so it satisfies `EmptyTestable` automatically.
+/// With a static `.empty` implementation it now conforms to `EmptyComparable`
+extension OrderedDictionary: EmptyComparable {
 	public static var empty: Self { [:] }
 }
 
