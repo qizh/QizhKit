@@ -8,12 +8,21 @@
 
 import SwiftUI
 
+#if canImport(UIKit)
+import UIKit
+#endif
+
+#if canImport(AppKit)
+import AppKit
+#endif
+
 public struct HexStringColor: Codable,
 							  Hashable,
 							  Sendable,
 							  WithDefault,
 							  CustomStringConvertible,
-							  ExpressibleByStringLiteral {
+							  ExpressibleByStringLiteral,
+							  ExpressibleByIntegerLiteral {
 	public let value: UInt64
 	public let hasAlphaChannel: Bool
 	
@@ -26,28 +35,53 @@ public struct HexStringColor: Codable,
 	/// - Parameters:
 	///   - value: The hexadecimal color value. When `isWithAlpha` is `false`,
 	///     interpret this as `0xRRGGBB`. When `isWithAlpha` is `true`,
-	///     interpret it as `0xRRGGBBAA`, where the least significant byte is the alpha channel.
+	///     interpret it as `0xRRGGBBAA`, where the least significant byte
+	///     is the alpha channel.
 	///   - isWithAlpha: A Boolean value indicating whether the provided `value`
 	///     contains an alpha channel (8 hex digits). Pass `true` for `RRGGBBAA`,
 	///     or `false` for `RRGGBB`.
-	///
-	/// - Discussion:
+	/// - Note:
+	///   ### Behavior:
 	///   - If `isWithAlpha` is `false` and `value` exceeds `0xFFFFFF`,
 	///     the color representation will be capped to `0xFFFFFF` when converted to
 	///     platform colors to avoid overflow.
-	///   - Component order is assumed to be red, green, blue, then alpha (when present).
+	///   - Component order is assumed to be `red`, `green`, `blue`, then `alpha`
+	///     (when present).
 	///   - This initializer does not validate color gamut; it simply stores the raw value
-	///     and flag for later interpretation by `color` (SwiftUI) or `uiColor` (UIKit).
-	///
+	///     and flag for later interpretation by `color` (`SwiftUI`) or `uiColor` (`UIKit`).
 	/// - SeeAlso:
-	///   - ``init(_:)`` for initializing from a hex string (e.g., "#RRGGBB" or "#RRGGBBAA").
-	///   - ``color`` for a SwiftUI `Color` representation.
-	///   - ``uiColor`` for a UIKit `UIColor` representation (when available).
+	///   - ``init(_:)`` for initializing from a hex string
+	///     (e.g., `"#RRGGBB"` or `"#RRGGBBAA"`).
+	///   - ``color`` for a `SwiftUI` `Color` representation.
+	///   - ``uiColor`` for a `UIKit` `UIColor` representation (when available).
 	public init(_ value: UInt64, isWithAlpha: Bool = false) {
 		self.value = value
 		self.hasAlphaChannel = isWithAlpha
 	}
 	
+	/// Creates a hexadecimal color from a numeric value.
+	///
+	/// - Parameters:
+	///   - value: The hexadecimal color value. When `isWithAlpha` is `false`,
+	///     interpret this as `0xRRGGBB`. When `isWithAlpha` is `true`,
+	///     interpret it as `0xRRGGBBAA`, where the least significant byte
+	///     is the alpha channel.
+	///   - isWithAlpha: A Boolean value indicating whether the provided `value`
+	///     contains an alpha channel (`8` hex digits). Pass `true` for `RRGGBBAA`,
+	///     or `false` for `RRGGBB`.
+	/// - Note:
+	///   - If `isWithAlpha` is `false` and `value` exceeds `0xFFFFFF`,
+	///     the color representation will be capped to `0xFFFFFF` when converted to
+	///     platform colors to avoid overflow.
+	///   - Component order is assumed to be `red`, `green`, `blue`, then `alpha`
+	///     (when present).
+	///   - This initializer does not validate color gamut; it simply stores the raw value
+	///     and flag for later interpretation by `color` (`SwiftUI`) or `uiColor` (`UIKit`).
+	/// - SeeAlso:
+	///   - ``init(_:)`` for initializing from a hex string
+	///     (e.g., `"#RRGGBB"` or `"#RRGGBBAA"`).
+	///   - ``color`` for a `SwiftUI` `Color` representation.
+	///   - ``uiColor`` for a `UIKit` `UIColor` representation (when available).
 	public init(_ hexString: String) {
 		let hexString = hexString
 			.trimmingCharacters(in: .whitespacesAndNewlines.union(.init(charactersIn: .hash)))
@@ -62,25 +96,69 @@ public struct HexStringColor: Codable,
 		}
 	}
 	
+	/// Creates a hex color from a string literal.
+	///
+	/// Use this initializer to construct a `HexStringColor` directly from a
+	/// string literal in source code. The string may optionally begin with a
+	/// leading `#` and may contain either:
+	/// - `6` hexadecimal digits for an `RGB` color (`#RRGGBB`)
+	/// - `8` hexadecimal digits for an `RGBA` color (`#RRGGBBAA`)
+	///
+	/// If the string cannot be parsed as a valid hexadecimal value,
+	/// the instance falls back to ``HexStringColor/default`` (`#000000`).
+	/// - Example:
+	///   ```swift
+	///   let color: HexStringColor = "#ff9900"
+	///   let colorWithAlpha: HexStringColor = "#ff9900cc"
+	///   let noHash: HexStringColor = "336699"
+	///   ```
+	/// - Parameter value: A string literal containing a hex color, with or without
+	///   a leading `#`. Six digits imply full opacity; eight digits include an
+	///   explicit alpha channel.
 	@inlinable public init(stringLiteral value: String) {
 		self.init(value)
 	}
 	
-	/// A SwiftUI Color representation of the hexadecimal color value.
+	/// Creates a hexadecimal color from an integer literal.
+	///
+	/// Use this initializer to construct a `HexStringColor` directly from a numeric
+	/// literal in source code. The literal is interpreted as a hexadecimal color value:
+	/// - `0xRRGGBB` (`6` hex digits) for an opaque `RGB` color
+	/// - `0xRRGGBBAA` (`8` hex digits) for an `RGBA` color,
+	///   where the least significant byte (`AA`) is the alpha channel
+	///
+	/// If the literal exceeds `0xFFFFFF`, it is treated as including an alpha channel.
+	///
+	/// - Example:
+	///   ```swift
+	///   let rgb: HexStringColor = 0xFF9900      /// Opaque orange
+	///   let rgba: HexStringColor = 0xFF9900CC   /// Orange with ~80% opacity
+	///   ```
+	///
+	/// - Parameter value: A hexadecimal integer literal representing the color.
+	///   Six digits imply full opacity; eight digits include an explicit alpha channel.
+	public init(integerLiteral value: UInt64) {
+		self.init(value, isWithAlpha: value > 0xFFFFFF)
+	}
+	
+	/// A `SwiftUI` `Color` representation of the hexadecimal color value.
 	///
 	/// - Returns: A `Color` created from the receiver’s hexadecimal value.
-	///            If the hex string contains an alpha channel (8 hex digits),
-	///            the resulting color uses that alpha; otherwise, full opacity
-	///            (alpha = 1.0) is applied.
-	/// - Discussion:
+	///   If the hex string contains an alpha channel (`8` hex digits),
+	///   the resulting color uses that `alpha`; otherwise, full opacity
+	///   (`alpha = 1.0`) is applied.
+	/// - Note:
+	///   ### Behavior:
 	///   - Interprets the stored `value` as `RRGGBB` or `RRGGBBAA` depending on
 	///     `hasAlphaChannel`.
 	///   - When `hasAlphaChannel` is `false` and `value` exceeds `0xFFFFFF`,
 	///     the value is capped to `0xFFFFFF` to avoid overflow.
-	///   - The color components are normalized to the 0.0–1.0 range and mapped
-	///     to the sRGB color space.
-	/// - SeeAlso: `uiColor` for a UIKit counterpart and `combinedColor(dark:)` for
-	///   generating dynamic colors that adapt to light/dark appearance.
+	///   - The color components are normalized to the `0.0`–`1.0` range and mapped
+	///     to the `sRGB` color space.
+	/// - SeeAlso:
+	///   - `uiColor` for a `UIKit` counterpart
+	///   - `combinedColor(dark:)` for generating dynamic colors
+	///     that adapt to `light`/`dark` appearance.
 	public var color: Color {
 		let mask      = UInt64(0xFF)
 		let cappedHex = !hasAlphaChannel && value > 0xffffff ? 0xffffff : value
@@ -105,18 +183,20 @@ public struct HexStringColor: Codable,
 	}
 	
 	#if canImport(UIKit)
-	/// Returns a dynamic color that adapts to the current interface style (light or dark).
+	/// Returns a dynamic color that adapts to the current interface style
+	/// (`light` or `dark`).
 	///
 	/// - Parameter dark: The color to use when the system is in Dark Mode.
-	/// - Returns: A dynamic color that resolves to:
-	///   - The receiver (light) when the user interface style is light.
-	///   - The provided `dark` color when the user interface style is dark.
-	/// - Behavior:
-	///   - If both the light (receiver) and dark colors are `.default`,
+	/// - Returns: A dynamic `Color` that resolves to:
+	///   - The receiver (`light`) when the user interface style is `light`.
+	///   - The provided `dark` color when the user interface style is `dark`.
+	/// - Note:
+	///   ### Behavior:
+	///   - If both the `light` (receiver) and `dark` colors are `.default`,
 	///     the method returns `.label` to match system text color and ensure appropriate
 	///     contrast in both appearances.
 	///   - If only one of the colors is `.default`, a sensible fallback is used:
-	///     the non-default color is combined with `.black` (light) or `.white` (dark)
+	///     the non-default color is combined with `.black` (`light`) or `.white` (`dark`)
 	///     as needed.
 	/// - Precondition: Available when `UIKit` can be imported.
 	public func combinedColor(dark: HexStringColor) -> UIColor {
@@ -134,36 +214,39 @@ public struct HexStringColor: Codable,
 		}
 	}
 	
-	/// Returns a dynamic color that adapts to the current interface style (light or dark).
+	/// Returns a dynamic color that adapts to the current interface style
+	/// (`light` or `dark`).
 	///
 	/// - Parameter dark: The color to use when the system is in Dark Mode.
-	/// - Returns: A dynamic color that resolves to:
-	///   - The receiver (light) when the user interface style is light.
-	///   - The provided `dark` color when the user interface style is dark.
-	/// - Behavior:
-	///   - If both the light (receiver) and dark colors are `.default`,
+	/// - Returns: A dynamic `Color` that resolves to:
+	///   - The receiver (`light`) when the user interface style is `light`.
+	///   - The provided `dark` color when the user interface style is `dark`.
+	/// - Note:
+	///   ### Behavior:
+	///   - If both the `light` (receiver) and `dark` colors are `.default`,
 	///     the method returns `.label` to match system text color and ensure appropriate
 	///     contrast in both appearances.
 	///   - If only one of the colors is `.default`, a sensible fallback is used:
-	///     the non-default color is combined with `.black` (light) or `.white` (dark)
+	///     the non-default color is combined with `.black` (`light`) or `.white` (`dark`)
 	///     as needed.
 	/// - Precondition: Available when `UIKit` can be imported.
 	@inlinable public func combinedColor(dark: HexStringColor) -> Color {
 		Color(uiColor: combinedColor(dark: dark))
 	}
 
-	/// A UIKit representation of the hex color.
+	/// A `UIKit` representation of the hex color.
 	///
 	/// - Returns: A `UIColor` created from the receiver’s hexadecimal value.
-	///            If the hex string contains an alpha channel (8 hex digits),
-	///            the resulting color uses that alpha; otherwise, full opacity
-	///            (alpha = 1.0) is applied.
-	/// - Discussion:
+	///   If the hex string contains an alpha channel (`8` hex digits),
+	///   the resulting color uses that `alpha`; otherwise, full opacity
+	///   (`alpha = 1.0`) is applied.
+	/// - Note:
+	///   ### Behavior:
 	///   - Interprets the stored `value` as `RRGGBB` or `RRGGBBAA` depending on
 	///     `hasAlphaChannel`.
 	///   - When `hasAlphaChannel` is `false` and `value` exceeds `0xFFFFFF`,
 	///     the value is capped to `0xFFFFFF` to avoid overflow.
-	///   - The color components are normalized to the 0.0–1.0 range.
+	///   - The color components are normalized to the `0.0`–`1.0` range.
 	/// - Precondition: Available when `UIKit` can be imported.
 	public var uiColor: UIColor {
 		let mask      = UInt64(0xFF)
@@ -180,6 +263,82 @@ public struct HexStringColor: Codable,
 		let alpha = CGFloat(a) / 255.0
 		
 		return UIColor(
+			red: red,
+			green: green,
+			blue: blue,
+			alpha: alpha
+		)
+	}
+	#elseif canImport(AppKit)
+	/// Returns a dynamic color that adapts to the current appearance (`light` or `dark`)
+	/// on `macOS`.
+	///
+	/// - Parameter dark: The color to use when the system is in Dark Mode.
+	/// - Returns: A dynamic color that resolves to:
+	///   - The receiver (`light`) when the appearance is `light`.
+	///   - The provided `dark` color when the appearance is `dark`.
+	/// - Note:
+	///   ### Behavior:
+	///   - If both the light (receiver) and dark colors are `.default`,
+	///     the method returns `.labelColor` to match system text color and ensure
+	///     appropriate contrast in both appearances.
+	///   - If only one of the colors is `.default`, a sensible fallback is used:
+	///     the non-default color is combined with `.black` (`light`) or `.white` (`dark`)
+	///     as needed.
+	/// - Precondition: Available when `AppKit` can be imported.
+	public func combinedColor(dark: HexStringColor) -> NSColor {
+		if dark.isDefault, self.isDefault {
+			return .labelColor
+		}
+		
+		let  darkSchemeNSColor = dark.nonDefault?.nsColor ?? .white
+		let lightSchemeNSColor = self.nonDefault?.nsColor ?? .black
+		
+		return NSColor(name: nil) { appearance in
+			let isDark = appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+			return isDark ? darkSchemeNSColor : lightSchemeNSColor
+		}
+	}
+	
+	/// Returns a dynamic color that adapts to the current appearance (`light` or `dark`)
+	/// on `macOS`.
+	///
+	/// - Parameter dark: The color to use when the system is in Dark Mode.
+	/// - Returns: A dynamic `SwiftUI` `Color` that resolves based on the current appearance.
+	/// - Precondition: Available when `AppKit` can be imported.
+	@inlinable public func combinedColor(dark: HexStringColor) -> Color {
+		Color(nsColor: combinedColor(dark: dark))
+	}
+	
+	/// An `AppKit` representation of the hex color.
+	///
+	/// - Returns: An `NSColor` created from the receiver’s hexadecimal value.
+	///     If the hex string contains an alpha channel (`8` hex digits),
+	///     the resulting color uses that alpha; otherwise, full opacity
+	///     (`alpha = 1.0`) is applied.
+	/// - Note:
+	///   ### Behavior:
+	///   - Interprets the stored `value` as `RRGGBB` or `RRGGBBAA` depending on
+	///     `hasAlphaChannel`.
+	///   - When `hasAlphaChannel` is `false` and `value` exceeds `0xFFFFFF`,
+	///     the value is capped to `0xFFFFFF` to avoid overflow.
+	///   - The color components are normalized to the `0.0`–`1.0` range.
+	/// - Precondition: Available when `AppKit` can be imported.
+	public var nsColor: NSColor {
+		let mask      = UInt64(0xFF)
+		let cappedHex = !hasAlphaChannel && value > 0xffffff ? 0xffffff : value
+		
+		let r = cappedHex >> (hasAlphaChannel ? 24 : 16) & mask
+		let g = cappedHex >> (hasAlphaChannel ? 16 : 8) & mask
+		let b = cappedHex >> (hasAlphaChannel ? 8 : 0) & mask
+		let a = hasAlphaChannel ? cappedHex & mask : 255
+		
+		let red   = CGFloat(r) / 255.0
+		let green = CGFloat(g) / 255.0
+		let blue  = CGFloat(b) / 255.0
+		let alpha = CGFloat(a) / 255.0
+		
+		return NSColor(
 			red: red,
 			green: green,
 			blue: blue,
@@ -212,27 +371,36 @@ extension KeyedDecodingContainer {
 }
 
 extension Color {
-	/// Creates a dynamic SwiftUI Color from two hexadecimal colors
-	/// that adapts to the current appearance.
+	/// Creates a dynamic `SwiftUI` `Color` from two hexadecimal colors that adapts
+	/// to `light` and `dark` appearances.
+	///
+	/// Use this factory to supply separate colors for `light` and `dark` system appearance
+	/// using `HexStringColor` values. On supported platforms, the returned `Color`
+	/// resolves at runtime based on the current appearance.
 	///
 	/// - Parameters:
-	///   - light: The color to use in Light Mode, represented as a `HexStringColor`.
-	///   - dark: The color to use in Dark Mode, represented as a `HexStringColor`.
-	///
-	/// - Returns: A `Color` that resolves
-	///   to the `light` color when the system appearance is `light`, and
-	///   to the `dark` color when the system appearance is `dark`.
-	///
-	/// - Discussion:
-	///   - If both `light` and `dark` are `.default`, the resulting color resolves
-	///     to the system label color to maintain appropriate contrast in both appearances
-	///     (on platforms that support `UIKit`-based resolution).
+	///   - light: The color to use in `light` system appearance,
+	///     represented as a `HexStringColor`.
+	///   - dark: The color to use in `dark` system appearance,
+	///     represented as a `HexStringColor`.
+	/// - Returns: A `Color` that resolves to the
+	///   - `light` color when the system appearance is `light`
+	///   - `dark` color when the system appearance is `dark`
+	/// - Note:
+	///   ### Behavior:
+	///   - If both `light` and `dark` are `.default`, the resulting `Color` resolves
+	///     to the system label color to maintain appropriate contrast
+	///     (on platforms that support dynamic system colors).
 	///   - If only one of the provided colors is `.default`, a sensible fallback is used
-	///     internally so the resulting color remains legible across appearances.
-	///   - The underlying resolution leverages platform capabilities
-	///     (e.g., `UIKit` on applicable platforms) to produce an appearance-aware color.
-	///
-	/// - SeeAlso: ``HexStringColor``, ``HexStringColor/combinedColor(dark:)``
+	///     internally so the resulting `Color` remains legible across appearances.
+	///   - Resolution is delegated to platform-specific capabilities when available:
+	///     - `UIKit` on `iOS`/`iPadOS`/`tvOS`/`visionOS`
+	///     - `AppKit` on `macOS`
+	/// - SeeAlso:
+	///   - ``HexStringColor``
+	///   - ``HexStringColor/combinedColor(dark:)-7dc7e``
+	///   - ``HexStringColor/combinedColor(dark:)->UIColor``
+	///   - ``HexStringColor/combinedColor(dark:)->NSColor``
 	@inlinable public static func fromHexColors(
 		light: HexStringColor,
 		dark: HexStringColor

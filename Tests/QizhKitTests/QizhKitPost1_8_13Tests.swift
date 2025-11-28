@@ -136,27 +136,27 @@ struct QizhKitPost1_8_13Tests {
 			let string = "Hello"
 			let text = string.asText()
 			// Text doesn't have equality, so we just verify it compiles
-			#expect(text is Text)
+			#expect(type(of: text) == Text.self)
 		}
 		
 		@Test func testLocalizedStringResourceAsText() {
 			let resource = LocalizedStringResource("test")
 			let text = resource.asText()
-			#expect(text is Text)
+			#expect(type(of: text) == Text.self)
 		}
 		
 		@Test func testOptionalLocalizedStringResourceWithValue() {
 			let resource: LocalizedStringResource? = LocalizedStringResource("test")
 			let text = resource.asText()
-			#expect(text is Optional<Text>)
+			#expect(text != nil)
 		}
 		
 		@Test func testOptionalLocalizedStringResourceNil() {
 			let resource: LocalizedStringResource? = nil
 			let text = resource.asText()
-			#expect(text is Optional<Text>)
+			#expect(text == nil)
 		}
-		
+	}
 	
 	// MARK: - Animatable Typealiases
 	
@@ -205,3 +205,4 @@ struct QizhKitPost1_8_13Tests {
 #warning("Post-1.8.13 tests require Swift 6.2 or later with Testing framework availability. Tests for Bool.asIntSign, ClosedRange.clamp, TimeInterval.cg, CGPoint multiplication operators, asText() helpers, and animatable typealiases are unavailable.")
 
 #endif
+

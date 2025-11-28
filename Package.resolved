@@ -1,5 +1,5 @@
 {
-  "originHash" : "b3eaa1d38cb41b4fd85941897e9f7118b5442ffc1721b330b219b82d19d000e1",
+  "originHash" : "ab52bcb73cbd8f4893c8d2d5472db18a27f79d4a31f6b6ed5017f995a88bb497",
   "pins" : [
     {
       "identity" : "alamofire",
@@ -33,8 +33,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/qizh/QizhMacroKit",
       "state" : {
-        "revision" : "86268d0a8e76cda89e5606616e3dbee96a0021d9",
-        "version" : "1.1.11"
+        "revision" : "eeeb14a1aaa390fdfd92f16c7c42124def2d3a92",
+        "version" : "1.1.14"
       }
     },
     {
@@ -51,8 +51,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlang/swift-syntax.git",
       "state" : {
-        "revision" : "f99ae8aa18f0cf0d53481901f88a0991dc3bd4a2",
-        "version" : "601.0.1"
+        "revision" : "4799286537280063c85a32f09884cfbca301b1a1",
+        "version" : "602.0.0"
       }
     },
     {

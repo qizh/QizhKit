@@ -93,12 +93,12 @@ public extension Color {
 	static let tertiarySystemFill       = Color(nsColor: .tertiarySystemFill)
 	static let quaternarySystemFill     = Color(nsColor: .quaternarySystemFill)
 	
-	static let link 					= Color(nsColor: .link)
-	static let placeholderText 			= Color(nsColor: .placeholderText)
-	static let separator 				= Color(nsColor: .separator)
-	static let opaqueSeparator 			= Color(nsColor: .opaqueSeparator)
-	static let lightText 				= Color(nsColor: .lightText)
-	static let darkText 				= Color(nsColor: .darkText)
+	static let link 					= Color(nsColor: .linkColor)
+	static let placeholderText 			= Color(nsColor: .placeholderTextColor)
+	static let separator 				= Color(nsColor: .separatorColor)
+	static let opaqueSeparator 			= Color(nsColor: .separatorColor)
+	static let lightText 				= Color(nsColor: .secondaryLabelColor)
+	static let darkText 				= Color(nsColor: .labelColor)
 	#endif
 
 	// MARK: B&W
@@ -151,10 +151,6 @@ public extension ShapeStyle where Self == Color {
 	#if canImport(UIKit)
 
 	// MARK: System
-	
-	@inlinable static var systemBackground: Color 			{ Color(uiColor: .systemBackground) }
-	@inlinable static var secondarySystemBackground: Color 	{ Color(uiColor: .secondarySystemBackground) }
-	@inlinable static var tertiarySystemBackground: Color 	{ Color(uiColor: .tertiarySystemBackground) }
 	
 	@inlinable static var systemGroupedBackground: Color 			{ Color(uiColor: .systemGroupedBackground) }
 	@inlinable static var secondarySystemGroupedBackground: Color 	{ Color(uiColor: .secondarySystemGroupedBackground) }
