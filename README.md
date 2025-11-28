@@ -141,7 +141,7 @@ Run tests with `swift test` or inside Xcode's Test navigator. New modules should
 Refer to [`KNOWN_ISSUES.md`](KNOWN_ISSUES.md) for a list of current limitations and [`TODO.md`](TODO.md) for roadmap items such as re-enabling strict concurrency flags, bringing UIKit utilities back online, and expanding the test matrix.
 
 ## Contributing
-Pull requests are welcome. Please add doc comments for every new type or member, match the Swift 6 coding style used in this repository (spaces equal tabs of four characters), and include tests whenever feasible. When introducing new dependencies, document why they are needed and ensure they support the platforms declared in `Package.swift`.
+Pull requests are welcome. Please add doc comments for every new type or member, match the Swift 6 coding style used in this repository (use tabs for indentation, equivalent to 4 spaces), and include tests whenever feasible. When introducing new dependencies, document why they are needed and ensure they support the platforms declared in `Package.swift`.
 
 ### 💡 Suggested code separation
 This package currently has a lot of dependencies bundled together. Here are some ideas for splitting it into smaller, more focused targets:
