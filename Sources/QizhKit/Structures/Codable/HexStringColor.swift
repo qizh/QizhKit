@@ -21,7 +21,8 @@ public struct HexStringColor: Codable,
 							  Sendable,
 							  WithDefault,
 							  CustomStringConvertible,
-							  ExpressibleByStringLiteral {
+							  ExpressibleByStringLiteral,
+							  ExpressibleByIntegerLiteral {
 	public let value: UInt64
 	public let hasAlphaChannel: Bool
 	
@@ -116,6 +117,28 @@ public struct HexStringColor: Codable,
 	///   explicit alpha channel.
 	@inlinable public init(stringLiteral value: String) {
 		self.init(value)
+	}
+	
+	/// Creates a hexadecimal color from an integer literal.
+	///
+	/// Use this initializer to construct a `HexStringColor` directly from a numeric
+	/// literal in source code. The literal is interpreted as a hexadecimal color value:
+	/// - `0xRRGGBB` (`6` hex digits) for an opaque `RGB` color
+	/// - `0xRRGGBBAA` (`8` hex digits) for an `RGBA` color,
+	///   where the least significant byte (`AA`) is the alpha channel
+	///
+	/// If the literal exceeds `0xFFFFFF`, it is treated as including an alpha channel.
+	///
+	/// - Example:
+	///   ```swift
+	///   let rgb: HexStringColor = 0xFF9900      /// Opaque orange
+	///   let rgba: HexStringColor = 0xFF9900CC   /// Orange with ~80% opacity
+	///   ```
+	///
+	/// - Parameter value: A hexadecimal integer literal representing the color.
+	///   Six digits imply full opacity; eight digits include an explicit alpha channel.
+	public init(integerLiteral value: UInt64) {
+		self.init(value, isWithAlpha: value > 0xFFFFFF)
 	}
 	
 	/// A `SwiftUI` `Color` representation of the hexadecimal color value.

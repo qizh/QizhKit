@@ -152,10 +152,6 @@ public extension ShapeStyle where Self == Color {
 
 	// MARK: System
 	
-	@inlinable static var systemBackground: Color 			{ Color(uiColor: .systemBackground) }
-	@inlinable static var secondarySystemBackground: Color 	{ Color(uiColor: .secondarySystemBackground) }
-	@inlinable static var tertiarySystemBackground: Color 	{ Color(uiColor: .tertiarySystemBackground) }
-	
 	@inlinable static var systemGroupedBackground: Color 			{ Color(uiColor: .systemGroupedBackground) }
 	@inlinable static var secondarySystemGroupedBackground: Color 	{ Color(uiColor: .secondarySystemGroupedBackground) }
 	@inlinable static var tertiarySystemGroupedBackground: Color 	{ Color(uiColor: .tertiarySystemGroupedBackground) }
