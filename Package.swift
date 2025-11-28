@@ -1,4 +1,4 @@
-// swift-tools-version: 6.1
+// swift-tools-version: 6.2
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -37,7 +37,7 @@ let package = Package(
 		.package(url: "https://github.com/apple/swift-collections", from: "1.3.0"),
 		
 		/// Macros
-		.package(url: "https://github.com/qizh/QizhMacroKit", from: "1.1.13"),
+		.package(url: "https://github.com/qizh/QizhMacroKit", from: "1.1.14"),
 	],
     targets: [
         .target(
@@ -84,7 +84,6 @@ let package = Package(
 		)
     ],
 	swiftLanguageModes: [
-		// .v5,
 		.v6,
 	]
 )
