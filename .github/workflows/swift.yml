@@ -10,30 +10,20 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
-    name: Using Swift ${{ matrix.swift }} on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [macos-latest]
-        swift: ['6.2', '6.1']
+  build-and-test:
+    runs-on: macos-latest
+
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v5
-        
-      - name: Setup Swift (via swift-actions)
+
+      - name: Set up Swift toolchain
         uses: swift-actions/setup-swift@v2
         with:
-          swift-version: ${{ matrix.swift }}
-          ## Removed because not defined in matrix configuration.
-          # soft-fail-version-check: ${{ matrix.soft-fail-version-check }}
-        
-      - name: Verify Swift version
-        run: swift --version # Swift 6.2
-      
-      - name: Build # (verbose)
-        run: swift build # -v
-        
-      - name: Run tests # (verbose)
-        run: swift test # -v
+          swift-version: "6.2"
+
+      - name: Build
+        run: swift build --configuration debug
+
+      - name: Run tests
+        run: swift test --parallel --verbose
