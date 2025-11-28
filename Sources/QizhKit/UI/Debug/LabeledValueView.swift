@@ -534,7 +534,13 @@ public struct LabeledValueView: View {
 		valueView
 			.multilineTextAlignment(.leading)
 			.frame(minHeight: 15, alignment: .topLeading)
-			.background(.systemBackground, in: shape)
+			#if os(iOS) || targetEnvironment(macCatalyst)
+			.background(Color(.systemBackground), in: shape)
+			#elseif os(macOS)
+			.background(Color(NSColor.windowBackgroundColor), in: shape)
+			#else
+			.background(Color.white, in: shape) // fallback for other platforms
+			#endif
 			.clipShape(shape)
 			.overlay {
 				if colorScheme.isDark {
@@ -647,7 +653,13 @@ public struct LabeledValueView: View {
 				.frame(minHeight: 15, alignment: .topLeading)
 				// .alignmentGuide(.separator, value: .zero)
 				
-				.background(.systemBackground, in: shape)
+				#if os(iOS) || targetEnvironment(macCatalyst)
+				.background(Color(.systemBackground), in: shape)
+				#elseif os(macOS)
+				.background(Color(NSColor.windowBackgroundColor), in: shape)
+				#else
+				.background(Color.white, in: shape) // fallback for other platforms
+				#endif
 				.clipShape(shape)
 				.overlay {
 					if colorScheme.isDark {
@@ -1563,7 +1575,13 @@ public struct LabeledValueView_Previews: PreviewProvider {
 				}
 			}
 			.padding()
-			.background(.systemBackground)
+			#if os(iOS) || targetEnvironment(macCatalyst)
+			.background(Color(.systemBackground))
+			#elseif os(macOS)
+			.background(Color(NSColor.windowBackgroundColor))
+			#else
+			.background(Color.white) // fallback for other platforms
+			#endif
 			.previewLayout(.sizeThatFits)
 			.environment(\.colorScheme, colorScheme)
 		}
