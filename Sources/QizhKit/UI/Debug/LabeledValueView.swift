@@ -44,6 +44,22 @@ extension View {
 		environment(\.labeledViewLengthLimit, length)
 	}
 	
+	/// Sets whether value text in `LabeledValueView` instances
+	/// is allowed to wrap onto multiple lines.
+	///
+	/// Use this modifier to control line-wrapping behavior for labeled value views within
+	/// the current view hierarchy. When multiline is allowed, long values can expand
+	/// vertically instead of being truncated to a single line. This setting is also
+	/// respected by the built‑in multiline switcher (`asMultilineSwitcher`)
+	/// used by `LabeledValueView`.
+	///
+	/// - Important: This is an environment-wide setting for the subtree where it is applied.
+	///   To override the behavior for a specific subtree, apply this modifier closer to the
+	///   views you want to affect.
+	/// - Parameter value: Pass `true` to allow multiline value text, or `false` to constrain
+	///   values to a single line. The default environment value is `false`.
+	/// - Returns: A view that applies the specified multiline policy to the
+	///   `labeledViewAllowMultiline` environment key.
 	public func setLabeledView(allowMultiline value: Bool) -> some View {
 		environment(\.labeledViewAllowMultiline, value)
 	}
@@ -57,18 +73,96 @@ extension View {
 		environment(\.labeledViewIsInitiallyMultiline, value)
 	}
 	
+	/// Sets the maximum width for the value column of `LabeledValueView` instances
+	/// in this view hierarchy.
+	///
+	/// Use this modifier to constrain how wide the value portion of labeled views can grow,
+	/// which helps maintain readable layouts in both single-row and two-column
+	/// (`LabeledColumnsLayout`) presentations.
+	/// Passing `nil` removes the constraint and allows values to expand as needed.
+	///
+	/// - Important: This is an environment-wide setting that affects all `LabeledValueView`
+	///   instances within the modified view subtree. Apply it closer to specific views
+	///   to scope its effect.
+	///
+	/// - Parameter value: The maximum width, in points, for the value column.
+	///   Pass `nil` to allow unlimited width.
+	/// - Returns: A view that applies the specified maximum value width to the
+	///   `labeledViewMaxValueWidth` environment key.
 	public func setLabeledView(maxValueWidth value: CGFloat?) -> some View {
 		environment(\.labeledViewMaxValueWidth, value)
 	}
 	
+	/// Sets a flag indicating whether the current subtree
+	/// is already inside a `LabeledColumnsLayout`.
+	///
+	/// Apply this modifier to prevent nested column layouts and to let labeled views
+	/// (such as `LabeledValueView`, `LabeledCollectionView`, and related helpers)
+	/// emit their label/value pairs directly instead of wrapping themselves in another
+	/// `LabeledColumnsLayout`.
+	///
+	/// Typically, you do not need to call this directly—`LabeledViews` applies it for you.
+	/// However, if you build a custom container or layout that arranges labeled rows in two
+	/// columns, set this to `true` within that container to avoid redundant layout nesting.
+	///
+	/// - Important: This is an environment-scoped setting that affects all labeled views
+	///   within the modified subtree.
+	/// - Parameter value: Pass `true` if the subtree is already arranged by a labeled
+	///   columns layout; otherwise pass `false`.
+	/// - Returns: A view that updates the `labeledViewIsInLabeledColumnsLayout`
+	///   environment key.
 	public func setLabeledView(isInColumnLayout value: Bool) -> some View {
 		environment(\.labeledViewIsInLabeledColumnsLayout, value)
 	}
 
+	/// Sets the maximum fraction of the total horizontal space that a label column
+	/// is allowed to occupy within `LabeledColumnsLayout`.
+	///
+	/// Use this to prevent long labels from consuming too much width and crowding out
+	/// the value column. The fraction is a value between `0` and `1`, where:
+	/// - `0` means labels receive no width (not practical),
+	/// - `1` means labels may take the entire available width (also not practical).
+	///
+	/// The default environment value is `0.45`, which generally balances label and value
+	/// readability across compact and regular widths.
+	///
+	/// - Important: This is an environment-scoped setting. Apply it to a container that
+	///   wraps your labeled views (e.g., around `LabeledViews` or a custom container that
+	///   uses `LabeledColumnsLayout`) to affect all nested labeled rows.
+	/// - Parameter fraction: The maximum proportion of the available width that the label
+	///   column can use, clamped logically between `0` and `1`.
+	/// - Returns: A view that applies the specified maximum label fraction to the
+	///   `labeledViewMaxLabelFraction` environment key.
 	public func setLabeledView(maxLabelFraction fraction: CGFloat) -> some View {
 		environment(\.labeledViewMaxLabelFraction, fraction)
 	}
 	
+	/// Controls whether labels in `LabeledValueView` are automatically converted to
+	/// sentence case, improving readability by normalizing capitalization
+	/// (e.g., `"userName"` -> `"User name"`).
+	///
+	/// When enabled, labels are transformed using a "regular sentence case" heuristic
+	/// intended for developer-facing diagnostics and tools, producing clearer,
+	/// human‑readable labels from common identifier styles
+	/// (`camelCase`, `snake_case`, etc.).
+	/// When disabled, labels are rendered exactly as provided.
+	///
+	/// - Important: This is an environment-scoped preference that affects all labeled views
+	///   within the modified subtree, including `LabeledValueView`, `LabeledCollectionView`,
+	///   and related helpers. Apply it at the container level (e.g., around `LabeledViews`)
+	///   to standardize label presentation across a group of rows.
+	/// - Parameter asSentence: Pass `true` (default) to enable sentence‑case normalization
+	///   of labels, or `false` to preserve the original label text.
+	/// - Returns: A view that updates the `labeledViewLabelAsSentence` environment value
+	///   used by labeled views when rendering their labels.
+	/// - Example:
+	///   ```swift
+	///   VStack {
+	///       "john_doe".labeledView(label: "user_name")
+	///       42.labeledView(label: "maxItems")
+	///   }
+	///   .setLabeledView(labelAsSentence: true) /// Renders as "User name" and "Max items"
+	///   ```
 	public func setLabeledView(labelAsSentence asSentence: Bool) -> some View {
 		environment(\.labeledViewLabelAsSentence, asSentence)
 	}
@@ -534,13 +628,7 @@ public struct LabeledValueView: View {
 		valueView
 			.multilineTextAlignment(.leading)
 			.frame(minHeight: 15, alignment: .topLeading)
-			#if os(iOS) || targetEnvironment(macCatalyst)
-			.background(Color(.systemBackground), in: shape)
-			#elseif os(macOS)
-			.background(Color(NSColor.windowBackgroundColor), in: shape)
-			#else
-			.background(Color.white, in: shape) // fallback for other platforms
-			#endif
+			.background(.systemBackground, in: shape)
 			.clipShape(shape)
 			.overlay {
 				if colorScheme.isDark {
@@ -591,182 +679,6 @@ public struct LabeledValueView: View {
 			.draggable(valueView.transferableText)
 			.layoutValue(key: LabeledRoleKey.self, value: .value)
 	}
-
-	
-	// MARK: Body (old)
-	
-	/*
-	public var body: some View {
-		// let maxValueWidth = maxValueWidth ?? 300
-		let labelRatio: CGFloat = 0.28
-		let valueRatio: CGFloat = 1 - labelRatio
-		let spacing: CGFloat = 1
-		
-		HStack(alignment: .top, spacing: spacing) {
-			
-			label?
-				.asText()
-				// .lineLimit(1)
-				.multilineTextAlignment(.trailing)
-				.font(Font.system(size: 10, weight: .semibold).smallCaps())
-				.padding(EdgeInsets(top: 1, leading: 5, bottom: 2, trailing: 5))
-				.foregroundStyle(.secondary)
-				.frame(minHeight: 15, alignment: .topTrailing)
-				
-				.background(.regularMaterial, in: shape) /// `Color.primary.opacity(0.6)`
-				.clipShape(shape)
-				.overlay {
-					if colorScheme.isDark {
-						shape.inset(by: LinePosition.inner.inset(for: pixelLength))
-							.strokeBorder(.tertiary, lineWidth: pixelLength)
-					}
-				}
-				#if os(iOS) || targetEnvironment(macCatalyst)
-				.contentShape([.contextMenuPreview, .hoverEffect, .interaction, .dragPreview], shape)
-				.hoverEffect(.highlight)
-				#else
-				.contentShape([.interaction, .dragPreview], shape)
-				#endif
-				
-				.fixedHeight()
-				.apply { view in
-					ViewThatFits(in: .horizontal) {
-						view.lineLimit(1)
-						view
-					}
-				}
-				// .containerRelativeFrame(.horizontal, count: 10, span: 3, spacing: spacing, alignment: .trailing)
-				.containerRelativeFrame(
-					[.horizontal, .vertical],
-					alignment: .topTrailing
-				) { length, axis in
-					switch axis {
-					case .horizontal: (length - spacing) * labelRatio
-					case .vertical where allowMultiline: length
-					case .vertical: 15
-					}
-				}
-				// .alignmentGuide(.separator) { $0.width }
-			
-			valueView
-				.multilineTextAlignment(.leading)
-				.frame(minHeight: 15, alignment: .topLeading)
-				// .alignmentGuide(.separator, value: .zero)
-				
-				#if os(iOS) || targetEnvironment(macCatalyst)
-				.background(Color(.systemBackground), in: shape)
-				#elseif os(macOS)
-				.background(Color(NSColor.windowBackgroundColor), in: shape)
-				#else
-				.background(Color.white, in: shape) // fallback for other platforms
-				#endif
-				.clipShape(shape)
-				.overlay {
-					if colorScheme.isDark {
-						shape.inset(by: LinePosition.inner.inset(for: pixelLength))
-							.strokeBorder(.tertiary, lineWidth: pixelLength)
-					}
-				}
-				#if os(iOS) || targetEnvironment(macCatalyst)
-				.contentShape([.contextMenuPreview, .hoverEffect, .interaction, .dragPreview], shape)
-				.hoverEffect(.highlight)
-				#else
-				.contentShape([.interaction, .dragPreview], shape)
-				#endif
-				
-				/*
-				.background(Color.systemBackground)
-				.roundedBorder(
-					Color.primary.opacity(0.6),
-					radius: 2,
-					weight: colorScheme.isDark ? pixelLength : 0
-				)
-				*/
-				
-				.asMultilineSwitcher()
-				.contextMenu {
-					Label {
-						Text("Copy", tableName: "Debug", comment: "Copy labeled view value string to clipboard")
-					} icon: {
-						Image(systemName: "doc.on.doc")
-					}
-					.button {
-						#if os(iOS) || targetEnvironment(macCatalyst)
-						UIPasteboard.general.string = valueView.string
-						#elseif os(macOS)
-						let pasteboard = NSPasteboard.general
-						pasteboard.clearContents()
-						pasteboard.setString(valueView.string, forType: .string)
-						#else
-						#warning("Pasteboard copy not implemented for this platform")
-						#endif
-					}
-
-					ShareLink(item: valueView.string) {
-						Label {
-							Text("Share", tableName: "Debug", comment: "Share labeled view value string")
-						} icon: {
-							Image(systemName: "square.and.arrow.up")
-						}
-					}
-				}
-				.draggable(valueView.transferableText)
-				.containerRelativeFrame(
-					[.horizontal, .vertical],
-					alignment: .topLeading
-				) { length, axis in
-					switch axis {
-					case .horizontal: (length - spacing) * valueRatio
-					case .vertical where allowMultiline: length
-					case .vertical: 15
-					}
-				}
-		}
-		.compositingGroup()
-		.shadow(
-			color: colorScheme.isDark ? .clear : .black.opacity(0.4),
-			radius: 2
-		)
-		.containerRelativeFrame(
-			[.horizontal, .vertical],
-			alignment: .topLeading
-		) { length, axis in
-			switch axis {
-			case .horizontal: length
-			case .vertical where allowMultiline: length
-			case .vertical: 15
-			}
-		}
-		// .containerRelativeFrame(.horizontal)
-		/*
-		.apply { view in
-			ViewThatFits(in: .horizontal) {
-				view
-				view.setLabeledView(maxValueWidth: maxValueWidth - 20)
-				view.setLabeledView(maxValueWidth: maxValueWidth - 40)
-				view.setLabeledView(maxValueWidth: maxValueWidth - 60)
-				view.setLabeledView(maxValueWidth: maxValueWidth - 80)
-				view.setLabeledView(maxValueWidth: maxValueWidth - 100)
-				/*
-				if allowMultiline {
-					view.alignmentGuide(.separator, value: 0)
-				}
-				*/
-			}
-		}
-		*/
-		/*
-		.apply { view in
-			ViewThatFits(in: .horizontal) {
-				view
-				if allowMultiline {
-					view.alignmentGuide(.separator, value: 0)
-				}
-			}
-		}
-		*/
-	}
-	*/
 }
 
 // MARK: - Bool Display Style
@@ -1474,27 +1386,6 @@ public struct DebugGeometryViewModifier: ViewModifier {
 	}
 }
 
-/*
-struct ShowSizeBlurryVibrantView: View {
-	@State private var size: CGSize = .zero
-	var body: some View {
-		HStack(alignment: .firstTextBaseline, spacing: 2) {
-			Text(size.width.wholeValueString)
-			Image(systemName: "multiply")
-				.font(.system(size: 6, weight: .semibold))
-				.opacity(0.4)
-				.padding(.bottom, 1)
-			Text(size.height.wholeValueString)
-		}
-		.font(.system(size: 8, weight: .semibold))
-		.foregroundStyle(.accentColor)
-		.fixedSize()
-		.containerSize($size)
-		.vibrantOnBlurredBackground()
-	}
-}
-*/
-
 public extension View {
 	func debugSize(blurred: Bool = true, _ alignment: Alignment = .center) -> some View {
 		modifier(DebugGeometryViewModifier(.size, blurred: blurred, alignment: alignment))
@@ -1506,87 +1397,4 @@ public extension View {
 		modifier(DebugGeometryViewModifier(.globlPosition, blurred: blurred, alignment: alignment))
 	}
 }
-
-/*
-// MARK: Previews
-
-#if DEBUG
-public struct LabeledValueView_Previews: PreviewProvider {
-	static var elements: some View {
-		Group {
-			Image(systemName: "heart.fill")
-				.font(.system(size: 28, weight: .thin))
-			
-			Image(systemName: "heart.fill")
-				.font(.system(size: 100))
-			
-			Image("tripadvisor")
-		}
-	}
-	
-	static let optionalString: String? = "string"
-	static let optionalCGFloat: CGFloat? = 134.2
-	static let optionalCGSize: CGSize? = CGSize(width: 128, height: 2)
-	static let optionalDate: Date? = Date()
-	static let optionalBool: Bool? = true
-	static let optionalBoolDisplayStyle: LabeledValueView.BoolDisplayStyle? = .default
-	static let optionalString2: String? = nil
-
-	public static var previews: some View {
-		ForEach(ColorScheme.allCases) { colorScheme in
-			Group {
-				VStack(alignment: .separator, spacing: 0) {
-					Group {
-						Group {
-							LabeledValueView(CGSize(width: 256, height: 64))
-							LabeledValueView(CGSize(width: 128, height: 2), label: "Content size")
-							LabeledValueView(256.05)
-							LabeledValueView(1920, label: "ScrollView height")
-							LabeledValueView(Date(), label: "Now", dateStyle: .short, timeStyle: .short)
-						}
-						Group {
-							LabeledValueView(true, label: "Cool, icon")
-							LabeledValueView(false, label: "Shit, icon")
-							LabeledValueView(true, label: "Cool, string", boolDisplayStyle: .string)
-							LabeledValueView(false, label: "Shit, string", boolDisplayStyle: .string)
-							LabeledValueView(true, label: "Cool, int", boolDisplayStyle: .int)
-							LabeledValueView(false, label: "Shit, int", boolDisplayStyle: .int)
-							LabeledValueView(LabeledValueView.BoolDisplayStyle.icon, label: "Bool display style")
-						}
-						Group {
-							LabeledValueView(optionalString, label: "Opt String")
-							LabeledValueView(optionalCGFloat, label: "Opt CGFloat")
-							LabeledValueView(optionalCGSize, label: "Opt CGSize")
-							LabeledValueView(optionalDate, label: "Opt Date", dateStyle: .short, timeStyle: .short)
-							LabeledValueView(optionalBool, label: "Opt bool")
-							LabeledValueView(optionalBoolDisplayStyle, label: "Opt BoolDisplayStyle")
-							LabeledValueView(optionalString2, label: "nil")
-						}
-						Group {
-							LabeledValueView(describing: [1, 5, [0.2, 0.67]].last, label: "Opt Array")
-							CGSize.zero.labeledView()
-							Date().labeledView()
-							([1, "2"] as [Any]).count.labeledView()
-							CGPoint(x: 2, y: 6).labeledView()
-							CGRect(x: 0, y: 100, width: 410, height: 800).labeledView()
-						}
-					}
-//					.debugSize()
-				}
-			}
-			.padding()
-			#if os(iOS) || targetEnvironment(macCatalyst)
-			.background(Color(.systemBackground))
-			#elseif os(macOS)
-			.background(Color(NSColor.windowBackgroundColor))
-			#else
-			.background(Color.white) // fallback for other platforms
-			#endif
-			.previewLayout(.sizeThatFits)
-			.environment(\.colorScheme, colorScheme)
-		}
-	}
-}
-#endif
-*/
 
