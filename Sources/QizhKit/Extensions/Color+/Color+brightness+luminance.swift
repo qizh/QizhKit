@@ -9,10 +9,7 @@
 import SwiftUI
 
 extension Color {
-	/// Resolve a Color into `sRGB`-ish components in the given environment.
-	/// [Extended sRGB](
-	/// 	https://developer.apple.com/documentation/SwiftUI/Color/ResolvedHDR "Apple Developer"
-	/// )
+	/// Resolves a `Color` to sRGB-like components for the given environment (HDR-aware when available).
 	public static func resolvedComponents(
 		of color: Color,
 		in environment: EnvironmentValues
@@ -42,7 +39,7 @@ extension Color {
 	}
 	
 	
-	/// `WCAG 2.1` relative luminance (`0` – dark, `1` – light).
+	/// Returns WCAG 2.1 relative luminance (0 = dark, 1 = light).
 	public static func relativeLuminance(
 		of color: Color,
 		in environment: EnvironmentValues
@@ -53,7 +50,7 @@ extension Color {
 			.relativeLuminance
 	}
 	
-	/// Simple “perceived brightness” convenience:
+	/// Returns a simple perceived brightness estimate.
 	public static func brightness(
 		of color: Color,
 		in environment: EnvironmentValues
@@ -67,25 +64,45 @@ extension Color {
 }
 
 extension Color.ResolvedComponents {
+	/// Output color space for resolved components.
 	public enum Representation: Hashable, Sendable {
+		/// Standard sRGB (gamma-encoded)
 		case sRGB
+		/// Linear-light values suitable for WCAG 2.1 math
 		case WCAG21
 	}
 }
 
 extension Color {
+	/// A resolved color's channel values with optional linear-light flag.
 	public struct ResolvedComponents: Hashable, Sendable {
+		/// Red channel value (0...1)
 		public let red: Double
+		/// Green channel value (0...1)
 		public let green: Double
+		/// Blue channel value (0...1)
 		public let blue: Double
+		/// Alpha channel value (0...1)
 		public let opacity: Double
+		/// Indicates whether RGB channels are linear-light.
 		public let isLinear: Bool
 		
+		/// Alias for `red`.
 		@inlinable public var r: Double { red }
+		/// Alias for `green`.
 		@inlinable public var g: Double { green }
+		/// Alias for `blue`.
 		@inlinable public var b: Double { blue }
+		/// Alias for `opacity`.
 		@inlinable public var a: Double { opacity }
 		
+		/// Creates components from explicit channels.
+		/// - Parameters:
+		///   - isLinear: Set `true` if channels are linear-light.
+		///   - red: Red (0...1)
+		///   - green: Green (0...1)
+		///   - blue: Blue (0...1)
+		///   - opacity: Alpha (0...1)
 		public init(
 			linear isLinear: Bool,
 			red: Double,
@@ -111,6 +128,7 @@ extension Color {
 		}
 		*/
 		
+		/// Creates components from generic floating-point channels.
 		public init<F>(
 			linear isLinear: Bool,
 			r red: F,
@@ -127,6 +145,7 @@ extension Color {
 			)
 		}
 		
+		/// Creates grayscale components with optional alpha.
 		@inlinable public init(
 			linear isLinear: Bool,
 			white: Double,
@@ -141,6 +160,8 @@ extension Color {
 			)
 		}
 		
+		/// Creates components from an array.
+		/// Interprets 2 values as grayscale+alpha, 3 as RGB, 4+ takes the first three as RGB and uses `alpha`.
 		public init(
 			linear isLinear: Bool,
 			components: [Double],
@@ -175,6 +196,7 @@ extension Color {
 			}
 		}
 		
+		/// Convenience initializer from CGFloat components.
 		@inlinable public init(
 			linear isLinear: Bool,
 			components: [CGFloat],
@@ -187,6 +209,7 @@ extension Color {
 			)
 		}
 		
+		/// Initializes from a SwiftUI `Color.Resolved`.
 		public init(
 			linear isLinear: Bool,
 			_ resolved: Color.Resolved
@@ -210,6 +233,7 @@ extension Color {
 			}
 		}
 		
+		/// Initializes from a SwiftUI `Color.ResolvedHDR`.
 		@available(iOS 26.0, *)
 		public init(
 			linear isLinear: Bool,
@@ -234,7 +258,9 @@ extension Color {
 			}
 		}
 		
+		/// Convenience white in sRGB.
 		public static let white: Self = .init(linear: false, white: 1)
+		/// Convenience black in sRGB.
 		public static let black: Self = .init(linear: false, white: 0)
 	}
 }
@@ -276,6 +302,7 @@ extension Color.ResolvedComponents {
 		}
 	}
 	
+	/// Returns a copy with all channels clamped to 0...1.
 	public var zeroOneClipped: Color.ResolvedComponents {
 		Color.ResolvedComponents(
 			linear: isLinear,
@@ -288,6 +315,7 @@ extension Color.ResolvedComponents {
 }
 
 extension Color.Resolved {
+	/// sRGB components from this resolved color.
 	public var resolvedComponents: Color.ResolvedComponents {
 		Color.ResolvedComponents(
 			linear: false,
@@ -298,6 +326,7 @@ extension Color.Resolved {
 		)
 	}
 	
+	/// Linear-light components from this resolved color.
 	public var linearResolvedComponents: Color.ResolvedComponents {
 		Color.ResolvedComponents(
 			linear: false,
@@ -311,6 +340,7 @@ extension Color.Resolved {
 
 @available(iOS 26.0, *)
 extension Color.ResolvedHDR {
+	/// sRGB components from this HDR-resolved color.
 	public var resolvedComponents: Color.ResolvedComponents {
 		Color.ResolvedComponents(
 			linear: false,
@@ -321,6 +351,7 @@ extension Color.ResolvedHDR {
 		)
 	}
 	
+	/// Linear-light components from this HDR-resolved color.
 	public var linearResolvedComponents: Color.ResolvedComponents {
 		Color.ResolvedComponents(
 			linear: false,
@@ -396,3 +427,4 @@ extension Double {
 		.sRGBToLinearWCAG21(self)
 	}
 }
+
