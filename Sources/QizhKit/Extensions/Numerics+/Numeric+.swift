@@ -178,6 +178,7 @@ public extension FloatingPoint {
 	/// 1/3 (of a point)
 	@inlinable static var hairline: Self { Self.one.third }
 	
+	
 	#if canImport(UIKit)
 	/// Size of a device pixel in points.
 	///
@@ -216,6 +217,13 @@ public extension FloatingPoint {
 		.one / Self(UITraitCollection.current.displayScale.int)
 	}
 	#endif
+}
+
+extension BinaryFloatingPoint {
+	/// Converts any `BinaryFloatingPoint` to `Double`.
+	@inlinable public var double: Double { Double(self) }
+	/// Converts any `BinaryFloatingPoint` to `CGFloat`.
+	@inlinable public var cg: CGFloat { CGFloat(self) }
 }
 
 // MARK: - Decode as Data
