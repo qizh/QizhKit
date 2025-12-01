@@ -329,7 +329,7 @@ extension Color.Resolved {
 	/// Linear-light components from this resolved color.
 	public var linearResolvedComponents: Color.ResolvedComponents {
 		Color.ResolvedComponents(
-			linear: false,
+			linear: true,
 			r: linearRed.double,
 			g: linearGreen.double,
 			b: linearBlue.double,
