@@ -75,6 +75,7 @@ swift build -Xswiftc "-sdk" -Xswiftc "`xcrun --sdk macosx --show-sdk-path`"
 - Include parameter descriptions, return values, and examples when relevant
 - Use triple-slash (`///`) comments for documentation
 - Update related `.md` files in the repository when adding major features
+- **DO NOT** treat block comments (`/* ... */`) as documentation — these typically contain commented-out code, not documentation
 
 ### Testing
 - Write unit tests for new functionality
@@ -239,6 +240,6 @@ The repository has a custom agent configured in `.github/agents/qizh.agent.md` w
 
 ---
 
-**Last Updated**: 2025-11-21
+**Last Updated**: 2025-12-01
 **Swift Version**: 6.1+
 **Minimum Platforms**: iOS 17, macOS 14, macCatalyst 17
