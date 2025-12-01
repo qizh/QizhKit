@@ -98,7 +98,8 @@ let package = Package(
 			name: "QizhKitTests",
 			dependencies: [
 				"QizhKit",
-			]
+			],
+			swiftSettings: qizhKitSwiftSettings
 		)
 	],
 	swiftLanguageModes: [
