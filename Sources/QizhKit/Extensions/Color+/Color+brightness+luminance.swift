@@ -354,7 +354,7 @@ extension Color.ResolvedHDR {
 	/// Linear-light components from this HDR-resolved color.
 	public var linearResolvedComponents: Color.ResolvedComponents {
 		Color.ResolvedComponents(
-			linear: false,
+			linear: true,
 			r: linearRed.double,
 			g: linearGreen.double,
 			b: linearBlue.double,
