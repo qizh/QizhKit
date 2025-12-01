@@ -104,7 +104,7 @@ extension Optional {
 ///   Though it's better to use string literals directly in `Optional/forceUnwrap(because:)` call:
 ///   ```swift
 ///   let a: Int? = nil
-///   let b = a.forceUnwrap(because: "I though it can never become nil")
+///   let b = a.forceUnwrap(because: "I thought it can never become nil")
 ///   ```
 /// - SeeAlso:
 ///   ## Built-in assumptions
