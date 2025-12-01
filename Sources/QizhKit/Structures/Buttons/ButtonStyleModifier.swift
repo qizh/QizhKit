@@ -82,7 +82,7 @@ public protocol ButtonStylePlaceholderable {
 	var isPlaceholder: Bool { get set }
 }
 
-/// Opt-in capability for ButtonStyle types
+/// Opt-in capability for `ButtonStyle` types
 /// that require pixel-accurate layout or strokes.
 ///
 /// When adopted, `ButtonStyleModifier` provides `pixelLength` (the size of one pixel in
