@@ -127,9 +127,6 @@ public func produceResultWith<T, P1, P2>(
 
 /// Executes the provided calculation with three parameters and returns the result.
 ///
-/// - Note: There may be a typographical error in the function signature;
-/// the calculation closure is declared with `(P1, P2, P4) -> T` but is used
-/// with three parameters. It is expected to be `(P1, P2, P3) -> T`.
 /// - Parameters:
 ///   - p1: The first parameter of type `P1`.
 ///   - p2: The second parameter of type `P2`.
@@ -140,7 +137,7 @@ public func produceResultWith<T, P1, P2, P3>(
 	_ p1: P1,
 	_ p2: P2,
 	_ p3: P3,
-	perform calculation: (P1, P2, P4) -> T
+	perform calculation: (P1, P2, P3) -> T
 ) -> T {
 	calculation(p1, p2, p3)
 }
