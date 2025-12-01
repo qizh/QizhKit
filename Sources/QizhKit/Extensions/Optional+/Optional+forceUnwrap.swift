@@ -37,7 +37,7 @@ extension Optional {
 	///   - ``Optional/forceUnwrapBecauseTested()``
 	///   - ``Optional/forceUnwrapBecauseCreated()``
 	///   - ``Optional/forceUnwrapBecauseSet()``
-	///   - ``Optional/forceUnwrapManagedObjectField()```
+	///   - ``Optional/forceUnwrapManagedObjectField()``
 	public func forceUnwrap(because assumption: OptionalForcedUnwrapAssumption) -> Wrapped {
 		switch self {
 		case .none:
