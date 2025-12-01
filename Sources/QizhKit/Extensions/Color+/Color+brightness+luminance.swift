@@ -200,7 +200,6 @@ extension Color {
 			)
 		}
 		
-		/// Creates grayscale components with optional alpha.
 		/// Creates a grayscale `Color.ResolvedComponents` value with an optional alpha,
 		/// specifying whether the provided channels are linear-light or gamma-encoded sRGB.
 		///
