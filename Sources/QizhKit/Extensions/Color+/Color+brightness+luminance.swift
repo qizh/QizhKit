@@ -234,7 +234,7 @@ extension Color {
 		}
 		
 		/// Initializes from a SwiftUI `Color.ResolvedHDR`.
-		@available(iOS 26.0, *)
+		@available(iOS 26.0, macOS 26.0, *)
 		public init(
 			linear isLinear: Bool,
 			_ resolvedHDR: Color.ResolvedHDR
@@ -338,7 +338,7 @@ extension Color.Resolved {
 	}
 }
 
-@available(iOS 26.0, *)
+@available(iOS 26.0, macOS 26.0, *)
 extension Color.ResolvedHDR {
 	/// sRGB components from this HDR-resolved color.
 	public var resolvedComponents: Color.ResolvedComponents {
