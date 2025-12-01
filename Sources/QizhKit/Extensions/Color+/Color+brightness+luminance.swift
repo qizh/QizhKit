@@ -17,7 +17,7 @@ extension Color {
 	/// you can use for calculations (e.g., luminance, contrast, or custom blending).
 	/// It automatically chooses the best available resolution API for the current platform
 	/// and SDK:
-	/// - On platforms where HDR-aware resolution is available (iOS 26, macOS 15 and later),
+	/// - On platforms where HDR-aware resolution is available (iOS 26, macOS 26 and later),
 	///   it uses `Color.resolveHDR(in:)` to obtain high-fidelity components.
 	/// - On earlier platforms, it falls back to `Color.resolve(in:)`.
 	///
@@ -39,7 +39,7 @@ extension Color {
 	///   A `ResolvedComponents` value containing `sRGB`-like channels and a linear-light
 	///   flag, suitable for luminance/contrast calculations or further color processing.
 	/// - Attention:
-	///   HDR-aware resolution is used automatically when available (iOS 26, macOS 15 and
+	///   HDR-aware resolution is used automatically when available (iOS 26, macOS 26 and
 	///   later), otherwise the function falls back to the pre-HDR resolve API.
 	/// - SeeAlso:
 	///   - ``ResolvedComponents``
