@@ -35,6 +35,7 @@ A Swift 6 toolkit that bundles SwiftUI building blocks, backend-facing models, l
 2. Enter the repository URL and wait for the package metadata to load.
 3. Select the `QizhKit` library product and add it to your application or framework target.
 4. Preferably enable `Exact` dependency requirements if you need deterministic builds; the manifest already declares minimum versions that match the versions in `Package.resolved`.
+5. Learn how to enable HDR-aware color APIs: [HDR Build Configuration](Docs/hdr-build-configuration-behavior.md)
 
 ### Command-line usage
 You can also add QizhKit to another package by editing its `Package.swift`:
@@ -123,12 +124,13 @@ Task {
 These examples are pulled from actual APIs in the source tree—copy-paste away. *No warranty implied, but they should work. Probably.*
 
 ## Documentation
-- [`Docs/Components.md`](Docs/Components.md)
-- [`Docs/Extensions.md`](Docs/Extensions.md)
-- [`Docs/Structures.md`](Docs/Structures.md)
-- [`Docs/UI.md`](Docs/UI.md)
-- [`KNOWN_ISSUES.md`](KNOWN_ISSUES.md)
-- [`TODO.md`](TODO.md)
+- [HDR Build Configuration](Docs/hdr-build-configuration-behavior.md)
+- [Components](Docs/Components.md)
+- [Extensions](Docs/Extensions.md)
+- [Structures](Docs/Structures.md)
+- [UI](Docs/UI.md)
+- [KNOWN_ISSUES](KNOWN_ISSUES.md)
+- [TODO](TODO.md)
 
 Each document drills into the relevant folders and calls out the most commonly used APIs. When in doubt, jump into the corresponding `Sources/QizhKit/...` path for the latest definitions.
 
