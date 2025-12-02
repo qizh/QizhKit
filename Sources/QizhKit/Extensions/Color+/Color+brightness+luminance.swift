@@ -66,6 +66,44 @@ extension Color {
 		#endif
 	}
 	
+	/// Resolves the receiver (`Color`) into concrete channel values for a given
+	/// `EnvironmentValues` context, returning `sRGB`-like components along with a flag
+	/// indicating whether the RGB channels are linear-light.
+	///
+	/// This is a convenience wrapper around `Color.resolvedComponents(of:in:)` that
+	/// bridges `SwiftUI`’s abstract `Color` to numeric components suitable for color math
+	/// (e.g., luminance, contrast, or custom blending).
+	/// ## Behavior
+	/// - On platforms where HDR-aware resolution is available
+	///   (`iOS 26`, `macOS 26` and later), it uses `Color.resolveHDR(in:)`
+	///   to obtain high-fidelity components.
+	/// - On earlier platforms, it falls back to `Color.resolve(in:)`.
+	/// - Note:
+	///   - The exact numeric values can vary by environment
+	///     (e.g., color scheme, accessibility).
+	///   - Use `ResolvedComponents.relativeLuminance` for `WCAG 2.1` luminance and
+	///     `ResolvedComponents.brightness` for a quick perceived brightness estimate.
+	///   - For linear color math, prefer the linear-light interpretation
+	///     (`isLinear == true`).
+	/// - Parameter environment: The `EnvironmentValues` context
+	///   in which to resolve the color.
+	/// - Returns: A `ResolvedComponents` value containing `sRGB`-like channels
+	///   and a linear-light flag.
+	///   ## The returned `Color.ResolvedComponents` contains:
+	///   - `red`, `green`, `blue`, `opacity`: normalized channel values (`0...1`)
+	///   - `isLinear`: whether the RGB channels represent linear-light (`true`) or
+	///     gamma-encoded `sRGB` (`false`)
+	/// - SeeAlso:
+	///   - ``Color/resolvedComponents(of:in:)``
+	///   - ``Color/ResolvedComponents``
+	///   - ``Color/Resolved/resolvedComponents``
+	///   - ``Color/Resolved/linearResolvedComponents``
+	@inlinable public func resolvedComponents(
+		in environment: EnvironmentValues
+	) -> ResolvedComponents {
+		Color.resolvedComponents(of: self, in: environment)
+	}
+		
 	/// Returns `WCAG 2.1` relative luminance (`0` = dark, `1` = light).
 	@inlinable public static func relativeLuminance(
 		of color: Color,

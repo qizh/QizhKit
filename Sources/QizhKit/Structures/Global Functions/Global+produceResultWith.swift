@@ -23,6 +23,7 @@ public func produceResult<T, R>(
 	result(calculatedValue)
 }
 
+/*
 /// Produces a result by first lazily computing a value using an autoclosure
 /// and then applying the provided `result` closure.
 ///
@@ -36,6 +37,7 @@ public func produceResult<T, R>(
 ) -> R {
 	result(calculation())
 }
+*/
 
 #if swift(>=5.9)
 
@@ -77,6 +79,13 @@ public func produceResultWith<T>(_ calculation: @autoclosure () -> T) -> T {
 #if swift(>=5.9)
 
 // MARK: ┣ Variadic Generics
+
+public func produceResult<T, each P>(
+	_ parameter: () -> (repeat each P),
+	andCreate calculation: (repeat each P) -> T
+) -> T {
+	calculation(repeat each parameter())
+}
 
 /// Executes a calculation that depends on multiple variadic parameters
 /// and returns its result.
