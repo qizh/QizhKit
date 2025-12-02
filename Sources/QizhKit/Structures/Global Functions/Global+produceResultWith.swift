@@ -80,9 +80,36 @@ public func produceResultWith<T>(_ calculation: @autoclosure () -> T) -> T {
 
 // MARK: ┣ Variadic Generics
 
+/// Produces a value by first supplying a lazily-evaluated tuple of parameters
+/// and then applying a calculation that consumes those parameters.
+///
+/// This overload leverages variadic generics to support any number of input parameters
+/// without requiring multiple function variants. The `parameter` closure is invoked
+/// exactly once to obtain the input values, which are then forwarded to `calculation`.
+/// ## Example:
+/// ```swift
+/// let sum = produceResult {
+/// 	(3, 5)
+/// } useResult: { (a: Int, b: Int) in
+/// 	a + b
+/// }
+/// /// sum == 8
+/// ```
+/// - Parameters:
+///   - parameter: A closure that returns a variadic tuple of input parameters
+///     (`repeat each P`). This closure is evaluated once to produce the inputs
+///     for the calculation.
+///   - calculation: A closure that accepts the expanded variadic parameters
+///     and produces a result of type `T`.
+/// - Returns: The value produced by applying `calculation`
+///   to the parameters returned by `parameter`.
+/// - Note: This function is available when compiling with Swift `5.9` or later,
+///   where variadic generics are supported.
+/// - Complexity: `O(1)` for invoking both closures.
+///   Overall cost depends on the work performed inside `calculation`.
 public func produceResult<T, each P>(
 	_ parameter: () -> (repeat each P),
-	andCreate calculation: (repeat each P) -> T
+	useResult calculation: (repeat each P) -> T
 ) -> T {
 	calculation(repeat each parameter())
 }
