@@ -247,8 +247,8 @@ struct ColorBrightnessLuminanceTests {
 				opacity: 1.0
 			)
 			
-			let sRGBLum = sRGB.relativeLuminance
-			let linearLum = linear.relativeLuminance
+			let sRGBLum = sRGB.luminance
+			let linearLum = linear.luminance
 			#expect(abs(sRGBLum - linearLum) < 1e-4)
 		}
 		
@@ -280,8 +280,8 @@ struct ColorBrightnessLuminanceTests {
 			let black = Color.ResolvedComponents.black
 			let white = Color.ResolvedComponents.white
 			
-			#expect(abs(black.relativeLuminance - 0.0) < ColorBrightnessLuminanceTests.epsilon)
-			#expect(abs(white.relativeLuminance - 1.0) < 1e-4)
+			#expect(abs(black.luminance - 0.0) < ColorBrightnessLuminanceTests.epsilon)
+			#expect(abs(white.luminance - 1.0) < 1e-4)
 		}
 		
 		@Test
@@ -357,8 +357,8 @@ struct ColorBrightnessLuminanceTests {
 			#expect(linearComponents.opacity == sRGBComponents.opacity)
 			
 			/// Luminance should approximately match between sRGB+linearization and pure linear.
-			let sRGBLum = sRGBComponents.relativeLuminance
-			let linearLum = linearComponents.relativeLuminance
+			let sRGBLum = sRGBComponents.luminance
+			let linearLum = linearComponents.luminance
 			#expect(abs(sRGBLum - linearLum) < 1e-4)
 		}
 	}
@@ -389,14 +389,14 @@ struct ColorBrightnessLuminanceTests {
 			let env = EnvironmentValues()
 			
 			let color: Color = .gray
-			let staticLum = Color.relativeLuminance(of: color, in: env)
-			let instanceLum = color.relativeLuminance(resolvedIn: env)
+			let staticLum = Color.luminance(of: color, in: env)
+			let instanceLum = color.luminance(in: env)
 			
 			#expect(abs(staticLum - instanceLum) < ColorBrightnessLuminanceTests.epsilon)
 			
 			/// Sanity: gray should be between black and white.
-			let blackLum = Color.relativeLuminance(of: .black, in: env)
-			let whiteLum = Color.relativeLuminance(of: .white, in: env)
+			let blackLum = Color.luminance(of: .black, in: env)
+			let whiteLum = Color.luminance(of: .white, in: env)
 			#expect(blackLum < staticLum && staticLum < whiteLum)
 		}
 		
@@ -406,7 +406,7 @@ struct ColorBrightnessLuminanceTests {
 			
 			let color: Color = .blue
 			let staticBrightness = Color.brightness(of: color, in: env)
-			let instanceBrightness = color.brightness(resolvedIn: env)
+			let instanceBrightness = color.brightness(in: env)
 			
 			#expect(abs(staticBrightness - instanceBrightness) < ColorBrightnessLuminanceTests.epsilon)
 			

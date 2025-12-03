@@ -22,6 +22,14 @@ public extension BinaryFloatingPoint where Self: CVarArg {
 	@inlinable var s0: String { "\(self, f: 0)" }
 	@inlinable var s1: String { "\(self, f: 1)" }
 	@inlinable var s2: String { "\(self, f: 2)" }
+	/// ``s1`` with `0` prefix deleted if present
+	@inlinable var s1drop0: String { "\(self, f: 1)".deleting(prefix: "0") }
+	/// ``s2`` with `0` prefix deleted if present
+	@inlinable var s2drop0: String { "\(self, f: 2)".deleting(prefix: "0") }
+	/// ``s1`` with `0.` prefix deleted if present
+	@inlinable var s1drop0dot: String { "\(self, f: 1)".deleting(prefix: "0.") }
+	/// ``s2`` with `0.` prefix deleted if present
+	@inlinable var s2drop0dot: String { "\(self, f: 2)".deleting(prefix: "0.") }
 }
 
 public extension BinaryFloatingPoint {
