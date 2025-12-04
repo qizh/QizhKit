@@ -5,14 +5,24 @@ import PackageDescription
 import Foundation // ← for ProcessInfo
 
 /// Decide if HDR APIs should be enabled for QizhKit.
-let isHDREnabled: Bool = {
-	/// You can choose any env var name you like.
-	/// On your Mac, set QIZHKIT_ENABLE_HDR=1 in the environment when building.
+/// On your Mac, set `QIZHKIT_ENABLE_HDR=1` in the environment when building.
+/// - Experiment:
+/// ```zsh
+/// launchctl setenv QIZHKIT_ENABLE_HDR 1
+/// launchctl getenv QIZHKIT_ENABLE_HDR # should output 1
+/// ```
+let isHDREnabled: Bool =
 	if let value = ProcessInfo.processInfo.environment["QIZHKIT_ENABLE_HDR"] {
-		return value == "1" || value.lowercased() == "true"
+		value == "1" || value.lowercased() == "true"
+	} else {
+		false
 	}
-	return false
-}()
+
+/*
+print("QIZHKIT_ENABLE_HDR in Package.swift:",
+	  ProcessInfo.processInfo.environment["QIZHKIT_ENABLE_HDR"] ?? "nil")
+print("HDR enabled:", isHDREnabled)
+*/
 
 /// Base swift settings for QizhKit.
 var qizhKitSwiftSettings: [SwiftSetting] = [
