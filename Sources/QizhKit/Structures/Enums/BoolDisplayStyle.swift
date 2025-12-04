@@ -55,7 +55,7 @@ public enum BoolDisplayStyle: OppositeStrings,
 	case state = "on|off"
 	/// 1 | 0
 	case unipolarInt = "1|0"
-	/// 1 | -
+	/// 1 | -1
 	case bipolarInt = "1|-1"
 	/// ✅ | ❌
 	case emojiColorMark = "✅|❌"
