@@ -38,7 +38,7 @@ import QizhMacroKit
 /// | ``BoolDisplayStyle/power`` | ⏼ | ○ | > ⏻ – standby |
 /// | ``BoolDisplayStyle/playPause`` | ⏵ | ⏸ | > ⏯ – play-pause |
 /// | ``BoolDisplayStyle/playStop`` | ⏵ | ⏹ | |
-/// | ``BoolDisplayStyle/logicalOutput`` | ⊨ | ⊭ | The model statement. >– suitable for displaying the results of checking conditions or rules. |
+/// | ``BoolDisplayStyle/logicalOutput`` | ⊨ | ⊭ | Logical satisfaction: __models__ / __does not model__. >– suitable for displaying the results of checking conditions or rules. |
 /// | ``BoolDisplayStyle/logicalValue`` | The classic __verum__ / __falsum__ in logic |||
 /// | ^ | ⊤ | | always __true__  |
 /// | ^ | | ⊥ | always __a lie__ |
