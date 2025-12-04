@@ -180,9 +180,9 @@ public extension String {
 	/** ✅ */ static let checkmarkEmoji = String(Character.checkmarkEmojiChar)
 	/** ❌ */ static let xmarkEmoji = String(Character.xmarkEmojiChar)
 	
-	/// ■ - BLACK SQUARE
+	/// ■ - filled square (BLACK SQUARE)
 	static let squareFilled = String(Character.squareFilledChar)
-	/// □ - WHITE SQUARE
+	/// □ - empty square (WHITE SQUARE)
 	static let squareEmpty = String(Character.squareEmptyChar)
 	/// ◽️ - white medium small square
 	static let squareWhite = String(Character.squareWhiteChar)
