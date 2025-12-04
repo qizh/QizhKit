@@ -16,7 +16,7 @@ public enum ValueView: View, Sendable {
 	case undefined(NilReplacement)
 	case string(String)
 	case text(Text)
-	case bool(Bool, display: LabeledValueView.BoolDisplayStyle = .icon)
+	case bool(Bool, display: BoolDisplayStyle = .labeledValueViewDefault)
 	case integer(any (FixedWidthInteger & SignedInteger))
 	case unsignedInteger(any (FixedWidthInteger & UnsignedInteger))
 	case floatingPoint(any (BinaryFloatingPoint & CVarArg), fraction: Int = .zero)
@@ -43,16 +43,7 @@ public enum ValueView: View, Sendable {
 		case let .text(text):
 			text
 		case let .bool(bool, displayStyle):
-			switch displayStyle {
-			case .string:
-				ValueView.string(bool ? "true" : "false").text
-			case .int:
-				ValueView.string(bool ? "1" : "0").text
-			case .icon:
-				Text(Image(systemName: bool ? "checkmark" : "xmark"))
-			case .emoji:
-				ValueView.string(bool.sign.s).text
-			}
+			bool.s(displayStyle).asText()
 		case let .integer(integer):
 			Text(Int(integer).formatted(.number))
 		case let .unsignedInteger(integer):
@@ -100,15 +91,7 @@ public enum ValueView: View, Sendable {
 		case let .text(text):
 			"\(text)"
 		case let .bool(bool, displayStyle):
-			switch displayStyle {
-			case .string:
-				bool ? "true" : "false"
-			case .int:
-				bool ? "1" : "0"
-			case .emoji,
-				 .icon:
-				bool.sign.s
-			}
+			bool.s(displayStyle)
 		case let .integer(integer):
 			Int(integer).formatted(.number)
 		case let .unsignedInteger(integer):

@@ -106,224 +106,220 @@ extension Color {
 	
 	// MARK: Luminance
 	
-	/// Returns `WCAG 2.1` relative luminance (`0` = dark, `1` = light).
+	/// Returns the `WCAG 2.1` relative luminance (`0` = black, `1` = white) for a color
+	/// resolved in a given environment.
+	///
+	/// The color is first resolved into concrete channel values in the specified
+	/// `EnvironmentValues`, then converted to linear-light space (if needed) before
+	/// computing the standard WCAG luminance:
+	/// ```swift
+	/// Y = 0.2126 * R + 0.7152 * G + 0.0722 * B
+	/// ```
 	/// - Parameters:
-	///   - source: The color to evaluate.
-	///   - reference: Optional reference color. When provided, the result is the
-	///     normalized luminance difference versus this color.
-	///   - environment: The environment used to resolve both colors.
-	/// - Returns: The WCAG 2.1 relative luminance in `0...1` when `reference` is `nil`,
-	///   otherwise the normalized luminance difference in `0...1`.
-	
-	/// Outdated documentation
+	///   - source: The `SwiftUI` `Color` to evaluate.
+	///   - environment: The environment used to resolve the color.
+	///   - opacityAffected: Controls whether the color’s opacity is taken into account:
+	///     - `false` (default): Luminance is computed from the color’s RGB channels only,
+	///       ignoring opacity.
+	///     - `true`: The color is composited over an implicit background that depends on
+	///       the environment’s color scheme (`black` in dark mode, `white` in light mode),
+	///       and luminance is computed for the composited result.
+	/// - Returns: The `WCAG 2.1` relative luminance in the range `0...1`.
 	@inlinable public static func luminance(
 		of source: Color,
-		relativeTo reference: Color? = nil,
-		opacityAffected: Bool = false,
-		in environment: EnvironmentValues
+		in environment: EnvironmentValues,
+		opacityAffected: Bool = false
 	) -> Double {
 		produceResult(
-			for: source.resolvedComponents(in: environment),
-			reference?.resolvedComponents(in: environment)
-		) { a, b in
-			(a.luminance, a.opacity)
+			for: source.resolvedComponents(in: environment)
+		) { components in
+			(components.luminance, components.opacity)
 		} andCreate: { lum, o in
 			if opacityAffected {
 				if environment.colorScheme == .dark {
-					/// Color over black background
-					/// L_out = L * opacity + 0 * (1 - opacity)
+					/// Color over `black` background
+					/// ```swift
+					/// let L_out = L * opacity + 0 * (1 - opacity)
+					/// ```
 					lum * o
 				} else {
-					/// Color over white background
+					/// Color over `white` background
+					/// ```swift
 					/// L_out = L * opacity + 1 * (1 - opacity)
+					/// ```
 					lum * o + (1 - o)
 				}
 			} else {
 				lum
 			}
 		}
-
-		/*
-		produceResultWith(
-			source
-				.resolvedComponents(in: environment)
-				.withOpacityAccounted(opacityAffected, for: environment.colorScheme),
-			reference?
-				.resolvedComponents(in: environment)
-				.withOpacityAccounted(opacityAffected, for: environment.colorScheme)
-		) { a, b in
-			a.luminance(relativeTo: b)
-		}
-		*/
 	}
 	
-	/// Returns `WCAG 2.1` relative luminance (`0` = dark, `1` = light).
+	/// Returns the `WCAG 2.1` relative luminance (`0` = black, `1` = white) for this
+	/// color in the given environment.
+	///
+	/// The color is resolved in the provided `EnvironmentValues`, then its luminance is
+	/// computed using the WCAG 2.1 formula. See
+	/// ``Color/luminance(of:in:opacityAffected:)`` for details.
 	/// - Parameters:
-	///   - reference: Optional reference color. When provided, computes the normalized
-	///     luminance difference versus this color.
-	///   - environment: The environment used to resolve both colors.
-	/// - Returns: The WCAG 2.1 relative luminance in `0...1` when `reference` is `nil`,
-	///   otherwise the normalized luminance difference in `0...1`.
+	///   - environment: The environment used to resolve the color.
+	///   - opacityAffected: Whether to treat the color’s opacity as affecting the result.
+	///     When `true`, the color is composited over black (dark scheme) or white (light
+	///     scheme) before computing luminance.
+	/// - Returns: The `WCAG 2.1` relative luminance in the range `0...1`.
 	@inlinable public func luminance(
-		relativeTo reference: Color? = nil,
-		opacityAffected: Bool = false,
-		in environment: EnvironmentValues
+		in environment: EnvironmentValues,
+		opacityAffected: Bool = false
 	) -> Double {
 		Self.luminance(
 			of: self,
-			relativeTo: reference,
-			opacityAffected: opacityAffected,
-			in: environment
+			in: environment,
+			opacityAffected: opacityAffected
 		)
 	}
 	
-	/// Returns the WCAG 2.1 relative luminance (if no reference) or the
-	/// normalized luminance difference versus the background.
-	/// ## Convenience
-	/// Uses `.systemBackground` as the reference color in `environment`.
-	/// - Parameter environment: The environment used to resolve `.systemBackground`.
+	/// Returns the normalized luminance difference between this color and the system
+	/// background in the given environment.
+	///
+	/// The color is first composited over the implicit background determined by the
+	/// environment’s color scheme (`black` in dark mode, `white` in light mode), and the
+	/// luminance of that composite is computed. The result is then expressed as the
+	/// absolute difference from the background luminance:
+	/// - In dark mode, where the background luminance is `0`, this is simply the composite
+	///   luminance.
+	/// - In light mode, where the background luminance is `1`, this is `1 - composite`.
+	///
+	/// The returned value is always in `0...1`, where `0` means “indistinguishable from
+	/// the background” and `1` represents the maximum possible contrast.
+	/// - Parameter environment: The environment used to resolve both this color and the
+	///   background.
 	/// - Returns: Normalized luminance difference versus `.systemBackground` in `0...1`.
 	@inlinable public func luminance(
 		relativeToBackgroundIn environment: EnvironmentValues
 	) -> Double {
-		luminance(
-			relativeTo: .systemBackground,
-			opacityAffected: true,
-			in: environment
-		)
+		let composite = luminance(in: environment, opacityAffected: true)
+		return environment.colorScheme == .dark ? composite : (1.0 - composite)
 	}
 	
-	/// Returns the WCAG 2.1 relative luminance (if no reference) or the
-	/// normalized luminance difference versus the text color.
-	/// ## Convenience
-	/// Uses `.label` (text) as the reference color in `environment`.
-	/// - Parameter environment: The environment used to resolve `.label`.
+	/// Returns the normalized luminance difference between this color and the primary
+	/// text color (`.label`) in the given environment.
+	///
+	/// Both this color and `.label` are composited over their respective implicit
+	/// backgrounds (depending on the environment’s color scheme), and luminance is
+	/// computed for each. The result is the absolute difference between those luminance
+	/// values, producing a value in `0...1`.
+	/// - Parameter environment: The environment used to resolve both this color and
+	///   `.label`.
 	/// - Returns: Normalized luminance difference versus `.label` in `0...1`.
 	@inlinable public func luminance(
 		relativeToTextIn environment: EnvironmentValues
 	) -> Double {
-		luminance(
-			relativeTo: .label,
-			opacityAffected: true,
-			in: environment
-		)
+		let selfLum = luminance(in: environment, opacityAffected: true)
+		let textLum = Color.label.luminance(in: environment, opacityAffected: true)
+		return abs(selfLum - textLum)
 	}
 	
 	// MARK: Brightness
 	
-	/// Returns a simple perceived brightness estimate.
+	/// Returns a simple perceived brightness estimate (`0` = darkest, `1` = brightest)
+	/// for a color resolved in a given environment.
+	///
+	/// Brightness is derived from the resolved RGB channels using a lightweight
+	/// perceptual model. You can choose whether opacity should affect the result:
+	/// - When `opacityAffected` is `false` (default), brightness is computed from the
+	///   color’s RGB channels only.
+	/// - When `opacityAffected` is `true`, the color is composited over an implicit
+	///   background (`black` in dark mode, `white` in light mode) and brightness is
+	///   computed for the composited color.
 	/// - Parameters:
-	///   - source: The color to evaluate.
-	///   - reference: Optional reference color. When provided, the result is the
-	///     normalized brightness difference versus this color.
-	///   - environment: The environment used to resolve both colors.
-	/// - Returns: The perceived brightness in `0...1` when `reference` is `nil`,
-	///   otherwise the normalized brightness difference in `0...1`.
-	
-	/// Outdated documentation
+	///   - source: The `SwiftUI` `Color` to evaluate.
+	///   - environment: The environment used to resolve the color.
+	///   - opacityAffected: Whether to treat opacity as affecting the perceived
+	///     brightness.
+	/// - Returns: The perceived brightness in `0...1`.
 	@inlinable public static func brightness(
 		of source: Color,
-		relativeTo reference: Color? = nil,
-		opacityAffected: Bool = false,
-		in environment: EnvironmentValues
+		in environment: EnvironmentValues,
+		opacityAffected: Bool = false
 	) -> Double {
 		produceResult(
-			for: source.resolvedComponents(in: environment),
-			reference?.resolvedComponents(in: environment)
-		) { a, b in
-			(a.brightness, a.opacity)
+			for: source.resolvedComponents(in: environment)
+		) { components in
+			(components.brightness, components.opacity)
 		} andCreate: { br, o in
 			if opacityAffected {
-				/*
-				BrightnessOnDark = Brightness × Opacity
-				BrightnessOnLight = Brightness × Opacity + (1 - Opacity)
-				*/
-
 				if environment.colorScheme == .dark {
-					/// Color over black background
-					/// B_out = B * opacity + 0 * (1 - opacity)
+					/// Color over `black` background
+					/// ```swift
+					/// let B_out = B * opacity + 0 * (1 - opacity)
+					/// ```
 					br * o
 				} else {
-					/// Color over white background
-					/// B_out = B * opacity + 1 * (1 - opacity)
+					/// Color over `white` background
+					/// ```swift
+					/// let B_out = B * opacity + 1 * (1 - opacity)
+					/// ```
 					br * o + (1 - o)
 				}
 			} else {
 				br
 			}
 		}
-
-		
-		/*
-		produceResultWith(
-			source.resolvedComponents(in: environment),
-			reference?.resolvedComponents(in: environment)
-		) { a, b in
-			if opacityAffected {
-				if environment.colorScheme == .dark {
-					
-				} else {
-					
-				}
-			} else {
-				a.brightness(relativeTo: b)
-			}
-		}
-		*/
 	}
 	
-	/// Returns a simple perceived brightness estimate.
+	/// Returns a simple perceived brightness estimate (`0` = darkest, `1` = brightest)
+	/// for this color in the given environment.
+	///
+	/// See ``Color/brightness(of:in:opacityAffected:)`` for details on how brightness is
+	/// computed and how opacity is treated.
 	/// - Parameters:
-	///   - reference: Optional reference color. When provided, computes the normalized
-	///     brightness difference versus this color.
-	///   - environment: The environment used to resolve both colors.
-	/// - Returns: The perceived brightness in `0...1` when `reference` is `nil`,
-	///   otherwise the normalized brightness difference in `0...1`.
+	///   - environment: The environment used to resolve the color.
+	///   - opacityAffected: Whether to treat opacity as affecting the perceived
+	///     brightness.
+	/// - Returns: The perceived brightness in `0...1`.
 	@inlinable public func brightness(
-		relativeTo reference: Color? = nil,
-		opacityAffected: Bool = false,
-		in environment: EnvironmentValues
+		in environment: EnvironmentValues,
+		opacityAffected: Bool = false
 	) -> Double {
 		Self.brightness(
 			of: self,
-			relativeTo: reference,
-			opacityAffected: opacityAffected,
-			in: environment
+			in: environment,
+			opacityAffected: opacityAffected
 		)
 	}
 	
-	/// Returns a simple perceived brightness estimate.
-	/// ## Convenience:
-	/// Uses `.systemBackground` as the reference color in `environment`.
-	/// - Parameter environment: The environment used to resolve `.systemBackground`.
-	/// - Returns: Normalized brightness difference versus `.systemBackground` in `0...1`.
+	/// Returns the normalized brightness difference between this color and an implicit
+	/// background determined by the environment’s color scheme.
+	///
+	/// The color is composited over black (dark mode) or white (light mode), and a
+	/// brightness estimate is computed. The result is then expressed as the absolute
+	/// difference from the background brightness:
+	/// - In dark mode, this is simply the composite brightness.
+	/// - In light mode, it is `1 - composite`.
+	/// - Parameter environment: The environment used to resolve this color.
+	/// - Returns: Normalized brightness difference versus the background in `0...1`.
 	@inlinable public func brightness(
 		relativeToBackgroundIn environment: EnvironmentValues
 	) -> Double {
-		brightness(
-			relativeTo: environment.colorScheme == .dark
-				? Color(white: 0, opacity: 1)
-				: Color(white: 1, opacity: 1),
-			opacityAffected: true,
-			in: environment
-		)
+		let composite = brightness(in: environment, opacityAffected: true)
+		return environment.colorScheme == .dark ? composite : (1.0 - composite)
 	}
 	
-	/// Returns a simple perceived brightness estimate.
-	/// ## Convenience:
-	/// Uses `.label` (text) as the reference color in `environment`.
-	/// - Parameter environment: The environment used to resolve `.label`.
+	/// Returns the normalized brightness difference between this color and the primary
+	/// text color (`.label`) in the given environment.
+	///
+	/// Both this color and `.label` are composited over their implicit backgrounds
+	/// (depending on the environment’s color scheme), and brightness is computed for
+	/// each. The result is the absolute difference between those brightness values.
+	/// - Parameter environment: The environment used to resolve both this color and
+	///   `.label`.
 	/// - Returns: Normalized brightness difference versus `.label` in `0...1`.
 	@inlinable public func brightness(
 		relativeToTextIn environment: EnvironmentValues
 	) -> Double {
-		brightness(
-			relativeTo: environment.colorScheme == .dark
-				? Color(white: 1, opacity: 1)
-				: Color(white: 0, opacity: 1),
-			opacityAffected: true,
-			in: environment
-		)
+		let selfBrightness = brightness(in: environment, opacityAffected: true)
+		let textBrightness = Color.label.brightness(in: environment, opacityAffected: true)
+		return abs(selfBrightness - textBrightness)
 	}
 }
 
@@ -890,7 +886,7 @@ extension Color.ResolvedComponents {
 	
 	/// Computes the normalized difference in WCAG 2.1 relative luminance between this color
 	/// and an optional reference color.
-	/// 
+	///
 	/// This method compares the receiver’s `relative luminance` (see ``luminance``) to the
 	/// reference’s luminance and returns a symmetric, normalized distance:
 	/// ```
@@ -1018,7 +1014,7 @@ extension Color.ResolvedComponents {
 	
 	/// Computes the normalized difference in perceived brightness between this color
 	/// and an optional reference color.
-	/// 
+	///
 	/// This method compares the receiver’s `brightness` (a luma-like metric in `0...1`)
 	/// to the `reference` brightness and returns a symmetric, normalized distance:
 	/// ```

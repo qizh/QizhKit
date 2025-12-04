@@ -158,7 +158,7 @@ extension View {
 	/// - Example:
 	///   ```swift
 	///   VStack {
-	///       "john_doe".labeledView(label: "user_name")
+	///   "john_doe".labeledView(label: "user_name")
 	///       42.labeledView(label: "maxItems")
 	///   }
 	///   .setLabeledView(labelAsSentence: true) /// Renders as "User name" and "Max items"
@@ -681,17 +681,6 @@ public struct LabeledValueView: View {
 	}
 }
 
-// MARK: - Bool Display Style
-
-extension LabeledValueView {
-	public enum BoolDisplayStyle: Hashable, Sendable, DefaultCaseFirst {
-		case icon
-		case string
-		case int
-		case emoji
-	}
-}
-
 // MARK: - Multiline Switcher
 
 public struct LabeledViewMultilineSwitcher<Content: View>: View {
@@ -952,7 +941,7 @@ public extension Optional where Wrapped == Date {
 public extension Bool {
 	@inlinable @MainActor func labeledView(
 		label: String? = nil,
-		boolDisplayStyle: LabeledValueView.BoolDisplayStyle = .default
+		boolDisplayStyle: BoolDisplayStyle = .labeledValueViewDefault
 	) -> LabeledValueView {
 		LabeledValueView(
 			self,
@@ -964,7 +953,7 @@ public extension Bool {
 public extension Optional where Wrapped == Bool {
 	@inlinable @MainActor func labeledView(
 		label: String? = nil,
-		boolDisplayStyle: LabeledValueView.BoolDisplayStyle = .default
+		boolDisplayStyle: BoolDisplayStyle = .labeledValueViewDefault
 	) -> LabeledValueView {
 		LabeledValueView(
 			self,
@@ -976,7 +965,7 @@ public extension Optional where Wrapped == Bool {
 public extension Binding where Value == Bool {
 	@inlinable @MainActor func labeledView(
 		label: String? = nil,
-		boolDisplayStyle: LabeledValueView.BoolDisplayStyle = .default
+		boolDisplayStyle: BoolDisplayStyle = .labeledValueViewDefault
 	) -> LabeledValueView {
 		LabeledValueView(
 			wrappedValue,
