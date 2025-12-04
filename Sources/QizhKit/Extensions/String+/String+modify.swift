@@ -97,7 +97,7 @@ extension Substring {
 	///   /// - Important:
 	///   ///   This is just the logic demo,
 	///   ///   not an actual code you can use or build.
-	///   extention T where T: some Swift.Type {
+	///   extension T where T: some Swift.Type {
 	///   	@inlinable public var s: String { String(self) }
 	///   }
 	///   ```
