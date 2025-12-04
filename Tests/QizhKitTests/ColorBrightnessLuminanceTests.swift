@@ -57,7 +57,7 @@ struct ColorBrightnessLuminanceTests {
 			#expect(abs(above - one) < ColorBrightnessLuminanceTests.epsilon)
 		}
 		
-		@Test("Thrreshold check")
+		@Test("Threshold check")
 		func testThresholdBehavior() {
 			/// 0.03928 is the WCAG threshold; just sanity-check continuity.
 			let threshold: Double = 0.03928
