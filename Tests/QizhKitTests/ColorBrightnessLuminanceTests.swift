@@ -134,7 +134,7 @@ struct ColorBrightnessLuminanceTests {
 			#expect(c.opacity == 0.8)
 		}
 		
-		@Test("Components initialized with an array of 2 values components shoul be interpreted as grayscale and alpha")
+		@Test("Components initialized with an array of 2 values should be interpreted as grayscale and alpha")
 		func testComponentsArrayTwoValuesGrayscalePlusAlpha() {
 			let c = Color.ResolvedComponents(
 				linear: false,
