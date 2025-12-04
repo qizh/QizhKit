@@ -81,7 +81,7 @@ extension Color {
 	/// - Note:
 	///   - The exact numeric values can vary by environment
 	///     (e.g., color scheme, accessibility).
-	///   - Use `ResolvedComponents.relativeLuminance` for `WCAG 2.1` luminance and
+	///   - Use `ResolvedComponents.luminance` for `WCAG 2.1` luminance and
 	///     `ResolvedComponents.brightness` for a quick perceived brightness estimate.
 	///   - For linear color math, prefer the linear-light interpretation
 	///     (`isLinear == true`).
