@@ -8,19 +8,12 @@
 
 import SwiftUI
 
-public struct HighlightColorKey: EnvironmentKey {
-	public static let defaultValue: Color? = nil
+extension EnvironmentValues {
+	@Entry public var highlightColor: Color? = nil
 }
 
-public extension EnvironmentValues {
-	var highlightColor: Color? {
-		get { self[HighlightColorKey.self] }
-		set { self[HighlightColorKey.self] = newValue }
-	}
-}
-
-public extension View {
-	func highlightColor(_ color: Color?) -> some View {
+extension View {
+	public func highlightColor(_ color: Color?) -> some View {
 		environment(\.highlightColor, color)
 	}
 }
