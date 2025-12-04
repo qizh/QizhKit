@@ -229,7 +229,7 @@ struct ColorBrightnessLuminanceTests {
 			#expect(linear.opacity == sRGB.opacity)
 		}
 		
-		@Test("Luminescence matching for sRGB and linear colors")
+		@Test("Luminance matching for sRGB and linear colors")
 		func testLuminanceMatchesBetweenSRGBAndLinear() {
 			let sRGB = Color.ResolvedComponents(
 				linear: false,
