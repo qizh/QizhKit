@@ -1037,14 +1037,14 @@ extension Color.ResolvedComponents {
 	/// let separation = fg.brightness(relativeTo: bg) /// 0...1
 	/// ```
 	/// - Important: This is not a WCAG contrast ratio. For accessibility-related contrast
-	///   calculations, prefer ``relativeLuminance`` and ``luminance(relativeTo:)``.
+	///   calculations, prefer ``luminance`` and ``luminance(relativeTo:)``.
 	/// - Parameter reference: The color to compare against.
 	///   If `nil`, returns the receiver’s absolute brightness.
 	/// - Returns: A value in `0...1` representing the normalized brightness difference,
 	///   where larger values indicate a greater perceived brightness separation.
 	/// - SeeAlso:
 	///   - ``brightness``
-	///   - ``relativeLuminance``
+	///   - ``luminance``
 	///   - ``luminance(relativeTo:)``
 	///   - ``Color/brightness(of:relativeTo:in:)``
 	///   - ``Color/brightness(relativeTo:in:)``
