@@ -130,10 +130,13 @@ extension Color {
 		} andCreate: { lum, o in
 			if opacityAffected {
 				if environment.colorScheme == .dark {
+					/// Color over black background
+					/// L_out = L * opacity + 0 * (1 - opacity)
 					lum * o
 				} else {
-					lum + o - lum * o
-					// lum + (1.0 - lum) * o
+					/// Color over white background
+					/// L_out = L * opacity + 1 * (1 - opacity)
+					lum * o + (1 - o)
 				}
 			} else {
 				lum
@@ -231,14 +234,19 @@ extension Color {
 			(a.brightness, a.opacity)
 		} andCreate: { br, o in
 			if opacityAffected {
-				/// BrightnessOnDark = Brighness x Opacity
-				/// BrightnessOnLight = Brighness + (1 - Brighness) x Opacity
+				/*
+				BrightnessOnDark = Brightness × Opacity
+				BrightnessOnLight = Brightness × Opacity + (1 - Opacity)
+				*/
 
 				if environment.colorScheme == .dark {
+					/// Color over black background
+					/// B_out = B * opacity + 0 * (1 - opacity)
 					br * o
 				} else {
-					br + o - br * o
-					// br + (1.0 - br) * o
+					/// Color over white background
+					/// B_out = B * opacity + 1 * (1 - opacity)
+					br * o + (1 - o)
 				}
 			} else {
 				br
