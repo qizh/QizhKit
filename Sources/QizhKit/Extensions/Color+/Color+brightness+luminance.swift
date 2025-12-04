@@ -887,7 +887,7 @@ extension Color.ResolvedComponents {
 	/// Computes the normalized difference in WCAG 2.1 relative luminance between this color
 	/// and an optional reference color.
 	///
-	/// This method compares the receiver’s `relative luminance` (see ``luminance``) to the
+	/// This method compares the receiver’s `luminance` (see ``luminance``) to the
 	/// reference’s luminance and returns a symmetric, normalized distance:
 	/// ```
 	/// distance = |L_self - L_ref| / max(L_self, L_ref)
