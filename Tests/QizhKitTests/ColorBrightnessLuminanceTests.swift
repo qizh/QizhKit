@@ -275,7 +275,7 @@ struct ColorBrightnessLuminanceTests {
 			#expect(abs(sRGBBrightness - linearBrightness) < 1e-4)
 		}
 		
-		@Test("Luminescence for black and white")
+		@Test("Luminance for black and white")
 		func testLuminanceForBlackAndWhite() {
 			let black = Color.ResolvedComponents.black
 			let white = Color.ResolvedComponents.white
