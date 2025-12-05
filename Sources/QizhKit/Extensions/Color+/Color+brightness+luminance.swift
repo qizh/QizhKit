@@ -66,46 +66,264 @@ extension Color {
 		#endif
 	}
 	
-	/// Returns `WCAG 2.1` relative luminance (`0` = dark, `1` = light).
-	@inlinable public static func relativeLuminance(
-		of color: Color,
+	/// Resolves the receiver (`Color`) into concrete channel values for a given
+	/// `EnvironmentValues` context, returning `sRGB`-like components along with a flag
+	/// indicating whether the RGB channels are linear-light.
+	///
+	/// This is a convenience wrapper around `Color.resolvedComponents(of:in:)` that
+	/// bridges `SwiftUI`’s abstract `Color` to numeric components suitable for color math
+	/// (e.g., luminance, contrast, or custom blending).
+	/// ## Behavior
+	/// - On platforms where HDR-aware resolution is available
+	///   (`iOS 26`, `macOS 26` and later), it uses `Color.resolveHDR(in:)`
+	///   to obtain high-fidelity components.
+	/// - On earlier platforms, it falls back to `Color.resolve(in:)`.
+	/// - Note:
+	///   - The exact numeric values can vary by environment
+	///     (e.g., color scheme, accessibility).
+	///   - Use `ResolvedComponents.luminance` for `WCAG 2.1` luminance and
+	///     `ResolvedComponents.brightness` for a quick perceived brightness estimate.
+	///   - For linear color math, prefer the linear-light interpretation
+	///     (`isLinear == true`).
+	/// - Parameter environment: The `EnvironmentValues` context
+	///   in which to resolve the color.
+	/// - Returns: A `ResolvedComponents` value containing `sRGB`-like channels
+	///   and a linear-light flag.
+	///   ## The returned `Color.ResolvedComponents` contains:
+	///   - `red`, `green`, `blue`, `opacity`: normalized channel values (`0...1`)
+	///   - `isLinear`: whether the RGB channels represent linear-light (`true`) or
+	///     gamma-encoded `sRGB` (`false`)
+	/// - SeeAlso:
+	///   - ``Color/resolvedComponents(of:in:)``
+	///   - ``Color/ResolvedComponents``
+	///   - ``Color/Resolved/resolvedComponents``
+	///   - ``Color/Resolved/linearResolvedComponents``
+	@inlinable public func resolvedComponents(
 		in environment: EnvironmentValues
-	) -> Double {
-		resolvedComponents(of: color, in: environment).relativeLuminance
+	) -> ResolvedComponents {
+		Color.resolvedComponents(of: self, in: environment)
 	}
 	
-	/// Returns `WCAG 2.1` relative luminance (`0` = dark, `1` = light).
-	@inlinable public func relativeLuminance(
-		resolvedIn environment: EnvironmentValues
+	// MARK: Luminance
+	
+	/// Returns the `WCAG 2.1` relative luminance (`0` = black, `1` = white) for a color
+	/// resolved in a given environment.
+	///
+	/// The color is first resolved into concrete channel values in the specified
+	/// `EnvironmentValues`, then converted to linear-light space (if needed) before
+	/// computing the standard WCAG luminance:
+	/// ```swift
+	/// Y = 0.2126 * R + 0.7152 * G + 0.0722 * B
+	/// ```
+	/// - Parameters:
+	///   - source: The `SwiftUI` `Color` to evaluate.
+	///   - environment: The environment used to resolve the color.
+	///   - opacityAffected: Controls whether the color’s opacity is taken into account:
+	///     - `false` (default): Luminance is computed from the color’s RGB channels only,
+	///       ignoring opacity.
+	///     - `true`: The color is composited over an implicit background that depends on
+	///       the environment’s color scheme (`black` in dark mode, `white` in light mode),
+	///       and luminance is computed for the composited result.
+	/// - Returns: The `WCAG 2.1` relative luminance in the range `0...1`.
+	@inlinable public static func luminance(
+		of source: Color,
+		in environment: EnvironmentValues,
+		opacityAffected: Bool = false
 	) -> Double {
-		Self.relativeLuminance(of: self, in: environment)
+		produceResult(
+			for: source.resolvedComponents(in: environment)
+		) { components in
+			(components.luminance, components.opacity)
+		} andCreate: { lum, o in
+			if opacityAffected {
+				if environment.colorScheme == .dark {
+					/// Color over `black` background
+					/// ```swift
+					/// let L_out = L * opacity + 0 * (1 - opacity)
+					/// ```
+					lum * o
+				} else {
+					/// Color over `white` background
+					/// ```swift
+					/// L_out = L * opacity + 1 * (1 - opacity)
+					/// ```
+					lum * o + (1 - o)
+				}
+			} else {
+				lum
+			}
+		}
 	}
 	
-	/// Returns a simple perceived brightness estimate.
+	/// Returns the `WCAG 2.1` relative luminance (`0` = black, `1` = white) for this
+	/// color in the given environment.
+	///
+	/// The color is resolved in the provided `EnvironmentValues`, then its luminance is
+	/// computed using the WCAG 2.1 formula. See
+	/// ``Color/luminance(of:in:opacityAffected:)`` for details.
+	/// - Parameters:
+	///   - environment: The environment used to resolve the color.
+	///   - opacityAffected: Whether to treat the color’s opacity as affecting the result.
+	///     When `true`, the color is composited over black (dark scheme) or white (light
+	///     scheme) before computing luminance.
+	/// - Returns: The `WCAG 2.1` relative luminance in the range `0...1`.
+	@inlinable public func luminance(
+		in environment: EnvironmentValues,
+		opacityAffected: Bool = false
+	) -> Double {
+		Self.luminance(
+			of: self,
+			in: environment,
+			opacityAffected: opacityAffected
+		)
+	}
+	
+	/// Returns the normalized luminance difference between this color and the system
+	/// background in the given environment.
+	///
+	/// The color is first composited over the implicit background determined by the
+	/// environment’s color scheme (`black` in dark mode, `white` in light mode), and the
+	/// luminance of that composite is computed. The result is then expressed as the
+	/// absolute difference from the background luminance:
+	/// - In dark mode, where the background luminance is `0`, this is simply the composite
+	///   luminance.
+	/// - In light mode, where the background luminance is `1`, this is `1 - composite`.
+	///
+	/// The returned value is always in `0...1`, where `0` means “indistinguishable from
+	/// the background” and `1` represents the maximum possible contrast.
+	/// - Parameter environment: The environment used to resolve both this color and the
+	///   background.
+	/// - Returns: Normalized luminance difference versus `.systemBackground` in `0...1`.
+	@inlinable public func luminance(
+		relativeToBackgroundIn environment: EnvironmentValues
+	) -> Double {
+		let composite = luminance(in: environment, opacityAffected: true)
+		return environment.colorScheme == .dark ? composite : (1.0 - composite)
+	}
+	
+	/// Returns the normalized luminance difference between this color and the primary
+	/// text color (`.label`) in the given environment.
+	///
+	/// Both this color and `.label` are composited over their respective implicit
+	/// backgrounds (depending on the environment’s color scheme), and luminance is
+	/// computed for each. The result is the absolute difference between those luminance
+	/// values, producing a value in `0...1`.
+	/// - Parameter environment: The environment used to resolve both this color and
+	///   `.label`.
+	/// - Returns: Normalized luminance difference versus `.label` in `0...1`.
+	@inlinable public func luminance(
+		relativeToTextIn environment: EnvironmentValues
+	) -> Double {
+		let selfLum = luminance(in: environment, opacityAffected: true)
+		let textLum = Color.label.luminance(in: environment, opacityAffected: true)
+		return abs(selfLum - textLum)
+	}
+	
+	// MARK: Brightness
+	
+	/// Returns a simple perceived brightness estimate (`0` = darkest, `1` = brightest)
+	/// for a color resolved in a given environment.
+	///
+	/// Brightness is derived from the resolved RGB channels using a lightweight
+	/// perceptual model. You can choose whether opacity should affect the result:
+	/// - When `opacityAffected` is `false` (default), brightness is computed from the
+	///   color’s RGB channels only.
+	/// - When `opacityAffected` is `true`, the color is composited over an implicit
+	///   background (`black` in dark mode, `white` in light mode) and brightness is
+	///   computed for the composited color.
+	/// - Parameters:
+	///   - source: The `SwiftUI` `Color` to evaluate.
+	///   - environment: The environment used to resolve the color.
+	///   - opacityAffected: Whether to treat opacity as affecting the perceived
+	///     brightness.
+	/// - Returns: The perceived brightness in `0...1`.
 	@inlinable public static func brightness(
-		of color: Color,
-		in environment: EnvironmentValues
+		of source: Color,
+		in environment: EnvironmentValues,
+		opacityAffected: Bool = false
 	) -> Double {
-		resolvedComponents(of: color, in: environment).brightness
+		produceResult(
+			for: source.resolvedComponents(in: environment)
+		) { components in
+			(components.brightness, components.opacity)
+		} andCreate: { br, o in
+			if opacityAffected {
+				if environment.colorScheme == .dark {
+					/// Color over `black` background
+					/// ```swift
+					/// let B_out = B * opacity + 0 * (1 - opacity)
+					/// ```
+					br * o
+				} else {
+					/// Color over `white` background
+					/// ```swift
+					/// let B_out = B * opacity + 1 * (1 - opacity)
+					/// ```
+					br * o + (1 - o)
+				}
+			} else {
+				br
+			}
+		}
 	}
 	
-	/// Returns a simple perceived brightness estimate.
+	/// Returns a simple perceived brightness estimate (`0` = darkest, `1` = brightest)
+	/// for this color in the given environment.
+	///
+	/// See ``Color/brightness(of:in:opacityAffected:)`` for details on how brightness is
+	/// computed and how opacity is treated.
+	/// - Parameters:
+	///   - environment: The environment used to resolve the color.
+	///   - opacityAffected: Whether to treat opacity as affecting the perceived
+	///     brightness.
+	/// - Returns: The perceived brightness in `0...1`.
 	@inlinable public func brightness(
-		resolvedIn environment: EnvironmentValues
+		in environment: EnvironmentValues,
+		opacityAffected: Bool = false
 	) -> Double {
-		Self.brightness(of: self, in: environment)
+		Self.brightness(
+			of: self,
+			in: environment,
+			opacityAffected: opacityAffected
+		)
+	}
+	
+	/// Returns the normalized brightness difference between this color and an implicit
+	/// background determined by the environment’s color scheme.
+	///
+	/// The color is composited over black (dark mode) or white (light mode), and a
+	/// brightness estimate is computed. The result is then expressed as the absolute
+	/// difference from the background brightness:
+	/// - In dark mode, this is simply the composite brightness.
+	/// - In light mode, it is `1 - composite`.
+	/// - Parameter environment: The environment used to resolve this color.
+	/// - Returns: Normalized brightness difference versus the background in `0...1`.
+	@inlinable public func brightness(
+		relativeToBackgroundIn environment: EnvironmentValues
+	) -> Double {
+		let composite = brightness(in: environment, opacityAffected: true)
+		return environment.colorScheme == .dark ? composite : (1.0 - composite)
+	}
+	
+	/// Returns the normalized brightness difference between this color and the primary
+	/// text color (`.label`) in the given environment.
+	///
+	/// Both this color and `.label` are composited over their implicit backgrounds
+	/// (depending on the environment’s color scheme), and brightness is computed for
+	/// each. The result is the absolute difference between those brightness values.
+	/// - Parameter environment: The environment used to resolve both this color and
+	///   `.label`.
+	/// - Returns: Normalized brightness difference versus `.label` in `0...1`.
+	@inlinable public func brightness(
+		relativeToTextIn environment: EnvironmentValues
+	) -> Double {
+		let selfBrightness = brightness(in: environment, opacityAffected: true)
+		let textBrightness = Color.label.brightness(in: environment, opacityAffected: true)
+		return abs(selfBrightness - textBrightness)
 	}
 }
 
-extension Color.ResolvedComponents {
-	/// Output color space for resolved components.
-	public enum Representation: Hashable, Sendable {
-		/// Standard sRGB (gamma-encoded)
-		case sRGB
-		/// Linear-light values suitable for WCAG 2.1 math
-		case WCAG21
-	}
-}
+// MARK: - Color.ResolvedComponents
 
 extension Color {
 	/// A resolved color's channel values with optional linear-light flag.
@@ -444,14 +662,151 @@ extension Color {
 		}
 		#endif
 		
-		/// Convenience white in sRGB.
+		/// Convenience `white` in sRGB.
 		public static let white: Self = .init(linear: false, white: 1)
-		/// Convenience black in sRGB.
+		/// Convenience `black` in sRGB.
 		public static let black: Self = .init(linear: false, white: 0)
+		/// Convenience `black` in sRGB.
+		public static let clear: Self = .init(linear: false, white: 0, opacity: 0)
+		
+		/// Convenience `Color.systemBackground` components
+		/// - Parameter environment: The environment used
+		///   to resolve `Color.systemBackground`.
+		/// - Returns: Resolved components for the system background color
+		///   in the given environment.
+		@inlinable public static func systemBackground(
+			resolvedIn environment: EnvironmentValues
+		) -> Color.ResolvedComponents {
+			Color.systemBackground.resolvedComponents(in: environment)
+		}
+		
+		/// Convenience `label` components
+		/// - Parameter environment: The environment used to resolve `Color.label`.
+		/// - Returns: Resolved components for the system label color
+		///   in the given environment.
+		@inlinable public static func label(
+			resolvedIn environment: EnvironmentValues
+		) -> Color.ResolvedComponents {
+			Color.label.resolvedComponents(in: environment)
+		}
+	}
+}
+
+// MARK: Color.ResolvedComponents +
+
+extension Color.ResolvedComponents: Identifiable {
+	/// A stable textual identifier composed from the `linear` flag and `RGBA` values.
+	public var id: String {
+		"""
+		\(isLinear ? "linear-" : "")\
+		RGBA\
+		(\(red), \(green), \(blue), \(opacity))
+		"""
 	}
 }
 
 extension Color.ResolvedComponents {
+	public static func * (rc: Self, k: Double) -> Color.ResolvedComponents {
+		Color.ResolvedComponents(
+			linear: rc.isLinear,
+			r: rc.red * k,
+			g: rc.green * k,
+			b: rc.blue * k,
+			a: rc.opacity
+		)
+		.zeroOneClipped
+	}
+	
+	public static func + (rc: Self, k: Double) -> Color.ResolvedComponents {
+		Color.ResolvedComponents(
+			linear: rc.isLinear,
+			r: rc.red + k,
+			g: rc.green + k,
+			b: rc.blue + k,
+			a: rc.opacity
+		)
+		.zeroOneClipped
+	}
+	
+	public static func + (lrc: Self, rrc: Self) -> Color.ResolvedComponents {
+		if lrc.isLinear == rrc.isLinear {
+			Color.ResolvedComponents(
+				linear: lrc.isLinear,
+				r: lrc.red + rrc.red,
+				g: lrc.green + rrc.green,
+				b: lrc.blue + rrc.blue,
+				a: (lrc.opacity + rrc.opacity) / 2
+			)
+			.zeroOneClipped
+		} else {
+			lrc.sRGBToLinearWCAG21 + rrc.sRGBToLinearWCAG21
+		}
+	}
+	
+	public static func - (rc: Self, k: Double) -> Color.ResolvedComponents {
+		Color.ResolvedComponents(
+			linear: rc.isLinear,
+			r: rc.red - k,
+			g: rc.green - k,
+			b: rc.blue - k,
+			a: rc.opacity
+		)
+		.zeroOneClipped
+	}
+	
+	public static func - (k: Double, rc: Self) -> Color.ResolvedComponents {
+		Color.ResolvedComponents(
+			linear: rc.isLinear,
+			r: k - rc.red,
+			g: k - rc.green,
+			b: k - rc.blue,
+			a: rc.opacity
+		)
+		.zeroOneClipped
+	}
+	
+	/*
+	public static func / (rc: Self, k: Double) -> Color.ResolvedComponents {
+		if k == 0.0 {
+			Color.ResolvedComponents(
+				linear: rc.isLinear,
+				r: 1.0,
+				g: 1.0,
+				b: 1.0,
+				a: rc.opacity
+			)
+		} else {
+			Color.ResolvedComponents(
+				linear: rc.isLinear,
+				r: rc.red / k,
+				g: rc.green / k,
+				b: rc.blue / k,
+				a: rc.opacity
+			)
+			.zeroOneClipped
+		}
+	}
+	*/
+	
+	@inlinable public static func * (k: Double, rc: Self) -> Self {
+		rc * k
+	}
+	
+	public func withOpacityAccounted(
+		_ accounted: Bool = true,
+		for colorScheme: ColorScheme
+	) -> Self {
+		if accounted {
+			if colorScheme == .dark {
+				self * opacity
+			} else {
+				self + (1 - self) * opacity
+			}
+		} else {
+			self
+		}
+	}
+	
 	/// Converts a gamma-encoded `sRGB` component into its linear-light equivalent
 	/// using the `WCAG 2.1` transfer function.
 	///
@@ -519,14 +874,106 @@ extension Color.ResolvedComponents {
 	///   - `WCAG 2.1`: [Relative Luminance](https://www.w3.org/TR/WCAG21/)
 	///   - sRGB to linear conversion used by WCAG
 	///   - `Color.ResolvedComponents.sRGBToLinearWCAG21`
-	public var relativeLuminance: Double {
+	public var luminance: Double {
 		if isLinear {
 			  0.2126 * r
 			+ 0.7152 * g
 			+ 0.0722 * b
 		} else {
-			sRGBToLinearWCAG21.relativeLuminance
+			sRGBToLinearWCAG21.luminance
 		}
+	}
+	
+	/// Computes the normalized difference in WCAG 2.1 relative luminance between this color
+	/// and an optional reference color.
+	///
+	/// This method compares the receiver’s `luminance` (see ``luminance``) to the
+	/// reference’s luminance and returns a symmetric, normalized distance:
+	/// ```
+	/// distance = |L_self - L_ref| / max(L_self, L_ref)
+	/// ```
+	/// where `L_self` and `L_ref` are WCAG 2.1 relative luminance values in `0...1`.
+	/// ## Behavior:
+	/// - If `reference == nil`, the method returns the receiver’s absolute `WCAG` luminance
+	///   (`0...1`).
+	/// - If `reference` is provided, the result is a value in `0...1` expressing the
+	///   relative separation between the two luminance values:
+	///   - `0` when both colors have identical luminance
+	///   - `1` when one color is black (`0`) and the other has any non-zero luminance
+	/// - The underlying luminance used for both colors is computed from linear-light RGB
+	///   `WCAG` coefficients `(0.2126, 0.7152, 0.0722)`. If the components are sRGB-encoded,
+	///   using they are linearized first (see ``sRGBToLinearWCAG21`` and ``luminance``).
+	/// ## Example:
+	/// ```swift
+	/// let fg: Color.ResolvedComponents = foregroundColor.resolvedComponents(in: env)
+	/// let bg: Color.ResolvedComponents = backgroundColor.resolvedComponents(in: env)
+	///
+	/// // Luminance separation (0...1), where higher means greater difference
+	/// let separation = fg.luminance(relativeTo: bg)
+	/// ```
+	/// - Important:
+	///   - This is not the WCAG contrast ratio. To compute the WCAG contrast ratio, use:
+	///     ```
+	///     contrast = (max(L1, L2) + 0.05) / (min(L1, L2) + 0.05)
+	///     ```
+	///   - The function is symmetric with respect to `self` and `reference`.
+	/// - Parameter reference: The `Color` to compare against.
+	///   If `nil`, returns the receiver’s absolute `WCAG` relative luminance.
+	/// - Returns: A value in `0...1` representing the normalized luminance difference, where
+	///   larger values indicate a greater separation in perceived lightness.
+	/// - SeeAlso:
+	///   - ``luminance``
+	///   - ``brightness(relativeTo:)``
+	///   - ``brightness``
+	///   - ``sRGBToLinearWCAG21``
+	///   - ``Color/luminance(of:relativeTo:in:)``
+	///   - ``luminance(relativeTo:resolvedIn:)``
+	public func luminance(
+		relativeTo reference: Color.ResolvedComponents? = nil
+	) -> Double {
+		switch reference {
+		case .none: self.luminance
+		case .some(let other):
+			produceResultWith(
+				self.luminance,
+				other.luminance
+			) { a, b in
+				if let m = max(a, b).nonZero {
+					abs(a - b) / m
+				} else {
+					.one
+				}
+				/*
+				if a > b {
+					if a.isZero {
+						.one
+					} else {
+						(a - b) / a
+					}
+				} else {
+					if b.isZero {
+						.one
+					} else {
+						(b - a) / b
+					}
+				}
+				*/
+			}
+		}
+	}
+
+	/// Convenience overload that resolves `other` in `environment` and forwards to
+	/// ``luminance(relativeTo:)``.
+	/// - Parameters:
+	///   - other: Optional reference `Color` to compare against.
+	///   - environment: Environment used to resolve the reference color.
+	/// - Returns: WCAG 2.1 relative luminance (if `other` is `nil`) or the
+	///   normalized luminance difference versus the resolved reference color.
+	@inlinable public func luminance(
+		relativeTo other: Color? = nil,
+		resolvedIn environment: EnvironmentValues
+	) -> Double {
+		self.luminance(relativeTo: other?.resolvedComponents(in: environment))
 	}
 	
 	/// A simple perceived brightness metric derived from the color’s RGB channels.
@@ -565,6 +1012,82 @@ extension Color.ResolvedComponents {
 		}
 	}
 	
+	/// Computes the normalized difference in perceived brightness between this color
+	/// and an optional reference color.
+	///
+	/// This method compares the receiver’s `brightness` (a luma-like metric in `0...1`)
+	/// to the `reference` brightness and returns a symmetric, normalized distance:
+	/// ```
+	/// distance = |self.brightness - reference.brightness| / max(self.brightness, reference.brightness)
+	/// ```
+	/// ## Behavior
+	/// - If `reference == nil`, the method returns the receiver’s absolute `brightness`
+	///   (in `0...1`).
+	/// - If `reference` is provided, the result is a value in `0...1` expressing the
+	///   relative difference between the two brightness values:
+	///   - `0` when both colors have identical brightness
+	///   - `1` when one color is black (`0`) and the other has any non-zero brightness
+	/// - The underlying `brightness` used for both colors is computed from their RGB
+	///   channels, automatically linearizing sRGB if needed (see ``brightness``).
+	/// ## Example
+	/// ```swift
+	/// /// Compare a foreground color to a background color’s components
+	/// let fg = foregroundComponents
+	/// let bg = backgroundComponents
+	/// let separation = fg.brightness(relativeTo: bg) /// 0...1
+	/// ```
+	/// - Important: This is not a WCAG contrast ratio. For accessibility-related contrast
+	///   calculations, prefer ``luminance`` and ``luminance(relativeTo:)``.
+	/// - Parameter reference: The color to compare against.
+	///   If `nil`, returns the receiver’s absolute brightness.
+	/// - Returns: A value in `0...1` representing the normalized brightness difference,
+	///   where larger values indicate a greater perceived brightness separation.
+	/// - SeeAlso:
+	///   - ``brightness``
+	///   - ``luminance``
+	///   - ``luminance(relativeTo:)``
+	///   - ``Color/brightness(of:relativeTo:in:)``
+	///   - ``Color/brightness(relativeTo:in:)``
+	public func brightness(
+		relativeTo reference: Color.ResolvedComponents? = nil
+	) -> Double {
+		switch reference {
+		case .none: self.brightness
+		case .some(let other):
+			produceResultWith(
+				self.brightness,
+				other.brightness
+			) { a, b in
+				if let m = max(a, b).nonZero {
+					abs(a - b) / m
+				} else {
+					.one
+				}
+				/*
+				if a > b {
+					(a - b) / a
+				} else {
+					(b - a) / b
+				}
+				 */
+			}
+		}
+	}
+	
+	/// Convenience overload that resolves `other` in `environment` and forwards to
+	/// ``brightness(relativeTo:)``.
+	/// - Parameters:
+	///   - other: Optional reference `Color` to compare against.
+	///   - environment: Environment used to resolve the reference color.
+	/// - Returns: Perceived brightness in `0...1` (if `other` is `nil`) or the normalized
+	///   brightness difference versus the resolved reference color.
+	@inlinable public func brightness(
+		relativeTo other: Color? = nil,
+		resolvedIn environment: EnvironmentValues
+	) -> Double {
+		self.brightness(relativeTo: other?.resolvedComponents(in: environment))
+	}
+	
 	/// Returns a value clamped to the `0...1` range.
 	///
 	/// Use this to ensure component values (such as color channels or opacity)
@@ -586,6 +1109,20 @@ extension Color.ResolvedComponents {
 		)
 	}
 }
+
+// MARK: Color.ResolvedComponents.Representation
+
+extension Color.ResolvedComponents {
+	/// Output color space for resolved components.
+	public enum Representation: Hashable, Sendable {
+		/// Standard sRGB (gamma-encoded)
+		case sRGB
+		/// Linear-light values suitable for WCAG 2.1 math
+		case WCAG21
+	}
+}
+
+// MARK: - Color.Resolved +
 
 extension Color.Resolved {
 	/// sRGB components from this resolved color.
@@ -610,6 +1147,8 @@ extension Color.Resolved {
 		)
 	}
 }
+
+// MARK: - Color.ResolvedHDR +
 
 #if RESOLVED_HDR_AVAILABLE
 @available(iOS 26.0, macOS 26.0, *)
@@ -637,6 +1176,8 @@ extension Color.ResolvedHDR {
 	}
 }
 #endif
+
+// MARK: Double +
 
 extension Double {
 	/// Converts an `sRGB` color component into its linearized form
@@ -702,3 +1243,4 @@ extension Double {
 		.sRGBToLinearWCAG21(self)
 	}
 }
+

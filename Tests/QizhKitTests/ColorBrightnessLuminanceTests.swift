@@ -23,7 +23,7 @@ struct ColorBrightnessLuminanceTests {
 	
 	@Suite("Double.sRGBToLinearWCAG21 & sRGBToLinearLightWCAG21")
 	struct DoubleLinearizationTests {
-		@Test
+		@Test("Zero maps to zero")
 		func testZeroMapsToZero() {
 			let v = Double.sRGBToLinearWCAG21(0.0)
 			#expect(v == 0.0)
@@ -32,7 +32,7 @@ struct ColorBrightnessLuminanceTests {
 			#expect(prop.sRGBToLinearLightWCAG21 == 0.0)
 		}
 		
-		@Test
+		@Test("One maps to one approximately")
 		func testOneMapsToOneApproximately() {
 			let v = Double.sRGBToLinearWCAG21(1.0)
 			#expect(abs(v - 1.0) < ColorBrightnessLuminanceTests.epsilon)
@@ -41,7 +41,7 @@ struct ColorBrightnessLuminanceTests {
 			#expect(abs(prop.sRGBToLinearLightWCAG21 - 1.0) < ColorBrightnessLuminanceTests.epsilon)
 		}
 		
-		@Test
+		@Test("Clamping values below zero")
 		func testClampBelowZero() {
 			/// Values below 0 are clamped to 0 before conversion.
 			let below = Double.sRGBToLinearWCAG21(-0.5)
@@ -49,7 +49,7 @@ struct ColorBrightnessLuminanceTests {
 			#expect(below == zero)
 		}
 		
-		@Test
+		@Test("Clamping values above one")
 		func testClampAboveOne() {
 			/// Values above 1 are clamped to 1 before conversion.
 			let above = Double.sRGBToLinearWCAG21(1.5)
@@ -57,7 +57,7 @@ struct ColorBrightnessLuminanceTests {
 			#expect(abs(above - one) < ColorBrightnessLuminanceTests.epsilon)
 		}
 		
-		@Test
+		@Test("Threshold check")
 		func testThresholdBehavior() {
 			/// 0.03928 is the WCAG threshold; just sanity-check continuity.
 			let threshold: Double = 0.03928
@@ -71,7 +71,7 @@ struct ColorBrightnessLuminanceTests {
 			#expect(aboveLinear > belowLinear)
 		}
 		
-		@Test
+		@Test("Static & property produce matching values")
 		func testStaticAndPropertyMatch() {
 			let value: Double = 0.5
 			let staticResult = Double.sRGBToLinearWCAG21(value)
@@ -84,7 +84,7 @@ struct ColorBrightnessLuminanceTests {
 	
 	@Suite("Color.ResolvedComponents Initializers")
 	struct ResolvedComponentsInitTests {
-		@Test
+		@Test("Explicit channels initializer")
 		func testExplicitChannelsInitializer() {
 			let c = Color.ResolvedComponents(
 				linear: false,
@@ -104,7 +104,7 @@ struct ColorBrightnessLuminanceTests {
 			#expect(c.a == 0.4)
 		}
 		
-		@Test
+		@Test("Generic floating-point initializer")
 		func testGenericFloatingPointInitializer() {
 			let c = Color.ResolvedComponents(
 				linear: true,
@@ -120,7 +120,7 @@ struct ColorBrightnessLuminanceTests {
 			#expect(c.opacity == 1.0)
 		}
 		
-		@Test
+		@Test("Grayscale initializer")
 		func testGrayscaleInitializer() {
 			let c = Color.ResolvedComponents(
 				linear: false,
@@ -134,7 +134,7 @@ struct ColorBrightnessLuminanceTests {
 			#expect(c.opacity == 0.8)
 		}
 		
-		@Test
+		@Test("Components initialized with an array of 2 values should be interpreted as grayscale and alpha")
 		func testComponentsArrayTwoValuesGrayscalePlusAlpha() {
 			let c = Color.ResolvedComponents(
 				linear: false,
@@ -146,7 +146,7 @@ struct ColorBrightnessLuminanceTests {
 			#expect(c.opacity == 0.25)
 		}
 		
-		@Test
+		@Test("Components initialized with an array of 3 elements and an alpha")
 		func testComponentsArrayThreeValuesRGBAlphaParameter() {
 			let c = Color.ResolvedComponents(
 				linear: true,
@@ -160,7 +160,7 @@ struct ColorBrightnessLuminanceTests {
 			#expect(c.isLinear == true)
 		}
 		
-		@Test
+		@Test("Components initialized with an array of 4+ elements is using only the first 3")
 		func testComponentsArrayFourValuesUsesFirstThreeAndAlphaParameter() {
 			let c = Color.ResolvedComponents(
 				linear: false,
@@ -174,7 +174,7 @@ struct ColorBrightnessLuminanceTests {
 			#expect(c.opacity == 0.4)
 		}
 		
-		@Test
+		@Test("Create from array of CGFloat")
 		func testComponentsArrayCGFloat() {
 			let cgComponents: [CGFloat] = [0.2, 0.4, 0.6]
 			let c = Color.ResolvedComponents(
@@ -189,7 +189,7 @@ struct ColorBrightnessLuminanceTests {
 			#expect(c.isLinear == true)
 		}
 		
-		@Test
+		@Test("White and black static constants")
 		func testWhiteAndBlackStaticConstants() {
 			let white = Color.ResolvedComponents.white
 			#expect(white.isLinear == false)
@@ -211,7 +211,7 @@ struct ColorBrightnessLuminanceTests {
 	
 	@Suite("Color.ResolvedComponents Derived Properties")
 	struct ResolvedComponentsDerivedTests {
-		@Test
+		@Test("sRGB to linear conversion: flag and values")
 		func testSRGBToLinearComponentsFlagAndValues() {
 			let sRGB = Color.ResolvedComponents(
 				linear: false,
@@ -229,8 +229,8 @@ struct ColorBrightnessLuminanceTests {
 			#expect(linear.opacity == sRGB.opacity)
 		}
 		
-		@Test
-		func testRelativeLuminanceMatchesBetweenSRGBAndLinear() {
+		@Test("Luminance matching for sRGB and linear colors")
+		func testLuminanceMatchesBetweenSRGBAndLinear() {
 			let sRGB = Color.ResolvedComponents(
 				linear: false,
 				red: 0.25,
@@ -247,12 +247,12 @@ struct ColorBrightnessLuminanceTests {
 				opacity: 1.0
 			)
 			
-			let sRGBLum = sRGB.relativeLuminance
-			let linearLum = linear.relativeLuminance
+			let sRGBLum = sRGB.luminance
+			let linearLum = linear.luminance
 			#expect(abs(sRGBLum - linearLum) < 1e-4)
 		}
 		
-		@Test
+		@Test("Brightness matching for sRGB and linear colors")
 		func testBrightnessMatchesBetweenSRGBAndLinear() {
 			let sRGB = Color.ResolvedComponents(
 				linear: false,
@@ -275,16 +275,16 @@ struct ColorBrightnessLuminanceTests {
 			#expect(abs(sRGBBrightness - linearBrightness) < 1e-4)
 		}
 		
-		@Test
-		func testRelativeLuminanceForBlackAndWhite() {
+		@Test("Luminance for black and white")
+		func testLuminanceForBlackAndWhite() {
 			let black = Color.ResolvedComponents.black
 			let white = Color.ResolvedComponents.white
 			
-			#expect(abs(black.relativeLuminance - 0.0) < ColorBrightnessLuminanceTests.epsilon)
-			#expect(abs(white.relativeLuminance - 1.0) < 1e-4)
+			#expect(abs(black.luminance - 0.0) < ColorBrightnessLuminanceTests.epsilon)
+			#expect(abs(white.luminance - 1.0) < 1e-4)
 		}
 		
-		@Test
+		@Test("Brightness for black and white")
 		func testBrightnessForBlackAndWhite() {
 			let black = Color.ResolvedComponents.black
 			let white = Color.ResolvedComponents.white
@@ -293,7 +293,7 @@ struct ColorBrightnessLuminanceTests {
 			#expect(abs(white.brightness - 1.0) < 1e-4)
 		}
 		
-		@Test
+		@Test("Clamping all channels to [0, 1] using `zeroOneClipped`")
 		func testZeroOneClippedClampsAllChannels() {
 			let components = Color.ResolvedComponents(
 				linear: true,
@@ -316,7 +316,7 @@ struct ColorBrightnessLuminanceTests {
 	
 	@Suite("Color.ResolvedComponents.Representation Tests")
 	struct RepresentationEnumTests {
-		@Test
+		@Test("Representation: hashability and cases")
 		func testRepresentationHashabilityAndCases() {
 			let all: Set<Color.ResolvedComponents.Representation> = [.sRGB, .WCAG21]
 			#expect(all.count == 2)
@@ -329,7 +329,7 @@ struct ColorBrightnessLuminanceTests {
 	
 	@Suite("Color.Resolved Extensions")
 	struct ColorResolvedExtensionsTests {
-		@Test
+		@Test("Resolved components from resolved color")
 		func testResolvedComponentsFromResolvedColor() {
 			let env = EnvironmentValues()
 			let color: Color = .red
@@ -344,7 +344,7 @@ struct ColorBrightnessLuminanceTests {
 			#expect(components.blue >= 0.0 && components.blue <= 1.0)
 		}
 		
-		@Test
+		@Test("Resolved linear components from resolved color")
 		func testLinearResolvedComponentsFromResolvedColor() {
 			let env = EnvironmentValues()
 			let color: Color = .red
@@ -357,8 +357,8 @@ struct ColorBrightnessLuminanceTests {
 			#expect(linearComponents.opacity == sRGBComponents.opacity)
 			
 			/// Luminance should approximately match between sRGB+linearization and pure linear.
-			let sRGBLum = sRGBComponents.relativeLuminance
-			let linearLum = linearComponents.relativeLuminance
+			let sRGBLum = sRGBComponents.luminance
+			let linearLum = linearComponents.luminance
 			#expect(abs(sRGBLum - linearLum) < 1e-4)
 		}
 	}
@@ -367,7 +367,7 @@ struct ColorBrightnessLuminanceTests {
 	
 	@Suite("Color Environment-based Helpers")
 	struct ColorEnvironmentHelpersTests {
-		@Test
+		@Test("White and black resolved components")
 		func testResolvedComponentsForWhiteAndBlack() {
 			let env = EnvironmentValues()
 			
@@ -384,29 +384,29 @@ struct ColorBrightnessLuminanceTests {
 			#expect(blackComponents.blue < 0.1)
 		}
 		
-		@Test
+		@Test("Relative luminance static and instance match")
 		func testRelativeLuminanceStaticAndInstanceMatch() {
 			let env = EnvironmentValues()
 			
 			let color: Color = .gray
-			let staticLum = Color.relativeLuminance(of: color, in: env)
-			let instanceLum = color.relativeLuminance(resolvedIn: env)
+			let staticLum = Color.luminance(of: color, in: env)
+			let instanceLum = color.luminance(in: env)
 			
 			#expect(abs(staticLum - instanceLum) < ColorBrightnessLuminanceTests.epsilon)
 			
 			/// Sanity: gray should be between black and white.
-			let blackLum = Color.relativeLuminance(of: .black, in: env)
-			let whiteLum = Color.relativeLuminance(of: .white, in: env)
+			let blackLum = Color.luminance(of: .black, in: env)
+			let whiteLum = Color.luminance(of: .white, in: env)
 			#expect(blackLum < staticLum && staticLum < whiteLum)
 		}
 		
-		@Test
+		@Test("Static brightness matches instance brightness")
 		func testBrightnessStaticAndInstanceMatch() {
 			let env = EnvironmentValues()
 			
 			let color: Color = .blue
 			let staticBrightness = Color.brightness(of: color, in: env)
-			let instanceBrightness = color.brightness(resolvedIn: env)
+			let instanceBrightness = color.brightness(in: env)
 			
 			#expect(abs(staticBrightness - instanceBrightness) < ColorBrightnessLuminanceTests.epsilon)
 			
@@ -416,13 +416,76 @@ struct ColorBrightnessLuminanceTests {
 			#expect(blackBrightness < staticBrightness && staticBrightness < whiteBrightness)
 		}
 	}
+
+	// MARK: - Opacity-affected luminance & brightness
+	
+	@Suite("Opacity-affected Luminance & Brightness")
+	struct OpacityAffectedTests {
+		@Test("Luminance (Opacity-Affected, Light Scheme)")
+		func testLuminanceOpacityAffectedLightScheme() {
+			var env = EnvironmentValues()
+			env.colorScheme = .light
+			
+			/// half-transparent black over white
+			let color = Color(white: 0.0, opacity: 0.5)
+			
+			let baseLum = color.luminance(in: env, opacityAffected: false)
+			let compositeLum = color.luminance(in: env, opacityAffected: true)
+			
+			#expect(abs(baseLum - 0.0) < ColorBrightnessLuminanceTests.epsilon)
+			#expect(abs(compositeLum - 0.5) < 1e-4)
+		}
+		
+		@Test("Luminance (Opacity-Affected, Dark Scheme)")
+		func testLuminanceOpacityAffectedDarkScheme() {
+			var env = EnvironmentValues()
+			env.colorScheme = .dark
+			
+			/// half-transparent white over black
+			let color = Color(white: 1.0, opacity: 0.5)
+			
+			let baseLum = color.luminance(in: env, opacityAffected: false)
+			let compositeLum = color.luminance(in: env, opacityAffected: true)
+			
+			#expect(abs(baseLum - 1.0) < ColorBrightnessLuminanceTests.epsilon)
+			#expect(abs(compositeLum - 0.5) < 1e-4)
+		}
+		
+		@Test("Brightness (Opacity-Affected, Light Scheme)")
+		func testBrightnessOpacityAffectedLightScheme() {
+			var env = EnvironmentValues()
+			env.colorScheme = .light
+			
+			let color = Color(white: 0.0, opacity: 0.5)
+			
+			let baseBrightness = color.brightness(in: env, opacityAffected: false)
+			let compositeBrightness = color.brightness(in: env, opacityAffected: true)
+			
+			#expect(abs(baseBrightness - 0.0) < ColorBrightnessLuminanceTests.epsilon)
+			#expect(abs(compositeBrightness - 0.5) < 1e-4)
+		}
+		
+		@Test("Brightness (Opacity-Affected, Dark Scheme)")
+		func testBrightnessOpacityAffectedDarkScheme() {
+			var env = EnvironmentValues()
+			env.colorScheme = .dark
+			
+			let color = Color(white: 1.0, opacity: 0.5)
+			
+			let baseBrightness = color.brightness(in: env, opacityAffected: false)
+			let compositeBrightness = color.brightness(in: env, opacityAffected: true)
+			
+			#expect(abs(baseBrightness - 1.0) < ColorBrightnessLuminanceTests.epsilon)
+			#expect(abs(compositeBrightness - 0.5) < 1e-4)
+		}
+	}
 	
 	// MARK: - Color.ResolvedHDR extensions (HDR path)
 	
 	#if RESOLVED_HDR_AVAILABLE
 	@Suite("Color.ResolvedHDR Extensions (HDR Available)")
 	struct ColorResolvedHDRExtensionsTests {
-		@Test
+		@Test("ResolvedHDR Components for White")
 		func testResolvedHDRComponentsForWhite() throws {
 			/// Only run on platforms where the HDR API is available at runtime.
 			if #available(iOS 26.0, macOS 26.0, *) {

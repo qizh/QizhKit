@@ -50,6 +50,11 @@ public extension Character {
 	/** ↓ */ static let arrowUpChar: Character 				= "↓"
 	/** ↑ */ static let arrowDownChar: Character 			= "↑"
 	
+	/** ᐅ */ static let keyRightChar: Character 			= "ᐅ"
+	/** ᐊ */ static let keyLeftChar: Character 				= "ᐊ"
+	/** ᐱ */ static let keyUpChar: Character 				= "ᐱ"
+	/** ᐯ */ static let keyDownChar: Character 			= "ᐯ"
+	
 	/** « */ static let leftDoubleQuoteChar: Character 		= "«"
 	/** » */ static let rightDoubleQuoteChar: Character 	= "»"
 	/** « */ static let openingDoubleQuoteChar: Character 	= "«"
@@ -59,18 +64,33 @@ public extension Character {
 	/** ┣ */ static let treeLineBranchChar: Character 		= "┣"
 	/** ┗ */ static let treeLineEndChar: Character 			= "┗"
 	
-	/** ( */ static let leftParenthesisChar: Character  	= "("
-	/** ) */ static let rightParenthesisChar: Character 	= ")"
-	/** [ */ static let leftBracketChar: Character  		= "["
-	/** ] */ static let rightBracketChar: Character 		= "]"
-	/** { */ static let leftBraceChar: Character  			= "{"
-	/** } */ static let rightBraceChar: Character 			= "}"
-	/** < */ static let leftChevronChar: Character  		= "<"
-	/** > */ static let rightChevronChar: Character 		= ">"
+	/** `(` */ static let leftParenthesisChar: Character  	= "("
+	/** `)` */ static let rightParenthesisChar: Character 	= ")"
+	/** `[` */ static let leftBracketChar: Character  		= "["
+	/** `]` */ static let rightBracketChar: Character 		= "]"
+	/** `{` */ static let leftBraceChar: Character  		= "{"
+	/** `}` */ static let rightBraceChar: Character 		= "}"
+	/** `<` */ static let leftChevronChar: Character  		= "<"
+	/** `>` */ static let rightChevronChar: Character 		= ">"
+	
+	/** ⓘ 	*/ static let infoChar: Character 				= "ⓘ"
+	/** ⌂ 	*/ static let houseChar: Character 				= "⌂"
+	/** ♡ 	*/ static let heartChar: Character 				= "♡"
+	/** ♥︎ 	*/ static let heartFilledChar: Character 		= "♥︎"
+	/** ⏾ 	*/ static let moonChar: Character 				= "⏾"
+	/** ☼ 	*/ static let sunChar: Character 				= "☼"
+	/** ␀ 	*/ static let nullChar: Character 				= "␀"
+	/** ■ 	*/ static let squareFilledChar: Character 		= "■"
+	/** □ 	*/ static let squareEmptyChar: Character 		= "□"
 	
 	/** ⚡️ */ static let boltChar: Character = "⚡️"
 	/** ✅ */ static let checkmarkEmojiChar: Character = "✅"
 	/** ❌ */ static let xmarkEmojiChar: Character = "❌"
+	
+	/// ◽️ "white medium small square"
+	static let squareWhiteChar: Character = "◽️"
+	/// ◾️ "black medium small square"
+	static let squareBlackChar: Character = "◾️"
 }
 
 // MARK: String
@@ -116,14 +136,27 @@ public extension String {
 	/** ↓ */ static let arrowUp 			= String(Character.arrowUpChar)
 	/** ↑ */ static let arrowDown 			= String(Character.arrowDownChar)
 	
+	/** ᐅ */ static let keyRight 			= String(Character.keyRightChar)
+	/** ᐊ */ static let keyLeft 			= String(Character.keyLeftChar)
+	/** ᐱ */ static let keyUp 				= String(Character.keyUpChar)
+	/** ᐯ */ static let keyDown 			= String(Character.keyDownChar)
+	
 	/** « */ static let leftDoubleQuote 	= String(Character.leftDoubleQuoteChar)
 	/** » */ static let rightDoubleQuote 	= String(Character.rightDoubleQuoteChar)
 	/** « */ static let openingDoubleQuote 	= String(Character.openingDoubleQuoteChar)
-	/** » */ static let closingDoubleQuote 		= String(Character.closingDoubleQuoteChar)
+	/** » */ static let closingDoubleQuote 	= String(Character.closingDoubleQuoteChar)
 	
 	/** ┃ */ static let treeLine 			= String(Character.treeLineChar)
 	/** ┣ */ static let treeLineBranch 		= String(Character.treeLineBranchChar)
 	/** ┗ */ static let treeLineEnd 		= String(Character.treeLineEndChar)
+	
+	/** ⓘ 	*/ static let info 				= String(Character.infoChar)
+	/** ⌂ 	*/ static let house 			= String(Character.houseChar)
+	/** ♡ 	*/ static let heart 			= String(Character.heartChar)
+	/** ♥︎ 	*/ static let heartFilled 		= String(Character.heartFilledChar)
+	/** ⏾ 	*/ static let moon 				= String(Character.moonChar)
+	/** ☼ 	*/ static let sun 				= String(Character.sunChar)
+	/** ␀ 	*/ static let null 				= String(Character.nullChar)
 	
 	/** ( */ static let leftParenthesis  	= String(Character.leftParenthesisChar)
 	/** ) */ static let rightParenthesis 	= String(Character.rightParenthesisChar)
@@ -147,7 +180,16 @@ public extension String {
 	/** ✅ */ static let checkmarkEmoji = String(Character.checkmarkEmojiChar)
 	/** ❌ */ static let xmarkEmoji = String(Character.xmarkEmojiChar)
 	
-	/** «`. `» */ static let dotspace    			= .coma + .space
+	/// ■ - filled square (BLACK SQUARE)
+	static let squareFilled = String(Character.squareFilledChar)
+	/// □ - empty square (WHITE SQUARE)
+	static let squareEmpty = String(Character.squareEmptyChar)
+	/// ◽️ - white medium small square
+	static let squareWhite = String(Character.squareWhiteChar)
+	/// ◾️ - black medium small square
+	static let squareBlack = String(Character.squareBlackChar)
+	
+	/** «`. `» */ static let dotspace    		= .coma + .space
 	/** «`, `» */ static let comaspace    		= .coma + .space
 	/** «`: `» */ static let colonspace   		= .colon + .space
 	/** «` → `» */ static let spaceArrowSpace 	= .space + .arrowRight + .space

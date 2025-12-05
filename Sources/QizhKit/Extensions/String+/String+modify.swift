@@ -83,7 +83,25 @@ extension StringProtocol {
 
 extension Substring {
 	@inlinable public func asString() -> String { String(self) }
+	@available(*, deprecated, renamed: "s", message: "For consistency with `Substring`'s `String` property and QizhKit's naming style in general")
 	@inlinable public var string: String { String(self) }
+	
+	// TODO: Collect a list of all "to string" calculated variables and make them match the same `.s`-format
+	/// - Returns: A `String` initialized with caller – `Substring` in this case.
+	/// - ToDo:
+	///   ## Tasks
+	///   - [ ] Collect a list of all "to string" calculated variables
+	///     and make them match the same `.s`-format.
+	///   ## Pseudo Swift code
+	///   ```swift
+	///   /// - Important:
+	///   ///   This is just the logic demo,
+	///   ///   not an actual code you can use or build.
+	///   extension T where T: some Swift.Type {
+	///   	@inlinable public var s: String { String(self) }
+	///   }
+	///   ```
+	@inlinable public var s: String { String(self) }
 }
 
 extension String {
