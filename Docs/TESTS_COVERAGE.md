@@ -23,7 +23,7 @@ This document tracks unit-test candidates discovered while scanning the QizhKit 
         </tr>
         <tr>                             <!-- ╭────┘ 1 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`.equals`, `.notEquals`, `.isEmpty`, and `.id`
+`testProducesAirtableFriendlyStrings`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Produce Airtable-friendly strings
@@ -31,7 +31,7 @@ Produce Airtable-friendly strings
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 2 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`combines_formulas_with_and_or_not`
+`testCombinesFormulasWithAndOrNot`
           </td>
           <td>                           <!-- ├❴ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣 ❵────┤ -->
 Validate `.and`, `.or`, and `.not` nest descriptions correctly for multiple children
@@ -39,7 +39,7 @@ Validate `.and`, `.or`, and `.not` nest descriptions correctly for multiple chil
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 3 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`escapes_apostrophes_in_interpolation`
+`testEscapesApostrophesInInterpolation`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Verify the custom string interpolation paths escape single quotes consistently for raw values and `RawRepresentable` inputs
@@ -70,7 +70,7 @@ Verify the custom string interpolation paths escape single quotes consistently f
         </tr>
         <tr>                             <!-- ╭────┘ 1 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`produces_repeatable_sequence`
+`testProducesRepeatableSequence`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Confirm identical seeds emit identical sequences across multiple draws
@@ -78,7 +78,7 @@ Confirm identical seeds emit identical sequences across multiple draws
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 2 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`mixes_64bit_output`
+`testMixes64BitOutput`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Assert two 32-bit GK samples are combined into varying high/low bits to prevent bias
@@ -86,7 +86,7 @@ Assert two 32-bit GK samples are combined into varying high/low bits to prevent 
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 3 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`advances_state_between_calls`
+`testAdvancesStateBetweenCalls`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Ensure successive `next()` calls mutate generator state (no repeated constant)
@@ -121,7 +121,7 @@ Ensure successive `next()` calls mutate generator state (no repeated constant)
         </tr>
         <tr>                             <!-- ╭────┘ 1 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`replaces_and_trims_strings`
+`testReplacesAndTrimsStrings`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Cover replacements by set/value and trimming behaviors including empty-line removal
@@ -129,7 +129,7 @@ Cover replacements by set/value and trimming behaviors including empty-line remo
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 2 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`trims_trailing_characters`
+`testTrimsTrailingCharacters`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Verify targeted trailing whitespace/newline removal paths
@@ -137,7 +137,7 @@ Verify targeted trailing whitespace/newline removal paths
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 3 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`repeats_string_with_multiplication_operator`
+`testRepeatsStringWithMultiplicationOperator`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Ensure `"abc" * 3` returns expected concatenation
@@ -145,7 +145,7 @@ Ensure `"abc" * 3` returns expected concatenation
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 4 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`string_offset_presets_emit_expected_tokens`
+`testStringOffsetPresetsEmitExpectedTokens`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Validate `StringOffset` preset suffix/prefix strings and computed properties
@@ -153,7 +153,7 @@ Validate `StringOffset` preset suffix/prefix strings and computed properties
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 5 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`offsets_multiline_blocks`
+`testOffsetsMultilineBlocks`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Assert offsetting helpers pad each line as documented
@@ -184,7 +184,7 @@ Assert offsetting helpers pad each line as documented
         </tr>
         <tr>                             <!-- ╭────┘ 1 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`captures_width_and_height_preferences`
+`testCapturesWidthAndHeightPreferences`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Inject test views and confirm bindings receive geometry values once layout occurs
@@ -192,7 +192,7 @@ Inject test views and confirm bindings receive geometry values once layout occur
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 2 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`invokes_callbacks_on_change`
+`testInvokesCallbacksOnChange`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Ensure callbacks fire with updated dimensions when layout changes
@@ -200,7 +200,7 @@ Ensure callbacks fire with updated dimensions when layout changes
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 3 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`binds_optional_and_nonoptional_insets`
+`testBindsOptionalAndNonoptionalInsets`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Verify both `EdgeInsets` and `EdgeInsets?` bindings are updated through the preference chain
@@ -233,7 +233,7 @@ Verify both `EdgeInsets` and `EdgeInsets?` bindings are updated through the pref
         </tr>
         <tr>                             <!-- ╭────┘ 1 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`initializes_from_literals`
+`testInitializesFromLiterals`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Confirm float/integer literal initializers map to `.exactly` with converted `CGFloat`
@@ -241,7 +241,7 @@ Confirm float/integer literal initializers map to `.exactly` with converted `CGF
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 2 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`exposes_value_and_maxValue`
+`testExposesValueAndMaxValue`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Validate optional outputs for `exactly` vs `maximum` cases
@@ -249,7 +249,7 @@ Validate optional outputs for `exactly` vs `maximum` cases
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 3 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`minimum_case_reports_padding`
+`testMinimumCaseReportsPadding`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Ensure `.minimum` carries the provided padding
@@ -257,7 +257,7 @@ Ensure `.minimum` carries the provided padding
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 4 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`comparison_helpers_match_cases`
+`testComparisonHelpersMatchCases`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Test `is` and convenience flags across all permutations
@@ -290,7 +290,7 @@ Test `is` and convenience flags across all permutations
         </tr>
         <tr>                             <!-- ╭────┘ 1 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`compares_boxed_values`
+`testComparesBoxedValues`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Assert `<` and `==` use underlying `Comparable` semantics for same-typed boxes
@@ -298,7 +298,7 @@ Assert `<` and `==` use underlying `Comparable` semantics for same-typed boxes
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 2 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`handles_cross_type_comparisons_safely`
+`testHandlesCrossTypeComparisonsSafely`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Ensure comparisons with different underlying types return `false` without crashes
@@ -306,7 +306,7 @@ Ensure comparisons with different underlying types return `false` without crashe
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 3 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`wraps_comparable_values`
+`testWrapsComparableValues`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Verify `.asAnyComparable()` wraps and preserves ordering in sorted collections
@@ -339,7 +339,7 @@ Verify `.asAnyComparable()` wraps and preserves ordering in sorted collections
         </tr>
         <tr>                             <!-- ╭────┘ 1 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`boxes_preserve_hash_and_equality`
+`testBoxesPreserveHashAndEquality`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Verify wrappers round-trip `Hashable`/`Sendable` values and compare correctly across identical and differing types
@@ -347,7 +347,7 @@ Verify wrappers round-trip `Hashable`/`Sendable` values and compare correctly ac
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 2 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`encodes_wrapped_values`
+`testEncodesWrappedValues`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Ensure encodable wrappers forward encoding to the underlying value and produce expected JSON/JSON5 strings
@@ -355,7 +355,7 @@ Ensure encodable wrappers forward encoding to the underlying value and produce e
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 3 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`supports_property_wrapper_init_styles`
+`testSupportsPropertyWrapperInitStyles`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Cover both `init(wrappedValue:)` and direct initializers for each wrapper
@@ -363,7 +363,7 @@ Cover both `init(wrappedValue:)` and direct initializers for each wrapper
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 4 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`handles_non_encodable_dictionary_entries`
+`testHandlesNonEncodableDictionaryEntries`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Assert encoding helpers return the fallback message when dictionary cannot be cast to `Encodable`
@@ -395,7 +395,7 @@ Assert encoding helpers return the fallback message when dictionary cannot be ca
         </tr>
         <tr>                             <!-- ╭────┘ 1 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`tracks_manually_assigned_window`
+`testTracksManuallyAssignedWindow`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Confirm `setOriginalWindow` overrides lookup and restores when cleared
@@ -403,7 +403,7 @@ Confirm `setOriginalWindow` overrides lookup and restores when cleared
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 2 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`resolves_top_view_controller`
+`testResolvesTopViewController`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Simulate navigation/tab/presentation stacks to ensure the traversal selects the visible controller
@@ -411,7 +411,7 @@ Simulate navigation/tab/presentation stacks to ensure the traversal selects the 
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 3 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`ends_editing_through_current_window`
+`testEndsEditingThroughCurrentWindow`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Verify `endEditing(force:)` relays to the active window and respects the `force` flag
@@ -419,7 +419,7 @@ Verify `endEditing(force:)` relays to the active window and respects the `force`
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 4 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`reports_safe_area_insets`
+`testReportsSafeAreaInsets`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Validate `SafeFrame.currentInsets` mirrors the active window's safe area
@@ -450,7 +450,7 @@ Validate `SafeFrame.currentInsets` mirrors the active window's safe area
         </tr>
         <tr>                             <!-- ╭────┘ 1 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`pluralizes_and_singularizes_common_words`
+`testPluralizesAndSingularizesCommonWords`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Check irregular and regular transformations for representative samples
@@ -458,7 +458,7 @@ Check irregular and regular transformations for representative samples
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 2 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`honors_uncountable_and_unchanging_lists`
+`testHonorsUncountableAndUnchangingLists`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Confirm words in those collections return unchanged results
@@ -466,7 +466,7 @@ Confirm words in those collections return unchanged results
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 3 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`adds_runtime_rules`
+`testAddsRuntimeRules`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Ensure dynamically added plural/singular rules apply ahead of defaults
@@ -479,4 +479,4 @@ Ensure dynamically added plural/singular rules apply ahead of defaults
 
 ---
 
-**Summary:** 9 scopes with 31 proposed test cases covering deterministic behavior, string processing, geometry preference wiring, type erasure semantics, UIKit helpers, and pluralization utilities across QizhKit.
+**Summary:** 9 scopes with 32 proposed test cases covering deterministic behavior, string processing, geometry preference wiring, type erasure semantics, UIKit helpers, and pluralization utilities across QizhKit.
