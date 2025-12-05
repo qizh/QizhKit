@@ -50,23 +50,433 @@ Verify the custom string interpolation paths escape single quotes consistently f
   </tr>
 </table>
 
-<details>
-  <summary>TODO</summary>
-  
-- [ ] Divide the following table into sections with tables, like the one above was made out of the first row previously present in the following table.
+## ⊞ [Components/Random Generators/SeededRandomGenerator.swift](Components/Random%20Generators/SeededRandomGenerator.swift)
 
-| Public entities to cover | Candidate tests (name — description) |
-|:-------------------------|:-------------------------------------|
-| Components/Random Generators/SeededRandomGenerator.swift | `SeededRandomGenerator` seeding behavior and `next()` production | `produces_repeatable_sequence` — confirm identical seeds emit identical sequences across multiple draws;<br>`mixes_64bit_output` — assert two 32-bit GK samples are combined into varying high/low bits to prevent bias;<br>`advances_state_between_calls` — ensure successive `next()` calls mutate generator state (no repeated constant). |
-| Extensions/String+/String+modify.swift | `StringProtocol` replacement/trim utilities (`replacing`, `withSpacesTrimmed`, `withLinesTrimmed`, `withEmptyLinesTrimmed`, `withLinesNSpacesTrimmed`, `digits`);<br>Trailing trimming helpers (`trimmingTrailingCharacters`, `withTrailingSpacesTrimmed`, `withTrailingSpacesAndLinesTrimmed`);<br>Multiplication operator `String * UInt`;<br>`StringOffset` presets and properties;<br>Line offsetting helpers (`offsetting`, `offsettingLines`, `offsettingNewLines`, `tabOffsettingLines`, `tabOffsettingNewLines`) | `replaces_and_trims_strings` — cover replacements by set/value and trimming behaviors including empty-line removal;<br>`trims_trailing_characters` — verify targeted trailing whitespace/newline removal paths;<br>`repeats_string_with_multiplication_operator` — ensure `"abc" * 3` returns expected concatenation;<br>`string_offset_presets_emit_expected_tokens` — validate `StringOffset` preset suffix/prefix strings and computed properties;<br>`offsets_multiline_blocks` — assert offsetting helpers pad each line as documented. |
-| Structures/Dimensions/GeometryReceivers.swift | View extensions `receiveWidth`, `receiveHeight`, `receiveSafeAreaInsets` for callback and binding variants | `captures_width_and_height_preferences` — inject test views and confirm bindings receive geometry values once layout occurs;<br>`invokes_callbacks_on_change` — ensure callbacks fire with updated dimensions when layout changes;<br>`binds_optional_and_nonoptional_insets` — verify both `EdgeInsets` and `EdgeInsets?` bindings are updated through the preference chain. |
-| Structures/Dimensions/RelativeDimension.swift | `RelativeDimension` literal conformance and stored cases (`maximum`, `exactly`, `minimum`);<br>Computed values (`value`, `maxValue`, `extraPadding`);<br>Comparison helpers (`is(_:)`, `isMaximum`, `isExact`, `isMinimum`) | `initializes_from_literals` — confirm float/integer literal initializers map to `.exactly` with converted `CGFloat`;<br>`exposes_value_and_maxValue` — validate optional outputs for `exactly` vs `maximum` cases;<br>`minimum_case_reports_padding` — ensure `.minimum` carries the provided padding;<br>`comparison_helpers_match_cases` — test `is` and convenience flags across all permutations. |
-| Structures/Type Erase/AnyComparable.swift | `AnyComparable` boxing behavior; `Comparable`/`Equatable` conformance; `Comparable.asAnyComparable()` helper | `compares_boxed_values` — assert `<` and `==` use underlying `Comparable` semantics for same-typed boxes;<br>`handles_cross_type_comparisons_safely` — ensure comparisons with different underlying types return `false` without crashes;<br>`wraps_comparable_values` — verify `.asAnyComparable()` wraps and preserves ordering in sorted collections. |
-| Structures/Type Erase/AnyHashableAndSendable.swift | Property wrappers `AnyHashableAndSendable`, `AnySendableEncodable`, `AnyHashableSendableEncodable` and their nested box types;<br>Protocols (`HashableAndSendableAdoptable`, `SendableEncodableAdoptable`, `HashableSendableEncodableAdoptable`);<br>Encoding helpers on `[AnyHashable: Any]` (`asEncodedJsonString`, `asEncodedJson5string`) | `boxes_preserve_hash_and_equality` — verify wrappers round-trip `Hashable`/`Sendable` values and compare correctly across identical and differing types;<br>`encodes_wrapped_values` — ensure encodable wrappers forward encoding to the underlying value and produce expected JSON/JSON5 strings;<br>`supports_property_wrapper_init_styles` — cover both `init(wrappedValue:)` and direct initializers for each wrapper;<br>`handles_non_encodable_dictionary_entries` — assert encoding helpers return the fallback message when dictionary cannot be cast to `Encodable`. |
-| Ugly/WindowUtils.swift | `WindowUtils` window accessors (`setOriginalWindow`, `windowScene`, `keyWindow`, `rootViewController`, `originalWindow`, `currentWindow`, `topViewController`);<br>Global helpers `endEditing(force:)` and `SafeFrame.currentInsets` | `tracks_manually_assigned_window` — confirm `setOriginalWindow` overrides lookup and restores when cleared;<br>`resolves_top_view_controller` — simulate navigation/tab/presentation stacks to ensure the traversal selects the visible controller;<br>`ends_editing_through_current_window` — verify `endEditing(force:)` relays to the active window and respects the `force` flag;<br>`reports_safe_area_insets` — validate `SafeFrame.currentInsets` mirrors the active window’s safe area. |
-| Third Party/Pluralize/Pluralize.swift | `Pluralize` class API (`apply`, `applySingular`, `rule`, `singularRule`, `uncountable`, `unchanging`, instance rule collections) | `pluralizes_and_singularizes_common_words` — check irregular and regular transformations for representative samples;<br>`honors_uncountable_and_unchanging_lists` — confirm words in those collections return unchanged results;<br>`adds_runtime_rules` — ensure dynamically added plural/singular rules apply ahead of defaults. |
-| **Summary** | **9 scopes** | **31 proposed test cases** |
+<table>
+  <tr>
+    <th>Public entities to cover</th>
+    <th>Candidate tests</th>
+  </tr>
+  <tr>
+    <td>
 
-</details>
+- `SeededRandomGenerator` seeding behavior and `next()` production
+    </td>
+    <td>
+      <table>
+        <tr>
+          <th alignment="leading">Name</th>
+          <th>Description</th>
+        </tr>
+        <tr>                             <!-- ╭────┘ 1 └───────╮ -->
+          <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
+`produces_repeatable_sequence`
+          </td>
+          <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
+Confirm identical seeds emit identical sequences across multiple draws
+          </td>
+        </tr>                            <!-- ╰────────────────╯ -->
+        <tr>                             <!-- ╭────┘ 2 └───────╮ -->
+          <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
+`mixes_64bit_output`
+          </td>
+          <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
+Assert two 32-bit GK samples are combined into varying high/low bits to prevent bias
+          </td>
+        </tr>                            <!-- ╰────────────────╯ -->
+        <tr>                             <!-- ╭────┘ 3 └───────╮ -->
+          <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
+`advances_state_between_calls`
+          </td>
+          <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
+Ensure successive `next()` calls mutate generator state (no repeated constant)
+          </td>
+        </tr>                            <!-- ╰────────────────╯ -->
+      </table>
+    </td>
+  </tr>
+</table>
 
-The plan surfaces nine source areas with thirty-one focused test ideas to exercise deterministic behavior, string processing, geometry preference wiring, type erasure semantics, UIKit helpers, and pluralization utilities across QizhKit.
+## ⊞ [Extensions/String+/String+modify.swift](Extensions/String+/String+modify.swift)
+
+<table>
+  <tr>
+    <th>Public entities to cover</th>
+    <th>Candidate tests</th>
+  </tr>
+  <tr>
+    <td>
+
+- `StringProtocol` replacement/trim utilities (`replacing`, `withSpacesTrimmed`, `withLinesTrimmed`, `withEmptyLinesTrimmed`, `withLinesNSpacesTrimmed`, `digits`)
+- Trailing trimming helpers (`trimmingTrailingCharacters`, `withTrailingSpacesTrimmed`, `withTrailingSpacesAndLinesTrimmed`)
+- Multiplication operator `String * UInt`
+- `StringOffset` presets and properties
+- Line offsetting helpers (`offsetting`, `offsettingLines`, `offsettingNewLines`, `tabOffsettingLines`, `tabOffsettingNewLines`)
+    </td>
+    <td>
+      <table>
+        <tr>
+          <th alignment="leading">Name</th>
+          <th>Description</th>
+        </tr>
+        <tr>                             <!-- ╭────┘ 1 └───────╮ -->
+          <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
+`replaces_and_trims_strings`
+          </td>
+          <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
+Cover replacements by set/value and trimming behaviors including empty-line removal
+          </td>
+        </tr>                            <!-- ╰────────────────╯ -->
+        <tr>                             <!-- ╭────┘ 2 └───────╮ -->
+          <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
+`trims_trailing_characters`
+          </td>
+          <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
+Verify targeted trailing whitespace/newline removal paths
+          </td>
+        </tr>                            <!-- ╰────────────────╯ -->
+        <tr>                             <!-- ╭────┘ 3 └───────╮ -->
+          <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
+`repeats_string_with_multiplication_operator`
+          </td>
+          <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
+Ensure `"abc" * 3` returns expected concatenation
+          </td>
+        </tr>                            <!-- ╰────────────────╯ -->
+        <tr>                             <!-- ╭────┘ 4 └───────╮ -->
+          <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
+`string_offset_presets_emit_expected_tokens`
+          </td>
+          <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
+Validate `StringOffset` preset suffix/prefix strings and computed properties
+          </td>
+        </tr>                            <!-- ╰────────────────╯ -->
+        <tr>                             <!-- ╭────┘ 5 └───────╮ -->
+          <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
+`offsets_multiline_blocks`
+          </td>
+          <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
+Assert offsetting helpers pad each line as documented
+          </td>
+        </tr>                            <!-- ╰────────────────╯ -->
+      </table>
+    </td>
+  </tr>
+</table>
+
+## ⊞ [Structures/Dimensions/GeometryReceivers.swift](Structures/Dimensions/GeometryReceivers.swift)
+
+<table>
+  <tr>
+    <th>Public entities to cover</th>
+    <th>Candidate tests</th>
+  </tr>
+  <tr>
+    <td>
+
+- View extensions `receiveWidth`, `receiveHeight`, `receiveSafeAreaInsets` for callback and binding variants
+    </td>
+    <td>
+      <table>
+        <tr>
+          <th alignment="leading">Name</th>
+          <th>Description</th>
+        </tr>
+        <tr>                             <!-- ╭────┘ 1 └───────╮ -->
+          <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
+`captures_width_and_height_preferences`
+          </td>
+          <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
+Inject test views and confirm bindings receive geometry values once layout occurs
+          </td>
+        </tr>                            <!-- ╰────────────────╯ -->
+        <tr>                             <!-- ╭────┘ 2 └───────╮ -->
+          <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
+`invokes_callbacks_on_change`
+          </td>
+          <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
+Ensure callbacks fire with updated dimensions when layout changes
+          </td>
+        </tr>                            <!-- ╰────────────────╯ -->
+        <tr>                             <!-- ╭────┘ 3 └───────╮ -->
+          <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
+`binds_optional_and_nonoptional_insets`
+          </td>
+          <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
+Verify both `EdgeInsets` and `EdgeInsets?` bindings are updated through the preference chain
+          </td>
+        </tr>                            <!-- ╰────────────────╯ -->
+      </table>
+    </td>
+  </tr>
+</table>
+
+## ⊞ [Structures/Dimensions/RelativeDimension.swift](Structures/Dimensions/RelativeDimension.swift)
+
+<table>
+  <tr>
+    <th>Public entities to cover</th>
+    <th>Candidate tests</th>
+  </tr>
+  <tr>
+    <td>
+
+- `RelativeDimension` literal conformance and stored cases (`maximum`, `exactly`, `minimum`)
+- Computed values (`value`, `maxValue`, `extraPadding`)
+- Comparison helpers (`is(_:)`, `isMaximum`, `isExact`, `isMinimum`)
+    </td>
+    <td>
+      <table>
+        <tr>
+          <th alignment="leading">Name</th>
+          <th>Description</th>
+        </tr>
+        <tr>                             <!-- ╭────┘ 1 └───────╮ -->
+          <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
+`initializes_from_literals`
+          </td>
+          <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
+Confirm float/integer literal initializers map to `.exactly` with converted `CGFloat`
+          </td>
+        </tr>                            <!-- ╰────────────────╯ -->
+        <tr>                             <!-- ╭────┘ 2 └───────╮ -->
+          <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
+`exposes_value_and_maxValue`
+          </td>
+          <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
+Validate optional outputs for `exactly` vs `maximum` cases
+          </td>
+        </tr>                            <!-- ╰────────────────╯ -->
+        <tr>                             <!-- ╭────┘ 3 └───────╮ -->
+          <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
+`minimum_case_reports_padding`
+          </td>
+          <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
+Ensure `.minimum` carries the provided padding
+          </td>
+        </tr>                            <!-- ╰────────────────╯ -->
+        <tr>                             <!-- ╭────┘ 4 └───────╮ -->
+          <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
+`comparison_helpers_match_cases`
+          </td>
+          <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
+Test `is` and convenience flags across all permutations
+          </td>
+        </tr>                            <!-- ╰────────────────╯ -->
+      </table>
+    </td>
+  </tr>
+</table>
+
+## ⊞ [Structures/Type Erase/AnyComparable.swift](Structures/Type%20Erase/AnyComparable.swift)
+
+<table>
+  <tr>
+    <th>Public entities to cover</th>
+    <th>Candidate tests</th>
+  </tr>
+  <tr>
+    <td>
+
+- `AnyComparable` boxing behavior
+- `Comparable`/`Equatable` conformance
+- `Comparable.asAnyComparable()` helper
+    </td>
+    <td>
+      <table>
+        <tr>
+          <th alignment="leading">Name</th>
+          <th>Description</th>
+        </tr>
+        <tr>                             <!-- ╭────┘ 1 └───────╮ -->
+          <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
+`compares_boxed_values`
+          </td>
+          <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
+Assert `<` and `==` use underlying `Comparable` semantics for same-typed boxes
+          </td>
+        </tr>                            <!-- ╰────────────────╯ -->
+        <tr>                             <!-- ╭────┘ 2 └───────╮ -->
+          <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
+`handles_cross_type_comparisons_safely`
+          </td>
+          <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
+Ensure comparisons with different underlying types return `false` without crashes
+          </td>
+        </tr>                            <!-- ╰────────────────╯ -->
+        <tr>                             <!-- ╭────┘ 3 └───────╮ -->
+          <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
+`wraps_comparable_values`
+          </td>
+          <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
+Verify `.asAnyComparable()` wraps and preserves ordering in sorted collections
+          </td>
+        </tr>                            <!-- ╰────────────────╯ -->
+      </table>
+    </td>
+  </tr>
+</table>
+
+## ⊞ [Structures/Type Erase/AnyHashableAndSendable.swift](Structures/Type%20Erase/AnyHashableAndSendable.swift)
+
+<table>
+  <tr>
+    <th>Public entities to cover</th>
+    <th>Candidate tests</th>
+  </tr>
+  <tr>
+    <td>
+
+- Property wrappers `AnyHashableAndSendable`, `AnySendableEncodable`, `AnyHashableSendableEncodable` and their nested box types
+- Protocols (`HashableAndSendableAdoptable`, `SendableEncodableAdoptable`, `HashableSendableEncodableAdoptable`)
+- Encoding helpers on `[AnyHashable: Any]` (`asEncodedJsonString`, `asEncodedJson5string`)
+    </td>
+    <td>
+      <table>
+        <tr>
+          <th alignment="leading">Name</th>
+          <th>Description</th>
+        </tr>
+        <tr>                             <!-- ╭────┘ 1 └───────╮ -->
+          <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
+`boxes_preserve_hash_and_equality`
+          </td>
+          <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
+Verify wrappers round-trip `Hashable`/`Sendable` values and compare correctly across identical and differing types
+          </td>
+        </tr>                            <!-- ╰────────────────╯ -->
+        <tr>                             <!-- ╭────┘ 2 └───────╮ -->
+          <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
+`encodes_wrapped_values`
+          </td>
+          <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
+Ensure encodable wrappers forward encoding to the underlying value and produce expected JSON/JSON5 strings
+          </td>
+        </tr>                            <!-- ╰────────────────╯ -->
+        <tr>                             <!-- ╭────┘ 3 └───────╮ -->
+          <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
+`supports_property_wrapper_init_styles`
+          </td>
+          <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
+Cover both `init(wrappedValue:)` and direct initializers for each wrapper
+          </td>
+        </tr>                            <!-- ╰────────────────╯ -->
+        <tr>                             <!-- ╭────┘ 4 └───────╮ -->
+          <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
+`handles_non_encodable_dictionary_entries`
+          </td>
+          <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
+Assert encoding helpers return the fallback message when dictionary cannot be cast to `Encodable`
+          </td>
+        </tr>                            <!-- ╰────────────────╯ -->
+      </table>
+    </td>
+  </tr>
+</table>
+
+## ⊞ [Ugly/WindowUtils.swift](Ugly/WindowUtils.swift)
+
+<table>
+  <tr>
+    <th>Public entities to cover</th>
+    <th>Candidate tests</th>
+  </tr>
+  <tr>
+    <td>
+
+- `WindowUtils` window accessors (`setOriginalWindow`, `windowScene`, `keyWindow`, `rootViewController`, `originalWindow`, `currentWindow`, `topViewController`)
+- Global helpers `endEditing(force:)` and `SafeFrame.currentInsets`
+    </td>
+    <td>
+      <table>
+        <tr>
+          <th alignment="leading">Name</th>
+          <th>Description</th>
+        </tr>
+        <tr>                             <!-- ╭────┘ 1 └───────╮ -->
+          <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
+`tracks_manually_assigned_window`
+          </td>
+          <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
+Confirm `setOriginalWindow` overrides lookup and restores when cleared
+          </td>
+        </tr>                            <!-- ╰────────────────╯ -->
+        <tr>                             <!-- ╭────┘ 2 └───────╮ -->
+          <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
+`resolves_top_view_controller`
+          </td>
+          <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
+Simulate navigation/tab/presentation stacks to ensure the traversal selects the visible controller
+          </td>
+        </tr>                            <!-- ╰────────────────╯ -->
+        <tr>                             <!-- ╭────┘ 3 └───────╮ -->
+          <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
+`ends_editing_through_current_window`
+          </td>
+          <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
+Verify `endEditing(force:)` relays to the active window and respects the `force` flag
+          </td>
+        </tr>                            <!-- ╰────────────────╯ -->
+        <tr>                             <!-- ╭────┘ 4 └───────╮ -->
+          <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
+`reports_safe_area_insets`
+          </td>
+          <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
+Validate `SafeFrame.currentInsets` mirrors the active window's safe area
+          </td>
+        </tr>                            <!-- ╰────────────────╯ -->
+      </table>
+    </td>
+  </tr>
+</table>
+
+## ⊞ [Third Party/Pluralize/Pluralize.swift](Third%20Party/Pluralize/Pluralize.swift)
+
+<table>
+  <tr>
+    <th>Public entities to cover</th>
+    <th>Candidate tests</th>
+  </tr>
+  <tr>
+    <td>
+
+- `Pluralize` class API (`apply`, `applySingular`, `rule`, `singularRule`, `uncountable`, `unchanging`, instance rule collections)
+    </td>
+    <td>
+      <table>
+        <tr>
+          <th alignment="leading">Name</th>
+          <th>Description</th>
+        </tr>
+        <tr>                             <!-- ╭────┘ 1 └───────╮ -->
+          <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
+`pluralizes_and_singularizes_common_words`
+          </td>
+          <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
+Check irregular and regular transformations for representative samples
+          </td>
+        </tr>                            <!-- ╰────────────────╯ -->
+        <tr>                             <!-- ╭────┘ 2 └───────╮ -->
+          <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
+`honors_uncountable_and_unchanging_lists`
+          </td>
+          <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
+Confirm words in those collections return unchanged results
+          </td>
+        </tr>                            <!-- ╰────────────────╯ -->
+        <tr>                             <!-- ╭────┘ 3 └───────╮ -->
+          <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
+`adds_runtime_rules`
+          </td>
+          <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
+Ensure dynamically added plural/singular rules apply ahead of defaults
+          </td>
+        </tr>                            <!-- ╰────────────────╯ -->
+      </table>
+    </td>
+  </tr>
+</table>
+
+---
+
+**Summary:** 9 scopes with 31 proposed test cases covering deterministic behavior, string processing, geometry preference wiring, type erasure semantics, UIKit helpers, and pluralization utilities across QizhKit.
