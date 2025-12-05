@@ -2,9 +2,61 @@
 
 This document tracks unit-test candidates discovered while scanning the QizhKit codebase, grouped by source area. Each entry lists the public APIs worth covering and concrete test ideas to validate their behavior.
 
-| Scope / File | Public entities to cover | Candidate tests (name — description) |
-| --- | --- | --- |
-| Components/Airtable/AirtableFormulaBuilder.swift | `AirtableFormulaBuilder` case rendering and combinators;<br>`String.StringInterpolation.appendInterpolation(_:)` overloads for formulas and apostrophe escaping;<br>`String.withApostrophesEscaped` helper | `builds_basic_formulas` — ensure `.search`, `.equals`, `.notEquals`, `.isEmpty`, and `.id` produce Airtable-friendly strings;<br>`combines_formulas_with_and_or_not` — validate `.and`, `.or`, and `.not` nest descriptions correctly for multiple children;<br>`escapes_apostrophes_in_interpolation` — verify the custom string interpolation paths escape single quotes consistently for raw values and `RawRepresentable` inputs. |
+## ⊞ [Components/Airtable/AirtableFormulaBuilder.swift](Components/Airtable/AirtableFormulaBuilder.swift)
+
+<table>
+  <tr>
+    <th>Public entities to cover</th>
+    <th>Candidate tests</th>
+  </tr>
+  <tr>
+    <td>
+      
+- `String.StringInterpolation.appendInterpolation(_:)` overloads for formulas and apostrophe escaping
+- `String.withApostrophesEscaped` helper
+    </td>
+    <td>
+      <table>
+        <tr>
+          <th alignment="leading">Name</th>
+          <th>Description</th>
+        </tr>
+        <tr>                             <!-- ╭────┘ 1 └───────╮ -->
+          <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
+`.equals`, `.notEquals`, `.isEmpty`, and `.id`
+          </td>
+          <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
+Produce Airtable-friendly strings
+          </td>
+        </tr>                            <!-- ╰────────────────╯ -->
+        <tr>                             <!-- ╭────┘ 2 └───────╮ -->
+          <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
+`combines_formulas_with_and_or_not`
+          </td>
+          <td>                           <!-- ├❴ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣 ❵────┤ -->
+Validate `.and`, `.or`, and `.not` nest descriptions correctly for multiple children
+          </td>
+        </tr>                            <!-- ╰────────────────╯ -->
+        <tr>                             <!-- ╭────┘ 3 └───────╮ -->
+          <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
+`escapes_apostrophes_in_interpolation`
+          </td>
+          <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
+Verify the custom string interpolation paths escape single quotes consistently for raw values and `RawRepresentable` inputs
+          </td>
+        </tr>                            <!-- ╰────────────────╯ -->
+      </table>
+    </td>
+  </tr>
+</table>
+
+<details>
+  <summary>TODO</summary>
+  
+- [ ] Divide the following table into sections with tables, like the one above was made out of the first row previously present in the following table.
+
+| Public entities to cover | Candidate tests (name — description) |
+|:-------------------------|:-------------------------------------|
 | Components/Random Generators/SeededRandomGenerator.swift | `SeededRandomGenerator` seeding behavior and `next()` production | `produces_repeatable_sequence` — confirm identical seeds emit identical sequences across multiple draws;<br>`mixes_64bit_output` — assert two 32-bit GK samples are combined into varying high/low bits to prevent bias;<br>`advances_state_between_calls` — ensure successive `next()` calls mutate generator state (no repeated constant). |
 | Extensions/String+/String+modify.swift | `StringProtocol` replacement/trim utilities (`replacing`, `withSpacesTrimmed`, `withLinesTrimmed`, `withEmptyLinesTrimmed`, `withLinesNSpacesTrimmed`, `digits`);<br>Trailing trimming helpers (`trimmingTrailingCharacters`, `withTrailingSpacesTrimmed`, `withTrailingSpacesAndLinesTrimmed`);<br>Multiplication operator `String * UInt`;<br>`StringOffset` presets and properties;<br>Line offsetting helpers (`offsetting`, `offsettingLines`, `offsettingNewLines`, `tabOffsettingLines`, `tabOffsettingNewLines`) | `replaces_and_trims_strings` — cover replacements by set/value and trimming behaviors including empty-line removal;<br>`trims_trailing_characters` — verify targeted trailing whitespace/newline removal paths;<br>`repeats_string_with_multiplication_operator` — ensure `"abc" * 3` returns expected concatenation;<br>`string_offset_presets_emit_expected_tokens` — validate `StringOffset` preset suffix/prefix strings and computed properties;<br>`offsets_multiline_blocks` — assert offsetting helpers pad each line as documented. |
 | Structures/Dimensions/GeometryReceivers.swift | View extensions `receiveWidth`, `receiveHeight`, `receiveSafeAreaInsets` for callback and binding variants | `captures_width_and_height_preferences` — inject test views and confirm bindings receive geometry values once layout occurs;<br>`invokes_callbacks_on_change` — ensure callbacks fire with updated dimensions when layout changes;<br>`binds_optional_and_nonoptional_insets` — verify both `EdgeInsets` and `EdgeInsets?` bindings are updated through the preference chain. |
@@ -14,5 +66,7 @@ This document tracks unit-test candidates discovered while scanning the QizhKit 
 | Ugly/WindowUtils.swift | `WindowUtils` window accessors (`setOriginalWindow`, `windowScene`, `keyWindow`, `rootViewController`, `originalWindow`, `currentWindow`, `topViewController`);<br>Global helpers `endEditing(force:)` and `SafeFrame.currentInsets` | `tracks_manually_assigned_window` — confirm `setOriginalWindow` overrides lookup and restores when cleared;<br>`resolves_top_view_controller` — simulate navigation/tab/presentation stacks to ensure the traversal selects the visible controller;<br>`ends_editing_through_current_window` — verify `endEditing(force:)` relays to the active window and respects the `force` flag;<br>`reports_safe_area_insets` — validate `SafeFrame.currentInsets` mirrors the active window’s safe area. |
 | Third Party/Pluralize/Pluralize.swift | `Pluralize` class API (`apply`, `applySingular`, `rule`, `singularRule`, `uncountable`, `unchanging`, instance rule collections) | `pluralizes_and_singularizes_common_words` — check irregular and regular transformations for representative samples;<br>`honors_uncountable_and_unchanging_lists` — confirm words in those collections return unchanged results;<br>`adds_runtime_rules` — ensure dynamically added plural/singular rules apply ahead of defaults. |
 | **Summary** | **9 scopes** | **31 proposed test cases** |
+
+</details>
 
 The plan surfaces nine source areas with thirty-one focused test ideas to exercise deterministic behavior, string processing, geometry preference wiring, type erasure semantics, UIKit helpers, and pluralization utilities across QizhKit.
