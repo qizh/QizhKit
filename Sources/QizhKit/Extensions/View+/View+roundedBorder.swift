@@ -178,12 +178,15 @@ public enum LinePosition: EasyCaseComparable {
 	
 	/// Calculate the border line inset
 	/// - Parameter weight: Border weight line to be insetted
-	/// - Returns: Zero for ``center`` case, `weight` half for ``inner``, and minus `weight` half for ``outer``
+	/// - Returns:
+	///   - Zero for ``center`` case,
+	///   - `weight` half for ``inner``
+	///   - Negated `weight` half for ``outer``
 	public func inset(for weight: CGFloat) -> CGFloat {
 		switch self {
-		case .center: return .zero
-		case .inner:  return  weight.half
-		case .outer:  return -weight.half
+		case .center: .zero
+		case .inner:   weight.half
+		case .outer:  -weight.half
 		}
 	}
 }
