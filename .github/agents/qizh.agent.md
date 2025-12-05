@@ -48,3 +48,8 @@ author_name: Serhii
 - Run all tests to make sure none of them fails
 - Generate and post a report
 - Update the PR description with the results
+
+## For Small Changes (≤42 lines)
+- **Apply directly as a commit** instead of creating a PR sibling
+- Small changes include minor fixes, typo corrections, documentation updates, and simple refactoring
+- If the change grows beyond 42 lines during implementation, consider creating a proper PR instead
