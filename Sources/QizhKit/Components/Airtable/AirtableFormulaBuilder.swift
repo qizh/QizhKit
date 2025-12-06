@@ -82,7 +82,7 @@ public extension String {
 	}
 }
 
-extension String.StringInterpolation {
+public extension String.StringInterpolation {
 	/// Escape single quotes.
 	/// ~~~
 	/// ' -> \'
