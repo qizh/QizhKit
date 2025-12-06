@@ -19,11 +19,15 @@ This document tracks unit-test candidates discovered while scanning the QizhKit 
       <table>
         <tr>
           <th alignment="leading">Name</th>
+          <th>APIs to test</th>
           <th>Description</th>
         </tr>
         <tr>                             <!-- ╭────┘ 1 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
 `testProducesAirtableFriendlyStrings`
+          </td>
+          <td>                           <!-- ├ 𝘼𝙋𝙄𝙨 𝙩𝙤 𝙩𝙚𝙨𝙩     │ -->
+`.equals`, `.notEquals`, `.isEmpty`, and `.id`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Produce Airtable-friendly strings
@@ -33,6 +37,9 @@ Produce Airtable-friendly strings
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
 `testCombinesFormulasWithAndOrNot`
           </td>
+          <td>                           <!-- ├ 𝘼𝙋𝙄𝙨 𝙩𝙤 𝙩𝙚𝙨𝙩     │ -->
+`.and`, `.or`, `.not`
+          </td>
           <td>                           <!-- ├❴ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣 ❵────┤ -->
 Validate `.and`, `.or`, and `.not` nest descriptions correctly for multiple children
           </td>
@@ -40,6 +47,9 @@ Validate `.and`, `.or`, and `.not` nest descriptions correctly for multiple chil
         <tr>                             <!-- ╭────┘ 3 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
 `testEscapesApostrophesInInterpolation`
+          </td>
+          <td>                           <!-- ├ 𝘼𝙋𝙄𝙨 𝙩𝙤 𝙩𝙚𝙨𝙩     │ -->
+`appendInterpolation(_:)`, `withApostrophesEscaped`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Verify the custom string interpolation paths escape single quotes consistently for raw values and `RawRepresentable` inputs
