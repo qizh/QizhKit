@@ -134,11 +134,12 @@ struct PluralizeTests {
     @Test func testAddsRuntimeRules() async throws {
         // Add a custom plural rule for a made-up pattern
         // Note: Rules are added to the front of the list, so they take precedence
-        Pluralize.rule(rule: "zoon$", with: "$1zoa")
+        // The pattern uses a capturing group for the prefix
+        Pluralize.rule(rule: "(proto)zoon$", with: "$1zoa")
         #expect("protozoon".pluralize() == "protozoa")
         
         // Add a custom singular rule
-        Pluralize.singularRule(rule: "zoa$", with: "zoon")
+        Pluralize.singularRule(rule: "(proto)zoa$", with: "$1zoon")
         #expect("protozoa".singularize() == "protozoon")
         
         // Add a custom uncountable word
