@@ -10,7 +10,7 @@ struct AirtableFormulaBuilderTests {
                 case city
         }
 
-        @Test
+        @Test("Friendly strings producing")
         func testProducesAirtableFriendlyStrings() {
                 let equals = AirtableFormulaBuilder.equals("O'Hara", in: Fields.name)
                 let notEquals = AirtableFormulaBuilder.notEquals("O'Hara", in: Fields.name)
@@ -23,7 +23,7 @@ struct AirtableFormulaBuilderTests {
                 #expect(recordID.description == "RECORD_ID() = 'recABC123'")
         }
 
-        @Test
+        @Test("Using And or Not to combine formulas")
         func testCombinesFormulasWithAndOrNot() {
                 let emptyCheck = AirtableFormulaBuilder.isEmpty(Fields.city)
                 let nameEquals = AirtableFormulaBuilder.equals("Jean", in: Fields.name)
@@ -38,7 +38,7 @@ struct AirtableFormulaBuilderTests {
                 #expect(combined.description == "AND({name} = 'Jean', NOT({city} = BLANK()), OR(RECORD_ID() = 'rec1', RECORD_ID() = 'rec2'))")
         }
 
-        @Test
+        @Test("Escaping apostrophes in interpolation")
         func testEscapesApostrophesInInterpolation() {
                 enum Borough: String { case queens = "Queen's" }
 
