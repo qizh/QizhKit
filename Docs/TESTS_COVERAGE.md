@@ -94,7 +94,7 @@ This document tracks unit-test candidates discovered while scanning the QizhKit 
 ## Third Party/Pluralize/Pluralize.swift
 - [ ] File: [Third Party/Pluralize/Pluralize.swift](Third%20Party/Pluralize/Pluralize.swift)
   - Public entities to cover
-    - [ ] `Pluralize` class API (`apply`, `applySingular`, `rule`, `singularRule`, `uncountable`, `unchanging`, instance rule collections`)
+    - [ ] `Pluralize` class API (`apply`, `applySingular`, `rule`, `singularRule`, `uncountable`, `unchanging`, instance rule collections)
   - Candidate tests
     - [ ] `testPluralizesAndSingularizesCommonWords` — Check irregular and regular transformations for representative samples.
     - [ ] `testHonorsUncountableAndUnchangingLists` — Confirm words in those collections return unchanged results.
