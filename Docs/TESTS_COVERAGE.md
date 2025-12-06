@@ -4,6 +4,8 @@ This document tracks unit-test candidates discovered while scanning the QizhKit 
 
 ## ⊞ [Components/Airtable/AirtableFormulaBuilder.swift](Components/Airtable/AirtableFormulaBuilder.swift)
 
+- [x] File coverage tracked in `Tests/QizhKitTests/AirtableFormulaBuilderTests.swift`
+
 <table>
   <tr>
     <th>Public entities to cover</th>
@@ -11,9 +13,9 @@ This document tracks unit-test candidates discovered while scanning the QizhKit 
   </tr>
   <tr>
     <td>
-      
-- `String.StringInterpolation.appendInterpolation(_:)` overloads for formulas and apostrophe escaping
-- `String.withApostrophesEscaped` helper
+
+- [x] `String.StringInterpolation.appendInterpolation(_:)` overloads for formulas and apostrophe escaping
+- [x] `String.withApostrophesEscaped` helper
     </td>
     <td>
       <table>
@@ -24,18 +26,18 @@ This document tracks unit-test candidates discovered while scanning the QizhKit 
         </tr>
         <tr>                             <!-- ╭────┘ 1 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`testProducesAirtableFriendlyStrings`
+- [x] `testProducesAirtableFriendlyStrings`
           </td>
           <td>                           <!-- ├ 𝘼𝙋𝙄𝙨 𝙩𝙤 𝙩𝙚𝙨𝙩     │ -->
-`.equals`, `.notEquals`, `.isEmpty`, and `.id`
+Formula builder equality and identifier outputs
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
-Produce Airtable-friendly strings
+Produce Airtable-friendly strings for `.equals`, `.notEquals`, `.isEmpty`, and `.id` while escaping apostrophes
           </td>
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 2 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`testCombinesFormulasWithAndOrNot`
+- [x] `testCombinesFormulasWithAndOrNot`
           </td>
           <td>                           <!-- ├ 𝘼𝙋𝙄𝙨 𝙩𝙤 𝙩𝙚𝙨𝙩     │ -->
 `.and`, `.or`, `.not`
@@ -46,7 +48,7 @@ Validate `.and`, `.or`, and `.not` nest descriptions correctly for multiple chil
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 3 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`testEscapesApostrophesInInterpolation`
+- [x] `testEscapesApostrophesInInterpolation`
           </td>
           <td>                           <!-- ├ 𝘼𝙋𝙄𝙨 𝙩𝙤 𝙩𝙚𝙨𝙩     │ -->
 `appendInterpolation(_:)`, `withApostrophesEscaped`
@@ -62,6 +64,8 @@ Verify the custom string interpolation paths escape single quotes consistently f
 
 ## ⊞ [Components/Random Generators/SeededRandomGenerator.swift](Components/Random%20Generators/SeededRandomGenerator.swift)
 
+- [ ] File coverage pending
+
 <table>
   <tr>
     <th>Public entities to cover</th>
@@ -70,7 +74,7 @@ Verify the custom string interpolation paths escape single quotes consistently f
   <tr>
     <td>
 
-- `SeededRandomGenerator` seeding behavior and `next()` production
+- [ ] `SeededRandomGenerator` seeding behavior and `next()` production
     </td>
     <td>
       <table>
@@ -80,7 +84,7 @@ Verify the custom string interpolation paths escape single quotes consistently f
         </tr>
         <tr>                             <!-- ╭────┘ 1 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`testProducesRepeatableSequence`
+- [ ] `testProducesRepeatableSequence`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Confirm identical seeds emit identical sequences across multiple draws
@@ -88,7 +92,7 @@ Confirm identical seeds emit identical sequences across multiple draws
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 2 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`testMixes64BitOutput`
+- [ ] `testMixes64BitOutput`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Assert two 32-bit GK samples are combined into varying high/low bits to prevent bias
@@ -96,7 +100,7 @@ Assert two 32-bit GK samples are combined into varying high/low bits to prevent 
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 3 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`testAdvancesStateBetweenCalls`
+- [ ] `testAdvancesStateBetweenCalls`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Ensure successive `next()` calls mutate generator state (no repeated constant)
@@ -109,6 +113,8 @@ Ensure successive `next()` calls mutate generator state (no repeated constant)
 
 ## ⊞ [Extensions/String+/String+modify.swift](Extensions/String+/String+modify.swift)
 
+- [ ] File coverage pending
+
 <table>
   <tr>
     <th>Public entities to cover</th>
@@ -117,11 +123,11 @@ Ensure successive `next()` calls mutate generator state (no repeated constant)
   <tr>
     <td>
 
-- `StringProtocol` replacement/trim utilities (`replacing`, `withSpacesTrimmed`, `withLinesTrimmed`, `withEmptyLinesTrimmed`, `withLinesNSpacesTrimmed`, `digits`)
-- Trailing trimming helpers (`trimmingTrailingCharacters`, `withTrailingSpacesTrimmed`, `withTrailingSpacesAndLinesTrimmed`)
-- Multiplication operator `String * UInt`
-- `StringOffset` presets and properties
-- Line offsetting helpers (`offsetting`, `offsettingLines`, `offsettingNewLines`, `tabOffsettingLines`, `tabOffsettingNewLines`)
+- [ ] `StringProtocol` replacement/trim utilities (`replacing`, `withSpacesTrimmed`, `withLinesTrimmed`, `withEmptyLinesTrimmed`, `withLinesNSpacesTrimmed`, `digits`)
+- [ ] Trailing trimming helpers (`trimmingTrailingCharacters`, `withTrailingSpacesTrimmed`, `withTrailingSpacesAndLinesTrimmed`)
+- [ ] Multiplication operator `String * UInt`
+- [ ] `StringOffset` presets and properties
+- [ ] Line offsetting helpers (`offsetting`, `offsettingLines`, `offsettingNewLines`, `tabOffsettingLines`, `tabOffsettingNewLines`)
     </td>
     <td>
       <table>
@@ -131,7 +137,7 @@ Ensure successive `next()` calls mutate generator state (no repeated constant)
         </tr>
         <tr>                             <!-- ╭────┘ 1 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`testReplacesAndTrimsStrings`
+- [ ] `testReplacesAndTrimsStrings`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Cover replacements by set/value and trimming behaviors including empty-line removal
@@ -139,7 +145,7 @@ Cover replacements by set/value and trimming behaviors including empty-line remo
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 2 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`testTrimsTrailingCharacters`
+- [ ] `testTrimsTrailingCharacters`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Verify targeted trailing whitespace/newline removal paths
@@ -147,7 +153,7 @@ Verify targeted trailing whitespace/newline removal paths
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 3 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`testRepeatsStringWithMultiplicationOperator`
+- [ ] `testRepeatsStringWithMultiplicationOperator`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Ensure `"abc" * 3` returns expected concatenation
@@ -155,7 +161,7 @@ Ensure `"abc" * 3` returns expected concatenation
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 4 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`testStringOffsetPresetsEmitExpectedTokens`
+- [ ] `testStringOffsetPresetsEmitExpectedTokens`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Validate `StringOffset` preset suffix/prefix strings and computed properties
@@ -163,7 +169,7 @@ Validate `StringOffset` preset suffix/prefix strings and computed properties
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 5 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`testOffsetsMultilineBlocks`
+- [ ] `testOffsetsMultilineBlocks`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Assert offsetting helpers pad each line as documented
@@ -176,6 +182,8 @@ Assert offsetting helpers pad each line as documented
 
 ## ⊞ [Structures/Dimensions/GeometryReceivers.swift](Structures/Dimensions/GeometryReceivers.swift)
 
+- [ ] File coverage pending
+
 <table>
   <tr>
     <th>Public entities to cover</th>
@@ -184,7 +192,7 @@ Assert offsetting helpers pad each line as documented
   <tr>
     <td>
 
-- View extensions `receiveWidth`, `receiveHeight`, `receiveSafeAreaInsets` for callback and binding variants
+- [ ] View extensions `receiveWidth`, `receiveHeight`, `receiveSafeAreaInsets` for callback and binding variants
     </td>
     <td>
       <table>
@@ -194,7 +202,7 @@ Assert offsetting helpers pad each line as documented
         </tr>
         <tr>                             <!-- ╭────┘ 1 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`testCapturesWidthAndHeightPreferences`
+- [ ] `testCapturesWidthAndHeightPreferences`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Inject test views and confirm bindings receive geometry values once layout occurs
@@ -202,7 +210,7 @@ Inject test views and confirm bindings receive geometry values once layout occur
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 2 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`testInvokesCallbacksOnChange`
+- [ ] `testInvokesCallbacksOnChange`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Ensure callbacks fire with updated dimensions when layout changes
@@ -210,7 +218,7 @@ Ensure callbacks fire with updated dimensions when layout changes
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 3 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`testBindsOptionalAndNonoptionalInsets`
+- [ ] `testBindsOptionalAndNonoptionalInsets`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Verify both `EdgeInsets` and `EdgeInsets?` bindings are updated through the preference chain
@@ -223,6 +231,8 @@ Verify both `EdgeInsets` and `EdgeInsets?` bindings are updated through the pref
 
 ## ⊞ [Structures/Dimensions/RelativeDimension.swift](Structures/Dimensions/RelativeDimension.swift)
 
+- [ ] File coverage pending
+
 <table>
   <tr>
     <th>Public entities to cover</th>
@@ -231,9 +241,9 @@ Verify both `EdgeInsets` and `EdgeInsets?` bindings are updated through the pref
   <tr>
     <td>
 
-- `RelativeDimension` literal conformance and stored cases (`maximum`, `exactly`, `minimum`)
-- Computed values (`value`, `maxValue`, `extraPadding`)
-- Comparison helpers (`is(_:)`, `isMaximum`, `isExact`, `isMinimum`)
+- [ ] `RelativeDimension` literal conformance and stored cases (`maximum`, `exactly`, `minimum`)
+- [ ] Computed values (`value`, `maxValue`, `extraPadding`)
+- [ ] Comparison helpers (`is(_:)`, `isMaximum`, `isExact`, `isMinimum`)
     </td>
     <td>
       <table>
@@ -243,7 +253,7 @@ Verify both `EdgeInsets` and `EdgeInsets?` bindings are updated through the pref
         </tr>
         <tr>                             <!-- ╭────┘ 1 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`testInitializesFromLiterals`
+- [ ] `testInitializesFromLiterals`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Confirm float/integer literal initializers map to `.exactly` with converted `CGFloat`
@@ -251,7 +261,7 @@ Confirm float/integer literal initializers map to `.exactly` with converted `CGF
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 2 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`testExposesValueAndMaxValue`
+- [ ] `testExposesValueAndMaxValue`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Validate optional outputs for `exactly` vs `maximum` cases
@@ -259,7 +269,7 @@ Validate optional outputs for `exactly` vs `maximum` cases
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 3 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`testMinimumCaseReportsPadding`
+- [ ] `testMinimumCaseReportsPadding`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Ensure `.minimum` carries the provided padding
@@ -267,7 +277,7 @@ Ensure `.minimum` carries the provided padding
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 4 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`testComparisonHelpersMatchCases`
+- [ ] `testComparisonHelpersMatchCases`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Test `is` and convenience flags across all permutations
@@ -280,6 +290,8 @@ Test `is` and convenience flags across all permutations
 
 ## ⊞ [Structures/Type Erase/AnyComparable.swift](Structures/Type%20Erase/AnyComparable.swift)
 
+- [ ] File coverage pending
+
 <table>
   <tr>
     <th>Public entities to cover</th>
@@ -288,9 +300,9 @@ Test `is` and convenience flags across all permutations
   <tr>
     <td>
 
-- `AnyComparable` boxing behavior
-- `Comparable`/`Equatable` conformance
-- `Comparable.asAnyComparable()` helper
+- [ ] `AnyComparable` boxing behavior
+- [ ] `Comparable`/`Equatable` conformance
+- [ ] `Comparable.asAnyComparable()` helper
     </td>
     <td>
       <table>
@@ -300,7 +312,7 @@ Test `is` and convenience flags across all permutations
         </tr>
         <tr>                             <!-- ╭────┘ 1 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`testComparesBoxedValues`
+- [ ] `testComparesBoxedValues`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Assert `<` and `==` use underlying `Comparable` semantics for same-typed boxes
@@ -308,7 +320,7 @@ Assert `<` and `==` use underlying `Comparable` semantics for same-typed boxes
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 2 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`testHandlesCrossTypeComparisonsSafely`
+- [ ] `testHandlesCrossTypeComparisonsSafely`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Ensure comparisons with different underlying types return `false` without crashes
@@ -316,7 +328,7 @@ Ensure comparisons with different underlying types return `false` without crashe
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 3 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`testWrapsComparableValues`
+- [ ] `testWrapsComparableValues`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Verify `.asAnyComparable()` wraps and preserves ordering in sorted collections
@@ -329,6 +341,8 @@ Verify `.asAnyComparable()` wraps and preserves ordering in sorted collections
 
 ## ⊞ [Structures/Type Erase/AnyHashableAndSendable.swift](Structures/Type%20Erase/AnyHashableAndSendable.swift)
 
+- [ ] File coverage pending
+
 <table>
   <tr>
     <th>Public entities to cover</th>
@@ -337,9 +351,9 @@ Verify `.asAnyComparable()` wraps and preserves ordering in sorted collections
   <tr>
     <td>
 
-- Property wrappers `AnyHashableAndSendable`, `AnySendableEncodable`, `AnyHashableSendableEncodable` and their nested box types
-- Protocols (`HashableAndSendableAdoptable`, `SendableEncodableAdoptable`, `HashableSendableEncodableAdoptable`)
-- Encoding helpers on `[AnyHashable: Any]` (`asEncodedJsonString`, `asEncodedJson5string`)
+- [ ] Property wrappers `AnyHashableAndSendable`, `AnySendableEncodable`, `AnyHashableSendableEncodable` and their nested box types
+- [ ] Protocols (`HashableAndSendableAdoptable`, `SendableEncodableAdoptable`, `HashableSendableEncodableAdoptable`)
+- [ ] Encoding helpers on `[AnyHashable: Any]` (`asEncodedJsonString`, `asEncodedJson5string`)
     </td>
     <td>
       <table>
@@ -349,7 +363,7 @@ Verify `.asAnyComparable()` wraps and preserves ordering in sorted collections
         </tr>
         <tr>                             <!-- ╭────┘ 1 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`testBoxesPreserveHashAndEquality`
+- [ ] `testBoxesPreserveHashAndEquality`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Verify wrappers round-trip `Hashable`/`Sendable` values and compare correctly across identical and differing types
@@ -357,7 +371,7 @@ Verify wrappers round-trip `Hashable`/`Sendable` values and compare correctly ac
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 2 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`testEncodesWrappedValues`
+- [ ] `testEncodesWrappedValues`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Ensure encodable wrappers forward encoding to the underlying value and produce expected JSON/JSON5 strings
@@ -365,7 +379,7 @@ Ensure encodable wrappers forward encoding to the underlying value and produce e
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 3 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`testSupportsPropertyWrapperInitStyles`
+- [ ] `testSupportsPropertyWrapperInitStyles`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Cover both `init(wrappedValue:)` and direct initializers for each wrapper
@@ -373,7 +387,7 @@ Cover both `init(wrappedValue:)` and direct initializers for each wrapper
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 4 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`testHandlesNonEncodableDictionaryEntries`
+- [ ] `testHandlesNonEncodableDictionaryEntries`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Assert encoding helpers return the fallback message when dictionary cannot be cast to `Encodable`
@@ -386,6 +400,8 @@ Assert encoding helpers return the fallback message when dictionary cannot be ca
 
 ## ⊞ [Ugly/WindowUtils.swift](Ugly/WindowUtils.swift)
 
+- [ ] File coverage pending
+
 <table>
   <tr>
     <th>Public entities to cover</th>
@@ -394,8 +410,8 @@ Assert encoding helpers return the fallback message when dictionary cannot be ca
   <tr>
     <td>
 
-- `WindowUtils` window accessors (`setOriginalWindow`, `windowScene`, `keyWindow`, `rootViewController`, `originalWindow`, `currentWindow`, `topViewController`)
-- Global helpers `endEditing(force:)` and `SafeFrame.currentInsets`
+- [ ] `WindowUtils` window accessors (`setOriginalWindow`, `windowScene`, `keyWindow`, `rootViewController`, `originalWindow`, `currentWindow`, `topViewController`)
+- [ ] Global helpers `endEditing(force:)` and `SafeFrame.currentInsets`
     </td>
     <td>
       <table>
@@ -405,7 +421,7 @@ Assert encoding helpers return the fallback message when dictionary cannot be ca
         </tr>
         <tr>                             <!-- ╭────┘ 1 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`testTracksManuallyAssignedWindow`
+- [ ] `testTracksManuallyAssignedWindow`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Confirm `setOriginalWindow` overrides lookup and restores when cleared
@@ -413,7 +429,7 @@ Confirm `setOriginalWindow` overrides lookup and restores when cleared
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 2 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`testResolvesTopViewController`
+- [ ] `testResolvesTopViewController`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Simulate navigation/tab/presentation stacks to ensure the traversal selects the visible controller
@@ -421,7 +437,7 @@ Simulate navigation/tab/presentation stacks to ensure the traversal selects the 
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 3 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`testEndsEditingThroughCurrentWindow`
+- [ ] `testEndsEditingThroughCurrentWindow`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Verify `endEditing(force:)` relays to the active window and respects the `force` flag
@@ -429,7 +445,7 @@ Verify `endEditing(force:)` relays to the active window and respects the `force`
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 4 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`testReportsSafeAreaInsets`
+- [ ] `testReportsSafeAreaInsets`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Validate `SafeFrame.currentInsets` mirrors the active window's safe area
@@ -442,6 +458,8 @@ Validate `SafeFrame.currentInsets` mirrors the active window's safe area
 
 ## ⊞ [Third Party/Pluralize/Pluralize.swift](Third%20Party/Pluralize/Pluralize.swift)
 
+- [ ] File coverage pending
+
 <table>
   <tr>
     <th>Public entities to cover</th>
@@ -450,7 +468,7 @@ Validate `SafeFrame.currentInsets` mirrors the active window's safe area
   <tr>
     <td>
 
-- `Pluralize` class API (`apply`, `applySingular`, `rule`, `singularRule`, `uncountable`, `unchanging`, instance rule collections)
+- [ ] `Pluralize` class API (`apply`, `applySingular`, `rule`, `singularRule`, `uncountable`, `unchanging`, instance rule collections)
     </td>
     <td>
       <table>
@@ -460,7 +478,7 @@ Validate `SafeFrame.currentInsets` mirrors the active window's safe area
         </tr>
         <tr>                             <!-- ╭────┘ 1 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`testPluralizesAndSingularizesCommonWords`
+- [ ] `testPluralizesAndSingularizesCommonWords`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Check irregular and regular transformations for representative samples
@@ -468,7 +486,7 @@ Check irregular and regular transformations for representative samples
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 2 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`testHonorsUncountableAndUnchangingLists`
+- [ ] `testHonorsUncountableAndUnchangingLists`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Confirm words in those collections return unchanged results
@@ -476,7 +494,7 @@ Confirm words in those collections return unchanged results
         </tr>                            <!-- ╰────────────────╯ -->
         <tr>                             <!-- ╭────┘ 3 └───────╮ -->
           <td>                           <!-- ├ 𝙉𝙖𝙢𝙚           │ -->
-`testAddsRuntimeRules`
+- [ ] `testAddsRuntimeRules`
           </td>
           <td>                           <!-- ├ 𝘿𝙚𝙨𝙘𝙧𝙞𝙥𝙩𝙞𝙤𝙣       │ -->
 Ensure dynamically added plural/singular rules apply ahead of defaults
