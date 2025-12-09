@@ -8,19 +8,12 @@
 
 import SwiftUI
 
-public struct IsInPreviewKey: EnvironmentKey {
-	public static let defaultValue: Bool = false
+extension EnvironmentValues {
+	@Entry public var isInPreview: Bool = false
 }
 
-public extension EnvironmentValues {
-	var isInPreview: Bool {
-		get { self[IsInPreviewKey.self] }
-		set { self[IsInPreviewKey.self] = newValue }
-	}
-}
-
-public extension View {
-	func isInPreview() -> some View {
+extension View {
+	public func isInPreview() -> some View {
 		environment(\.isInPreview, true)
 	}
 }

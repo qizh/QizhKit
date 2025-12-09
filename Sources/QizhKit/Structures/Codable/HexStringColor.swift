@@ -16,6 +16,83 @@ import UIKit
 import AppKit
 #endif
 
+// MARK: - Pair of Hex Colors
+
+public struct HexStringColorsPair: Codable,
+								   Hashable,
+								   Sendable,
+								   WithDefault,
+								   CustomStringConvertible,
+								   ExpressibleByStringLiteral,
+								   ExpressibleByArrayLiteral {
+	
+	public let light: HexStringColor
+	public let dark: HexStringColor
+	
+	public init(light: HexStringColor, dark: HexStringColor) {
+		self.light = light
+		self.dark = dark
+	}
+	
+	@_disfavoredOverload
+	public init(light: HexStringColor?, dark: HexStringColor?) {
+		self.init(light: light ?? Self.default.light, dark: dark ?? Self.default.dark)
+	}
+	
+	@inlinable public init(_ light: HexStringColor, _ dark: HexStringColor) {
+		self.init(light: light, dark: dark)
+	}
+	
+	@inlinable public init(same hexColor: HexStringColor) {
+		self.init(light: hexColor, dark: hexColor)
+	}
+	
+	@inlinable public init(_ colors: HexStringColor...) { self.init(colors) }
+	public init(_ colors: [HexStringColor]) {
+		switch colors.count {
+		case 0: self = .default
+		case 1: self.init(same: colors[0])
+		default: self.init(light: colors[0], dark: colors[1])
+		}
+	}
+	
+	public init(stringLiteral value: String) {
+		let invertedHexColorSet = HexStringColor.characterSet.inverted
+		
+		let hexColors = value
+			.components(separatedBy: invertedHexColorSet)
+			.compactMap { s in
+				s.replacing(invertedHexColorSet, with: .empty).nonEmpty
+			}
+			.map { s in
+				HexStringColor(stringLiteral: s)
+			}
+		
+		self.init(hexColors)
+	}
+	
+	public init(arrayLiteral elements: UInt64...) {
+		self.init(elements.map(HexStringColor.init(integerLiteral:)))
+	}
+	
+	public static let `default`: HexStringColorsPair = .init(
+		light: .violentVioletLight,
+		dark: .violentVioletDark
+	)
+	
+	public var description: String {
+		if isDefault {
+			"default"
+		} else if light == dark {
+			light.description
+		} else {
+			"[\(light == Self.default.light ? "null" : light.description.inQuotes), \(dark == Self.default.dark ? "null" : dark.description.inQuotes)]"
+		}
+	}
+}
+
+// MARK: - Hex Color
+
 public struct HexStringColor: Codable,
 							  Hashable,
 							  Sendable,
@@ -26,9 +103,13 @@ public struct HexStringColor: Codable,
 	public let value: UInt64
 	public let hasAlphaChannel: Bool
 	
+	public static let characterSet = CharacterSet(charactersIn: "#0123456789abcdefABCDEF")
+	
 	public static let `default`: HexStringColor = .init(0x000000)
-	public static let black: HexStringColor = .init(0x000000)
-	public static let white: HexStringColor = .init(0xffffff)
+	public static let black: HexStringColor = 0x000000
+	public static let white: HexStringColor = 0xffffff
+	public static let violentVioletLight: HexStringColor = 0x1D0E64
+	public static let violentVioletDark: HexStringColor = 0xA7B9E3
 	
 	/// Creates a hexadecimal color from a numeric value.
 	///

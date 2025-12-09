@@ -4,13 +4,14 @@
 import PackageDescription
 import Foundation // ← for ProcessInfo
 
-/// Decide if HDR APIs should be enabled for QizhKit.
+/// Decide if HDR APIs should be enabled for `QizhKit`.
 /// On your Mac, set `QIZHKIT_ENABLE_HDR=1` in the environment when building.
 /// - Experiment:
-/// ```zsh
-/// launchctl setenv QIZHKIT_ENABLE_HDR 1
-/// launchctl getenv QIZHKIT_ENABLE_HDR # should output 1
-/// ```
+///   ```zsh
+///   launchctl setenv QIZHKIT_ENABLE_HDR 1
+///   launchctl getenv QIZHKIT_ENABLE_HDR
+///   # should output 1
+///   ```
 let isHDREnabled: Bool =
 	if let value = ProcessInfo.processInfo.environment["QIZHKIT_ENABLE_HDR"] {
 		value == "1" || value.lowercased() == "true"
@@ -70,7 +71,7 @@ let package = Package(
 		.package(url: "https://github.com/apple/swift-collections", from: "1.3.0"),
 		
 		/// Macros
-		.package(url: "https://github.com/qizh/QizhMacroKit", from: "1.1.15"),
+		.package(url: "https://github.com/qizh/QizhMacroKit", from: "1.1.16"),
 	],
 	targets: [
 		.target(
