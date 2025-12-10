@@ -4,6 +4,71 @@
 import PackageDescription
 import Foundation // ← for ProcessInfo
 
+// MARK: Prepare
+
+/// Base swift settings for the package.
+var swiftSettings: [SwiftSetting] = []
+
+/// Helper function to define `Trait`s in `SwiftSetting`s
+@MainActor func addSwiftSetting(_ traits: Trait..., platforms: [Platform] = []) {
+	for trait in traits {
+		for traitName in trait.enabledTraits {
+			swiftSettings.append(
+				.define(traitName, .when(platforms: platforms, traits: [trait.name]))
+			)
+		}
+	}
+}
+
+/// Helper function to define macros `Set<String>` (compiler conditions) in `SwiftSetting`s
+@MainActor func addSwiftSetting(_ macros: Set<String>, condition: BuildSettingCondition? = nil) {
+	for name in macros {
+		swiftSettings.append(.define(name, condition))
+	}
+}
+
+/// Helper function to define macros (compiler conditions) in `SwiftSetting`s
+@MainActor func addSwiftSetting(_ macros: String..., condition: BuildSettingCondition? = nil) {
+	addSwiftSetting(Set(macros), condition: condition)
+}
+
+// MARK: HDR
+
+/// `Trait` checking for `QIZHKIT_ENABLE_HDR` and assigning `RESOLVED_HDR_AVAILABLE`.
+public let resolvedHDRAvailable: Trait = .trait(
+	name: "RESOLVED_HDR_AVAILABLE",
+	description: "SwiftUI Color resolving HDR API is available"
+)
+
+/// `Trait` checking for `QIZHKIT_ENABLE_HDR` and assigning `RESOLVED_HDR_AVAILABLE`.
+public let conditionalResolvedHDRAvailable: Trait = .trait(
+	name: "QIZHKIT_ENABLE_HDR",
+	description: """
+		Enables resolving SwiftUI Colors in HDR by turning on the `\(resolvedHDRAvailable.name)` \ 
+		(\(resolvedHDRAvailable.description ?? "no description provided")) trait
+		""",
+	enabledTraits: [resolvedHDRAvailable.name]
+)
+
+/// HDR is disabled by default
+public let defaultTrait: Trait = .default(enabledTraits: [])
+
+let traits: Set<Trait> = [
+	resolvedHDRAvailable,
+	conditionalResolvedHDRAvailable,
+	defaultTrait,
+]
+
+addSwiftSetting(conditionalResolvedHDRAvailable)
+
+/// Get `ProcessInfo` & `Context` `environment` value for traits
+let envValues = [
+	ProcessInfo.processInfo.environment[resolvedHDRAvailable.name],
+	ProcessInfo.processInfo.environment[conditionalResolvedHDRAvailable.name],
+	Context.environment[resolvedHDRAvailable.name],
+	Context.environment[conditionalResolvedHDRAvailable.name],
+]
+
 /// Decide if HDR APIs should be enabled for `QizhKit`.
 /// On your Mac, set `QIZHKIT_ENABLE_HDR=1` in the environment when building.
 /// - Experiment:
@@ -11,31 +76,20 @@ import Foundation // ← for ProcessInfo
 ///   launchctl setenv QIZHKIT_ENABLE_HDR 1
 ///   launchctl getenv QIZHKIT_ENABLE_HDR
 ///   # should output 1
+///
+///   env | grep -E "HDR|QIZH"
+///   # Will output assigned environment values containing `HDR` or `QIZH`
 ///   ```
-let isHDREnabled: Bool =
-	if let value = ProcessInfo.processInfo.environment["QIZHKIT_ENABLE_HDR"] {
+let isHDREnabled: Bool = envValues
+	.compactMap(\.self)
+	.contains { value in
 		value == "1" || value.lowercased() == "true"
-	} else {
-		false
 	}
 
-/*
-print("QIZHKIT_ENABLE_HDR in Package.swift:",
-	  ProcessInfo.processInfo.environment["QIZHKIT_ENABLE_HDR"] ?? "nil")
-print("HDR enabled:", isHDREnabled)
-*/
-
-/// Base swift settings for QizhKit.
-var qizhKitSwiftSettings: [SwiftSetting] = [
-	// .defaultIsolation(MainActor.self)
-	// .enableExperimentalFeature("StrictConcurrency=complete", .when(configuration: .debug)),
-	// .unsafeFlags(["-Xfrontend", "-strict-concurrency=complete"], .when(configuration: .debug)),
-	// .unsafeFlags(["-cross-module-optimization"], .when(configuration: .release)),
-]
 
 /// Add the define only when HDR is explicitly enabled.
 if isHDREnabled {
-	qizhKitSwiftSettings.append(.define("RESOLVED_HDR_AVAILABLE"))
+	addSwiftSetting(resolvedHDRAvailable.name)
 }
 
 let package = Package(
@@ -52,6 +106,7 @@ let package = Package(
 			targets: ["QizhKit"]
 		),
 	],
+	traits: traits,
 	dependencies: [
 		/// Introspect
 		.package(url: "https://github.com/siteline/swiftui-introspect", from: "26.0.0"),
@@ -103,14 +158,14 @@ let package = Package(
 				.process("Localizations"),
 				.process("PrivacyInfo.xcprivacy"),
 			],
-			swiftSettings: qizhKitSwiftSettings
+			swiftSettings: swiftSettings
 		),
 		.testTarget(
 			name: "QizhKitTests",
 			dependencies: [
 				"QizhKit",
 			],
-			swiftSettings: qizhKitSwiftSettings
+			swiftSettings: swiftSettings
 		)
 	],
 	swiftLanguageModes: [
