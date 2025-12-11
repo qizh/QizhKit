@@ -89,6 +89,14 @@ public struct HexStringColorsPair: Codable,
 			"[\(light == Self.default.light ? "null" : light.description.inQuotes), \(dark == Self.default.dark ? "null" : dark.description.inQuotes)]"
 		}
 	}
+	
+	public var color: Color {
+		if light == dark {
+			light.color
+		} else {
+			.fromHexColors(light: light, dark: dark)
+		}
+	}
 }
 
 // MARK: - Hex Color
