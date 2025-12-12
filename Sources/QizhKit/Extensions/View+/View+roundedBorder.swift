@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import QizhMacroKit
 
 public extension View {
 	#if canImport(UIKit)
@@ -170,18 +171,68 @@ public extension View {
 
 // MARK: Line Position
 
-/// Enum for calculating border line insets
-public enum LinePosition: EasyCaseComparable {
+/// Represents where a stroked border line should be placed relative to the
+/// shape’s actual boundary when drawing borders (strokes).
+///
+/// Use this enum to control whether the stroke is centered on the boundary,
+/// drawn entirely inside, or drawn entirely outside. This is especially useful
+/// when you need pixel-perfect alignment or want to avoid clipping caused by
+/// stroke thickness.
+/// ## Cases
+/// - ``center``\
+///   The border line is centered on the shape’s boundary (default).
+///   Half of the stroke lies inside and half outside.
+/// - ``inner``\
+///   The border line is inset so it lies fully inside the shape’s
+///   boundary. Useful to prevent the stroke from being clipped by parent
+///   views or to ensure the shape’s outer size remains unchanged.
+/// - ``outer``\
+///   The border line is outset so it lies fully outside the shape’s
+///   boundary. Useful to preserve the interior content area exactly as sized.
+/// ## Conformance
+/// - `Hashable`
+/// - `Sendable`
+/// - `CaseIterable`
+/// ## Utilities
+/// - ``inset(for:)``\
+///   Computes the inset amount for a given stroke weight:
+///   - ``center`` returns
+///     ```swift
+///     0
+///     ```
+///   - ``inner`` returns
+///     ```swift
+///     weight / 2
+///     ```
+///   - ``outer`` returns
+///     ```swift
+///     -weight / 2
+///     ```
+/// ## Typical usage
+/// - When overlaying a shape with `.stroke`/`.strokeBorder`, pass
+///   `position.inset(for: weight)` to `.inset(by:)` so the stroke aligns
+///   as desired without changing the view’s visual layout unexpectedly.
+@IsCase
+public enum LinePosition: Hashable, Sendable, CaseIterable, DefaultCaseFirst {
 	case center
 	case inner
 	case outer
 	
 	/// Calculate the border line inset
 	/// - Parameter weight: Border weight line to be insetted
-	/// - Returns:
-	///   - Zero for ``center`` case,
-	///   - `weight` half for ``inner``
-	///   - Negated `weight` half for ``outer``
+	/// - Returns: Computes the inset amount for a given stroke `weight` and returns:
+	///   - ``center``
+	///     ```swift
+	///     0
+	///     ```
+	///   - ``inner``
+	///     ```swift
+	///     weight / 2
+	///     ```
+	///   - ``outer``
+	///     ```swift
+	///     -weight / 2
+	///     ```
 	public func inset(for weight: CGFloat) -> CGFloat {
 		switch self {
 		case .center: .zero
