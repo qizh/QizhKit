@@ -134,7 +134,7 @@ public protocol RailsModel: KeyedEmptyableBackendModel {
 /// In case the model is a wrapper or a submit model
 /// and there's no id in it
 extension RailsModel {
-	public var id: UInt8 { 0 }
+	public var id: UInt { 0 }
 }
 
 public struct RailsResponse <Item>: Codable, Sendable
