@@ -259,6 +259,13 @@ extension AnyShapeStyle {
 	public static let tertiary: AnyShapeStyle = .init(HierarchicalShapeStyle.tertiary)
 	public static let quaternary: AnyShapeStyle = .init(HierarchicalShapeStyle.quaternary)
 	public static let quinary: AnyShapeStyle = .init(HierarchicalShapeStyle.quinary)
+	
+	public static let regularMaterial: AnyShapeStyle = .init(Material.regular)
+	public static let thickMaterial: AnyShapeStyle = .init(Material.thick)
+	public static let thinMaterial: AnyShapeStyle = .init(Material.thin)
+	public static let ultraThinMaterial: AnyShapeStyle = .init(Material.ultraThin)
+	public static let ultraThickMaterial: AnyShapeStyle = .init(Material.ultraThick)
+	public static let barMaterial: AnyShapeStyle = .init(Material.bar)
 }
 
 extension ShapeStyle {
