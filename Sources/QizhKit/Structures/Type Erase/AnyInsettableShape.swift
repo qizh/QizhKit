@@ -13,7 +13,7 @@ public struct AnyInsettableShape: InsettableShape, Sendable {
 	private let makeInset: @Sendable (CGFloat) -> AnyInsettableShape
 
 	public init<S: InsettableShape & Sendable>(_ shape: S) {
-		// Capture a copy of the shape to ensure it's Sendable
+		/// Capture a copy of the shape to ensure it's Sendable
 		let shapeCopy = shape
 		makePath = { rect in shapeCopy.path(in: rect) }
 		makeInset = { amount in AnyInsettableShape(shapeCopy.inset(by: amount)) }

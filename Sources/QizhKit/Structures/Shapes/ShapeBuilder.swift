@@ -13,26 +13,6 @@ import SwiftUI
 
 
 
-// MARK: Any
-
-/// A type-erased `Shape`.
-///
-/// SwiftUI provides `AnyShapeStyle`, but a type-erased `Shape` is still useful for
-/// result-builder scenarios (e.g. `buildLimitedAvailability`).
-public struct AnyShape: Shape {
-	private let _path: @Sendable (CGRect) -> Path
-
-	public init<S: Shape>(_ shape: S) {
-		self._path = { rect in
-			shape.path(in: rect)
-		}
-	}
-
-	public func path(in rect: CGRect) -> Path {
-		_path(rect)
-	}
-}
-
 // MARK: Insetted
 
 /// A `Shape` wrapper that applies an inset (`InsettableShape.inset(by:)`) lazily.
@@ -259,28 +239,6 @@ public struct ShapeBuilder {
 	public static func buildEither<S1: Shape, S2: Shape>(second: S2) -> EitherShape<S1, S2> {
 		.second(second)
 	}
-	/*
-	public static func buildEither<First: InsettableShape, Second: InsettableShape>(
-		first: First
-	) -> EitherShape<First, Second> {
-		.first(first)
-	}
-	public static func buildEither<First: InsettableShape, Second: InsettableShape>(
-		second: Second
-	) -> EitherShape<First, Second> {
-		.second(second)
-	}
-	public static func buildEither<First: InsettableShape, Second: Shape>(
-		first: First
-	) -> EitherShape<First, Second> {
-		.first(first)
-	}
-	public static func buildEither<First: Shape, Second: InsettableShape>(
-		second: Second
-	) -> EitherShape<First, Second> {
-		.second(second)
-	}
-	*/
 	
 	// MARK: 5 - Handle `for`..`in`
 	
@@ -290,7 +248,19 @@ public struct ShapeBuilder {
 	// MARK: 6 - Handle `if #available(...) { ... }` in a builder context
 	
 	/// Type-erases shapes across availability boundaries (`if #available`).
-	public static func buildLimitedAvailability(_ s: some Shape) -> AnyShape { AnyShape(s) }
+	public static func buildLimitedAvailability(
+		_ s: some Shape
+	) -> AnyShape {
+		AnyShape(s)
+	}
+	
+	/// Type-erases shapes across availability boundaries (`if #available`)
+	/// for `InsettableShape`.
+	public static func buildLimitedAvailability(
+		_ s: some InsettableShape
+	) -> AnyInsettableShape {
+		AnyInsettableShape(s)
+	}
 	
 	// MARK: 7 - Optionally post-process the final Component into a different return type
 	
