@@ -106,6 +106,11 @@ The following dependencies are used (package name → product name):
 
 ## What You Should Do
 
+### For Small Changes (≤42 lines)
+- **Apply directly as a commit** instead of creating a PR sibling
+- Small changes include minor fixes, typo corrections, documentation updates, and simple refactoring
+- If the change grows beyond 42 lines during implementation, consider creating a proper PR instead
+
 ### For Code Changes
 1. **Review existing code patterns** before making changes
 2. **Write tests** for new functionality
@@ -240,6 +245,6 @@ The repository has a custom agent configured in `.github/agents/qizh.agent.md` w
 
 ---
 
-**Last Updated**: 2025-12-01
+**Last Updated**: 2025-12-05
 **Swift Version**: 6.1+
 **Minimum Platforms**: iOS 17, macOS 14, macCatalyst 17
