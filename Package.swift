@@ -126,7 +126,7 @@ let package = Package(
 		.package(url: "https://github.com/apple/swift-collections", from: "1.3.0"),
 		
 		/// Macros
-		.package(url: "https://github.com/qizh/QizhMacroKit", exact: "1.5.0"),
+		.package(url: "https://github.com/qizh/QizhMacroKit", from: "1.4.2"),
 	],
 	targets: [
 		.target(
