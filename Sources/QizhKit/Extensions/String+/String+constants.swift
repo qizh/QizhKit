@@ -20,9 +20,24 @@ public extension Character {
 	static let quotChar: Character         			= "\""
 	/** | */ static let lineChar: Character 		= "|"
 	static let apostropheChar: Character   			= "'"
-	
-	static let plusChar: Character         			= "+"
+	/// `+`
+	/// - Returns: Unicode "PLUS SIGN": `U+002B`
+	/// ```swift
+	/// Character("+")
+	/// ```
+	static let plusChar: Character = "+"
+	/// `-`
+	/// - Returns: Unicode "HYPHEN-MINUS": `U+002D`
+	/// ```swift
+	/// Character("-")
+	/// ```
 	static let minusChar: Character        			= "-"
+	/// `-`
+	/// - Returns: Unicode "HYPHEN-MINUS": `U+002D`
+	/// ```swift
+	/// Character("-")
+	/// ```
+	static let hyphenChar: Character        		= "-"
 	static let multiplyChar: Character     			= "✕"
 	static let xMarkChar: Character        			= "✕"
 	static let checkMarkChar: Character        		= "✔︎"

@@ -28,10 +28,47 @@ extension DynamicTypeSize {
 }
 
 extension RangeExpression where Self == ClosedRange<DynamicTypeSize> {
+	/// This range spans from `.xSmall` through `.xxxLarge`, covering the regular
+	/// content size categories and excluding the accessibility sizes
+	///
+	/// Use this when you want to:
+	/// - Iterate over or filter the regular Dynamic Type cases.
+	/// - Compute progress or interpolate values across standard sizes
+	///   (e.g., for layout or typography scaling), in combination with helpers
+	///   like `DynamicTypeSize.progress(in:)` or `ClosedRange.interpolated(for:from:)`.
+	///
+	/// - Note: The following accessibility sizes are excluded.
+	///   ```swift
+	///   .accessibility1 ... .accessibility5
+	///   ```
+	///
+	/// - SeeAlso:
+	///   - `fullRange` for a range that includes accessibility sizes.
+	///   - `DynamicTypeSize.allRegularCases` for an array of all regular cases.
 	public static var regularRange: ClosedRange<DynamicTypeSize> {
 		.xSmall ... .xxxLarge
 	}
 	
+	/// A range that spans from `.xSmall` through `.accessibility5`, covering
+	/// every `DynamicTypeSize` case, including the accessibility sizes.
+	/// 
+	/// Use this when you want to:
+	/// - Iterate over or filter all Dynamic Type cases, including accessibility.
+	/// - Compute progress or interpolate values across the entire spectrum,
+	///   in combination with helpers like `DynamicTypeSize.progress(in:)`
+	///   or `ClosedRange.interpolated(for:from:)`.
+	/// - Ensure UI scales appropriately even for the largest accessibility sizes.
+	/// 
+	/// - Note:
+	///   ```swift
+	///   .accessibility1 ... .accessibility5
+	///   ```
+	///   These accessibility sizes represent significantly larger text
+	///   and may require layout considerations.
+	///
+	/// - SeeAlso:
+	///   - `regularRange` for a range that excludes accessibility sizes.
+	///   - `DynamicTypeSize.allCases` for an array of all cases.
 	public static var fullRange: ClosedRange<DynamicTypeSize> {
 		.xSmall ... .accessibility5
 	}

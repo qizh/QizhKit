@@ -102,6 +102,17 @@ extension LocalizedStringKey: EmptyComparable {
 	public static var empty: LocalizedStringKey { "" }
 }
 
+extension String.LocalizationValue: EmptyComparable {
+	public static var empty: String.LocalizationValue {
+		String.LocalizationValue(.empty)
+	}
+}
+
+extension LocalizedStringResource: EmptyComparable {
+	public static var empty: LocalizedStringResource {
+		LocalizedStringResource(.empty, table: "Special Cases", locale: .en_US, bundle: .qizhKit.forLocale(.en_US), comment: "Empty string, used to adopt EmptyComparable") }
+}
+
 extension Text: EmptyComparable {
 	public static let empty = Text(verbatim: .empty)
 }
